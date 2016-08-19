@@ -84,18 +84,12 @@ public class GVRPickerTests
     {
         gvrTestUtils = new GVRTestUtils(mActivityRule.getActivity());
         final Waiter waiter = new Waiter();
-        gvrTestUtils.setOnInitCallback(new OnInitCallback() {
-            public void onInit(GVRContext ctx)
-            {
-                GVRContext context = gvrTestUtils.getGvrContext();
+        gvrTestUtils.waitForOnInit();
+        GVRContext context = gvrTestUtils.getGvrContext();
 
-                mBlue = new GVRMaterial(context, GVRMaterial.GVRShaderType.BeingGenerated.ID);
-                mBlue.setDiffuseColor(0, 0, 1, 1);
-                mPickHandler = new PickHandler();
-                waiter.resume();
-            }
-        });
-        waiter.await(4000);
+        mBlue = new GVRMaterial(context, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        mBlue.setDiffuseColor(0, 0, 1, 1);
+        mPickHandler = new PickHandler();
     }
 
     class PickCallback implements GVRTestUtils.OnRenderCallback
@@ -103,9 +97,11 @@ public class GVRPickerTests
         public GVRPicker Picker;
         public GVRScene Scene;
         public GVRSceneObject PickMe;
+        public Waiter Wait;
 
         public PickCallback(GVRPicker picker, GVRScene scene, GVRSceneObject pickme)
         {
+            Wait = new Waiter();
             Picker = picker;
             Scene = scene;
             PickMe = pickme;
@@ -116,11 +112,10 @@ public class GVRPickerTests
             Picker.onDrawFrame(0);
             GVRPicker.GVRPickedObject[] picked = Picker.getPicked();
 
-            Assert.assertNotNull(picked);
-            Assert.assertEquals(picked.length, 1);
-            Assert.assertEquals(picked[0].getHitObject(), PickMe);
-            Scene.removeSceneObject(PickMe);
-            Picker.setEnable(false);
+            Wait.assertNotNull(picked);
+            Wait.assertEquals(picked.length, 1);
+            Wait.assertEquals(picked[0].getHitObject(), PickMe);
+            Wait.resume();
         }
     }
 
@@ -139,6 +134,7 @@ public class GVRPickerTests
         scene.addSceneObject(sphere);
         GVRPicker picker = new GVRPicker(context, scene);
         gvrTestUtils.setOnRenderCallback(new PickCallback(picker, scene, sphere));
+        gvrTestUtils.waitForSceneRendering();
     }
 
     @Test
@@ -155,5 +151,6 @@ public class GVRPickerTests
         scene.addSceneObject(cube);
         GVRPicker picker = new GVRPicker(context, scene);
         gvrTestUtils.setOnRenderCallback(new PickCallback(picker, scene, cube));
+        gvrTestUtils.waitForSceneRendering();
     }
 }
