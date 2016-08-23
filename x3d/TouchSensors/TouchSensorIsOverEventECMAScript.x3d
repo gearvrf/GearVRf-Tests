@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.1//EN" "http://www.web3d.org/specifications/x3d-3.1.dtd">
+<X3D profile='Immersive' version='3.1' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.1.xsd'>
+  <head>
+    <meta content='TouchSensorIsOverEventECMAScript.x3d' name='title'/>
+    <meta content='This example demonstrates a scripted response to a TouchSensor isOver event by changing the color of a Box from blue to red' name='description'/>
+    <meta content='X3D Specification' name='creator'/>
+    <meta content='23 February 2005' name='translated'/>
+    <meta content='15 March 2008' name='modified'/>
+    <meta content='X3D ECMAScript Script Authoring Interface (SAI)' name='subject'/>
+    <meta content='http://www.web3d.org/x3d/content/examples/Basic/ScriptConformance/TouchSensorIsOverEventECMAScript.x3d' name='identifier'/>
+    <meta content='http://www.web3d.org/x3d/specifications/ISO-IEC-19777-1-X3DLanguageBindings-ECMAScript/Part1/examples.html#TouchSensorIsOverEvent' name='reference'/>
+    <meta content='Vrml97ToX3dNist, http://ovrt.nist.gov/v2_x3d.html' name='generator'/>
+    <meta content='X3D-Edit 3.3, https://savage.nps.edu/X3D-Edit' name='generator'/>
+    <meta content='../license.html' name='license'/>
+  </head>
+  <Scene>
+    <Group>
+      <Shape>
+        <Appearance>
+          <Material DEF='MAT' diffuseColor='0 0 1'/>
+        </Appearance>
+        <Box/>
+      </Shape>
+      <TouchSensor DEF='TS'/>
+    </Group>
+    <Script DEF='SC'>
+      <field accessType='inputOnly' name='isOver' type='SFBool'/>
+      <field accessType='outputOnly' name='diffuseColor_changed' type='SFColor'/>
+      <![CDATA[
+ecmascript:
+
+function isOver(val) 
+{ 
+    if (val == true) 
+    { 
+        diffuseColor_changed = new SFColor(1,0,0); 
+    } 
+    else 
+    { 
+        diffuseColor_changed = new SFColor(0,0,1);
+    }
+}
+]]>
+    </Script>
+    <ROUTE fromField='isOver' fromNode='TS' toField='isOver' toNode='SC'/>
+    <ROUTE fromField='diffuseColor_changed' fromNode='SC' toField='set_diffuseColor' toNode='MAT'/>
+  </Scene>
+</X3D>
