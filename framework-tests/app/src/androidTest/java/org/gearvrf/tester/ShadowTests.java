@@ -33,6 +33,7 @@ public class ShadowTests
     private Waiter mWaiter;
     private GVRSceneObject mRoot;
     private GVRSceneObject mSphere;
+    private GVRSceneObject mCube;
     private boolean mDoCompare = false;
 
     @Rule
@@ -50,14 +51,23 @@ public class ShadowTests
         GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject background = new GVRCubeSceneObject(ctx, false);
         GVRMaterial blue = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        GVRMaterial red = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
 
         mWaiter.assertNotNull(scene);
         background.getTransform().setScale(10, 10, 10);
         background.getRenderData().setShaderTemplate(GVRPhongShader.class);
         blue.setDiffuseColor(0, 0, 1, 1);
+        red.setDiffuseColor(0.8f, 0, 0, 1);
+        red.setSpecularColor(0.6f, 0.3f, 0.6f, 1);
+        red.setSpecularExponent(10.0f);
         mSphere = new GVRSphereSceneObject(ctx, true, blue);
         mSphere.getRenderData().setShaderTemplate(GVRPhongShader.class);
         mSphere.getTransform().setPosition(0, 0, -4);
+        mSphere.setName("sphere");
+        mCube = new GVRCubeSceneObject(ctx, true, blue);
+        mCube.getRenderData().setShaderTemplate(GVRPhongShader.class);
+        mCube.getTransform().setPosition(0, 0, -3);
+        mCube.setName("cube");
         mRoot = scene.getRoot();
         mWaiter.assertNotNull(mRoot);
         mRoot.addChildObject(background);
@@ -65,7 +75,7 @@ public class ShadowTests
 
 
     @Test
-    public void spotLightAtTopCastsShadow() throws TimeoutException
+    public void spotLightAtCornerCastsShadow() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
@@ -75,31 +85,75 @@ public class ShadowTests
         light.setCastShadow(true);
         lightObj.attachComponent(light);
         lightObj.getTransform().rotateByAxis(-45, 1, 0, 0);
-        lightObj.getTransform().setPosition(0, 3, 3);
+        lightObj.getTransform().rotateByAxis(35, 0, 1, 0);
+        lightObj.getTransform().setPosition(3, 3, 3);
         light.setInnerConeAngle(30.0f);
         light.setOuterConeAngle(45.0f);
         mRoot.addChildObject(lightObj);
-        mRoot.addChildObject(mSphere);
+        mRoot.addChildObject(mCube);
         scene.bindShaders();
         mTestUtils.waitForSceneRendering();
-        mTestUtils.screenShot(getClass().getSimpleName(), "spotLightAtTopCastsShadow", mWaiter, mDoCompare);
+        mTestUtils.screenShot(getClass().getSimpleName(), "spotLightAtCornerCastsShadow", mWaiter, mDoCompare);
+    }
+
+    @Test
+    public void spotLightAtFrontCastsShadow() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRSceneObject lightObj = new GVRSceneObject(ctx);
+        GVRSpotLight light = new GVRSpotLight(ctx);
+
+        light.setCastShadow(true);
+        lightObj.attachComponent(light);
+        lightObj.getTransform().rotateByAxis(-45, 1, 0, 0);
+        lightObj.getTransform().setPosition(0, 3, 0);
+        light.setInnerConeAngle(30.0f);
+        light.setOuterConeAngle(45.0f);
+        mRoot.addChildObject(lightObj);
+        mRoot.addChildObject(mCube);
+        scene.bindShaders();
+        mTestUtils.waitForSceneRendering();
+        mTestUtils.screenShot(getClass().getSimpleName(), "spotLightAtFrontCastsShadow", mWaiter, mDoCompare);
     }
 
 
     @Test
-    public void directLightAtTopCastsShadow() throws TimeoutException
+    public void directLightAtCornerCastsShadow() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRDirectLight light = new GVRDirectLight(ctx);
 
-        lightObj.getTransform().rotateByAxis(-45, 1, 0, 0);
+        light.setCastShadow(true);
         lightObj.attachComponent(light);
+        lightObj.getTransform().rotateByAxis(-45, 1, 0, 0);
+        lightObj.getTransform().rotateByAxis(35, 0, 1, 0);
+        lightObj.getTransform().setPosition(3, 3, 3);
+        mRoot.addChildObject(lightObj);
+        mRoot.addChildObject(mCube);
+        scene.bindShaders();
+        mTestUtils.waitForSceneRendering();
+        mTestUtils.screenShot(getClass().getSimpleName(), "directLightAtCornerCastsShadow", mWaiter, mDoCompare);
+    }
+
+
+    @Test
+    public void directLightAtFrontCastsShadow() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRSceneObject lightObj = new GVRSceneObject(ctx);
+        GVRDirectLight light = new GVRDirectLight(ctx);
+
+        light.setCastShadow(true);
+        lightObj.attachComponent(light);
+        lightObj.getTransform().rotateByAxis(-45, 1, 0, 0);
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mSphere);
         scene.bindShaders();
         mTestUtils.waitForSceneRendering();
-        mTestUtils.screenShot(getClass().getSimpleName(), "directLightAtTopCastsShadow", mWaiter, mDoCompare);
+        mTestUtils.screenShot(getClass().getSimpleName(), "directLightAtFrontCastsShadow", mWaiter, mDoCompare);
     }
 }
