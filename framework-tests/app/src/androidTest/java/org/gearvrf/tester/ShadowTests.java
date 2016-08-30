@@ -228,6 +228,25 @@ public class ShadowTests
         mTestUtils.screenShot(getClass().getSimpleName(), "directLightAtSideCastsShadow", mWaiter, mDoCompare);
     }
 
+    @Test
+    public void directLightAtTopCastsShadow() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRSceneObject lightObj = new GVRSceneObject(ctx);
+        GVRDirectLight light = new GVRDirectLight(ctx);
+
+        light.setCastShadow(true);
+        lightObj.attachComponent(light);
+        lightObj.getTransform().rotateByAxis(-90, 1, 0, 0);
+        mRoot.addChildObject(lightObj);
+        mRoot.addChildObject(mCube);
+        mRoot.addChildObject(mSphere);
+        scene.bindShaders();
+        mTestUtils.waitForSceneRendering();
+        mTestUtils.screenShot(getClass().getSimpleName(), "directLightAtTopCastsShadow", mWaiter, mDoCompare);
+    }
+
     GVRSceneObject makeBackground(GVRContext ctx)
     {
         GVRMaterial leftmtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
