@@ -76,7 +76,8 @@ public class SceneObjectTests
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
 
-        scene.clear();
+        GVRTextViewSceneObject text = new GVRTextViewSceneObject(ctx, "Hello");
+        scene.removeAllSceneObjects();
     }
 
     @Test

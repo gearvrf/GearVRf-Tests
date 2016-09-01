@@ -7,8 +7,10 @@ import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRPicker;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;
@@ -31,10 +33,7 @@ import java.util.concurrent.TimeoutException;
 @RunWith(AndroidJUnit4.class)
 public class PickerTests
 {
-
-
     private static final String TAG = PickerTests.class.getSimpleName();
-    private static final int NUM_NORMALS_IN_QUAD = 12;
     private GVRTestUtils gvrTestUtils;
     private GVRPicker mPicker;
     private GVRMaterial mBlue;
@@ -332,6 +331,62 @@ public class PickerTests
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkObject("cube", cube, 1, 0, 1, 1);
         mPickHandler.checkHits("cube", new Vector3f[] { new Vector3f(0, 0, 0.5f) }, null);
+        mWaiter.resume();
+    }
+
+    @Test
+    public void canPickQuad()
+    {
+        GVRContext context = gvrTestUtils.getGvrContext();
+        GVRScene scene = gvrTestUtils.getMainScene();
+        GVRSceneObject sceneObj = new GVRSceneObject(context, 2.0f, 2.0f);
+        GVRMeshCollider collider = new GVRMeshCollider(context, false);
+        GVRRenderData rdata = sceneObj.getRenderData();
+
+        sceneObj.attachCollider(collider);
+        sceneObj.setName("quad");
+        sceneObj.getTransform().setPositionZ(-5.0f);
+        rdata.setMaterial(mBlue);
+        rdata.setShaderTemplate(GVRPhongShader.class);
+        scene.addSceneObject(sceneObj);
+        scene.getEventReceiver().addListener(mPickHandler);
+        Log.d("Picker", "canPickQuad");
+        mPicker = new GVRPicker(context, scene);
+        gvrTestUtils.waitForSceneRendering();
+        mPickHandler.checkResults(1, 0);
+        mPickHandler.checkObject("quad", sceneObj, 1, 0, 1, 1);
+        mPickHandler.checkHits("quad", new Vector3f[] { new Vector3f(0, 0, 0) }, null);
+        mWaiter.resume();
+    }
+
+    @Test
+    public void canPickTriangle()
+    {
+        GVRContext context = gvrTestUtils.getGvrContext();
+        GVRScene scene = gvrTestUtils.getMainScene();
+        GVRMesh triangleMesh = new GVRMesh(context);
+        float[] a = {0f, 0f, 0f, 5f, 5f, 5f, 1f, 4f, 1f};
+        char indices[] = { 0, 1, 2 };
+        triangleMesh.setVertices(a);
+        triangleMesh.setIndices(indices);
+        GVRSceneObject sceneObjTriangle = new GVRSceneObject(context, triangleMesh);
+        GVRMeshCollider collider = new GVRMeshCollider(context, false);
+        GVRRenderData rdata = sceneObjTriangle.getRenderData();
+
+        sceneObjTriangle.attachCollider(collider);
+        sceneObjTriangle.setName("Triangle");
+        rdata.setMaterial(mBlue);
+        rdata.setShaderTemplate(GVRPhongShader.class);
+        scene.addSceneObject(sceneObjTriangle);
+        sceneObjTriangle.getTransform().setPosition(-2.0f, -4.0f, -15.0f);
+        sceneObjTriangle.getTransform().setScale(5, 5, 5);
+        scene.getEventReceiver().addListener(mPickHandler);
+        Log.d("Picker", "canPickTriangle");
+        mPicker = new GVRPicker(context, scene);
+        gvrTestUtils.waitForSceneRendering();
+        mPickHandler.checkResults(1, 0);
+        mPickHandler.checkObject("Triangle", sceneObjTriangle, 1, 0, 1, 1);
+        mPickHandler.checkHits("Triangle", new Vector3f[] { new Vector3f(0.4f, 0.8f, 0.4f) }, null);
         mWaiter.resume();
     }
 }
