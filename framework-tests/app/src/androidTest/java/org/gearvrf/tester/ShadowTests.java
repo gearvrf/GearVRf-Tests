@@ -56,6 +56,7 @@ public class ShadowTests
         GVRMaterial red = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
         GVRSceneObject background;
 
+        scene.getMainCameraRig().setFarClippingDistance(20.0f);
         mWaiter.assertNotNull(scene);
         background = makeBackground(ctx);
         blue.setDiffuseColor(0, 0, 1, 1);
@@ -247,6 +248,71 @@ public class ShadowTests
         mTestUtils.screenShot(getClass().getSimpleName(), "directLightAtTopCastsShadow", mWaiter, mDoCompare);
     }
 
+    @Test
+    public void twoLightsCastShadows() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRSceneObject lightObj1 = new GVRSceneObject(ctx);
+        GVRSceneObject lightObj2 = new GVRSceneObject(ctx);
+        GVRDirectLight light1 = new GVRDirectLight(ctx);
+        GVRSpotLight light2 = new GVRSpotLight(ctx);
+
+        light1.setCastShadow(true);
+        lightObj1.attachComponent(light1);
+        lightObj1.getTransform().rotateByAxis(-90, 1, 0, 0);
+        light2.setCastShadow(true);
+        lightObj2.attachComponent(light2);
+        lightObj2.getTransform().rotateByAxis(-90, 0, 1, 0);
+        lightObj2.getTransform().setPosition(-3, 0, -3);
+        light2.setInnerConeAngle(30.0f);
+        light2.setOuterConeAngle(45.0f);
+        mRoot.addChildObject(lightObj1);
+        mRoot.addChildObject(lightObj2);
+        mRoot.addChildObject(mCube);
+        mRoot.addChildObject(mSphere);
+        scene.bindShaders();
+        mTestUtils.waitForSceneRendering();
+        mTestUtils.screenShot(getClass().getSimpleName(), "twoLightsCastShadows", mWaiter, mDoCompare);
+    }
+
+
+    @Test
+    public void threeLightsCastShadows() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRSceneObject lightObj1 = new GVRSceneObject(ctx);
+        GVRSceneObject lightObj2 = new GVRSceneObject(ctx);
+        GVRSceneObject lightObj3 = new GVRSceneObject(ctx);
+        GVRDirectLight light1 = new GVRDirectLight(ctx);
+        GVRSpotLight light2 = new GVRSpotLight(ctx);
+        GVRSpotLight light3 = new GVRSpotLight(ctx);
+
+        light1.setCastShadow(true);
+        lightObj1.attachComponent(light1);
+        lightObj1.getTransform().rotateByAxis(-90, 1, 0, 0);
+        light2.setCastShadow(true);
+        lightObj2.attachComponent(light2);
+        lightObj2.getTransform().rotateByAxis(-90, 0, 1, 0);
+        lightObj2.getTransform().setPosition(-3, 0, -3);
+        light2.setInnerConeAngle(30.0f);
+        light2.setOuterConeAngle(45.0f);
+        lightObj3.attachComponent(light3);
+        lightObj3.getTransform().rotateByAxis(-45, 0, 1, 0);
+        lightObj3.getTransform().setPosition(0, 3, 0);
+        light3.setInnerConeAngle(30.0f);
+        light3.setOuterConeAngle(45.0f);
+        mRoot.addChildObject(lightObj1);
+        mRoot.addChildObject(lightObj2);
+        mRoot.addChildObject(lightObj3);
+        mRoot.addChildObject(mCube);
+        mRoot.addChildObject(mSphere);
+        scene.bindShaders();
+        mTestUtils.waitForSceneRendering();
+        mTestUtils.screenShot(getClass().getSimpleName(), "threeLightsCastShadows", mWaiter, mDoCompare);
+    }
+
     GVRSceneObject makeBackground(GVRContext ctx)
     {
         GVRMaterial leftmtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
@@ -274,16 +340,19 @@ public class ShadowTests
         floor.getTransform().setPosition(0, -2.0f, -2.0f);
 
         rightside.getRenderData().setMaterial(rightmtl);
+        rightside.getRenderData().setCastShadows(false);
         rightside.getRenderData().setShaderTemplate(GVRPhongShader.class);
         rightside.getTransform().rotateByAxis(90, 0, 1, 0);
         rightside.getTransform().setPosition(-2.0f, 0.0f, -2.0f);
 
         leftside.getRenderData().setMaterial(leftmtl);
+        leftside.getRenderData().setCastShadows(false);
         leftside.getRenderData().setShaderTemplate(GVRPhongShader.class);
         leftside.getTransform().rotateByAxis(-90, 0, 1, 0);
         leftside.getTransform().setPosition(2.0f, 0.0f, -2.0f);
 
         back.getRenderData().setMaterial(backmtl);
+        back.getRenderData().setCastShadows(false);
         back.getRenderData().setShaderTemplate(GVRPhongShader.class);
         back.getTransform().setPosition(0.0f, 0.0f, -4.0f);
 
