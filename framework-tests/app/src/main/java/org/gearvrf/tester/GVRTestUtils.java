@@ -199,7 +199,7 @@ public class GVRTestUtils implements GVRMainMonitor {
                 Bitmap golden = null;
                 try
                 {
-                    InputStream stream = gvrContext.getContext().getAssets().open(testname);
+                    InputStream stream = gvrContext.getContext().getAssets().open(category + "/" + testname);
                     golden = BitmapFactory.decodeStream(stream);
                 }
                 catch (IOException ex)
