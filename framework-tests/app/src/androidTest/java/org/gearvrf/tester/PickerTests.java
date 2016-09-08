@@ -227,13 +227,17 @@ public class PickerTests
     }
 
     @Rule
-    public ActivityTestRule<TestableActivity> mActivityRule = new
-            ActivityTestRule<TestableActivity>(TestableActivity.class);
+    public ActivityTestRule<TestableActivity> ActivityRule = new ActivityTestRule<TestableActivity>(TestableActivity.class)
+    {
+        protected void afterActivityFinished() {
+            gvrTestUtils.getMainScene().clear();
+        }
+    };
 
     @Before
     public void setUp() throws TimeoutException
     {
-        gvrTestUtils = new GVRTestUtils(mActivityRule.getActivity());
+        gvrTestUtils = new GVRTestUtils(ActivityRule.getActivity());
         mWaiter = new Waiter();
         gvrTestUtils.waitForOnInit();
         GVRContext context = gvrTestUtils.getGvrContext();

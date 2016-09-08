@@ -37,7 +37,12 @@ public class LightTests
     private boolean mDoCompare = true;
 
     @Rule
-    public ActivityTestRule<TestableActivity> ActivityRule = new ActivityTestRule<TestableActivity>(TestableActivity.class);
+    public ActivityTestRule<TestableActivity> ActivityRule = new ActivityTestRule<TestableActivity>(TestableActivity.class)
+    {
+        protected void afterActivityFinished() {
+            //mTestUtils.getMainScene().clear();
+        }
+    };
 
     @Before
     public void setUp() throws TimeoutException

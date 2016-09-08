@@ -40,7 +40,12 @@ public class ShadowTests
     private boolean mDoCompare = false;
 
     @Rule
-    public ActivityTestRule<TestableActivity> ActivityRule = new ActivityTestRule<TestableActivity>(TestableActivity.class);
+    public ActivityTestRule<TestableActivity> ActivityRule = new ActivityTestRule<TestableActivity>(TestableActivity.class)
+    {
+        protected void afterActivityFinished() {
+            mTestUtils.getMainScene().clear();
+        }
+    };
 
     @Before
     public void setUp() throws TimeoutException
@@ -90,7 +95,7 @@ public class ShadowTests
         lightObj.attachComponent(light);
         lightObj.getTransform().rotateByAxis(-45, 1, 0, 0);
         lightObj.getTransform().rotateByAxis(35, 0, 1, 0);
-        lightObj.getTransform().setPosition(3, 3, 3);
+        lightObj.getTransform().setPosition(3, 3, 0);
         light.setInnerConeAngle(30.0f);
         light.setOuterConeAngle(45.0f);
         mRoot.addChildObject(lightObj);
