@@ -6,10 +6,12 @@ import android.support.test.runner.AndroidJUnit4;
 import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRFrustumPicker;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRPicker;
+import org.gearvrf.GVRObjectPicker;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
@@ -37,6 +39,7 @@ public class PickerTests
     private GVRTestUtils gvrTestUtils;
     private GVRPicker mPicker;
     private GVRMaterial mBlue;
+    private GVRMaterial mRed;
     private PickHandler mPickHandler;
     private Waiter mWaiter;
 
@@ -89,15 +92,11 @@ public class PickerTests
                 if (p == null)
                 {
                     p = new PickInfo();
-                    p.NumEnter = 1;
                     p.PickedObj = sceneObj;
                     p.EnterHits.add(new Vector3f(pickInfo.getHitX(), pickInfo.getHitY(), pickInfo.getHitZ()));
-                    mPicked.put(name, p);
                 }
-                else
-                {
-                    p.NumEnter++;
-                }
+                p.NumEnter++;
+                mPicked.put(name, p);
                 Log.d("Picker", "onEnter %s %f, %f, %f", name, pickInfo.getHitX(), pickInfo.getHitY(), pickInfo.getHitZ());
             }
         }
@@ -148,15 +147,11 @@ public class PickerTests
                     if (p == null)
                     {
                         p = new PickInfo();
-                        p.NumEnter = 1;
                         p.PickedObj = sceneObj;
-                        mPicked.put(name, p);
                     }
-                    else
-                    {
-                        mWaiter.assertNotNull(p);
-                        p.NumPick++;
-                    }
+                    mWaiter.assertNotNull(p);
+                    p.NumPick++;
+                    mPicked.put(name, p);
                     Log.d("Picker", "onPick %s", name);
                 }
             }
@@ -220,6 +215,11 @@ public class PickerTests
                 }
             }
         }
+
+        public void checkNoHits(String name)
+        {
+            mWaiter.assertNull(mPicked.get(name));
+        }
     }
 
     public PickerTests() {
@@ -244,6 +244,8 @@ public class PickerTests
 
         mBlue = new GVRMaterial(context, GVRMaterial.GVRShaderType.BeingGenerated.ID);
         mBlue.setDiffuseColor(0, 0, 1, 1);
+        mRed = new GVRMaterial(context, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        mRed.setDiffuseColor(1, 0, 0, 1);
         mPickHandler = new PickHandler();
     }
 
@@ -391,6 +393,182 @@ public class PickerTests
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkObject("Triangle", sceneObjTriangle, 1, 0, 1, 1);
         mPickHandler.checkHits("Triangle", new Vector3f[] { new Vector3f(0.4f, 0.8f, 0.4f) }, null);
+        mWaiter.resume();
+    }
+
+    @Test
+    public void testPickObjects()
+    {
+        GVRContext context = gvrTestUtils.getGvrContext();
+        GVRScene scene = gvrTestUtils.getMainScene();
+        GVRSceneObject sphere = new GVRSphereSceneObject(context, true, mBlue);
+        GVRSphereCollider collider1 = new GVRSphereCollider(context);
+        GVRSceneObject box = new GVRCubeSceneObject(context, true, mRed);
+        GVRMeshCollider collider2 = new GVRMeshCollider(context, false);
+
+        sphere.setName("sphere");
+        sphere.getRenderData().setShaderTemplate(GVRPhongShader.class);
+        sphere.getTransform().setPosition(0, 0, -2);
+        collider1.setRadius(1.0f);
+        sphere.attachComponent(collider1);
+        scene.addSceneObject(sphere);
+        box.setName("box");
+        box.getRenderData().setShaderTemplate(GVRPhongShader.class);
+        box.getTransform().setPosition(0, 0.25f, -1);
+        box.attachComponent(collider2);
+        scene.addSceneObject(sphere);
+        scene.addSceneObject(box);
+
+        GVRPicker.GVRPickedObject picked[] = GVRPicker.pickObjects(scene, null, 0, 0, 0, 0, 0, -1.0f);
+        Log.d("Picker", "testPickObjects");
+        gvrTestUtils.waitForSceneRendering();
+        mWaiter.assertNotNull(picked);
+        mWaiter.assertTrue(picked.length == 2);
+        GVRPicker.GVRPickedObject hit1 = picked[0];
+        GVRPicker.GVRPickedObject hit2 = picked[1];
+        mWaiter.assertNotNull(hit1);
+        mWaiter.assertEquals("box", hit1.hitObject.getName());
+        mWaiter.assertEquals(0, hit1.hitLocation[0]);
+        mWaiter.assertEquals(-0.25f, hit1.hitLocation[1]);
+        mWaiter.assertEquals(0.5f, hit1.hitLocation[2]);
+        mWaiter.assertNotNull(hit2);
+        mWaiter.assertEquals("sphere", hit2.hitObject.getName());
+        mWaiter.assertEquals(0, hit2.hitLocation[0]);
+        mWaiter.assertEquals(0, hit2.hitLocation[1]);
+        mWaiter.assertEquals(-2, hit2.hitLocation[2]);
+
+        mWaiter.resume();
+    }
+
+    @Test
+    public void canPickObjectWithRay()
+    {
+        GVRContext context = gvrTestUtils.getGvrContext();
+        GVRScene scene = gvrTestUtils.getMainScene();
+        GVRSceneObject sphere1 = new GVRSphereSceneObject(context, true, mBlue);
+        GVRSphereCollider collider1 = new GVRSphereCollider(context);
+
+        sphere1.setName("sphere1");
+        sphere1.getRenderData().setShaderTemplate(GVRPhongShader.class);
+        sphere1.getTransform().setPosition(0, 0, -2);
+        collider1.setRadius(1.0f);
+        sphere1.attachComponent(collider1);
+        scene.addSceneObject(sphere1);
+
+        Log.d("Picker", "canPickObjectWithRay");
+        float distance = GVRPicker.pickSceneObject(sphere1, scene.getMainCameraRig());
+        gvrTestUtils.waitForSceneRendering();
+        mWaiter.assertEquals(1, distance);
+        mWaiter.resume();
+    }
+
+    @Test
+    public void canPickWithFrustum()
+    {
+        GVRContext context = gvrTestUtils.getGvrContext();
+        GVRScene scene = gvrTestUtils.getMainScene();
+        GVRSceneObject sphere = new GVRSphereSceneObject(context, true, mBlue);
+        GVRSphereCollider collider1 = new GVRSphereCollider(context);
+        GVRSceneObject box = new GVRCubeSceneObject(context, true, mRed);
+        GVRMeshCollider collider2 = new GVRMeshCollider(context, false);
+
+        sphere.setName("sphere");
+        sphere.getRenderData().setShaderTemplate(GVRPhongShader.class);
+        sphere.getTransform().setPosition(0, 0, -2);
+        collider1.setRadius(1.0f);
+        sphere.attachComponent(collider1);
+        scene.addSceneObject(sphere);
+        box.setName("box");
+        box.getRenderData().setShaderTemplate(GVRPhongShader.class);
+        box.getTransform().setPosition(-2, 0, -1);
+        box.attachComponent(collider2);
+        scene.addSceneObject(sphere);
+        scene.addSceneObject(box);
+
+        scene.getEventReceiver().addListener(mPickHandler);
+        Log.d("Picker", "canPickWithFrustum");
+        mPicker = new GVRFrustumPicker(context, scene);
+        ((GVRFrustumPicker) mPicker).setFrustum(45.0f, 1.0f, 0.1f, 100.0f);
+        gvrTestUtils.waitForSceneRendering();
+        mPickHandler.checkResults(1, 0);
+        mPickHandler.checkHits("sphere", new Vector3f[] { new Vector3f(0, 0, -2) }, null);
+        mPickHandler.checkNoHits("box");
+        mWaiter.resume();
+    }
+
+
+    @Test
+    public void canPickFromObject()
+    {
+        GVRContext context = gvrTestUtils.getGvrContext();
+        GVRScene scene = gvrTestUtils.getMainScene();
+        GVRSceneObject sphere = new GVRSphereSceneObject(context, true, mBlue);
+        GVRSphereCollider collider1 = new GVRSphereCollider(context);
+        GVRSceneObject box = new GVRCubeSceneObject(context, true, mRed);
+
+        sphere.setName("sphere");
+        sphere.getRenderData().setShaderTemplate(GVRPhongShader.class);
+        sphere.getTransform().setPosition(0, 0, -2);
+        collider1.setRadius(1.0f);
+        sphere.attachComponent(collider1);
+        scene.addSceneObject(sphere);
+        box.setName("box");
+        box.getRenderData().setShaderTemplate(GVRPhongShader.class);
+        box.getTransform().setPosition(-2, 0, -2);
+
+        scene.getEventReceiver().addListener(mPickHandler);
+        Log.d("Picker", "canPickFromObject");
+        mPicker = new GVRPicker(context, scene);
+        mPicker.setPickRay(0, 0, 0, 1, 0, 0);
+        box.attachComponent(mPicker);
+
+        scene.addSceneObject(sphere);
+        scene.addSceneObject(box);
+        gvrTestUtils.waitForSceneRendering();
+        mPickHandler.checkResults(1, 0);
+        mPickHandler.checkHits("sphere", new Vector3f[] { new Vector3f(-1, 0, 0) }, null);
+        mWaiter.resume();
+    }
+
+    @Test
+    public void canPickWithObject()
+    {
+        GVRContext context = gvrTestUtils.getGvrContext();
+        GVRScene scene = gvrTestUtils.getMainScene();
+        GVRSceneObject sphere1 = new GVRSphereSceneObject(context, true, mBlue);
+        GVRSceneObject sphere2 = new GVRSphereSceneObject(context, true, mRed);
+        GVRSphereCollider collider1 = new GVRSphereCollider(context);
+        GVRSphereCollider collider2 = new GVRSphereCollider(context);
+        GVRSceneObject box = new GVRCubeSceneObject(context, true, mRed);
+
+        sphere1.setName("sphere1");
+        sphere1.getRenderData().setShaderTemplate(GVRPhongShader.class);
+        sphere1.getTransform().setPosition(0, 0, -2);
+        collider1.setRadius(1.0f);
+        sphere1.attachComponent(collider1);
+        sphere2.setName("sphere2");
+        sphere2.getRenderData().setShaderTemplate(GVRPhongShader.class);
+        sphere2.getTransform().setPosition(2, 0, 0);
+        collider2.setRadius(1.0f);
+        sphere2.attachComponent(collider2);
+        box.setName("box");
+        box.getRenderData().setShaderTemplate(GVRPhongShader.class);
+        box.getTransform().setScale(0.25f, 0.25f, 0.25f);
+        box.getTransform().setPosition(0.5f, 0, -1.75f);
+
+        scene.getEventReceiver().addListener(mPickHandler);
+        Log.d("Picker", "canPickWithObject");
+        mPicker = new GVRObjectPicker(context, scene);
+        mPicker.setPickRay(0, 0, 0, 1, 0, 0);
+        box.attachComponent(mPicker);
+        scene.addSceneObject(sphere1);
+        scene.addSceneObject(sphere2);
+        scene.addSceneObject(box);
+
+        gvrTestUtils.waitForSceneRendering();
+        mPickHandler.checkResults(1, 0);
+        mPickHandler.checkHits("sphere1", new Vector3f[] { new Vector3f(0, 0, -2) }, null);
+        mPickHandler.checkNoHits("sphere2");
         mWaiter.resume();
     }
 }

@@ -38,7 +38,7 @@ public class SceneObjectTests
     private GVRSceneObject mBackground;
     private GVRMaterial mBlueMtl;
     private GVRMaterial mCubeMapMtl;
-    private boolean mDoCompare = false;
+    private boolean mDoCompare = true;
 
 
     @Rule
