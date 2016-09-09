@@ -10,6 +10,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRPointLight;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSpotLight;
@@ -40,7 +41,7 @@ public class LightTests
     public ActivityTestRule<TestableActivity> ActivityRule = new ActivityTestRule<TestableActivity>(TestableActivity.class)
     {
         protected void afterActivityFinished() {
-            //mTestUtils.getMainScene().clear();
+            mTestUtils.getMainScene().clear();
         }
     };
 
@@ -64,7 +65,7 @@ public class LightTests
         check.setTexture("diffuseTexture", checker);
         background.getTransform().setScale(10, 10, 10);
         background.getRenderData().setShaderTemplate(GVRPhongShader.class);
-        blue.setDiffuseColor(0, 0, 1, 0.5f);
+        blue.setDiffuseColor(0, 0, 1, 1);
         mSphere = new GVRSphereSceneObject(ctx, true, blue);
         mSphere.getRenderData().setShaderTemplate(GVRPhongShader.class);
         mSphere.getTransform().setPosition(0, 0, -2);
