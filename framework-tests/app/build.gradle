@@ -44,18 +44,11 @@ android {
 
 dependencies {
     compile(name:'framework-debug', ext:'aar')
-<<<<<<< e2865e769afcf6ca2ef6111f2d3a5cb5f41ee144
-    compile(name:'backend-debug', ext:'aar')
-=======
 	compile(name: 'backend_oculus-debug', ext: 'aar')
->>>>>>> Adding lighting tests
     androidTestCompile 'com.android.support:support-annotations:23.0.1'
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
     compile 'net.jodah:concurrentunit:0.4.2'
-<<<<<<< e2865e769afcf6ca2ef6111f2d3a5cb5f41ee144
     compile project(path: ':gvr-unittestutils')
-=======
->>>>>>> Adding lighting tests
 }
