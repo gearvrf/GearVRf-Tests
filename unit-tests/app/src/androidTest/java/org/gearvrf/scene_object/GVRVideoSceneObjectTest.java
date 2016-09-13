@@ -29,14 +29,14 @@ public class GVRVideoSceneObjectTest extends ActivityInstrumentationGVRf {
         MediaPlayer mediaPlayer = new MediaPlayer();
         GVRVideoSceneObject videoSceneObject = new GVRVideoSceneObject(TestDefaultGVRViewManager.mGVRContext, 100f, 100f, mediaPlayer, GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO);
         videoSceneObject.getMediaPlayer().start();
-        videoSceneObject.getMediaPlayer().stop();
+        mediaPlayer.stop();
     }
 
     public void testStopVideo() {
         MediaPlayer mediaPlayer = new MediaPlayer();
         GVRVideoSceneObject videoSceneObject = new GVRVideoSceneObject(TestDefaultGVRViewManager.mGVRContext, 100f, 100f, mediaPlayer, GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO);
         videoSceneObject.getMediaPlayer().start();
-        videoSceneObject.getMediaPlayer().stop();
+        mediaPlayer.stop();
     }
 
     public void testPauseVideo() {
@@ -44,7 +44,7 @@ public class GVRVideoSceneObjectTest extends ActivityInstrumentationGVRf {
         GVRVideoSceneObject videoSceneObject = new GVRVideoSceneObject(TestDefaultGVRViewManager.mGVRContext, 100f, 100f, mediaPlayer, GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO);
         videoSceneObject.getMediaPlayer().start();
         videoSceneObject.getMediaPlayer().pause();
-        videoSceneObject.getMediaPlayer().stop();
+        mediaPlayer.stop();
     }
 
     public void testGetGVRVideoSceneObjectTransform() {
@@ -107,7 +107,7 @@ public class GVRVideoSceneObjectTest extends ActivityInstrumentationGVRf {
         MediaPlayer mediaPlayer = new MediaPlayer();
         GVRVideoSceneObject videoSceneObject = new GVRVideoSceneObject(TestDefaultGVRViewManager.mGVRContext, 100f, 100f, mediaPlayer, GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO);
         MediaPlayer mediaPlayer2 = new MediaPlayer();
-        videoSceneObject.setMediaPlayer(mediaPlayer2);
+        videoSceneObject.setMediaPlayer(GVRVideoSceneObject.makePlayerInstance(mediaPlayer2));
         videoSceneObject.activate();
         videoSceneObject.deactivate();
     }
