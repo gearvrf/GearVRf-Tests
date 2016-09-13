@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">GearVRFapp_02</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="motion">MOTION</string>
+    <string name="color">COLOR</string>
+    <string name="rotatation">ROTATATION</string>
+    <string name="scale">SCALE</string>
+</resources>
