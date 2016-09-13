@@ -217,6 +217,7 @@ public class AssetTests
         loadTestModel("jassimp/astro_boy.dae", 4, "canLoadModelInScene");
     }
 
+    /*
     @Test
     public void canLoadModelSceneObject() throws TimeoutException
     {
@@ -240,6 +241,7 @@ public class AssetTests
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot("AssetTests", "canLoadModelSceneObject", mWaiter, mDoCompare);
     }
+    */
 
     @Test
     public void jassimpBench() throws TimeoutException
