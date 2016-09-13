@@ -18,6 +18,8 @@ import org.gearvrf.GVRTexture;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.GVRPhongShader;
+import org.gearvrf.unittestutils.GVRTestUtils;
+import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.joml.Vector3f;
 import org.junit.Before;
 import org.junit.Rule;
@@ -38,7 +40,7 @@ public class LightTests
     private boolean mDoCompare = true;
 
     @Rule
-    public ActivityTestRule<TestableActivity> ActivityRule = new ActivityTestRule<TestableActivity>(TestableActivity.class)
+    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
     {
         protected void afterActivityFinished() {
             mTestUtils.getMainScene().clear();
