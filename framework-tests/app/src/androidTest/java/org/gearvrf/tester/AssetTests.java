@@ -28,7 +28,7 @@ import java.util.concurrent.TimeoutException;
 @RunWith(AndroidJUnit4.class)
 public class AssetTests
 {
-    private static final String TAG = ShadowTests.class.getSimpleName();
+    private static final String TAG = AssetTests.class.getSimpleName();
     private GVRTestUtils mTestUtils;
     private Waiter mWaiter;
     private GVRSceneObject mRoot;
@@ -241,6 +241,7 @@ public class AssetTests
         mTestUtils.screenShot("AssetTests", "canLoadModelSceneObject", mWaiter, mDoCompare);
     }
 */
+
     @Test
     public void jassimpBench() throws TimeoutException
     {
