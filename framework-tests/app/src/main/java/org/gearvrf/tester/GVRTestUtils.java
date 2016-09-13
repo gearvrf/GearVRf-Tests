@@ -21,17 +21,14 @@ import android.graphics.Color;
 import android.os.Environment;
 import net.jodah.concurrentunit.Waiter;
 
-import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScreenshotCallback;
-import org.gearvrf.utility.FileNameUtils;
 import org.gearvrf.utility.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,6 +42,7 @@ public class GVRTestUtils implements GVRMainMonitor {
     private GVRContext gvrContext;
     private final Object onInitLock;
     private final Object onStepLock;
+    private final Object onScreenshotLock;
     private final Object onAssetLock;
     private GVRTestableMain testableMain;
     private GVRScene mainScene;
@@ -56,7 +54,9 @@ public class GVRTestUtils implements GVRMainMonitor {
         gvrContext = null;
         onInitLock = new Object();
         onStepLock = new Object();
+        onScreenshotLock = new Object();
         onAssetLock = new Object();
+
         if (testableGVRActivity == null) {
             throw new IllegalArgumentException();
         }
@@ -248,21 +248,24 @@ public class GVRTestUtils implements GVRMainMonitor {
             @Override
             public void onScreenCaptured(Bitmap bitmap)
             {
-                try
+                synchronized (onScreenshotLock)
                 {
-                    String basename = testname + ".png";
-                    writeBitmap(category, basename, bitmap);
-                    Log.d(category, "Saved screenshot of %s", testname);
-                    if (doCompare)
+                    try
                     {
-                        compareWithGolden(bitmap, basename, waiter);
+                        String basename = testname + ".png";
+                        writeBitmap(category, basename, bitmap);
+                        Log.d(category, "Saved screenshot of %s", testname);
+                        if (doCompare)
+                        {
+                            compareWithGolden(bitmap, basename, waiter);
+                        }
+                        waiter.resume();
                     }
-                    waiter.resume();
-                }
-                catch (Exception e)
-                {
-                    Log.d(category, "Could not save screenshot of %s", testname);
-                    waiter.fail(e);
+                    catch (Exception e)
+                    {
+                        Log.d(category, "Could not save screenshot of %s", testname);
+                        waiter.fail(e);
+                    }
                 }
             }
         };
