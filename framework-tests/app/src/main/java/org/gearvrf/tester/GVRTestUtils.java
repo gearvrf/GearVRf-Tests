@@ -24,6 +24,7 @@ import net.jodah.concurrentunit.Waiter;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
+import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScreenshotCallback;
 import org.gearvrf.utility.FileNameUtils;
 import org.gearvrf.utility.Log;
@@ -45,16 +46,19 @@ public class GVRTestUtils implements GVRMainMonitor {
     private final Object onInitLock;
     private final Object onStepLock;
     private final Object onScreenshotLock;
+    private final Object onAssetLock;
     private GVRTestableMain testableMain;
     private GVRScene mainScene;
     private OnInitCallback onInitCallback;
     private OnRenderCallback onRenderCallback;
+    private boolean mAssetIsLoaded = false;
 
     public GVRTestUtils(GVRTestableActivity testableGVRActivity) {
         gvrContext = null;
         onInitLock = new Object();
         onStepLock = new Object();
         onScreenshotLock = new Object();
+        onAssetLock = new Object();
         if (testableGVRActivity == null) {
             throw new IllegalArgumentException();
         }
@@ -103,6 +107,32 @@ public class GVRTestUtils implements GVRMainMonitor {
         }
     }
 
+    public void waitForNextFrame() {
+        synchronized (onStepLock) {
+            try {
+                Log.d(TAG, "Waiting for OnStep");
+                onStepLock.wait();
+            } catch (InterruptedException e) {
+                Log.e(TAG, "", e);
+                return;
+            }
+        }
+    }
+
+    public void waitForAssetLoad() {
+        if (mAssetIsLoaded)
+            return;
+        synchronized (onAssetLock) {
+            try {
+                Log.d(TAG, "Waiting for OnAssetLoaded");
+                onAssetLock.wait();
+            } catch (InterruptedException e) {
+                Log.e(TAG, "", e);
+                return;
+            }
+        }
+    }
+
     @Override
     public void onInitCalled(GVRContext context, GVRScene mainScene) {
         this.mainScene = mainScene;
@@ -127,6 +157,15 @@ public class GVRTestUtils implements GVRMainMonitor {
         Log.d(TAG, "OnSceneRenderedCalled");
     }
 
+    @Override
+    public void onAssetLoaded(GVRSceneObject asset) {
+        mAssetIsLoaded = true;
+        synchronized (onAssetLock) {
+            onAssetLock.notifyAll();
+        }
+        Log.d(TAG, "OnAssetLoaded Called");
+    }
+
     public GVRContext getGvrContext() {
         return gvrContext;
     }
@@ -149,6 +188,10 @@ public class GVRTestUtils implements GVRMainMonitor {
         void onSceneRendered();
     }
 
+    public interface OnAssetCallback {
+        void onAssetLoaded(GVRSceneObject asset);
+    }
+
     void screenShot(final String category, final String testname, final Waiter waiter, final boolean doCompare) throws TimeoutException
     {
         GVRScreenshotCallback callback = new GVRScreenshotCallback()
@@ -158,7 +201,7 @@ public class GVRTestUtils implements GVRMainMonitor {
                 Bitmap golden = null;
                 try
                 {
-                    InputStream stream = gvrContext.getContext().getAssets().open(testname);
+                     InputStream stream = gvrContext.getContext().getAssets().open(category + "/" + testname);
                     golden = BitmapFactory.decodeStream(stream);
                 }
                 catch (IOException ex)
