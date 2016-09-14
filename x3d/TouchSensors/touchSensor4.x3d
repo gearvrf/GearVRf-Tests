@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.0//EN" "http://www.web3d.org/specifications/x3d-3.0.dtd">
+<X3D xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' profile='Full' version='3.0' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.0.xsd'>
+  <Scene DEF='scene'>
+  <Viewpoint position="0 0 0"/>
+
+  <PointLight/>
+
+      <TimeSensor DEF='BlueCone-TIMER' cycleInterval='8' loop="false"/>
+      <PositionInterpolator DEF='Cylinder02-POS-INTERP' key='0 .5 1' keyValue='-3 0 -20  -1 0 -4  5 0 -10'/>
+
+      <OrientationInterpolator DEF='Cylinder01-Rotation-INTERP' key='0 .5 1' keyValue='0 0 1 0   0 0 1 3.14   0 0 1 6.28'/>
+
+    <Transform DEF='Cylinder02' translation='-3 0 -20'>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='1 .5 0'/>
+          </Appearance>
+          <Cylinder/>
+        </Shape>
+    </Transform>
+
+    <Transform DEF='Cylinder01' translation='0 -3 -8'>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='1 1 0'/>
+          </Appearance>
+          <Cylinder/>
+        </Shape>
+    </Transform>
+
+    <Transform DEF='RedCone' translation='6.5 -7 -10'>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='1 0 0'/>
+          </Appearance>
+          <Cone/>
+        </Shape>
+    </Transform>
+      <PositionInterpolator DEF='RedCone-Animated-POS-INTERP' key='0 .5 1' keyValue='6.5 -7 -10  -6.5 -10 -10  6.5 -7 -10'/>
+      <OrientationInterpolator DEF='RedCone-Animated-Rotation-INTERP' key='0 .5 1' keyValue='1 0 0 0   1 0 0 3.14   0 0 1 6.28'/>
+      <TimeSensor DEF='RedCone-Timer' cycleInterval='10' loop="true"/>
+      <ROUTE fromNode='RedCone-Timer' fromField='fraction_changed' toNode='RedCone-Animated-POS-INTERP' toField='set_fraction'/>
+      <ROUTE fromNode='RedCone-Animated-POS-INTERP' fromField='value_changed' toNode='RedCone' toField='set_translation'/>
+      <ROUTE fromNode='RedCone-Timer' fromField='fraction_changed' toNode='RedCone-Animated-Rotation-INTERP' toField='set_fraction'/>
+      <ROUTE fromNode='RedCone-Animated-Rotation-INTERP' fromField='value_changed' toNode='RedCone' toField='set_rotation'/>
+
+      <OrientationInterpolator DEF='ConeRotation-INTERP' key='0 .5 1' keyValue='1 0 0 0   1 0 0 3.14   1 0 0 6.28'/>
+
+
+        <Transform DEF='GreenCone' translation='-2 0 -6'>
+            <Shape>
+              <Appearance>
+                <Material diffuseColor='0 1 .5'/>
+              </Appearance>
+              <Cone bottomRadius="1"/>
+            </Shape>
+          <TouchSensor DEF='TouchSensor02-SENSOR'/>
+        </Transform>
+
+    <Transform DEF='BlueCone' translation='2 0 -6'>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='0 .5 1'/>
+          </Appearance>
+          <Cone bottomRadius="1"/>
+        </Shape>
+      <TouchSensor DEF='TouchSensor01-SENSOR'/>
+    </Transform>
+
+
+        <Transform DEF='GrayCone' translation='0 0 -10'>
+            <Shape>
+              <Appearance>
+                <Material diffuseColor='.5 .5 .5'/>
+              </Appearance>
+              <Cone bottomRadius="1"/>
+            </Shape>
+        </Transform>
+
+    <ROUTE fromNode='BlueCone-TIMER' fromField='fraction_changed' toNode='Cylinder02-POS-INTERP' toField='set_fraction'/>
+    <ROUTE fromNode='Cylinder02-POS-INTERP' fromField='value_changed' toNode='Cylinder02' toField='set_translation'/>
+
+    <ROUTE fromNode='BlueCone-TIMER' fromField='fraction_changed' toNode='Cylinder01-Rotation-INTERP' toField='set_fraction'/>
+    <ROUTE fromNode='Cylinder01-Rotation-INTERP' fromField='value_changed' toNode='Cylinder01' toField='set_rotation'/>
+    <ROUTE fromNode='TouchSensor01-SENSOR' fromField='isActive' toNode='BlueCone-TIMER' toField='set_enabled'/>
+
+    <TimeSensor DEF='GreenCone-TIMER' cycleInterval='7' loop="false"/>
+    <ROUTE fromNode='GreenCone-TIMER' fromField='fraction_changed' toNode='Cylinder02-POS-INTERP' toField='set_fraction'/>
+    <ROUTE fromNode='Cylinder02-POS-INTERP' fromField='value_changed' toNode='Cylinder02' toField='set_translation'/>
+    <ROUTE fromNode='TouchSensor02-SENSOR' fromField='isOver' toNode='GreenCone-TIMER' toField='set_enabled'/>
+
+
+  </Scene>
+</X3D>
