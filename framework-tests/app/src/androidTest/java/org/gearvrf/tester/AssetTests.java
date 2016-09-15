@@ -14,6 +14,7 @@ import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.GVRPhongShader;
 import org.gearvrf.IAssetEvents;
+import org.gearvrf.GVRExternalScene;
 
 import org.gearvrf.utility.FileNameUtils;
 import org.junit.Before;
@@ -163,6 +164,30 @@ public class AssetTests
         }
     }
 
+    public void loadTestScene(String modelfile, int numTex, String testname) throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRSceneObject model = null;
+
+        ctx.getEventReceiver().addListener(mHandler);
+        try
+        {
+            model = ctx.getAssetLoader().loadScene(modelfile, scene);
+        }
+        catch (IOException ex)
+        {
+            mWaiter.fail(ex);
+        }
+        mTestUtils.waitForAssetLoad();
+        mHandler.checkAssetLoaded(mWaiter, FileNameUtils.getFilename(modelfile), numTex);
+        mHandler.checkAssetErrors(mWaiter, 0, 0);
+        if (testname != null)
+        {
+            mTestUtils.screenShot("AssetTests", testname, mWaiter, mDoCompare);
+        }
+    }
+
     @Test
     public void canLoadModel() throws TimeoutException
     {
@@ -217,43 +242,61 @@ public class AssetTests
         loadTestModel("jassimp/astro_boy.dae", 4, "canLoadModelInScene");
     }
 
-    /*
     @Test
-    public void canLoadModelSceneObject() throws TimeoutException
+    public void canLoadScene() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
-        GVRModelSceneObject model = new GVRModelSceneObject(ctx, "jassimp/astro_boy.dae");
+        GVRSceneObject model = null;
 
+        scene.addSceneObject(mBackground);
         ctx.getEventReceiver().addListener(mHandler);
         try
         {
-            model = ctx.getAssetLoader().loadModel(model, scene);
+            model = ctx.getAssetLoader().loadScene("jassimp/astro_boy.dae", scene);
         }
         catch (IOException ex)
         {
             mWaiter.fail(ex);
         }
-        mWaiter.assertNotNull(model);
+        mTestUtils.waitForAssetLoad();
+        mHandler.checkAssetLoaded(mWaiter, null, 4);
+        mWaiter.assertNull(scene.getSceneObjectByName("background"));
+        mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
+        mHandler.checkAssetErrors(mWaiter, 0, 0);
+        mTestUtils.waitForSceneRendering();
+        mTestUtils.screenShot("AssetTests", "canLoadScene", mWaiter, mDoCompare);
+    }
+
+    @Test
+    public void canLoadExternalScene() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRSceneObject model = new GVRSceneObject(ctx);
+        GVRExternalScene extScene = new GVRExternalScene(ctx, "jassimp/astro_boy.dae", false);
+
+        ctx.getEventReceiver().addListener(mHandler);
+        model.attachComponent(extScene);
+        mWaiter.assertTrue(extScene.load(scene));
         mTestUtils.waitForAssetLoad();
         mHandler.checkAssetLoaded(mWaiter, "astro_boy.dae", 4);
         mHandler.checkAssetErrors(mWaiter, 0, 0);
         mTestUtils.waitForSceneRendering();
-        mTestUtils.screenShot("AssetTests", "canLoadModelSceneObject", mWaiter, mDoCompare);
+        mTestUtils.screenShot("AssetTests", "canLoadExternalScene", mWaiter, mDoCompare);
     }
-    */
 
     @Test
     public void jassimpBench() throws TimeoutException
     {
-        loadTestModel("jassimp/bench.dae", 0, "jassimpBench");
+        loadTestScene("jassimp/bench.dae", 0, "jassimpBench");
     }
 
 
     @Test
     public void x3dTeapotTorus() throws TimeoutException
     {
-        loadTestModel("x3d/teapottorusdirlights.x3d", 2, "x3dTeapotTorus");
+        loadTestScene("x3d/teapottorusdirlights.x3d", 2, "x3dTeapotTorus");
     }
 
 }
