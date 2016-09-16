@@ -1,5 +1,6 @@
 package org.gearvrf.da_gearvrf;
 
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
 import org.gearvrf.ActivityInstrumentationGVRf;
 
@@ -9,6 +10,10 @@ import org.gearvrf.GVROrthogonalCamera;
  * Created by j.elidelson on 6/10/2015.
  */
 public class GVROrthogonalCameraTest extends ActivityInstrumentationGVRf {
+
+    public GVROrthogonalCameraTest() {
+        super(GVRTestActivity.class);
+    }
 
     public void testConstructor(){
 
@@ -42,6 +47,7 @@ public class GVROrthogonalCameraTest extends ActivityInstrumentationGVRf {
         gvrOrthogonalCamera.setBottomClippingDistance(1.0f);
         assertEquals(1.0f,gvrOrthogonalCamera.getBottomClippingDistance());
     }
+
     public void testSetGetTopClippingDistance(){
 
         GVROrthogonalCamera gvrOrthogonalCamera = new GVROrthogonalCamera(TestDefaultGVRViewManager.mGVRContext);
@@ -55,6 +61,7 @@ public class GVROrthogonalCameraTest extends ActivityInstrumentationGVRf {
         gvrOrthogonalCamera.setNearClippingDistance(1.0f);
         assertEquals(1.0f,gvrOrthogonalCamera.getNearClippingDistance());
     }
+
     public void testSetGetFarClippingDistance(){
 
         GVROrthogonalCamera gvrOrthogonalCamera = new GVROrthogonalCamera(TestDefaultGVRViewManager.mGVRContext);

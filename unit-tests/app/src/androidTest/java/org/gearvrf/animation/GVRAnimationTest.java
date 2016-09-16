@@ -3,6 +3,7 @@ package org.gearvrf.animation;
 
 import org.gearvrf.ActivityInstrumentationGVRf;
 import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.misc.CustomPostEffectShaderManager;
 import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
 
@@ -26,10 +27,11 @@ public class GVRAnimationTest extends ActivityInstrumentationGVRf {
     private GVRContext mGVRContext = null;
     private CustomPostEffectShaderManager shaderManager;
 
+    public GVRAnimationTest() {
+        super(GVRTestActivity.class);
+    }
 
     public void testConstructor() {
-
-
         GVRSceneObject sceneObject = new GVRSceneObject(TestDefaultGVRViewManager.mGVRContext);
         GVRAnimation animation = new GVRAnimation(sceneObject, ANIM_DURATION) {
             @Override
@@ -40,13 +42,7 @@ public class GVRAnimationTest extends ActivityInstrumentationGVRf {
 
     }
 
-
-
-
-
     public void testPostEffectAnimation() {
-
-
         mGVRContext = TestDefaultGVRViewManager.mGVRContext;
         shaderManager = new CustomPostEffectShaderManager(mGVRContext);
 
@@ -57,15 +53,10 @@ public class GVRAnimationTest extends ActivityInstrumentationGVRf {
             }
         };
         assertNotNull(animation);
-
     }
-
-
 
     // TODO create test which calls animate and uses the null object
     public void ignoretestConstructorNullObject() {
-
-
         GVRSceneObject sceneObject = new GVRSceneObject(TestDefaultGVRViewManager.mGVRContext);
         GVRAnimation animation = new GVRAnimation(sceneObject, ANIM_DURATION) {
             @Override
@@ -76,10 +67,7 @@ public class GVRAnimationTest extends ActivityInstrumentationGVRf {
         assertNotNull(animation);
     }
 
-
      public void testSetInterpolator() {
-
-
         GVRInterpolator interpolator = new GVRInterpolator() {
             @Override
             public float mapRatio(float v) {
@@ -99,8 +87,6 @@ public class GVRAnimationTest extends ActivityInstrumentationGVRf {
     }
 
     public void testSetInterpolatorNull() {
-
-
         GVRSceneObject sceneObject = new GVRSceneObject(TestDefaultGVRViewManager.mGVRContext);
         GVRAnimation animation = new GVRAnimation(sceneObject, ANIM_DURATION) {
             @Override
@@ -311,7 +297,7 @@ public class GVRAnimationTest extends ActivityInstrumentationGVRf {
             protected void animate(GVRHybridObject gvrHybridObject, float v) {
             }
         };
-
+        animation.start(TestDefaultGVRViewManager.mGVRContext.getAnimationEngine());
         boolean isFinished = animation.isFinished();
         assertTrue(isFinished);
     }
@@ -413,6 +399,5 @@ public class GVRAnimationTest extends ActivityInstrumentationGVRf {
             }
         };
     }
-
 
 }

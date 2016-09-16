@@ -2,12 +2,17 @@ package org.gearvrf.utility;
 
 import org.gearvrf.ActivityInstrumentationGVRf;
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.GVRTexture;
 
 /**
  * Created by j.elidelson on 8/26/2015.
  */
 public class VrAppSettingsTest extends ActivityInstrumentationGVRf {
+
+    public VrAppSettingsTest() {
+        super(GVRTestActivity.class);
+    }
 
     public void testToString(){
 

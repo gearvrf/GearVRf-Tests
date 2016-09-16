@@ -6,6 +6,7 @@ import android.provider.MediaStore;
 
 import org.gearvrf.ActivityInstrumentationGVRf;
 import org.gearvrf.DefaultGVRTestActivity;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.utility.RuntimeAssertion;
 
 import java.io.ByteArrayOutputStream;
@@ -16,6 +17,10 @@ import java.io.InputStream;
  * Created by j.elidelson on 8/21/2015.
  */
 public class AdaptiveScalableTextureCompressionTest extends ActivityInstrumentationGVRf {
+
+    public AdaptiveScalableTextureCompressionTest() {
+        super(GVRTestActivity.class);
+    }
 
     public void testeheaderLength() {
 

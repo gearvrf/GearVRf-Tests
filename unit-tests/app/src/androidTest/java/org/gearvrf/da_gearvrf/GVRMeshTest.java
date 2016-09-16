@@ -7,6 +7,7 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRMeshEyePointee;
 import org.gearvrf.GVRSceneObject;
 
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.tests.R;
 import org.gearvrf.misc.ColorShader;
 import org.gearvrf.utils.UtilResource;
@@ -28,6 +29,9 @@ public class GVRMeshTest extends ActivityInstrumentationGVRf {
     private static final float UNPICKED_COLOR_A = 1.0f;
     private GVRSceneObject mSceneObject;
 
+    public GVRMeshTest() {
+        super(GVRTestActivity.class);
+    }
 
     /**
      * Valid create mesh factory.

@@ -4,6 +4,7 @@ import org.gearvrf.GVRLight;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderPass;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
 import org.gearvrf.ActivityInstrumentationGVRf;
@@ -20,6 +21,10 @@ import java.util.concurrent.TimeoutException;
  * Modified by Elidelson Cravlho on 09/09/2015
  */
 public class GVRRenderDataTest extends ActivityInstrumentationGVRf {
+
+    public GVRRenderDataTest() {
+        super(GVRTestActivity.class);
+    }
 
     @Override
     public void setUp() throws Exception {

@@ -1,11 +1,16 @@
 package org.gearvrf.asynchronous;
 
 import org.gearvrf.ActivityInstrumentationGVRf;
+import org.gearvrf.GVRTestActivity;
 
 /**
  * Created by j.elidelson on 8/24/2015.
  */
 public class GLESXTest extends ActivityInstrumentationGVRf {
+
+    public GLESXTest() {
+        super(GVRTestActivity.class);
+    }
 
     public  void testGLESX(){
 

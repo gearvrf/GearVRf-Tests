@@ -2,6 +2,7 @@ package org.gearvrf.utility;
 
 
 import org.gearvrf.ActivityInstrumentationGVRf;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.utility.Exceptions;
 import org.gearvrf.utility.RuntimeAssertion;
 
@@ -9,6 +10,10 @@ import org.gearvrf.utility.RuntimeAssertion;
  * Created by j.elidelson on 5/14/2015.
  */
 public class ExceptionsTest extends ActivityInstrumentationGVRf {
+
+    public ExceptionsTest() {
+        super(GVRTestActivity.class);
+    }
 
     public void testIllegalArgument() {
         Exceptions exceptions = new Exceptions() {

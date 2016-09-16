@@ -2,6 +2,7 @@ package org.gearvrf.scene_object;
 
 import android.graphics.Color;
 
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
 import org.gearvrf.ActivityInstrumentationGVRf;
 
@@ -18,6 +19,9 @@ import org.junit.*;
  * Created by j.elidelson on 6/1/2015.
  */
 public class GVRTextViewSceneObjectTest extends ActivityInstrumentationGVRf {
+    public GVRTextViewSceneObjectTest() {
+        super(GVRTestActivity.class);
+    }
 
     //@BeforeClass
     //public static void onceExecutedBeforeAll() {

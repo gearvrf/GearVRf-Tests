@@ -9,6 +9,7 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRHybridObject;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTextureParameters;
 import org.gearvrf.tests.R;
@@ -26,7 +27,11 @@ import java.util.Map;
 /**
  * Created by j.elidelson on 8/19/2015.
  */
-public class GVRGVRAsynchronousResourceLoaderTest extends ActivityInstrumentationGVRf {
+public class GVRAsynchronousResourceLoaderTest extends ActivityInstrumentationGVRf {
+
+    public GVRAsynchronousResourceLoaderTest() {
+        super(GVRTestActivity.class);
+    }
 
    public void testGVRAsynchronousResourceLoader(){
         GVRAsynchronousResourceLoader gvrAsynchronousResourceLoader = new GVRAsynchronousResourceLoader();

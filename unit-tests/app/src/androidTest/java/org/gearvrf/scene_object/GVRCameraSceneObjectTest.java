@@ -4,6 +4,7 @@ import android.hardware.Camera;
 
 import org.gearvrf.GVRMesh;
 
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.tests.R;
 import org.gearvrf.utils.UtilResource;
 import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
@@ -14,6 +15,10 @@ import org.gearvrf.ActivityInstrumentationGVRf;
  * Created by m.gorll on 2/27/2015.
  */
 public class GVRCameraSceneObjectTest extends ActivityInstrumentationGVRf {
+
+    public GVRCameraSceneObjectTest() {
+        super(GVRTestActivity.class);
+    }
 
     public void testCreateCameraSceneObject() {
         Camera c = Camera.open();

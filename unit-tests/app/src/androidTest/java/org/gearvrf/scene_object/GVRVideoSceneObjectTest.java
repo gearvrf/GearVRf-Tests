@@ -2,6 +2,8 @@ package org.gearvrf.scene_object;
 
 import android.media.MediaPlayer;
 
+import org.gearvrf.GVRTestActivity;
+import org.gearvrf.scene_objects.GVRVideoSceneObjectPlayer;
 import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
 import org.gearvrf.ActivityInstrumentationGVRf;
 
@@ -10,6 +12,9 @@ import org.gearvrf.scene_objects.GVRVideoSceneObject;
 
 public class GVRVideoSceneObjectTest extends ActivityInstrumentationGVRf {
 
+    public GVRVideoSceneObjectTest() {
+        super(GVRTestActivity.class);
+    }
 
     public void testCreateGVRVideoSceneObject() {
 

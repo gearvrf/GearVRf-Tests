@@ -2,12 +2,17 @@ package org.gearvrf.utility;
 
 import org.gearvrf.ActivityInstrumentationGVRf;
 
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.utility.RecycleBin;
 
 /**
  * Created by j.elidelson on 6/8/2015.
  */
 public class RecycleBinTest extends ActivityInstrumentationGVRf {
+
+    public RecycleBinTest() {
+        super(GVRTestActivity.class);
+    }
 
     private Integer ax[] = {1, 2, 3, 4, 5};
     private Integer bx[] = null;

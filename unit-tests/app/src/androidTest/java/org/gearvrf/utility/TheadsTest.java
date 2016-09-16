@@ -2,6 +2,7 @@ package org.gearvrf.utility;
 
 import org.gearvrf.ActivityInstrumentationGVRf;
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.R;
 import org.gearvrf.animation.GVRAnimationEngine;
@@ -16,6 +17,10 @@ import java.util.concurrent.FutureTask;
  * Created by j.elidelson on 10/9/2015.
  */
 public class TheadsTest extends ActivityInstrumentationGVRf {
+
+    public TheadsTest() {
+        super(GVRTestActivity.class);
+    }
 
     public void testSpawn(){
 

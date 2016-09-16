@@ -5,6 +5,7 @@ import android.app.Instrumentation;
 import android.content.Intent;
 
 import org.gearvrf.ActivityInstrumentationGVRf;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.viewmanager.CubemapActivity;
 import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
 
@@ -12,10 +13,10 @@ import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
 /**
  * Created by j.elidelson on 9/18/2015.
  */
-public class cubmapTest extends ActivityInstrumentationGVRf {
+public class CubemapTest extends ActivityInstrumentationGVRf {
 
-    public cubmapTest() {
-        //super(SceneObjectActivity.class);
+    public CubemapTest() {
+        super(GVRTestActivity.class);
     }
 
     public void testGetInstance() {

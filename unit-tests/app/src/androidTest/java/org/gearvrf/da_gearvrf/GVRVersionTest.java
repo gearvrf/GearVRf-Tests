@@ -2,6 +2,7 @@ package org.gearvrf.da_gearvrf;
 
 import org.gearvrf.ActivityInstrumentationGVRf;
 
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.GVRVersion;
 
 /**
@@ -11,6 +12,10 @@ public class GVRVersionTest extends ActivityInstrumentationGVRf {
 
     private GVRVersion version;
     private GVRVersion gvrVersion;
+
+    public GVRVersionTest() {
+        super(GVRTestActivity.class);
+    }
 
     public void testConstructor(){
 

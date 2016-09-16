@@ -5,6 +5,7 @@ import android.app.Instrumentation;
 import android.content.Intent;
 
 import org.gearvrf.ActivityInstrumentationGVRf;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.viewmanager.LODTestActivity;
 import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
 
@@ -15,7 +16,7 @@ import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
 public class LODTest extends ActivityInstrumentationGVRf {
 
     public LODTest() {
-        //super(SceneObjectActivity.class);
+        super(GVRTestActivity.class);
     }
 
     public void testGetInstance() {

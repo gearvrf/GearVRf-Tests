@@ -1,12 +1,17 @@
 package org.gearvrf.utility;
 
 import org.gearvrf.ActivityInstrumentationGVRf;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.utility.Colors;
 
 /**
  * Created by Douglas on 2/26/15.
  */
 public class ColorsTest extends ActivityInstrumentationGVRf {
+
+    public ColorsTest() {
+        super(GVRTestActivity.class);
+    }
 
     public void testGetBytToGl() {
         Colors colors = new Colors() {
