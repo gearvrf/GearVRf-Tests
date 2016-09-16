@@ -107,14 +107,16 @@ public class GVRTestUtils implements GVRMainMonitor {
         }
     }
 
-    public void waitForNextFrame() {
-        synchronized (onStepLock) {
-            try {
-                Log.d(TAG, "Waiting for OnStep");
-                onStepLock.wait();
-            } catch (InterruptedException e) {
-                Log.e(TAG, "", e);
-                return;
+    public void waitForFrameCount(int frameCount) {
+        while (frameCount-- >= 0) {
+            synchronized (onStepLock) {
+                try {
+                    Log.d(TAG, "Waiting for OnStep");
+                    onStepLock.wait();
+                } catch (InterruptedException e) {
+                    Log.e(TAG, "", e);
+                    return;
+                }
             }
         }
     }

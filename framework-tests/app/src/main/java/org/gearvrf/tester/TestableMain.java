@@ -45,10 +45,10 @@ public class TestableMain extends GVRTestableMain {
 
     @Override
     public void onStep() {
-        if (mainMonitor != null && !sceneRendered) {
+        if (mainMonitor != null) {
             sceneRendered = true;
-            mainMonitor.onSceneRendered();
         }
+        mainMonitor.onSceneRendered();
     }
 
     @Override
