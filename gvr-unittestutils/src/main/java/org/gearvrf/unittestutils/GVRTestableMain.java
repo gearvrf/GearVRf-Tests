@@ -50,9 +50,8 @@ class GVRTestableMain extends GVRMain{
 
     @Override
     public void onStep() {
-        if (mainMonitor != null && !sceneRendered) {
+        if (mainMonitor != null) {
             sceneRendered = true;
-            mainMonitor.onSceneRendered();
         }
         synchronized (waitXFramesLock) {
             if (waitForXFrames != WAIT_DISABLED) {
@@ -64,7 +63,7 @@ class GVRTestableMain extends GVRMain{
                 }
             }
         }
-
+        mainMonitor.onSceneRendered();
     }
 
     public void setMainMonitor(GVRMainMonitor mainMonitor) {
