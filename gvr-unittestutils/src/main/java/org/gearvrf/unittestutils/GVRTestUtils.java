@@ -139,6 +139,7 @@ public class GVRTestUtils implements GVRMainMonitor {
                 Log.e(TAG,"",e);
 
                 return;
+
             }
         }
     }
