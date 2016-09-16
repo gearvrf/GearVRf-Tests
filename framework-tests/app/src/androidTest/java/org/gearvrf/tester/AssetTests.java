@@ -15,6 +15,7 @@ import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.GVRPhongShader;
 import org.gearvrf.IAssetEvents;
+import org.gearvrf.GVRExternalScene;
 
 import org.gearvrf.utility.FileNameUtils;
 import org.junit.Before;
@@ -34,7 +35,7 @@ public class AssetTests
     private Waiter mWaiter;
     private GVRSceneObject mRoot;
     private GVRSceneObject mBackground;
-    private boolean mDoCompare = false;
+    private boolean mDoCompare = true;
     private AssetEventHandler mHandler;
 
     class AssetEventHandler implements IAssetEvents
@@ -186,6 +187,7 @@ public class AssetTests
         }
     }
 
+
     @Test
     public void canLoadModel() throws TimeoutException
     {
@@ -250,32 +252,32 @@ public class AssetTests
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
-        GVRExternalScene sceneLoader = new GVRExternalScene(ctx, "jassimp/astro_boy.dae", true);
         GVRSceneObject model = new GVRSceneObject(ctx);
+        GVRExternalScene extScene = new GVRExternalScene(ctx, "jassimp/astro_boy.dae", false);
 
         ctx.getEventReceiver().addListener(mHandler);
-        model.attachComponent(sceneLoader);
-        scene.addSceneObject(model);
-        mWaiter.assertTrue(sceneLoader.load(scene));
-        mWaiter.assertNotNull(model);
+        model.attachComponent(extScene);
+        mWaiter.assertTrue(extScene.load(scene));
         mTestUtils.waitForAssetLoad();
         mHandler.checkAssetLoaded(mWaiter, "astro_boy.dae", 4);
         mHandler.checkAssetErrors(mWaiter, 0, 0);
-        mTestUtils.waitForSceneRendering();
+        centerModel(model);
+        scene.addSceneObject(model);
+        mTestUtils.waitForFrameCount(2);
         mTestUtils.screenShot("AssetTests", "canLoadExternalScene", mWaiter, mDoCompare);
     }
 
     @Test
     public void jassimpBench() throws TimeoutException
     {
-        loadTestModel("jassimp/bench.dae", 0, "jassimpBench");
+        loadTestScene("jassimp/bench.dae", 0, "jassimpBench");
     }
 
 
     @Test
     public void x3dTeapotTorus() throws TimeoutException
     {
-        loadTestModel("x3d/teapottorusdirlights.x3d", 2, "x3dTeapotTorus");
+        loadTestScene("x3d/teapottorusdirlights.x3d", 2, "x3dTeapotTorus");
     }
 
 }

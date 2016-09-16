@@ -32,10 +32,14 @@ public class TestableMain extends GVRTestableMain {
     private GVRMainMonitor mainMonitor;
     private boolean sceneRendered = false;
 
+    public SplashMode getSplashMode() {
+        return SplashMode.NONE;
+    }
+
     @Override
     public void onInit(GVRContext gvrContext) {
         this.gvrContext = gvrContext;
-        mainScene = gvrContext.getNextMainScene();
+        mainScene = gvrContext.getMainScene();
         if (mainMonitor != null) {
             mainMonitor.onInitCalled(gvrContext, mainScene);
         } else {
