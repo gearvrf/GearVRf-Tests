@@ -1,6 +1,7 @@
 package org.gearvrf.utility;
 
 import org.gearvrf.ActivityInstrumentationGVRf;
+import org.gearvrf.GVRTestActivity;
 
 import java.util.Arrays;
 
@@ -8,6 +9,10 @@ import java.util.Arrays;
  * Created by j.elidelson on 6/8/2015.
  */
 public class AssertTest extends ActivityInstrumentationGVRf {
+
+    public AssertTest() {
+        super(GVRTestActivity.class);
+    }
 
     public void testAssertcheckNotNull(){
 

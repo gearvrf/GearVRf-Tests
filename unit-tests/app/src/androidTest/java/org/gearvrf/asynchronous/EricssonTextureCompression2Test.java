@@ -3,6 +3,7 @@ package org.gearvrf.asynchronous;
 import android.content.res.AssetManager;
 
 import org.gearvrf.ActivityInstrumentationGVRf;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.utility.RuntimeAssertion;
 
 import java.io.ByteArrayOutputStream;
@@ -13,6 +14,10 @@ import java.io.InputStream;
  * Created by j.elidelson on 8/24/2015.
  */
 public class EricssonTextureCompression2Test extends ActivityInstrumentationGVRf {
+
+    public EricssonTextureCompression2Test() {
+        super(GVRTestActivity.class);
+    }
 
     public void testHeaderLength(){
 

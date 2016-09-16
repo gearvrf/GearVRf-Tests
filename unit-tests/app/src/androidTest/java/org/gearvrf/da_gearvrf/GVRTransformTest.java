@@ -1,5 +1,6 @@
 package org.gearvrf.da_gearvrf;
 
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.misc.ColorShader;
 import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
 import org.gearvrf.ActivityInstrumentationGVRf;
@@ -20,6 +21,10 @@ public class GVRTransformTest extends ActivityInstrumentationGVRf {
     private static final float UNPICKED_COLOR_A = 1.0f;
 
     private GVRSceneObject mSceneObject;
+
+    public GVRTransformTest() {
+        super(GVRTestActivity.class);
+    }
 
     @Override
     public void setUp() throws Exception {

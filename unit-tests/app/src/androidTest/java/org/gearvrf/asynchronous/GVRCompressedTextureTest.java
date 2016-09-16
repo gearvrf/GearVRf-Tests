@@ -3,6 +3,7 @@ package org.gearvrf.asynchronous;
 import android.content.res.AssetManager;
 
 import org.gearvrf.ActivityInstrumentationGVRf;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.GVRTextureParameters;
 import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
 
@@ -14,6 +15,10 @@ import java.io.InputStream;
  * Created by j.elidelson on 8/24/2015.
  */
 public class GVRCompressedTextureTest extends ActivityInstrumentationGVRf {
+
+    public GVRCompressedTextureTest() {
+        super(GVRTestActivity.class);
+    }
 
     public void testGVRCompressedTextureConstructor(){
 

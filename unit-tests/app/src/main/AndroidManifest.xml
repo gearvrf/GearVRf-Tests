@@ -38,7 +38,7 @@
             android:value="vr_only" />-->
 
         <activity
-            android:name="org.gearvrf.tests.DefaultGVRTestActivity"
+            android:name="org.gearvrf.DefaultGVRTestActivity"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
             android:excludeFromRecents="true"
             android:label="@string/app_name"
@@ -51,47 +51,7 @@
         </activity>
 
         <activity
-            android:name=".viewmanager.GalleryActivity"
-            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
-            android:excludeFromRecents="true"
-            android:label="@string/app_name"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-
-        <activity
-            android:name=".viewmanager.SceneObjectActivity"
-            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
-            android:excludeFromRecents="true"
-            android:label="@string/app_name"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name="org.gearvrf.CollisionActivity"
-            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
-            android:excludeFromRecents="true"
-            android:label="@string/app_name"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".viewmanager.CockpitActivity"
+            android:name="org.gearvrf.viewmanager.GalleryActivity"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
             android:excludeFromRecents="true"
             android:label="@string/app_name"
@@ -105,7 +65,7 @@
 
 
         <activity
-            android:name=".viewmanager.SimpleSampleActivity"
+            android:name="org.gearvrf.viewmanager.SceneObjectActivity"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
             android:excludeFromRecents="true"
             android:label="@string/app_name"
@@ -118,7 +78,7 @@
         </activity>
 
         <activity
-            android:name=".viewmanager.eyepickActivity"
+            android:name="org.gearvrf.viewmanager.CollisionActivity"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
             android:excludeFromRecents="true"
             android:label="@string/app_name"
@@ -131,46 +91,7 @@
         </activity>
 
         <activity
-            android:name=".viewmanager.gamepadActivity"
-            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
-            android:excludeFromRecents="true"
-            android:label="@string/app_name"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".viewmanager.CubemapActivity"
-            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
-            android:excludeFromRecents="true"
-            android:label="@string/app_name"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".viewmanager.exposeActivity"
-            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
-            android:excludeFromRecents="true"
-            android:label="@string/app_name"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".viewmanager.JassimpModelLoaderActivity"
+            android:name="org.gearvrf.viewmanager.CockpitActivity"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
             android:excludeFromRecents="true"
             android:label="@string/app_name"
@@ -184,7 +105,72 @@
 
 
         <activity
-            android:name=".viewmanager.LitshaderActivity"
+            android:name="org.gearvrf.viewmanager.SimpleSampleActivity"
+            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
+            android:excludeFromRecents="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="org.gearvrf.viewmanager.eyepickActivity"
+            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
+            android:excludeFromRecents="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="org.gearvrf.viewmanager.gamepadActivity"
+            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
+            android:excludeFromRecents="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="org.gearvrf.viewmanager.CubemapActivity"
+            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
+            android:excludeFromRecents="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="org.gearvrf.viewmanager.exposeActivity"
+            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
+            android:excludeFromRecents="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="org.gearvrf.viewmanager.JassimpModelLoaderActivity"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
             android:excludeFromRecents="true"
             android:label="@string/app_name"
@@ -198,20 +184,7 @@
 
 
         <activity
-            android:name=".viewmanager.OutlineActivity"
-            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
-            android:excludeFromRecents="true"
-            android:label="@string/app_name"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".viewmanager.panoramaActivity"
+            android:name="org.gearvrf.viewmanager.LitshaderActivity"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
             android:excludeFromRecents="true"
             android:label="@string/app_name"
@@ -225,7 +198,7 @@
 
 
         <activity
-            android:name=".viewmanager.perfActivity"
+            android:name="org.gearvrf.viewmanager.OutlineActivity"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
             android:excludeFromRecents="true"
             android:label="@string/app_name"
@@ -238,33 +211,7 @@
         </activity>
 
         <activity
-            android:name=".viewmanager.PickandmoveActivity"
-            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
-            android:excludeFromRecents="true"
-            android:label="@string/app_name"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".viewmanager.SampleActivity"
-            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
-            android:excludeFromRecents="true"
-            android:label="@string/app_name"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".viewmanager.sixaxisActivity"
+            android:name="org.gearvrf.viewmanager.panoramaActivity"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
             android:excludeFromRecents="true"
             android:label="@string/app_name"
@@ -278,7 +225,7 @@
 
 
         <activity
-            android:name=".viewmanager.testCubeActivity"
+            android:name="org.gearvrf.viewmanager.perfActivity"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
             android:excludeFromRecents="true"
             android:label="@string/app_name"
@@ -291,21 +238,7 @@
         </activity>
 
         <activity
-            android:name=".viewmanager.LODTestActivity"
-            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
-            android:excludeFromRecents="true"
-            android:label="@string/app_name"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-
-        <activity
-            android:name=".viewmanager.ViewerActivity"
+            android:name="org.gearvrf.viewmanager.PickandmoveActivity"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
             android:excludeFromRecents="true"
             android:label="@string/app_name"
@@ -318,7 +251,7 @@
         </activity>
 
         <activity
-            android:name=".viewmanager.SolarActivity"
+            android:name="org.gearvrf.viewmanager.SampleActivity"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
             android:excludeFromRecents="true"
             android:label="@string/app_name"
@@ -331,7 +264,7 @@
         </activity>
 
         <activity
-            android:name=".viewmanager.controls.MainActivity"
+            android:name="org.gearvrf.viewmanager.sixaxisActivity"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
             android:excludeFromRecents="true"
             android:label="@string/app_name"
@@ -345,7 +278,20 @@
 
 
         <activity
-            android:name=".viewmanager.controls.Test01MainActivity"
+            android:name="org.gearvrf.viewmanager.testCubeActivity"
+            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
+            android:excludeFromRecents="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="org.gearvrf.viewmanager.LODTestActivity"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
             android:excludeFromRecents="true"
             android:label="@string/app_name"
@@ -359,7 +305,61 @@
 
 
         <activity
-            android:name=".viewmanager.CollisionActivity"
+            android:name="org.gearvrf.viewmanager.ViewerActivity"
+            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
+            android:excludeFromRecents="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="org.gearvrf.viewmanager.SolarActivity"
+            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
+            android:excludeFromRecents="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="org.gearvrf.viewmanager.controls.MainActivity"
+            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
+            android:excludeFromRecents="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+
+        <activity
+            android:name="org.gearvrf.viewmanager.controls.Test01MainActivity"
+            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
+            android:excludeFromRecents="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+
+        <activity
+            android:name="org.gearvrf.viewmanager.CollisionActivity"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
             android:excludeFromRecents="true"
             android:label="@string/app_name"

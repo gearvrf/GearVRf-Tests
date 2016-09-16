@@ -7,6 +7,7 @@ import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRMeshEyePointee;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.tests.R;
 import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
@@ -24,6 +25,10 @@ import java.util.concurrent.Future;
  * Created by rodolfo.ps on 5/19/2015.
  */
 public class GVRPickerTest extends ActivityInstrumentationGVRf {
+
+    public GVRPickerTest() {
+        super(GVRTestActivity.class);
+    }
 
     public void testPickScene() {
 

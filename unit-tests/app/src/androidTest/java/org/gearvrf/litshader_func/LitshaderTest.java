@@ -1,34 +1,35 @@
-package org.gearvrf.outline_func;
+package org.gearvrf.litshader_func;
 
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Intent;
 
 import org.gearvrf.ActivityInstrumentationGVRf;
-import org.gearvrf.viewmanager.OutlineActivity;
+import org.gearvrf.GVRTestActivity;
+import org.gearvrf.viewmanager.LitshaderActivity;
 import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
 
 
 /**
  * Created by j.elidelson on 9/18/2015.
  */
-public class outlineTest extends ActivityInstrumentationGVRf {
+public class LitshaderTest extends ActivityInstrumentationGVRf {
 
-    public outlineTest() {
-        //super(SceneObjectActivity.class);
+    public LitshaderTest() {
+        super(GVRTestActivity.class);
     }
 
     public void testGetInstance() {
         Instrumentation mInstrumentation = getInstrumentation();
         // We register our interest in the activity
-        Instrumentation.ActivityMonitor monitor = mInstrumentation.addMonitor(OutlineActivity.class.getName(), null, false);
+        Instrumentation.ActivityMonitor monitor = mInstrumentation.addMonitor(LitshaderActivity.class.getName(), null, false);
         // We launch it
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setClassName(mInstrumentation.getTargetContext(), OutlineActivity.class.getName());
+        intent.setClass(mInstrumentation.getTargetContext(), LitshaderActivity.class);
         mInstrumentation.startActivitySync(intent);
         try {
-            Thread.sleep(TestDefaultGVRViewManager.DelayTest+1000);
+            Thread.sleep(TestDefaultGVRViewManager.DelayTest+4000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import org.gearvrf.ActivityInstrumentationGVRf;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
 
 import java.nio.ByteBuffer;
@@ -19,6 +20,10 @@ import java.util.List;
  * Created by j.elidelson on 9/11/2015.
  */
 public class AiBuiltInWrapperProviderTest extends ActivityInstrumentationGVRf {
+
+    public AiBuiltInWrapperProviderTest() {
+        super(GVRTestActivity.class);
+    }
 
     public void testConstructor() {
 

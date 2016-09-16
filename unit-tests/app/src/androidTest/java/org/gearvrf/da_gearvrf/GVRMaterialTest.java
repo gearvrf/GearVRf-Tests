@@ -5,6 +5,7 @@ import android.graphics.Color;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.tests.R;
 import org.gearvrf.misc.ColorShader;
@@ -28,6 +29,9 @@ public class GVRMaterialTest extends ActivityInstrumentationGVRf {
     private float mWidth = 1.0f;
     private float mHeight = 1.0f;
 
+    public GVRMaterialTest() {
+        super(GVRTestActivity.class);
+    }
 
     public void ignoretestGetTexture() {
         mColorShader = new ColorShader(TestDefaultGVRViewManager.mGVRContext);
@@ -185,7 +189,6 @@ public class GVRMaterialTest extends ActivityInstrumentationGVRf {
     /**
      * Created by elidelson on 9/01/15.
      */
-
     public void testSetColor(){
 
         GVRMaterial gvrMaterial = new GVRMaterial(TestDefaultGVRViewManager.mGVRContext);

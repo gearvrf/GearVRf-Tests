@@ -7,6 +7,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRPostEffect;
 import org.gearvrf.GVRPostEffectShaderId;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.tests.R;
 import org.gearvrf.utility.Log;
@@ -34,6 +35,10 @@ public class GVRPostEffectTest extends ActivityInstrumentationGVRf {
     private static GVRContext mGVRContext = null;
 
     private CustomPostEffectShaderManager shaderManager;
+
+    public GVRPostEffectTest() {
+        super(GVRTestActivity.class);
+    }
 
     @Override
     public void setUp() throws Exception {

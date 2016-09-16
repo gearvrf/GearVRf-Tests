@@ -3,6 +3,7 @@ package org.gearvrf.jassimp;
 import org.gearvrf.ActivityInstrumentationGVRf;
 import org.gearvrf.GVRImportSettings;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
 
 import java.io.IOException;
@@ -13,6 +14,10 @@ import java.util.Set;
  * Created by j.elidelson on 9/15/2015.
  */
 public class AiMaterialTest extends ActivityInstrumentationGVRf {
+
+    public AiMaterialTest() {
+        super(GVRTestActivity.class);
+    }
 
     public void testConstructor() {
         AiMaterial aiMaterial = new AiMaterial();

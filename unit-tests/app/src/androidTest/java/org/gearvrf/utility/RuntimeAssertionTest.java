@@ -4,6 +4,7 @@ import org.gearvrf.ActivityInstrumentationGVRf;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRFutureOnGlThread;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.R;
 import org.gearvrf.animation.GVRAnimationEngine;
@@ -19,6 +20,10 @@ import java.util.concurrent.Future;
  * Created by j.elidelson on 6/9/2015.
  */
 public class RuntimeAssertionTest extends ActivityInstrumentationGVRf {
+
+    public RuntimeAssertionTest() {
+        super(GVRTestActivity.class);
+    }
 
     public void testConstructorA(){
         RuntimeAssertion runtimeAssertionTest = new RuntimeAssertion("test");

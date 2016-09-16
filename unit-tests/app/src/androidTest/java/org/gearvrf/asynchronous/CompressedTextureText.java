@@ -5,6 +5,7 @@ import android.content.res.AssetManager;
 import org.gearvrf.ActivityInstrumentationGVRf;
 import org.gearvrf.DefaultGVRTestActivity;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.GVRTextureParameters;
 import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
 
@@ -17,6 +18,10 @@ import java.nio.ByteBuffer;
  * Created by j.elidelson on 8/21/2015.
  */
 public class CompressedTextureText extends ActivityInstrumentationGVRf {
+
+    public CompressedTextureText() {
+        super(GVRTestActivity.class);
+    }
 
     public void testCompressedTexture() {
         AssetManager assets = getInstrumentation().getTargetContext().getAssets();

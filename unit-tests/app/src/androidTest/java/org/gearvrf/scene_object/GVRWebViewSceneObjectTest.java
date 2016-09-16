@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 
 import org.gearvrf.DefaultGVRTestActivity;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
 import org.gearvrf.ActivityInstrumentationGVRf;
 
@@ -17,6 +18,9 @@ import org.gearvrf.scene_objects.GVRWebViewSceneObject;
  */
 public class GVRWebViewSceneObjectTest extends ActivityInstrumentationGVRf {
 
+    public GVRWebViewSceneObjectTest() {
+        super(GVRTestActivity.class);
+    }
 
     public void testCreateGVRWebViewSceneObject() {
 

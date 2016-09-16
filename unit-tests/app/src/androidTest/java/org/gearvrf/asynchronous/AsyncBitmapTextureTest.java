@@ -7,6 +7,7 @@ import org.gearvrf.ActivityInstrumentationGVRf;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRBitmapTexture;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTextureParameters;
 import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
@@ -18,6 +19,10 @@ import java.io.InputStream;
  * Created by j.elidelson on 8/21/2015.
  */
 public class AsyncBitmapTextureTest extends ActivityInstrumentationGVRf {
+
+    public AsyncBitmapTextureTest() {
+        super(GVRTestActivity.class);
+    }
 
     public void testloadTextureA() {
         GVRAndroidResource.CancelableCallback<GVRBitmapTexture> bitmapTextureCallback = new GVRAndroidResource.CancelableCallback<GVRBitmapTexture>() {

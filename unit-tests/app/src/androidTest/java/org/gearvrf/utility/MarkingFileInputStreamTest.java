@@ -2,6 +2,7 @@ package org.gearvrf.utility;
 
 import android.os.Environment;
 import org.gearvrf.ActivityInstrumentationGVRf;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.utility.MarkingFileInputStream;
 
 import java.io.File;
@@ -12,6 +13,10 @@ import java.io.IOException;
  * Created by j.elidelson on 6/8/2015.
  */
 public class MarkingFileInputStreamTest extends ActivityInstrumentationGVRf {
+
+    public MarkingFileInputStreamTest() {
+        super(GVRTestActivity.class);
+    }
 
     public void testConstructorA(){
         String resourcePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath()+"/home.png";

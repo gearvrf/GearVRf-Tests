@@ -3,6 +3,7 @@ package org.gearvrf.utility;
 import android.content.Context;
 import android.os.Environment;
 
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.tests.R;
 import org.gearvrf.ActivityInstrumentationGVRf;
 
@@ -17,6 +18,10 @@ import java.io.InputStream;
  * Created by j.elidelson on 6/9/2015.
  */
 public class TextFileTest extends ActivityInstrumentationGVRf {
+
+    public TextFileTest() {
+        super(GVRTestActivity.class);
+    }
 
     public void testreadTextFileEmptyString(){
 

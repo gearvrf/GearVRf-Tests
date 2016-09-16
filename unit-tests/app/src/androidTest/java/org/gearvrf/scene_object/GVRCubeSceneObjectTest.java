@@ -1,6 +1,7 @@
 package org.gearvrf.scene_object;
 
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.tests.R;
 import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
@@ -15,6 +16,10 @@ import java.util.concurrent.Future;
  * Created by j.elidelson on 5/29/2015.
  */
 public class GVRCubeSceneObjectTest extends ActivityInstrumentationGVRf {
+
+    public GVRCubeSceneObjectTest() {
+        super(GVRTestActivity.class);
+    }
 
     //************
     //*** Cube ***

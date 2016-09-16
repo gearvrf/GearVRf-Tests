@@ -2,12 +2,17 @@ package org.gearvrf.da_gearvrf;
 
 import org.gearvrf.ActivityInstrumentationGVRf;
 import org.gearvrf.GVRLight;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
 
 /**
  * Created by j.elidelson on 9/1/2015.
  */
 public class GVRLightTest extends ActivityInstrumentationGVRf {
+
+    public GVRLightTest() {
+        super(GVRTestActivity.class);
+    }
 
     public void testConstructor(){
         GVRLight gvrLight = new GVRLight(TestDefaultGVRViewManager.mGVRContext);
@@ -30,6 +35,7 @@ public class GVRLightTest extends ActivityInstrumentationGVRf {
         assertEquals(true, gvrLight.isEnabled());
     }
 
+    //TODO fix native crash
     public void testIntensity(){
         GVRLight gvrLight = new GVRLight(TestDefaultGVRViewManager.mGVRContext);
         float aux1[] = gvrLight.getAmbientIntensity();

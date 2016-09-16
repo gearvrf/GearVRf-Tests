@@ -1,34 +1,35 @@
-package org.gearvrf.litshader_func;
+package org.gearvrf.sisaxis_func;
 
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Intent;
 
 import org.gearvrf.ActivityInstrumentationGVRf;
-import org.gearvrf.viewmanager.LitshaderActivity;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
+import org.gearvrf.viewmanager.sixaxisActivity;
 
 
 /**
  * Created by j.elidelson on 9/18/2015.
  */
-public class litshaderTest extends ActivityInstrumentationGVRf {
+public class SixaxisTest extends ActivityInstrumentationGVRf {
 
-    public litshaderTest() {
-        //super(SceneObjectActivity.class);
+    public SixaxisTest() {
+        super(GVRTestActivity.class);
     }
 
-    public void testGetInstance() {
+    public void ignoretestGetInstance() {
         Instrumentation mInstrumentation = getInstrumentation();
         // We register our interest in the activity
-        Instrumentation.ActivityMonitor monitor = mInstrumentation.addMonitor(LitshaderActivity.class.getName(), null, false);
+        Instrumentation.ActivityMonitor monitor = mInstrumentation.addMonitor(sixaxisActivity.class.getName(), null, false);
         // We launch it
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setClassName(mInstrumentation.getTargetContext(), LitshaderActivity.class.getName());
+        intent.setClassName(mInstrumentation.getTargetContext(),sixaxisActivity.class.getName());
         mInstrumentation.startActivitySync(intent);
         try {
-            Thread.sleep(TestDefaultGVRViewManager.DelayTest+4000);
+            Thread.sleep(TestDefaultGVRViewManager.DelayTest+1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -1,5 +1,6 @@
 package org.gearvrf.scene_object;
 
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
 import org.gearvrf.ActivityInstrumentationGVRf;
 
@@ -9,6 +10,10 @@ import org.gearvrf.scene_objects.GVRConeSceneObject;
  * Created by j.elidelson on 5/29/2015.
  */
 public class GVRConeSceneObjectTest extends ActivityInstrumentationGVRf {
+
+    public GVRConeSceneObjectTest() {
+        super(GVRTestActivity.class);
+    }
 
     //************
     //*** Cone ***

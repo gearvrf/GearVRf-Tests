@@ -2,6 +2,7 @@ package org.gearvrf.debug;
 
 import android.graphics.Color;
 
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
 import org.gearvrf.ActivityInstrumentationGVRf;
 
@@ -9,6 +10,10 @@ import org.gearvrf.ActivityInstrumentationGVRf;
  * Created by j.elidelson on 5/19/2015.
  */
 public class GVRConsoleTest extends ActivityInstrumentationGVRf {
+
+    public GVRConsoleTest() {
+        super(GVRTestActivity.class);
+    }
 
     public void testConstructorNullEyeMode() {
 
