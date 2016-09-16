@@ -138,6 +138,7 @@ public class GVRTestUtils implements GVRMainMonitor {
             } catch (InterruptedException e) {
                 Log.e(TAG,"",e);
                 return;
+
             }
         }
     }
