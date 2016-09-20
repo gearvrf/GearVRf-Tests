@@ -2,7 +2,9 @@ package org.gearvrf.viewmanager;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVREyePointeeHolder;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRMeshEyePointee;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
@@ -15,7 +17,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * Created by santhyago on 1/15/15.
  */
-public abstract class BaseViewManager extends GVRScript {
+public abstract class BaseViewManager extends GVRMain {
     protected static final float UNPICKED_COLOR_R = 0.7f;
     protected static final float UNPICKED_COLOR_G = 0.7f;
     protected static final float UNPICKED_COLOR_B = 0.7f;
@@ -28,7 +30,6 @@ public abstract class BaseViewManager extends GVRScript {
     protected GVRContext mGVRContext = null;
     protected ColorShader mColorShader = null;
     protected Vector<GVRSceneObject> mObjects = new Vector<GVRSceneObject>();
-//    protected GVRContextListener listener;
     protected LinkedBlockingQueue<Runnable> runnableTests = new LinkedBlockingQueue<>();
 
     protected float OBJECT_ROT = 0.0f;
@@ -45,16 +46,12 @@ public abstract class BaseViewManager extends GVRScript {
 
         GVRSceneObject objectExt = null;
 
-        for(GVRSceneObject object : mObjects)
-        {
+        for (GVRSceneObject object : mObjects) {
             object.getRenderData().getMaterial().setVec4(ColorShader.COLOR_KEY, UNPICKED_COLOR_R, UNPICKED_COLOR_G, UNPICKED_COLOR_B, UNPICKED_COLOR_A);
         }
-        for(GVREyePointeeHolder eph : GVRPicker.pickScene(mGVRContext.getMainScene()))
-        {
-            for(GVRSceneObject object : mObjects)
-            {
-                if(eph.getOwnerObject().equals(object))
-                {
+        for (GVRPicker.GVRPickedObject hit : GVRPicker.pickObjects(mGVRContext.getMainScene(), 0, 0, 0, 0, 0, -1)) {
+            for (GVRSceneObject object : mObjects) {
+                if (hit.getHitObject().equals(object)) {
                     object.getRenderData().getMaterial().setVec4(ColorShader.COLOR_KEY, PICKED_COLOR_R, PICKED_COLOR_G, PICKED_COLOR_B, PICKED_COLOR_A);
                     objectExt = object;
                     break;
@@ -62,39 +59,9 @@ public abstract class BaseViewManager extends GVRScript {
             }
         }
         OBJECT_ROT += -1.0f;
-        for (int i = 0; i < OBJECT_ROT; i++) objectExt.getTransform().rotateByAxis(OBJECT_ROT, 0f, 1.0f, 0f);
+        for (int i = 0; i < OBJECT_ROT; i++)
+            objectExt.getTransform().rotateByAxis(OBJECT_ROT, 0f, 1.0f, 0f);
     }
-
-    protected GVRSceneObject getColorBoard(float width, float height)
-    {
-        GVRMaterial material = new GVRMaterial(mGVRContext, mColorShader.getShaderId());
-        material.setVec4(ColorShader.COLOR_KEY, UNPICKED_COLOR_R, UNPICKED_COLOR_G, UNPICKED_COLOR_B, UNPICKED_COLOR_A);
-        GVRSceneObject board = new GVRSceneObject(mGVRContext, width, height);
-        board.getRenderData().setMaterial(material);
-
-        return board;
-    }
-
-
-
-    protected void attachDefaultEyePointee(GVRSceneObject sceneObject)
-    {
-        GVREyePointeeHolder eyePointeeHolder = new GVREyePointeeHolder(mGVRContext);
-        GVRMeshEyePointee eyePointee = new GVRMeshEyePointee(mGVRContext, sceneObject.getRenderData().getMesh());
-        eyePointeeHolder.addPointee(eyePointee);
-        sceneObject.attachEyePointeeHolder(eyePointeeHolder);
-    }
-
-    protected void attachBoundingBoxEyePointee(GVRSceneObject sceneObject)
-    {
-        GVREyePointeeHolder eyePointeeHolder = new GVREyePointeeHolder(mGVRContext);
-        GVRMeshEyePointee eyePointee = new GVRMeshEyePointee(mGVRContext, sceneObject.getRenderData().getMesh().getBoundingBox());
-        eyePointeeHolder.addPointee(eyePointee);
-        sceneObject.attachEyePointeeHolder(eyePointeeHolder);
-    }
-
-//    public void setGVRContextListener(GVRContextListener contextListener) {
-//        listener = contextListener;
-//    }
 }
+
 

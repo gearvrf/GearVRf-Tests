@@ -25,7 +25,7 @@ public class GVRVersionTest extends ActivityInstrumentationGVRf {
 
     public void testVersionsNumbers(){
 
-        assertEquals("2.0.2",GVRVersion.CURRENT);
+        assertEquals("3.0.1",GVRVersion.CURRENT);
         assertEquals("1.5.0",GVRVersion.V_1_5_0);
         assertEquals("1.6.0",GVRVersion.V_1_6_0);
         assertEquals("1.6.1",GVRVersion.V_1_6_1);

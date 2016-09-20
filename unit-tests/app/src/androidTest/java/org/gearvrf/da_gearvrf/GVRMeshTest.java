@@ -4,6 +4,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRMeshEyePointee;
 import org.gearvrf.GVRSceneObject;
 
@@ -73,26 +74,14 @@ public class GVRMeshTest extends ActivityInstrumentationGVRf {
         return board;
     }
 
-    public void testAttachEyePointee() {
+    public void testAttachCollider() {
         mSceneObject = getColorBoard(1.0f, 1.0f);
         mSceneObject.getTransform().setPosition(0.0f, 3.0f, -5.0f);
         GVRSceneObject object = getColorBoard(1.0f, 1.0f);
         object.getTransform().setPosition(0.0f, 3.0f, -5.0f);
         GVRContext gvrContext = TestDefaultGVRViewManager.mGVRContext;
-        GVREyePointeeHolder eyePointeeHolder = new GVREyePointeeHolder(gvrContext);
-        GVRMeshEyePointee eyePointee = new GVRMeshEyePointee(gvrContext, mSceneObject.getRenderData().getMesh());
-        eyePointeeHolder.addPointee(eyePointee);
-        mSceneObject.attachEyePointeeHolder(eyePointeeHolder);
-    }
-
-    public void testGetGVRMeshOfEyePointee() {
-        mSceneObject = getColorBoard(1.0f, 1.0f);
-        mSceneObject.getTransform().setPosition(0.0f, 3.0f, -5.0f);
-        GVRSceneObject object = getColorBoard(1.0f, 1.0f);
-        object.getTransform().setPosition(0.0f, 3.0f, -5.0f);
-        GVRContext gvrContext = TestDefaultGVRViewManager.mGVRContext;
-        GVRMeshEyePointee eyePointee = new GVRMeshEyePointee(gvrContext, mSceneObject.getRenderData().getMesh());
-        assertNotNull(eyePointee.getMesh());
+        GVRMeshCollider collider = new GVRMeshCollider(gvrContext, mSceneObject.getRenderData().getMesh());
+        mSceneObject.attachComponent(collider);
     }
 
 

@@ -314,6 +314,7 @@ public class GVRRenderDataTest extends ActivityInstrumentationGVRf {
     }
 
     public void testDrawMode() {
+        assertNotNull(TestDefaultGVRViewManager.mGVRContext);
         GVRCubeSceneObject gvrCubeSceneObject = new GVRCubeSceneObject(TestDefaultGVRViewManager.mGVRContext);
         TestDefaultGVRViewManager.mGVRContext.getMainScene().addSceneObject(gvrCubeSceneObject);
         GVRRenderData renderDataLeftScreen = gvrCubeSceneObject.getRenderData();

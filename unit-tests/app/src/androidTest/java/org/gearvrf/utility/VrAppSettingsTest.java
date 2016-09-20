@@ -118,7 +118,7 @@ public class VrAppSettingsTest extends ActivityInstrumentationGVRf {
         assertEquals(1, vrAppSettings.getEyeBufferParams().getResolutionWidth());
         eyeBufferParms.setResolutionHeight(1);
         assertEquals(1, vrAppSettings.getEyeBufferParams().getResolutionHeight());
-        assertEquals(VrAppSettings.EyeBufferParams.DepthFormat.DEPTH_24_STENCIL_8, vrAppSettings.getEyeBufferParams().getDepthFormat());
+        assertEquals(VrAppSettings.EyeBufferParams.DepthFormat.DEPTH_24, vrAppSettings.getEyeBufferParams().getDepthFormat());
         assertEquals(VrAppSettings.EyeBufferParams.ColorFormat.COLOR_8888,vrAppSettings.getEyeBufferParams().getColorFormat());
         assertEquals(false, vrAppSettings.getEyeBufferParams().isResolveDepth());
 

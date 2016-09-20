@@ -228,22 +228,6 @@ public class GVRMaterialTest extends ActivityInstrumentationGVRf {
         assertEquals(GVRMaterial.GVRShaderType.ExternalRenderer.ID, material.getShaderType());
    }
 
-    /*
-    DEPRECATED - Assimp uses GVRPhongShader now
-
-    public void testAssimp() {
-        mColorShader = new ColorShader(TestDefaultGVRViewManager.mGVRContext);
-        GVRMaterial material = new GVRMaterial(TestDefaultGVRViewManager.mGVRContext, mColorShader.getShaderId());
-
-        material.setShaderType(GVRMaterial.GVRShaderType.Assimp.ID);
-        assertEquals(GVRMaterial.GVRShaderType.Assimp.ID, material.getShaderType());
-        assertEquals(2, GVRMaterial.GVRShaderType.Assimp.setBit(GVRMaterial.GVRShaderType.Assimp.AS_DIFFUSE_TEXTURE, 1));
-        assertEquals(3, GVRMaterial.GVRShaderType.Assimp.setBit(GVRMaterial.GVRShaderType.Assimp.AS_SPECULAR_TEXTURE,1));
-        assertEquals(false, GVRMaterial.GVRShaderType.Assimp.isSet(GVRMaterial.GVRShaderType.Assimp.AS_DIFFUSE_TEXTURE, 1));
-        assertEquals(0, GVRMaterial.GVRShaderType.Assimp.clearBit(GVRMaterial.GVRShaderType.Assimp.AS_DIFFUSE_TEXTURE, 1));
-    }
-    */
-
     public void testMainTexture(){
 
         GVRMaterial gvrMaterial = new GVRMaterial(TestDefaultGVRViewManager.mGVRContext);
@@ -284,16 +268,5 @@ public class GVRMaterialTest extends ActivityInstrumentationGVRf {
         float specularcolor = gvrMaterial.getSpecularExponent();
         assertEquals(1.0f,specularcolor);
     }
-
-    /*
-    DEPRECATED
-
-    public void testGetSetShaderFeatureSet(){
-
-        GVRMaterial gvrMaterial = new GVRMaterial(TestDefaultGVRViewManager.mGVRContext);
-        gvrMaterial.setShaderFeatureSet(GVRMaterial.GVRShaderType.Assimp.AS_DIFFUSE_TEXTURE);
-        assertEquals(GVRMaterial.GVRShaderType.Assimp.AS_DIFFUSE_TEXTURE,gvrMaterial.getShaderFeatureSet());
-    }
-    */
 
 }

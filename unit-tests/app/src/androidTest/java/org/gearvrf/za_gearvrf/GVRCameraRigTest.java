@@ -4,6 +4,7 @@ import org.gearvrf.GVRCamera;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRMeshEyePointee;
 import org.gearvrf.GVRPerspectiveCamera;
 import org.gearvrf.GVRRenderData;
@@ -47,10 +48,8 @@ public class GVRCameraRigTest extends ActivityInstrumentationGVRf {
 
         mGVRBoardObject.getTransform().setPosition(0.0f, 1.0f, 1.0f);
 
-        GVREyePointeeHolder eyePointeeHolder = new GVREyePointeeHolder(TestDefaultGVRViewManager.mGVRContext);
-        GVRMeshEyePointee eyePointee = new GVRMeshEyePointee(TestDefaultGVRViewManager.mGVRContext, mGVRBoardObject.getRenderData().getMesh());
-        eyePointeeHolder.addPointee(eyePointee);
-        mGVRBoardObject.attachEyePointeeHolder(eyePointeeHolder);
+        GVRMeshCollider collider = new GVRMeshCollider(TestDefaultGVRViewManager.mGVRContext, mGVRBoardObject.getRenderData().getMesh());
+        mGVRBoardObject.attachComponent(collider);
 
         TestDefaultGVRViewManager.mGVRContext.getMainScene().addSceneObject(mGVRBoardObject);
 

@@ -16,14 +16,8 @@ public class GVROrthogonalCameraTest extends ActivityInstrumentationGVRf {
     }
 
     public void testConstructor(){
-
+        assertNotNull(TestDefaultGVRViewManager.mGVRContext);
         GVROrthogonalCamera gvrOrthogonalCamera = new GVROrthogonalCamera(TestDefaultGVRViewManager.mGVRContext);
-        assertNotNull(gvrOrthogonalCamera);
-    }
-
-    public void testNullConstructor(){
-
-        GVROrthogonalCamera gvrOrthogonalCamera = new GVROrthogonalCamera(null);
         assertNotNull(gvrOrthogonalCamera);
     }
 
