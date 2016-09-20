@@ -34,8 +34,8 @@ class GVRTestableMain extends GVRMain{
     private GVRMainMonitor mainMonitor;
     private boolean sceneRendered = false;
     private int framesRendered = 0;
-    private final Object waitXFramesLock = new Object();
-    private int waitForXFrames = WAIT_DISABLED;
+    private final Object waitFrameCountLock = new Object();
+    private int waitForFrameCount = WAIT_DISABLED;
 
     @Override
     public void onInit(GVRContext gvrContext) {
@@ -50,16 +50,16 @@ class GVRTestableMain extends GVRMain{
 
     @Override
     public void onStep() {
-        if (mainMonitor != null) {
+        if (mainMonitor != null && !sceneRendered) {
             sceneRendered = true;
             mainMonitor.onSceneRendered();
         }
-        synchronized (waitXFramesLock) {
-            if (waitForXFrames != WAIT_DISABLED) {
+        synchronized (waitFrameCountLock) {
+            if (waitForFrameCount != WAIT_DISABLED) {
                 framesRendered++;
-                if (framesRendered == waitForXFrames) {
-                    mainMonitor.xFramesRendered();
-                    waitForXFrames = WAIT_DISABLED;
+                if (framesRendered == waitForFrameCount) {
+                    mainMonitor.onFramesRendered();
+                    waitForFrameCount = WAIT_DISABLED;
                     framesRendered = 0;
                 }
             }
@@ -78,9 +78,9 @@ class GVRTestableMain extends GVRMain{
         return sceneRendered;
     }
 
-    public void notifyAfterXFrames(int frames) {
-        synchronized (waitXFramesLock) {
-            waitForXFrames = frames;
+    public void notifyAfterFrameCount(int frames) {
+        synchronized (waitFrameCountLock) {
+            waitForFrameCount = frames;
             framesRendered = 0;
         }
 

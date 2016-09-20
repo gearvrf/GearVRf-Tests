@@ -18,9 +18,11 @@ package org.gearvrf.unittestutils;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
+import org.gearvrf.GVRSceneObject;
 
 interface GVRMainMonitor {
     void onInitCalled(GVRContext context, GVRScene scene);
     void onSceneRendered();
-    void xFramesRendered();
+    void onFramesRendered();
+    void onAssetLoaded(GVRSceneObject asset);
 }

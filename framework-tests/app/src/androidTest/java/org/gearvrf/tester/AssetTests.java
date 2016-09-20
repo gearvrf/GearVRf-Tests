@@ -2,20 +2,20 @@ package org.gearvrf.tester;
 
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+
 import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRExternalScene;
+import org.gearvrf.GVRPhongShader;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.IErrorEvents;
-import org.gearvrf.scene_objects.GVRCubeSceneObject;
-import org.gearvrf.scene_objects.GVRModelSceneObject;
-import org.gearvrf.GVRPhongShader;
 import org.gearvrf.IAssetEvents;
-
+import org.gearvrf.scene_objects.GVRCubeSceneObject;
+import org.gearvrf.unittestutils.GVRTestUtils;
+import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.gearvrf.utility.FileNameUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -44,7 +44,6 @@ public class AssetTests
         public int TextureErrors = 0;
         public int ModelErrors = 0;
         public String AssetErrors = null;
-        public int AssetsLoaded = 0;
         protected GVRScene mScene;
 
         AssetEventHandler(GVRScene scene)
@@ -94,7 +93,8 @@ public class AssetTests
     };
 
     @Rule
-    public ActivityTestRule<TestableActivity> ActivityRule = new ActivityTestRule<TestableActivity>(TestableActivity.class)
+    public ActivityTestRule<GVRTestableActivity> ActivityRule = new
+            ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
     {
         protected void afterActivityFinished() {
             GVRScene scene = mTestUtils.getMainScene();

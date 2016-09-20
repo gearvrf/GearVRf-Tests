@@ -43,12 +43,14 @@ public class GVRTestUtils implements GVRMainMonitor {
     private static final String TAG = GVRTestUtils.class.getSimpleName();
     public static final int TEST_TIMEOUT = 2000;
     protected static final int SCREENSHOT_TEST_TIMEOUT = 10000;
+    private static final String DIFF_IMAGE_PREFIX = "diff_";
+    private static final String SCREENSHOT_DIRECTORY = "GearVRFTests";
 
     private GVRContext gvrContext;
     private final Object onInitLock;
     private final Object onStepLock;
     private final Object onScreenshotLock;
-    private final Object xFramesLock;
+    private final Object frameCountLock;
     private final Object onAssetLock;
     private GVRTestableMain testableMain;
     private GVRScene mainScene;
@@ -64,7 +66,7 @@ public class GVRTestUtils implements GVRMainMonitor {
         gvrContext = null;
         onInitLock = new Object();
         onStepLock = new Object();
-        xFramesLock = new Object();
+        frameCountLock = new Object();
         onScreenshotLock = new Object();
         onAssetLock = new Object();
         if (testableGVRActivity == null) {
@@ -130,11 +132,11 @@ public class GVRTestUtils implements GVRMainMonitor {
      * Waits for "frames" number of frames to be rendered before returning. This is a blocking call.
      * @param frames number of frames to wait for
      */
-    public void waitForXFrames(int frames) {
-        testableMain.notifyAfterXFrames(frames);
-        synchronized (xFramesLock) {
+    public void waitForFrameCount(int frames) {
+        testableMain.notifyAfterFrameCount(frames);
+        synchronized (frameCountLock) {
             try {
-                xFramesLock.wait();
+                frameCountLock.wait();
             } catch (InterruptedException e) {
                 Log.e(TAG,"",e);
 
@@ -144,7 +146,10 @@ public class GVRTestUtils implements GVRMainMonitor {
         }
     }
 
- public void waitForAssetLoad() {
+    /**
+     *  Wait for the asset to be loaded.
+     */
+    public void waitForAssetLoad() {
         if (mAssetIsLoaded)
             return;
         synchronized (onAssetLock) {
@@ -183,9 +188,9 @@ public class GVRTestUtils implements GVRMainMonitor {
     }
 
     @Override
-    public void xFramesRendered() {
-        synchronized (xFramesLock) {
-            xFramesLock.notifyAll();
+    public void onFramesRendered() {
+        synchronized (frameCountLock) {
+            frameCountLock.notifyAll();
         }
     }
 
@@ -250,17 +255,16 @@ public class GVRTestUtils implements GVRMainMonitor {
         void onSceneRendered();
     }
 
- public interface OnAssetCallback {
-        void onAssetLoaded(GVRSceneObject asset);
-    }
-
     /**
      * Captures a screenshot and compares it with a golden screenshot from the
-     * assets directory. This method looks for a file named "diff_$testname$.png" in the assets
-     * folder for the reference screenshot of the expected result. The captured screenshots are
-     * stored in /sdcard/GearVRfTests/$category$/$testname$.png
-     * @param category directory to store screenshots in.
-     * @param testname the name of the test method.
+     * assets directory. This method looks for a file named "$category$/$testname$.png" in the
+     * assets directory for the reference screenshot of the expected result. The captured
+     * screenshots are stored in /sdcard/GearVRfTests/$category$/$testname$.png. If the test
+     * fails due to the screen shots not matching, /sdcard/GearVRfTests/$category$/diff_$testname$
+     * .png file is created to examine the difference between the two screenshots.
+     * @param category category name, which is also used for naming the sub-directory in the
+     *                 assets directory for storing reference screenshots for the test.
+     * @param testname the name of the test method, also used as a filename for screenshot.
      * @param waiter instance of the {@link Waiter} class.
      * @param doCompare flag used to turnon/off comparison of screenshots.
      * @throws TimeoutException
@@ -306,7 +310,7 @@ public class GVRTestUtils implements GVRMainMonitor {
                     Log.e(category, category + ": %s %f", testname, diff);
                     if (diff > 1000.0f)
                     {
-                        writeBitmap(category, "diff_" + testname, diffmap);
+                        writeBitmap(category, DIFF_IMAGE_PREFIX + testname, diffmap);
                     }
                     waiter.assertTrue(diff <= 1000.0f);
                 }
@@ -319,7 +323,8 @@ public class GVRTestUtils implements GVRMainMonitor {
                     ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes);
                     File sdcard = Environment.getExternalStorageDirectory();
-                    dir = sdcard.getAbsolutePath() + "/GearVRFTests/" + dir + "/";
+                    dir = sdcard.getAbsolutePath() + File.separator + SCREENSHOT_DIRECTORY + File
+                            .separator + dir + File.separator;
                     File d = new File(dir);
                     d.mkdirs();
                     File f = new File(d, filename);

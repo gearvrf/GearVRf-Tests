@@ -78,7 +78,7 @@ public class GVRContextTests {
         GVRContext gvrContext = gvrTestUtils.waitForOnInit();
         // Execute tests after onInit is called.
         GVRMesh mesh = gvrContext.createQuad(2.0f, 2.0f);
-        gvrTestUtils.waitForXFrames(3);
+        gvrTestUtils.waitForFrameCount(3);
         Assert.assertTrue(mesh.getNormals().length == NUM_NORMALS_IN_QUAD);
     }
 }
