@@ -127,8 +127,7 @@ public class GVRAsynchronousResourceLoaderTest extends ActivityInstrumentationGV
 
         Map<String, Integer> m = new HashMap<String, Integer>();
         Integer key1   = new Integer(123);
-        String  value1 = "v" +
-                "alue 1";
+        String  value1 = "value 1";
         m.put(value1,key1);
         GVRAndroidResource gvrAndroidResource = new GVRAndroidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.sample_20140509_r);
         ResourceCache<GVRTexture> textureCache = new ResourceCache<GVRTexture>();

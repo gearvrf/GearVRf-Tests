@@ -140,7 +140,7 @@ public class GVRAndroidResourceTest extends ActivityInstrumentationGVRf {
             } else {
                 throw new NullPointerException();
             }
-        } catch (NullPointerException e) {
+        } catch (NullPointerException | IOException e) {
             e.printStackTrace();
         }
     }
