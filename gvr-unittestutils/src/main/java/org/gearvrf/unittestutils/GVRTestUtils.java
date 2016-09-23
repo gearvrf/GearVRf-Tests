@@ -25,6 +25,7 @@ import net.jodah.concurrentunit.Waiter;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRScene;
+import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScreenshotCallback;
 import org.gearvrf.utility.Log;
 
@@ -47,11 +48,13 @@ public class GVRTestUtils implements GVRMainMonitor {
     private final Object onInitLock;
     private final Object onStepLock;
     private final Object onScreenshotLock;
+    private final Object onAssetLock;
     private final Object xFramesLock;
     private GVRTestableMain testableMain;
     private GVRScene mainScene;
     private OnInitCallback onInitCallback;
     private OnRenderCallback onRenderCallback;
+    private boolean mAssetIsLoaded = false;
 
     /**
      * Constructor, needs an instance of {@link GVRTestableActivity}.
@@ -63,6 +66,7 @@ public class GVRTestUtils implements GVRMainMonitor {
         onStepLock = new Object();
         xFramesLock = new Object();
         onScreenshotLock = new Object();
+        onAssetLock = new Object();
         if (testableGVRActivity == null) {
             throw new IllegalArgumentException();
         }
@@ -122,6 +126,20 @@ public class GVRTestUtils implements GVRMainMonitor {
         }
     }
 
+    public void waitForAssetLoad() {
+        if (mAssetIsLoaded)
+            return;
+        synchronized (onAssetLock) {
+            try {
+                Log.d(TAG, "Waiting for OnAssetLoaded");
+                onAssetLock.wait();
+            } catch (InterruptedException e) {
+                Log.e(TAG, "", e);
+                return;
+            }
+        }
+    }
+
     /**
      * Waits for "frames" number of frames to be rendered before returning. This is a blocking call.
      * @param frames number of frames to wait for
@@ -162,7 +180,14 @@ public class GVRTestUtils implements GVRMainMonitor {
         Log.d(TAG, "OnSceneRenderedCalled");
     }
 
-    @Override
+     public void onAssetLoaded(GVRSceneObject asset) {
+        mAssetIsLoaded = true;
+        synchronized (onAssetLock) {
+            onAssetLock.notifyAll();
+        }
+        Log.d(TAG, "OnAssetLoaded Called");
+    }
+
     public void xFramesRendered() {
         synchronized (xFramesLock) {
             xFramesLock.notifyAll();
@@ -221,6 +246,10 @@ public class GVRTestUtils implements GVRMainMonitor {
         void onSceneRendered();
     }
 
+    public interface OnAssetCallback {
+        void onAssetLoaded(GVRSceneObject asset);
+    }
+
     /**
      * Captures a screenshot and compares it with a golden screenshot from the
      * assets directory. This method looks for a file named "diff_$testname$.png" in the assets
@@ -242,7 +271,7 @@ public class GVRTestUtils implements GVRMainMonitor {
                 Bitmap golden = null;
                 try
                 {
-                    InputStream stream = gvrContext.getContext().getAssets().open(testname);
+                     InputStream stream = gvrContext.getContext().getAssets().open(category + "/" + testname);
                     golden = BitmapFactory.decodeStream(stream);
                 }
                 catch (IOException ex)
