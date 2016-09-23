@@ -13,24 +13,29 @@
  * limitations under the License.
  */
 
-package org.gearvrf.tester;
+package org.gearvrf.unittestutils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import org.gearvrf.GVRBitmapTexture;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.utility.Log;
 
-public class TestableMain extends GVRTestableMain {
+class GVRTestableMain extends GVRMain{
 
-    private static final String TAG = TestableMain.class.getSimpleName();
+    private static final String TAG = GVRTestableMain.class.getSimpleName();
+    private static final int WAIT_DISABLED = -1;
     private GVRContext gvrContext;
     private GVRScene mainScene;
     private GVRMainMonitor mainMonitor;
     private boolean sceneRendered = false;
+    private int framesRendered = 0;
+    private final Object waitXFramesLock = new Object();
+    private int waitForXFrames = WAIT_DISABLED;
 
     @Override
     public void onInit(GVRContext gvrContext) {
@@ -49,14 +54,23 @@ public class TestableMain extends GVRTestableMain {
             sceneRendered = true;
             mainMonitor.onSceneRendered();
         }
+        synchronized (waitXFramesLock) {
+            if (waitForXFrames != WAIT_DISABLED) {
+                framesRendered++;
+                if (framesRendered == waitForXFrames) {
+                    mainMonitor.xFramesRendered();
+                    waitForXFrames = WAIT_DISABLED;
+                    framesRendered = 0;
+                }
+            }
+        }
+
     }
 
-    @Override
     public void setMainMonitor(GVRMainMonitor mainMonitor) {
         this.mainMonitor = mainMonitor;
     }
 
-    @Override
     public boolean isOnInitCalled() {
         return (gvrContext != null);
     }
@@ -65,7 +79,14 @@ public class TestableMain extends GVRTestableMain {
         return sceneRendered;
     }
 
-    @Override
+    public void notifyAfterXFrames(int frames) {
+        synchronized (waitXFramesLock) {
+            waitForXFrames = frames;
+            framesRendered = 0;
+        }
+
+    }
+
     public GVRTexture getSplashTexture(GVRContext gvrContext) {
         Bitmap bitmap = BitmapFactory.decodeResource(
                 gvrContext.getContext().getResources(),
