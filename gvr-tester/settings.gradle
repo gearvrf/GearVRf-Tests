@@ -1,1 +1,4 @@
-include ':app'
+include ':app', ':gvr-unittestutils'
+project(':gvr-unittestutils').projectDir = new File("../gvr-unittestutils")
+
+

@@ -1,12 +1,5 @@
 apply plugin: 'com.android.application'
 
-if(file("../../common.gradle").exists()) {
-    apply from: '../../common.gradle'
-}
-if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
-    apply from: '../../../../GearVRf-Demos/common.gradle'
-}
-
 allprojects {
     repositories {
         jcenter()
@@ -57,4 +50,5 @@ dependencies {
     androidTestCompile 'com.android.support.test:rules:0.4.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
     compile 'net.jodah:concurrentunit:0.4.2'
+    compile project(path: ':gvr-unittestutils')
 }

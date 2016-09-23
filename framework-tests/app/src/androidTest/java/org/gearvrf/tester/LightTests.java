@@ -10,6 +10,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRPointLight;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSpotLight;
@@ -17,19 +18,20 @@ import org.gearvrf.GVRTexture;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.GVRPhongShader;
+import org.gearvrf.unittestutils.GVRTestUtils;
+import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.joml.Vector3f;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 @RunWith(AndroidJUnit4.class)
-public class GVRLightTests
+public class LightTests
 {
-    private static final String TAG = GVRLightTests.class.getSimpleName();
+    private static final String TAG = LightTests.class.getSimpleName();
     private GVRTestUtils mTestUtils;
     private Waiter mWaiter;
     private GVRSceneObject mRoot;
@@ -38,7 +40,13 @@ public class GVRLightTests
     private boolean mDoCompare = true;
 
     @Rule
-    public ActivityTestRule<TestableActivity> ActivityRule = new ActivityTestRule<TestableActivity>(TestableActivity.class);
+    public ActivityTestRule<GVRTestableActivity> ActivityRule = new
+            ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
+    {
+        protected void afterActivityFinished() {
+            mTestUtils.getMainScene().clear();
+        }
+    };
 
     @Before
     public void setUp() throws TimeoutException
@@ -60,7 +68,7 @@ public class GVRLightTests
         check.setTexture("diffuseTexture", checker);
         background.getTransform().setScale(10, 10, 10);
         background.getRenderData().setShaderTemplate(GVRPhongShader.class);
-        blue.setDiffuseColor(0, 0, 1, 0.5f);
+        blue.setDiffuseColor(0, 0, 1, 1);
         mSphere = new GVRSphereSceneObject(ctx, true, blue);
         mSphere.getRenderData().setShaderTemplate(GVRPhongShader.class);
         mSphere.getTransform().setPosition(0, 0, -2);
@@ -356,16 +364,21 @@ public class GVRLightTests
         GVRSceneObject lightObj2 = new GVRSceneObject(ctx);
         GVRSpotLight light2 = new GVRSpotLight(ctx);
 
-        light1.setInnerConeAngle(30.0f);
-        light1.setOuterConeAngle(45.0f);
+        light1.setInnerConeAngle(20.0f);
+        light1.setOuterConeAngle(30.0f);
+        light1.setDiffuseIntensity(1.0f, 0.3f, 0.3f, 1.0f);
         light2.setInnerConeAngle(10.0f);
         light2.setOuterConeAngle(20.0f);
+        light2.setDiffuseIntensity(0.3f, 1.0f, 0.3f, 1.0f);
         lightObj1.getTransform().rotateByAxis(-45, 0, 1, 0);
         lightObj1.getTransform().setPosition(-1, 0, 1);
         lightObj2.getTransform().rotateByAxis(45, 0, 1, 0);
         lightObj2.getTransform().setPosition(2, 0, 2);
         lightObj1.attachComponent(light1);
         lightObj2.attachComponent(light2);
+        mSphere.getRenderData().getMaterial().setDiffuseColor(0.8f, 0.8f, 0.8f, 1.0f);
+        mSphere.getRenderData().getMaterial().setSpecularColor(0.8f, 0.8f, 0.8f, 1.0f);
+        mSphere.getRenderData().getMaterial().setSpecularExponent(8.0f);
         mRoot.addChildObject(lightObj1);
         mRoot.addChildObject(lightObj2);
         mRoot.addChildObject(mCube);
