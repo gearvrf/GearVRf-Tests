@@ -1,0 +1,4 @@
+collision - no run
+gvrbulletsample - We cannot find package: org.siprop
+gvr-test-screenshot3Dresult - problems with .png files
+gvr-vuforia - missing .java files
