@@ -13,19 +13,25 @@
  * limitations under the License.
  */
 
-package org.gearvrf.tester;
+package org.gearvrf.unittestutils;
 
 import android.os.Bundle;
 import android.util.Log;
 
-public class TestableActivity extends GVRTestableActivity {
-    private static final String TAG = TestableActivity.class.getSimpleName();
-    private TestableMain testableMain;
+import org.gearvrf.GVRActivity;
+
+/**
+ * This class defines the activity that can be used as the main activity for test projects. This
+ * activity can be used as the main activity in the Manifest.xml file for the unit test project.
+ */
+public class GVRTestableActivity extends GVRActivity {
+    private static final String TAG = GVRTestableActivity.class.getSimpleName();
+    private GVRTestableMain testableMain;
 
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-        testableMain = new TestableMain();
+        testableMain = new GVRTestableMain();
         setMain(testableMain, "gvr.xml");
         Log.d(TAG, "OnCreate called");
     }
@@ -54,8 +60,7 @@ public class TestableActivity extends GVRTestableActivity {
         Log.d(TAG, "OnStop called");
     }
 
-    @Override
-    public GVRTestableMain getGVRTestableMain() {
+    GVRTestableMain getGVRTestableMain() {
         return testableMain;
     }
 }

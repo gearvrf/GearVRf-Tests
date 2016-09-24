@@ -13,39 +13,44 @@
  * limitations under the License.
  */
 
-package org.gearvrf.tester;
+package org.gearvrf.unittestutils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Environment;
+
 import net.jodah.concurrentunit.Waiter;
 
-import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScreenshotCallback;
-import org.gearvrf.utility.FileNameUtils;
 import org.gearvrf.utility.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.TimeoutException;
 
+/**
+ * This class defines utility function to be used for writing unit tests for GearVR framework
+ */
 public class GVRTestUtils implements GVRMainMonitor {
     private static final String TAG = GVRTestUtils.class.getSimpleName();
-    protected static final int TEST_TIMEOUT = 2000;
+    public static final int TEST_TIMEOUT = 2000;
     protected static final int SCREENSHOT_TEST_TIMEOUT = 10000;
+    private static final String DIFF_IMAGE_PREFIX = "diff_";
+    private static final String SCREENSHOT_DIRECTORY = "GearVRFTests";
 
     private GVRContext gvrContext;
     private final Object onInitLock;
     private final Object onStepLock;
     private final Object onScreenshotLock;
+    private final Object frameCountLock;
     private final Object onAssetLock;
     private GVRTestableMain testableMain;
     private GVRScene mainScene;
@@ -53,10 +58,15 @@ public class GVRTestUtils implements GVRMainMonitor {
     private OnRenderCallback onRenderCallback;
     private boolean mAssetIsLoaded = false;
 
+    /**
+     * Constructor, needs an instance of {@link GVRTestableActivity}.
+     * @param testableGVRActivity The instance of the activity to be tested.
+     */
     public GVRTestUtils(GVRTestableActivity testableGVRActivity) {
         gvrContext = null;
         onInitLock = new Object();
         onStepLock = new Object();
+        frameCountLock = new Object();
         onScreenshotLock = new Object();
         onAssetLock = new Object();
         if (testableGVRActivity == null) {
@@ -69,6 +79,12 @@ public class GVRTestUtils implements GVRMainMonitor {
         onInitCallback = null;
     }
 
+    /**
+     * Waits for the {@link GVRMain#onInit(GVRContext)} to be called on the corresponding
+     * {@link GVRMain}. This function is useful to obtain an instance to the {@link GVRContext}
+     * in the unit tests.
+     * @return Returns the {@link GVRContext} instance associated with the application.
+     */
     public GVRContext waitForOnInit() {
         if (gvrContext == null) {
             if (testableMain.isOnInitCalled()) {
@@ -90,6 +106,11 @@ public class GVRTestUtils implements GVRMainMonitor {
         }
     }
 
+    /**
+     * Waits for the first frame to be rendered. It returns after the first time
+     * {@link GVRMain#onStep()} is called. If {@link GVRMain#onStep()} is already called it
+     * returns immediately. This is a blocking call.
+     */
     public void waitForSceneRendering() {
 
         if (testableMain.isSceneRendered()) {
@@ -107,20 +128,27 @@ public class GVRTestUtils implements GVRMainMonitor {
         }
     }
 
-    public void waitForFrameCount(int frameCount) {
-        while (frameCount-- >= 0) {
-            synchronized (onStepLock) {
-                try {
-                    Log.d(TAG, "Waiting for OnStep");
-                    onStepLock.wait();
-                } catch (InterruptedException e) {
-                    Log.e(TAG, "", e);
-                    return;
-                }
+    /**
+     * Waits for "frames" number of frames to be rendered before returning. This is a blocking call.
+     * @param frames number of frames to wait for
+     */
+    public void waitForFrameCount(int frames) {
+        testableMain.notifyAfterFrameCount(frames);
+        synchronized (frameCountLock) {
+            try {
+                frameCountLock.wait();
+            } catch (InterruptedException e) {
+                Log.e(TAG,"",e);
+
+                return;
+
             }
         }
     }
 
+    /**
+     *  Wait for the asset to be loaded.
+     */
     public void waitForAssetLoad() {
         if (mAssetIsLoaded)
             return;
@@ -160,6 +188,13 @@ public class GVRTestUtils implements GVRMainMonitor {
     }
 
     @Override
+    public void onFramesRendered() {
+        synchronized (frameCountLock) {
+            frameCountLock.notifyAll();
+        }
+    }
+
+    @Override
     public void onAssetLoaded(GVRSceneObject asset) {
         mAssetIsLoaded = true;
         synchronized (onAssetLock) {
@@ -168,24 +203,54 @@ public class GVRTestUtils implements GVRMainMonitor {
         Log.d(TAG, "OnAssetLoaded Called");
     }
 
+    /**
+     *  Returns the {@link GVRContext} associated with the application
+     * @return the {@link GVRContext} instance
+     */
     public GVRContext getGvrContext() {
         return gvrContext;
     }
 
+    /**
+     *  Returns the main scene to be rendered.
+     * @return the {@link GVRScene} instance of the main scene.
+     */
     public GVRScene getMainScene() {
         return mainScene;
     }
 
+    /**
+     * Set a callback to be executed in the {@link GVRMain#onInit(GVRContext)} method. This can
+     * be used for executing code in the {@link GVRMain#onInit(GVRContext)} method. To use
+     * assertions inside the {@link OnInitCallback} use the {@link Waiter} class.
+     * @param callback
+     */
     public void setOnInitCallback(OnInitCallback callback) {
         this.onInitCallback = callback;
     }
 
+    /**
+     * Set a callback to be executed when {@link GVRMain#onStep()} is called for the first time.
+     * This callback executed on the GL thread. Use this to execute code in the
+     * {@link GVRMain#onStep()} method. To use assertions inside the {@link OnRenderCallback} use
+     * the {@link Waiter} class.
+     * @param callback
+     */
     public void setOnRenderCallback(OnRenderCallback callback) { this.onRenderCallback = callback; }
 
+    /**
+     * Defines the interface for setting a callback in the {@link GVRMain#onInit(GVRContext)}
+     * method. Use the {@link GVRTestUtils#setOnInitCallback(OnInitCallback)} to set this callback.
+     */
     public interface OnInitCallback {
         void onInit(GVRContext gvrContext);
     }
 
+    /**
+     * Defines the interface for setting a callback which is invoked when the
+     * {@link GVRMain#onStep()} is executed for the first time. Use the
+     * {@link GVRTestUtils#setOnRenderCallback(OnRenderCallback)} to set this callback.
+     */
     public interface OnRenderCallback {
         void onSceneRendered();
     }
@@ -194,7 +259,22 @@ public class GVRTestUtils implements GVRMainMonitor {
         void onAssetLoaded(GVRSceneObject asset);
     }
 
-    void screenShot(final String category, final String testname, final Waiter waiter, final boolean doCompare) throws TimeoutException
+    /**
+     * Captures a screenshot and compares it with a golden screenshot from the
+     * assets directory. This method looks for a file named "$category$/$testname$.png" in the
+     * assets directory for the reference screenshot of the expected result. The captured
+     * screenshots are stored in /sdcard/GearVRfTests/$category$/$testname$.png. If the test
+     * fails due to the screen shots not matching, /sdcard/GearVRfTests/$category$/diff_$testname$
+     * .png file is created to examine the difference between the two screenshots.
+     * @param category category name, which is also used for naming the sub-directory in the
+     *                 assets directory for storing reference screenshots for the test.
+     * @param testname the name of the test method, also used as a filename for screenshot.
+     * @param waiter instance of the {@link Waiter} class.
+     * @param doCompare flag used to turnon/off comparison of screenshots.
+     * @throws TimeoutException
+     */
+    public void screenShot(final String category, final String testname, final Waiter waiter,
+                           final boolean doCompare) throws TimeoutException
     {
         GVRScreenshotCallback callback = new GVRScreenshotCallback()
         {
@@ -203,7 +283,7 @@ public class GVRTestUtils implements GVRMainMonitor {
                 Bitmap golden = null;
                 try
                 {
-                     InputStream stream = gvrContext.getContext().getAssets().open(category + "/" + testname);
+                    InputStream stream = gvrContext.getContext().getAssets().open(category + "/" + testname);
                     golden = BitmapFactory.decodeStream(stream);
                 }
                 catch (IOException ex)
@@ -234,7 +314,7 @@ public class GVRTestUtils implements GVRMainMonitor {
                     Log.e(category, category + ": %s %f", testname, diff);
                     if (diff > 1000.0f)
                     {
-                        writeBitmap(category, "diff_" + testname, diffmap);
+                        writeBitmap(category, DIFF_IMAGE_PREFIX + testname, diffmap);
                     }
                     waiter.assertTrue(diff <= 1000.0f);
                 }
@@ -247,7 +327,8 @@ public class GVRTestUtils implements GVRMainMonitor {
                     ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes);
                     File sdcard = Environment.getExternalStorageDirectory();
-                    dir = sdcard.getAbsolutePath() + "/GearVRFTests/" + dir + "/";
+                    dir = sdcard.getAbsolutePath() + File.separator + SCREENSHOT_DIRECTORY + File
+                            .separator + dir + File.separator;
                     File d = new File(dir);
                     d.mkdirs();
                     File f = new File(d, filename);

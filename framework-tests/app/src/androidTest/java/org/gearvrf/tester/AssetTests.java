@@ -15,8 +15,9 @@ import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.GVRPhongShader;
 import org.gearvrf.IAssetEvents;
-import org.gearvrf.GVRExternalScene;
 
+import org.gearvrf.unittestutils.GVRTestUtils;
+import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.gearvrf.utility.FileNameUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -95,7 +96,8 @@ public class AssetTests
     };
 
     @Rule
-    public ActivityTestRule<TestableActivity> ActivityRule = new ActivityTestRule<TestableActivity>(TestableActivity.class)
+    public ActivityTestRule<GVRTestableActivity> ActivityRule = new
+            ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
     {
         protected void afterActivityFinished() {
             GVRScene scene = mTestUtils.getMainScene();
@@ -187,7 +189,6 @@ public class AssetTests
         }
     }
 
-
     @Test
     public void canLoadModel() throws TimeoutException
     {
@@ -252,18 +253,18 @@ public class AssetTests
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
+        GVRExternalScene sceneLoader = new GVRExternalScene(ctx, "jassimp/astro_boy.dae", true);
         GVRSceneObject model = new GVRSceneObject(ctx);
-        GVRExternalScene extScene = new GVRExternalScene(ctx, "jassimp/astro_boy.dae", false);
 
         ctx.getEventReceiver().addListener(mHandler);
-        model.attachComponent(extScene);
-        mWaiter.assertTrue(extScene.load(scene));
+        model.attachComponent(sceneLoader);
+        scene.addSceneObject(model);
+        mWaiter.assertTrue(sceneLoader.load(scene));
+        mWaiter.assertNotNull(model);
         mTestUtils.waitForAssetLoad();
         mHandler.checkAssetLoaded(mWaiter, "astro_boy.dae", 4);
         mHandler.checkAssetErrors(mWaiter, 0, 0);
-        centerModel(model);
-        scene.addSceneObject(model);
-        mTestUtils.waitForFrameCount(2);
+        mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot("AssetTests", "canLoadExternalScene", mWaiter, mDoCompare);
     }
 
