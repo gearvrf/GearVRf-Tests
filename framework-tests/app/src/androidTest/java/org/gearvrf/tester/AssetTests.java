@@ -36,7 +36,7 @@ public class AssetTests
     private Waiter mWaiter;
     private GVRSceneObject mRoot;
     private GVRSceneObject mBackground;
-    private boolean mDoCompare = false;
+    private boolean mDoCompare = true;
     private AssetEventHandler mHandler;
 
     class AssetEventHandler implements IAssetEvents
