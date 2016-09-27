@@ -15,6 +15,8 @@ import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.GVRPhongShader;
 import org.gearvrf.IAssetEvents;
 
+import org.gearvrf.unittestutils.GVRTestUtils;
+import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.gearvrf.utility.FileNameUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -101,7 +103,7 @@ public class AssetTests
     };
 
     @Rule
-    public ActivityTestRule<TestableActivity> ActivityRule = new ActivityTestRule<TestableActivity>(TestableActivity.class)
+    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
     {
         protected void afterActivityFinished() {
             mTestUtils.getMainScene().clear();
