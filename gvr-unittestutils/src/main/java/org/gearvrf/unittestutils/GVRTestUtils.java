@@ -48,6 +48,7 @@ public class GVRTestUtils implements GVRMainMonitor {
     private final Object onInitLock;
     private final Object onStepLock;
     private final Object onScreenshotLock;
+    private final Object onAssetLock;
     private final Object xFramesLock;
     private final Object onAssetLock;
     private GVRTestableMain testableMain;
@@ -126,6 +127,20 @@ public class GVRTestUtils implements GVRMainMonitor {
         }
     }
 
+    public void waitForAssetLoad() {
+        if (mAssetIsLoaded)
+            return;
+        synchronized (onAssetLock) {
+            try {
+                Log.d(TAG, "Waiting for OnAssetLoaded");
+                onAssetLock.wait();
+            } catch (InterruptedException e) {
+                Log.e(TAG, "", e);
+                return;
+            }
+        }
+    }
+
     /**
      * Waits for "frames" number of frames to be rendered before returning. This is a blocking call.
      * @param frames number of frames to wait for
@@ -181,7 +196,14 @@ public class GVRTestUtils implements GVRMainMonitor {
         Log.d(TAG, "OnSceneRenderedCalled");
     }
 
-    @Override
+     public void onAssetLoaded(GVRSceneObject asset) {
+        mAssetIsLoaded = true;
+        synchronized (onAssetLock) {
+            onAssetLock.notifyAll();
+        }
+        Log.d(TAG, "OnAssetLoaded Called");
+    }
+
     public void xFramesRendered() {
         synchronized (xFramesLock) {
             xFramesLock.notifyAll();
