@@ -48,7 +48,6 @@ public class GVRTestUtils implements GVRMainMonitor {
     private final Object onInitLock;
     private final Object onStepLock;
     private final Object onScreenshotLock;
-    private final Object onAssetLock;
     private final Object xFramesLock;
     private final Object onAssetLock;
     private GVRTestableMain testableMain;
@@ -68,6 +67,7 @@ public class GVRTestUtils implements GVRMainMonitor {
         xFramesLock = new Object();
         onScreenshotLock = new Object();
         onAssetLock = new Object();
+
         if (testableGVRActivity == null) {
             throw new IllegalArgumentException();
         }
@@ -158,20 +158,6 @@ public class GVRTestUtils implements GVRMainMonitor {
         }
     }
 
-    public void waitForAssetLoad() {
-        if (mAssetIsLoaded)
-            return;
-        synchronized (onAssetLock) {
-            try {
-                Log.d(TAG, "Waiting for OnAssetLoaded");
-                onAssetLock.wait();
-            } catch (InterruptedException e) {
-                Log.e(TAG, "", e);
-                return;
-            }
-        }
-    }
-
     @Override
     public void onInitCalled(GVRContext context, GVRScene mainScene) {
         this.mainScene = mainScene;
@@ -196,24 +182,12 @@ public class GVRTestUtils implements GVRMainMonitor {
         Log.d(TAG, "OnSceneRenderedCalled");
     }
 
-     public void onAssetLoaded(GVRSceneObject asset) {
-        mAssetIsLoaded = true;
-        synchronized (onAssetLock) {
-            onAssetLock.notifyAll();
-        }
-        Log.d(TAG, "OnAssetLoaded Called");
-    }
-
     public void xFramesRendered() {
         synchronized (xFramesLock) {
             xFramesLock.notifyAll();
         }
     }
 
-    /**
-     *  Returns the {@link GVRContext} associated with the application
-     * @return the {@link GVRContext} instance
-     */
     public void onAssetLoaded(GVRSceneObject asset) {
         mAssetIsLoaded = true;
         synchronized (onAssetLock) {
@@ -222,6 +196,10 @@ public class GVRTestUtils implements GVRMainMonitor {
         Log.d(TAG, "OnAssetLoaded Called");
     }
 
+    /**
+     *  Returns the {@link GVRContext} associated with the application
+     * @return the {@link GVRContext} instance
+     */
     public GVRContext getGvrContext() {
         return gvrContext;
     }
@@ -295,7 +273,7 @@ public class GVRTestUtils implements GVRMainMonitor {
                 Bitmap golden = null;
                 try
                 {
-                     InputStream stream = gvrContext.getContext().getAssets().open(category + "/" + testname);
+                    InputStream stream = gvrContext.getContext().getAssets().open(category + "/" + testname);
                     golden = BitmapFactory.decodeStream(stream);
                 }
                 catch (IOException ex)

@@ -42,8 +42,7 @@ public class ShadowTests
     private boolean mDoCompare = false;
 
     @Rule
-    public ActivityTestRule<GVRTestableActivity> ActivityRule = new
-            ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
+    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
     {
         protected void afterActivityFinished() {
             mTestUtils.getMainScene().clear();
