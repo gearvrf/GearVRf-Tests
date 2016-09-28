@@ -6,6 +6,7 @@ import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRExternalScene;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
@@ -15,6 +16,8 @@ import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.GVRPhongShader;
 import org.gearvrf.IAssetEvents;
 
+import org.gearvrf.unittestutils.GVRTestUtils;
+import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.gearvrf.utility.FileNameUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -28,12 +31,12 @@ import java.util.concurrent.TimeoutException;
 @RunWith(AndroidJUnit4.class)
 public class AssetTests
 {
-    private static final String TAG = ShadowTests.class.getSimpleName();
+    private static final String TAG = AssetTests.class.getSimpleName();
     private GVRTestUtils mTestUtils;
     private Waiter mWaiter;
     private GVRSceneObject mRoot;
     private GVRSceneObject mBackground;
-    private boolean mDoCompare = false;
+    private boolean mDoCompare = true;
     private AssetEventHandler mHandler;
 
     class AssetEventHandler implements IAssetEvents
@@ -53,14 +56,6 @@ public class AssetTests
         public void onAssetLoaded(GVRContext context, GVRSceneObject model, String filePath, String errors)
         {
             AssetErrors = errors;
-            if (model != null)
-            {
-                GVRSceneObject.BoundingVolume bv = model.getBoundingVolume();
-                float sf = 1 / (4.0f * bv.radius);
-                model.getTransform().setScale(sf, sf, sf);
-                bv = model.getBoundingVolume();
-                model.getTransform().setPosition(-bv.center.x, -bv.center.y, -bv.center.z - 1.5f * bv.radius);
-            }
             mTestUtils.onAssetLoaded(model);
         }
         public void onModelLoaded(GVRContext context, GVRSceneObject model, String filePath)
@@ -101,10 +96,13 @@ public class AssetTests
     };
 
     @Rule
-    public ActivityTestRule<TestableActivity> ActivityRule = new ActivityTestRule<TestableActivity>(TestableActivity.class)
+    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
     {
         protected void afterActivityFinished() {
-            mTestUtils.getMainScene().clear();
+            GVRScene scene = mTestUtils.getMainScene();
+            if (scene != null) {
+                scene.clear();
+            }
         }
     };
 
@@ -133,7 +131,7 @@ public class AssetTests
     public void centerModel(GVRSceneObject model)
     {
         GVRSceneObject.BoundingVolume bv = model.getBoundingVolume();
-        float sf = 1 / (4.0f * bv.radius);
+        float sf = 1 / bv.radius;
         model.getTransform().setScale(sf, sf, sf);
         bv = model.getBoundingVolume();
         model.getTransform().setPosition(-bv.center.x, -bv.center.y, -bv.center.z - 1.5f * bv.radius);
@@ -155,10 +153,37 @@ public class AssetTests
             mWaiter.fail(ex);
         }
         mTestUtils.waitForAssetLoad();
+        centerModel(model);
         mHandler.checkAssetLoaded(mWaiter, FileNameUtils.getFilename(modelfile), numTex);
         mHandler.checkAssetErrors(mWaiter, 0, 0);
         if (testname != null)
         {
+            mTestUtils.waitForXFrames(2);
+            mTestUtils.screenShot("AssetTests", testname, mWaiter, mDoCompare);
+        }
+    }
+
+    public void loadTestScene(String modelfile, int numTex, String testname) throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRSceneObject model = null;
+
+        ctx.getEventReceiver().addListener(mHandler);
+        try
+        {
+            model = ctx.getAssetLoader().loadScene(modelfile, scene);
+        }
+        catch (IOException ex)
+        {
+            mWaiter.fail(ex);
+        }
+        mTestUtils.waitForAssetLoad();
+        mHandler.checkAssetLoaded(mWaiter, FileNameUtils.getFilename(modelfile), numTex);
+        mHandler.checkAssetErrors(mWaiter, 0, 0);
+        if (testname != null)
+        {
+            mTestUtils.waitForXFrames(2);
             mTestUtils.screenShot("AssetTests", testname, mWaiter, mDoCompare);
         }
     }
@@ -184,7 +209,8 @@ public class AssetTests
         mWaiter.assertNull(scene.getSceneObjectByName("astro_boy.dae"));
         mHandler.checkAssetErrors(mWaiter, 0, 0);
         scene.addSceneObject(model);
-        mTestUtils.waitForSceneRendering();
+        mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot("AssetTests", "canLoadModel", mWaiter, mDoCompare);
     }
 
@@ -206,9 +232,13 @@ public class AssetTests
         mTestUtils.waitForAssetLoad();
         mHandler.checkAssetLoaded(mWaiter, null, 4);
         mWaiter.assertNull(scene.getSceneObjectByName("astro_boy.dae"));
+        mWaiter.assertTrue(model.getChildrenCount() > 0);
         mHandler.checkAssetErrors(mWaiter, 0, 0);
-        mTestUtils.waitForSceneRendering();
-        mTestUtils.screenShot("AssetTests", "canLoadModelWithHandler", mWaiter, mDoCompare);
+        centerModel(model);
+        scene.addSceneObject(model);
+        mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
+        mTestUtils.waitForXFrames(2);
+        mTestUtils.screenShot("AssetTests", "canLoadModelWithHandler", mWaiter, false);
     }
 
     @Test
@@ -218,29 +248,26 @@ public class AssetTests
     }
 /*
     @Test
-    public void canLoadModelSceneObject() throws TimeoutException
+    public void canLoadExternalScene() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
-        GVRModelSceneObject model = new GVRModelSceneObject(ctx, "jassimp/astro_boy.dae");
+        GVRExternalScene sceneLoader = new GVRExternalScene(ctx, "jassimp/astro_boy.dae", true);
+        GVRSceneObject model = new GVRSceneObject(ctx);
 
         ctx.getEventReceiver().addListener(mHandler);
-        try
-        {
-            model = ctx.getAssetLoader().loadModel(model, scene);
-        }
-        catch (IOException ex)
-        {
-            mWaiter.fail(ex);
-        }
+        model.attachComponent(sceneLoader);
+        scene.addSceneObject(model);
+        mWaiter.assertTrue(sceneLoader.load(scene));
         mWaiter.assertNotNull(model);
         mTestUtils.waitForAssetLoad();
         mHandler.checkAssetLoaded(mWaiter, "astro_boy.dae", 4);
         mHandler.checkAssetErrors(mWaiter, 0, 0);
         mTestUtils.waitForSceneRendering();
-        mTestUtils.screenShot("AssetTests", "canLoadModelSceneObject", mWaiter, mDoCompare);
+        mTestUtils.screenShot("AssetTests", "canLoadExternalScene", mWaiter, mDoCompare);
     }
 */
+
     @Test
     public void jassimpBench() throws TimeoutException
     {

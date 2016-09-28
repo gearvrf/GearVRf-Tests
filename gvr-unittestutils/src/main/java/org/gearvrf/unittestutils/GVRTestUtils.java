@@ -50,6 +50,7 @@ public class GVRTestUtils implements GVRMainMonitor {
     private final Object onScreenshotLock;
     private final Object onAssetLock;
     private final Object xFramesLock;
+    private final Object onAssetLock;
     private GVRTestableMain testableMain;
     private GVRScene mainScene;
     private OnInitCallback onInitCallback;
@@ -152,6 +153,21 @@ public class GVRTestUtils implements GVRMainMonitor {
             } catch (InterruptedException e) {
                 Log.e(TAG,"",e);
                 return;
+
+            }
+        }
+    }
+
+    public void waitForAssetLoad() {
+        if (mAssetIsLoaded)
+            return;
+        synchronized (onAssetLock) {
+            try {
+                Log.d(TAG, "Waiting for OnAssetLoaded");
+                onAssetLock.wait();
+            } catch (InterruptedException e) {
+                Log.e(TAG, "", e);
+                return;
             }
         }
     }
@@ -198,6 +214,14 @@ public class GVRTestUtils implements GVRMainMonitor {
      *  Returns the {@link GVRContext} associated with the application
      * @return the {@link GVRContext} instance
      */
+    public void onAssetLoaded(GVRSceneObject asset) {
+        mAssetIsLoaded = true;
+        synchronized (onAssetLock) {
+            onAssetLock.notifyAll();
+        }
+        Log.d(TAG, "OnAssetLoaded Called");
+    }
+
     public GVRContext getGvrContext() {
         return gvrContext;
     }

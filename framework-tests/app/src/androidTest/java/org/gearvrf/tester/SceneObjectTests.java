@@ -19,6 +19,8 @@ import org.gearvrf.scene_objects.GVRCylinderSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.GVRPhongShader;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
+import org.gearvrf.unittestutils.GVRTestUtils;
+import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.joml.Vector3f;
 import org.junit.Before;
 import org.junit.Rule;
@@ -42,7 +44,7 @@ public class SceneObjectTests
 
 
     @Rule
-    public ActivityTestRule<TestableActivity> ActivityRule = new ActivityTestRule<TestableActivity>(TestableActivity.class)
+    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
     {
         protected void afterActivityFinished() {
             mTestUtils.getMainScene().clear();
