@@ -46,7 +46,10 @@ public class LightTests
 
     {
         protected void afterActivityFinished() {
-            mTestUtils.getMainScene().clear();
+            final GVRScene mainScene = mTestUtils.getMainScene();
+            if (null != mainScene) {
+                mainScene.clear();
+            }
         }
     };
 
