@@ -21,6 +21,7 @@ import org.gearvrf.GVRPhongShader;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.joml.Vector3f;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -39,16 +40,16 @@ public class ShadowTests
     private GVRSceneObject mRoot;
     private GVRSceneObject mSphere;
     private GVRSceneObject mCube;
-    private boolean mDoCompare = false;
+    private boolean mDoCompare = true;
 
     @Rule
-    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
-    {
-        protected void afterActivityFinished() {
-            mTestUtils.getMainScene().clear();
-        }
-    };
+    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class);
 
+    @After
+    public void tearDown()
+    {
+        mTestUtils.getMainScene().clear();
+    }
     @Before
     public void setUp() throws TimeoutException
     {
@@ -104,7 +105,7 @@ public class ShadowTests
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
         scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "spotLightAtCornerCastsShadow", mWaiter, mDoCompare);
     }
 
@@ -126,7 +127,7 @@ public class ShadowTests
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
         scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "spotLightAtFrontCastsShadow", mWaiter, mDoCompare);
     }
 
@@ -149,7 +150,7 @@ public class ShadowTests
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
         scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "spotLightAtSideCastsShadow", mWaiter, mDoCompare);
     }
 
@@ -172,7 +173,7 @@ public class ShadowTests
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
         scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "spotLightAtTopCastsShadow", mWaiter, mDoCompare);
     }
 
@@ -193,7 +194,7 @@ public class ShadowTests
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
         scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "directLightAtCornerCastsShadow", mWaiter, mDoCompare);
     }
 
@@ -213,7 +214,7 @@ public class ShadowTests
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
         scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "directLightAtFrontCastsShadow", mWaiter, mDoCompare);
     }
 
@@ -232,7 +233,7 @@ public class ShadowTests
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
         scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "directLightAtSideCastsShadow", mWaiter, mDoCompare);
     }
 
@@ -251,7 +252,7 @@ public class ShadowTests
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
         scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "directLightAtTopCastsShadow", mWaiter, mDoCompare);
     }
 
@@ -279,7 +280,7 @@ public class ShadowTests
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
         scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "twoLightsCastShadows", mWaiter, mDoCompare);
     }
 
@@ -316,7 +317,7 @@ public class ShadowTests
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
         scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "threeLightsCastShadows", mWaiter, mDoCompare);
     }
 
@@ -347,19 +348,19 @@ public class ShadowTests
         floor.getTransform().setPosition(0, -2.0f, -2.0f);
 
         rightside.getRenderData().setMaterial(rightmtl);
-        //rightside.getRenderData().setCastShadows(false);
+        rightside.getRenderData().setCastShadows(false);
         rightside.getRenderData().setShaderTemplate(GVRPhongShader.class);
         rightside.getTransform().rotateByAxis(90, 0, 1, 0);
         rightside.getTransform().setPosition(-2.0f, 0.0f, -2.0f);
 
         leftside.getRenderData().setMaterial(leftmtl);
-        //leftside.getRenderData().setCastShadows(false);
+        leftside.getRenderData().setCastShadows(false);
         leftside.getRenderData().setShaderTemplate(GVRPhongShader.class);
         leftside.getTransform().rotateByAxis(-90, 0, 1, 0);
         leftside.getTransform().setPosition(2.0f, 0.0f, -2.0f);
 
         back.getRenderData().setMaterial(backmtl);
-        //back.getRenderData().setCastShadows(false);
+        back.getRenderData().setCastShadows(false);
         back.getRenderData().setShaderTemplate(GVRPhongShader.class);
         back.getTransform().setPosition(0.0f, 0.0f, -4.0f);
 
