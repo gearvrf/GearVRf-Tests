@@ -48,7 +48,11 @@ public class ShadowTests
     @After
     public void tearDown()
     {
-        mTestUtils.getMainScene().clear();
+        GVRScene scene = mTestUtils.getMainScene();
+        if (scene != null)
+        {
+            scene.clear();
+        }
     }
     @Before
     public void setUp() throws TimeoutException
