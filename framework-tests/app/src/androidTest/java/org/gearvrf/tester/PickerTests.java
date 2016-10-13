@@ -232,7 +232,10 @@ public class PickerTests
     public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
     {
         protected void afterActivityFinished() {
-            gvrTestUtils.getMainScene().clear();
+            GVRScene scene = gvrTestUtils.getMainScene();
+            if (scene != null) {
+                scene.clear();
+            }
         }
     };
 
