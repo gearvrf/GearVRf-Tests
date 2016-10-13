@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <!-- head>
+  </head -->
+  <Scene>
+  
+    <NavigationInfo headlight="false"/>
+    <PointLight DEF="myPtLight" location="0 0 10" on="false"/>
+    <DirectionalLight intensity=".3"/>
+
+      <Transform translation='-1.5 -1.75 -5'>
+        <TouchSensor DEF='ButtonTouch'/>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='1 0 0'/>
+          </Appearance>
+          <Cylinder radius='.75'/>
+        </Shape>
+      </Transform>
+    
+      <Transform translation='1.5 -1.5 -5'>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='1 1 0'/>
+          </Appearance>
+          <Sphere radius='.5'/>
+        </Shape>
+      </Transform>
+      
+    <BooleanToggle DEF='Toggler'/>
+    <ROUTE fromField='toggle_changed' fromNode='Toggler' toField='on' toNode='myPtLight'/>
+    <ROUTE fromField='isActive' fromNode='ButtonTouch' toField='set_boolean' toNode='Toggler'/>
+
+  </Scene>
+</X3D>
