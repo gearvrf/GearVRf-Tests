@@ -11,6 +11,7 @@ import org.gearvrf.GVRFrustumPicker;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRMeshCollider;
+import org.gearvrf.GVRObjectPicker;
 import org.gearvrf.GVRPicker;
 //import org.gearvrf.GVRObjectPicker;
 import org.gearvrf.GVRRenderData;
@@ -244,10 +245,6 @@ public class PickerTests
         mWaiter = new Waiter();
         gvrTestUtils.waitForOnInit();
         GVRContext context = gvrTestUtils.getGvrContext();
-        GVRScene scene = gvrTestUtils.getMainScene();
-
-        //Freeze the camera rig so that the hit positions are accurate and predictable.
-        scene.getMainCameraRig().setCameraRigType(GVRCameraRig.GVRCameraRigType.Freeze.ID);
 
         mBlue = new GVRMaterial(context, GVRMaterial.GVRShaderType.BeingGenerated.ID);
         mBlue.setDiffuseColor(0, 0, 1, 1);
@@ -539,7 +536,7 @@ public class PickerTests
         mPickHandler.checkHits("sphere", new Vector3f[] { new Vector3f(-1, 0, 0) }, null);
         mWaiter.resume();
     }
-/*
+
     @Test
     public void canPickWithObject()
     {
@@ -581,5 +578,4 @@ public class PickerTests
         mPickHandler.checkNoHits("sphere2");
         mWaiter.resume();
     }
-    */
 }

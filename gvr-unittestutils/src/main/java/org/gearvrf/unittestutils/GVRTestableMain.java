@@ -19,6 +19,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import org.gearvrf.GVRBitmapTexture;
+import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRScene;
@@ -41,6 +42,9 @@ class GVRTestableMain extends GVRMain{
     public void onInit(GVRContext gvrContext) {
         this.gvrContext = gvrContext;
         mainScene = gvrContext.getNextMainScene();
+
+        //Freeze the camera rig for the tests
+        mainScene.getMainCameraRig().setCameraRigType(GVRCameraRig.GVRCameraRigType.Freeze.ID);
         if (mainMonitor != null) {
             mainMonitor.onInitCalled(gvrContext, mainScene);
         } else {
