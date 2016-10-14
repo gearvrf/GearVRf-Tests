@@ -2,6 +2,9 @@ package org.gearvrf.da_gearvrf;
 
 import android.os.Environment;
 
+import org.gearvrf.ActivityInstrumentationGVRf;
+import org.gearvrf.BoundsValues;
+import org.gearvrf.CustomPostEffectShaderManager;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
@@ -9,20 +12,17 @@ import org.gearvrf.GVRPostEffect;
 import org.gearvrf.GVRPostEffectShaderId;
 import org.gearvrf.GVRTestActivity;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.animation.GVRAnimationTest;
 import org.gearvrf.tests.R;
 import org.gearvrf.utility.Log;
-
-import org.gearvrf.misc.CustomPostEffectShaderManager;
 import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
-import org.gearvrf.ActivityInstrumentationGVRf;
-import org.gearvrf.BoundsValues;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.concurrent.Future;
 
 /**
- * Created by d.schettini on 3/4/2015.
+ * Push sea_env.jpg to /sdcard/Android/data/com.example.gearvrf.gearvrfapp_02/cache/
  */
 public class GVRPostEffectTest extends ActivityInstrumentationGVRf {
     private final String TAG = GVRPostEffectTest.class.getSimpleName();
@@ -44,7 +44,7 @@ public class GVRPostEffectTest extends ActivityInstrumentationGVRf {
     public void setUp() throws Exception {
         super.setUp();
         mGVRContext = TestDefaultGVRViewManager.mGVRContext;
-        shaderManager = new CustomPostEffectShaderManager(mGVRContext);
+        shaderManager = GVRAnimationTest.makeCustomPostEffectShaderManager(mGVRContext);
     }
 
     public void testPostEffectConstructor(){
@@ -253,17 +253,17 @@ public class GVRPostEffectTest extends ActivityInstrumentationGVRf {
         postEffect.setMat4(key, 1.0f,1.0f,1.0f,1.0f,2.0f,2.0f,2.0f,2.0f,3.0f,3.0f,3.0f,3.0f,4.0f,4.0f,4.0f,4.0f);
     }
 
-
-    public void testTextureNull(){
+    public void testTextureNull() {
         Log.d(TAG, "Starting testTextureNull");
-        if(mGVRContext == null) {
+        if (mGVRContext == null) {
             try {
                 setUp();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }GVRPostEffect postEffect = new GVRPostEffect(mGVRContext, shaderManager.getShaderId());
-        String resourcePath = Environment.getExternalStorageDirectory()+ "sea_env.jpg";
+        }
+        GVRPostEffect postEffect = new GVRPostEffect(mGVRContext, shaderManager.getShaderId());
+        final String resourcePath = mGVRContext.getActivity().getExternalCacheDir().toString() + "/sea_env.jpg";
         try {
             File file = new File(resourcePath);
             GVRAndroidResource gvrAndroidResource = new GVRAndroidResource(file);
@@ -279,17 +279,17 @@ public class GVRPostEffectTest extends ActivityInstrumentationGVRf {
 
     }
 
-
-    public void testGetTexture(){
+    public void testGetTexture() {
         Log.d(TAG, "Starting testGetTexture");
-        if(mGVRContext == null) {
+        if (mGVRContext == null) {
             try {
                 setUp();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }GVRPostEffect postEffect = new GVRPostEffect(mGVRContext, shaderManager.getShaderId());
-        String resourcePath = Environment.getExternalStorageDirectory()+ "sea_env.jpg";
+        }
+        GVRPostEffect postEffect = new GVRPostEffect(mGVRContext, shaderManager.getShaderId());
+        final String resourcePath = mGVRContext.getActivity().getExternalCacheDir().toString() + "/sea_env.jpg";
         try {
             File file = new File(resourcePath);
             GVRAndroidResource gvrAndroidResource = new GVRAndroidResource(file);
@@ -298,11 +298,10 @@ public class GVRPostEffectTest extends ActivityInstrumentationGVRf {
 
             postEffect.setTexture(key, texture);
 
-        assertEquals(texture, postEffect.getTexture(key));
+            assertEquals(texture, postEffect.getTexture(key));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
     }
 
     public void testMainTextureNull(){
@@ -315,7 +314,7 @@ public class GVRPostEffectTest extends ActivityInstrumentationGVRf {
             }
         }
         GVRPostEffect postEffect = new GVRPostEffect(mGVRContext, shaderManager.getShaderId());
-        String resourcePath = Environment.getExternalStorageDirectory()+ "sea_env.jpg";
+        final String resourcePath = mGVRContext.getActivity().getExternalCacheDir().toString() + "/sea_env.jpg";
         try {
             File file = new File(resourcePath);
             GVRAndroidResource gvrAndroidResource = new GVRAndroidResource(file);
