@@ -2,15 +2,18 @@ package org.gearvrf.animation;
 
 
 import org.gearvrf.ActivityInstrumentationGVRf;
+import org.gearvrf.CustomPostEffectShaderManager;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRTestActivity;
-import org.gearvrf.misc.CustomPostEffectShaderManager;
 import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRHybridObject;
 import org.gearvrf.GVRPostEffect;
 import org.gearvrf.GVRSceneObject;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 //import org.junit.BeforeClass;
 
@@ -25,7 +28,6 @@ public class GVRAnimationTest extends ActivityInstrumentationGVRf {
     private static final int INVALID_REPEAT_MODE = -1;
 
     private GVRContext mGVRContext = null;
-    private CustomPostEffectShaderManager shaderManager;
 
     public GVRAnimationTest() {
         super(GVRTestActivity.class);
@@ -42,10 +44,10 @@ public class GVRAnimationTest extends ActivityInstrumentationGVRf {
 
     }
 
-    public void testPostEffectAnimation() {
+    public void testPostEffectAnimation() throws InterruptedException {
         mGVRContext = TestDefaultGVRViewManager.mGVRContext;
-        shaderManager = new CustomPostEffectShaderManager(mGVRContext);
 
+        final CustomPostEffectShaderManager shaderManager = makeCustomPostEffectShaderManager(mGVRContext);
         GVRPostEffect postEffect = new GVRPostEffect(mGVRContext, shaderManager.getShaderId());
         GVRPostEffectAnimation animation = new GVRPostEffectAnimation(postEffect, ANIM_DURATION) {
             @Override
@@ -290,16 +292,20 @@ public class GVRAnimationTest extends ActivityInstrumentationGVRf {
         assertFalse(isFinished);
     }
 
-    public void testIsFinishedTrue() {
-        GVRSceneObject sceneObject = new GVRSceneObject(TestDefaultGVRViewManager.mGVRContext);
-        GVRAnimation animation = new GVRAnimation(sceneObject, 0f) {
+    public void testIsFinishedTrue() throws InterruptedException {
+        final GVRSceneObject sceneObject = new GVRSceneObject(TestDefaultGVRViewManager.mGVRContext);
+
+        final CountDownLatch cdl = new CountDownLatch(1);
+        final GVRAnimation animation = new GVRAnimation(sceneObject, 0f) {
             @Override
             protected void animate(GVRHybridObject gvrHybridObject, float v) {
+                cdl.countDown();
             }
         };
+
         animation.start(TestDefaultGVRViewManager.mGVRContext.getAnimationEngine());
-        boolean isFinished = animation.isFinished();
-        assertTrue(isFinished);
+        assertTrue(cdl.await(1, TimeUnit.SECONDS));
+        assertTrue(animation.isFinished());
     }
 
     // TODO create test which calls animate with a duration of 0f
@@ -400,4 +406,17 @@ public class GVRAnimationTest extends ActivityInstrumentationGVRf {
         };
     }
 
+    public static CustomPostEffectShaderManager makeCustomPostEffectShaderManager(final GVRContext mGVRContext) throws InterruptedException {
+        final CustomPostEffectShaderManager[] shaderManager = {null};
+        final CountDownLatch cdl = new CountDownLatch(1);
+        mGVRContext.runOnGlThread(new Runnable() {
+            @Override
+            public void run() {
+                shaderManager[0] = new CustomPostEffectShaderManager(mGVRContext);
+                cdl.countDown();
+            }
+        });
+        assertTrue(cdl.await(1, TimeUnit.SECONDS));
+        return shaderManager[0];
+    }
 }
