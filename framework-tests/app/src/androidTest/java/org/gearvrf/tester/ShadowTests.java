@@ -352,19 +352,19 @@ public class ShadowTests
         floor.getTransform().setPosition(0, -2.0f, -2.0f);
 
         rightside.getRenderData().setMaterial(rightmtl);
-        rightside.getRenderData().setCastShadows(false);
+        //rightside.getRenderData().setCastShadows(false);
         rightside.getRenderData().setShaderTemplate(GVRPhongShader.class);
         rightside.getTransform().rotateByAxis(90, 0, 1, 0);
         rightside.getTransform().setPosition(-2.0f, 0.0f, -2.0f);
 
         leftside.getRenderData().setMaterial(leftmtl);
-        leftside.getRenderData().setCastShadows(false);
+        //leftside.getRenderData().setCastShadows(false);
         leftside.getRenderData().setShaderTemplate(GVRPhongShader.class);
         leftside.getTransform().rotateByAxis(-90, 0, 1, 0);
         leftside.getTransform().setPosition(2.0f, 0.0f, -2.0f);
 
         back.getRenderData().setMaterial(backmtl);
-        back.getRenderData().setCastShadows(false);
+        //back.getRenderData().setCastShadows(false);
         back.getRenderData().setShaderTemplate(GVRPhongShader.class);
         back.getTransform().setPosition(0.0f, 0.0f, -4.0f);
 
