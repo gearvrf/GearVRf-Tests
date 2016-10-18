@@ -67,7 +67,7 @@ public class LightTests
         GVRSceneObject background = new GVRCubeSceneObject(ctx, false);
         GVRMaterial blue = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
         GVRMaterial check = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
-        GVRTexture checker = ctx.loadTexture(new GVRAndroidResource(ctx, R.drawable.checker));
+        GVRTexture checker = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.checker));
 
         mWaiter.assertNotNull(scene);
         mWaiter.assertNotNull(checker);
