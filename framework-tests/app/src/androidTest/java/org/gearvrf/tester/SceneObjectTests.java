@@ -44,7 +44,15 @@ public class SceneObjectTests
 
 
     @Rule
-    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class);
+    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
+    {
+        protected void afterActivityFinished() {
+            GVRScene scene = mTestUtils.getMainScene();
+            if (scene != null) {
+                scene.clear();
+            }
+        }
+    };
 
     @Before
     public void setUp() throws TimeoutException
