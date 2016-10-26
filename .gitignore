@@ -38,3 +38,5 @@ local.properties
 *.iml
 lib.jar
 import-summary.txt
+
+.externalNativeBuild
