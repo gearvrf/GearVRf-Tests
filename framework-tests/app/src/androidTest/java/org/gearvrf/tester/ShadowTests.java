@@ -9,6 +9,7 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRCubemapTexture;
 import org.gearvrf.GVRDirectLight;
+import org.gearvrf.GVRLightBase;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRPointLight;
 import org.gearvrf.GVRScene;
@@ -68,8 +69,10 @@ public class ShadowTests
         GVRMaterial red = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
         GVRSceneObject background;
 
-        scene.getMainCameraRig().setFarClippingDistance(20.0f);
         mWaiter.assertNotNull(scene);
+        scene.getMainCameraRig().setFarClippingDistance(20.0f);
+        GVRMaterial material = GVRLightBase.getShadowMaterial(ctx);
+        material.setFloat("shadow_far", 25.0f);
         background = makeBackground(ctx);
         blue.setDiffuseColor(0, 0, 1, 1);
         red.setDiffuseColor(0.8f, 0, 0, 1);
@@ -352,19 +355,19 @@ public class ShadowTests
         floor.getTransform().setPosition(0, -2.0f, -2.0f);
 
         rightside.getRenderData().setMaterial(rightmtl);
-        //rightside.getRenderData().setCastShadows(false);
+        rightside.getRenderData().setCastShadows(false);
         rightside.getRenderData().setShaderTemplate(GVRPhongShader.class);
         rightside.getTransform().rotateByAxis(90, 0, 1, 0);
         rightside.getTransform().setPosition(-2.0f, 0.0f, -2.0f);
 
         leftside.getRenderData().setMaterial(leftmtl);
-        //leftside.getRenderData().setCastShadows(false);
+        leftside.getRenderData().setCastShadows(false);
         leftside.getRenderData().setShaderTemplate(GVRPhongShader.class);
         leftside.getTransform().rotateByAxis(-90, 0, 1, 0);
         leftside.getTransform().setPosition(2.0f, 0.0f, -2.0f);
 
         back.getRenderData().setMaterial(backmtl);
-        //back.getRenderData().setCastShadows(false);
+        back.getRenderData().setCastShadows(false);
         back.getRenderData().setShaderTemplate(GVRPhongShader.class);
         back.getTransform().setPosition(0.0f, 0.0f, -4.0f);
 
