@@ -2,7 +2,7 @@
     <scene>
 		<Background skyColor='0 .2 .6'/>
 		
-		<Viewpoint DEF="vp1" position='0 0 1'/>
+		<Viewpoint DEF="vp1" position='0 0 0'/>
 		<Viewpoint DEF="vp2" position='0 0 2.6'/>
 
  		<Transform DEF="lodTest01">
@@ -10,7 +10,7 @@
 	        <shape>
 				<Appearance>
 					<Material diffuseColor="1 1 1"/>
-					<ImageTexture url="brick.jpg" repeatS="TRUE" repeatT="TRUE"/>
+					<ImageTexture url="lod1.png" repeatS="TRUE" repeatT="TRUE"/>
 					<TextureTransform center='.5 .5' rotation='0' scale='4 4' translation='0 0'/>
 				</Appearance>
 				<IndexedFaceSet
@@ -26,7 +26,7 @@
 	        <shape>
 				<Appearance>
 					<Material diffuseColor="1 1 1"/>
-					<ImageTexture url="deedee1.jpg" repeatS="TRUE" repeatT="TRUE"/>
+					<ImageTexture url="lod2.png" repeatS="TRUE" repeatT="TRUE"/>
 					<TextureTransform center='.5 .5' rotation='0' scale='2 2' translation='0 0'/>
 				</Appearance>
 				<IndexedFaceSet
@@ -42,7 +42,7 @@
 	        <shape>
 				<Appearance>
 					<Material diffuseColor="1 1 1"/>
-					<ImageTexture url="dog1.jpg" repeatS="TRUE" repeatT="TRUE"/>
+					<ImageTexture url="lod3.png" repeatS="TRUE" repeatT="TRUE"/>
 					<TextureTransform center='.5 .5' rotation='0' scale='1 1' translation='0 0'/>
 				</Appearance>
 				<IndexedFaceSet
@@ -62,7 +62,7 @@
 	        <shape>
 				<Appearance>
 					<Material diffuseColor="1 1 1"/>
-					<ImageTexture url="caltrain.png" repeatS="TRUE" repeatT="TRUE"/>
+					<ImageTexture url="markerthree.png" repeatS="TRUE" repeatT="TRUE"/>
 					<TextureTransform center='.5 .5' rotation='0' scale='1 1' translation='0 0'/>
 				</Appearance>
 				<IndexedFaceSet
@@ -82,7 +82,7 @@
 	        <shape>
 				<Appearance>
 					<Material diffuseColor="1 1 1"/>
-					<ImageTexture url="brick.jpg" repeatS="TRUE" repeatT="TRUE"/>
+					<ImageTexture url="markerone.png" repeatS="TRUE" repeatT="TRUE"/>
 					<TextureTransform center='.5 .5' rotation='0' scale='1 1' translation='0 0'/>
 				</Appearance>
 				<IndexedFaceSet
@@ -101,7 +101,7 @@
 	        <shape>
 				<Appearance>
 					<Material diffuseColor="1 1 1"/>
-					<ImageTexture url="deedee1.jpg" repeatS="TRUE" repeatT="TRUE"/>
+					<ImageTexture url="markertwo.png" repeatS="TRUE" repeatT="TRUE"/>
 					<TextureTransform center='.5 .5' rotation='0' scale='1 1' translation='0 0'/>
 				</Appearance>
 				<IndexedFaceSet

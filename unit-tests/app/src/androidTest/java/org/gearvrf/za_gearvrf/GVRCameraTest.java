@@ -3,14 +3,15 @@ package org.gearvrf.za_gearvrf;
 import android.graphics.Color;
 import android.util.Log;
 
+import org.gearvrf.CustomPostEffectShaderManager;
 import org.gearvrf.GVRCamera;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRPostEffect;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTransform;
+import org.gearvrf.animation.GVRAnimationTest;
 import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
-import org.gearvrf.misc.CustomPostEffectShaderManager;
 import org.gearvrf.ActivityInstrumentationGVRf;
 
 /**
@@ -77,10 +78,11 @@ public class GVRCameraTest extends ActivityInstrumentationGVRf {
     /**
      * GVRCamera - Test addPostEffect
      */
-    public void testAddPostEffect() {
+    public void testAddPostEffect() throws InterruptedException {
         Log.d(TAG, "testaddPostEffect");
 
-        CustomPostEffectShaderManager shaderManager = new CustomPostEffectShaderManager(TestDefaultGVRViewManager.mGVRContext);
+        final CustomPostEffectShaderManager shaderManager
+                = GVRAnimationTest.makeCustomPostEffectShaderManager(TestDefaultGVRViewManager.mGVRContext);
         GVRPostEffect postEffect = new GVRPostEffect(TestDefaultGVRViewManager.mGVRContext, shaderManager.getShaderId());
         postEffect.setVec3("ratio_r", 0.393f, 0.769f, 0.189f);
         postEffect.setVec3("ratio_g", 0.349f, 0.686f, 0.168f);
@@ -95,10 +97,11 @@ public class GVRCameraTest extends ActivityInstrumentationGVRf {
     /**
      * GVRCamera - Test removePostEffect
      */
-    public void testRemovePostEffectt() {
+    public void testRemovePostEffectt() throws InterruptedException {
         Log.d(TAG, "testremovePostEffectt");
 
-        CustomPostEffectShaderManager shaderManager = new CustomPostEffectShaderManager(TestDefaultGVRViewManager.mGVRContext);
+        final CustomPostEffectShaderManager shaderManager
+                = GVRAnimationTest.makeCustomPostEffectShaderManager(TestDefaultGVRViewManager.mGVRContext);
         GVRPostEffect postEffect = new GVRPostEffect(TestDefaultGVRViewManager.mGVRContext, shaderManager.getShaderId());
         postEffect.setVec3("ratio_r", 0.393f, 0.769f, 0.189f);
         postEffect.setVec3("ratio_g", 0.349f, 0.686f, 0.168f);

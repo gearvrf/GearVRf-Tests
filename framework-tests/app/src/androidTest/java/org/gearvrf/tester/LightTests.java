@@ -22,6 +22,7 @@ import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 
 import org.joml.Vector3f;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -42,14 +43,17 @@ public class LightTests
 
     @Rule
 
-    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
+    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class);
 
+    @After
+    public void tearDown()
     {
-        protected void afterActivityFinished() {
-            mTestUtils.getMainScene().clear();
+        GVRScene scene = mTestUtils.getMainScene();
+        if (scene != null)
+        {
+            scene.clear();
         }
-    };
-
+    }
     @Before
     public void setUp() throws TimeoutException
     {
@@ -63,7 +67,7 @@ public class LightTests
         GVRSceneObject background = new GVRCubeSceneObject(ctx, false);
         GVRMaterial blue = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
         GVRMaterial check = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
-        GVRTexture checker = ctx.loadTexture(new GVRAndroidResource(ctx, R.drawable.checker));
+        GVRTexture checker = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.checker));
 
         mWaiter.assertNotNull(scene);
         mWaiter.assertNotNull(checker);

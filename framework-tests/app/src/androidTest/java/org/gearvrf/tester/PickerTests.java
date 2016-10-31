@@ -5,11 +5,13 @@ import android.support.test.runner.AndroidJUnit4;
 
 import net.jodah.concurrentunit.Waiter;
 
+import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRFrustumPicker;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRMeshCollider;
+import org.gearvrf.GVRObjectPicker;
 import org.gearvrf.GVRPicker;
 //import org.gearvrf.GVRObjectPicker;
 import org.gearvrf.GVRRenderData;
@@ -232,7 +234,10 @@ public class PickerTests
     public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
     {
         protected void afterActivityFinished() {
-            gvrTestUtils.getMainScene().clear();
+            GVRScene scene = gvrTestUtils.getMainScene();
+            if (scene != null) {
+                scene.clear();
+            }
         }
     };
 
@@ -421,23 +426,26 @@ public class PickerTests
         scene.addSceneObject(sphere);
         scene.addSceneObject(box);
 
+        gvrTestUtils.waitForSceneRendering();
+
+        //test picking after the scene is rendered
         GVRPicker.GVRPickedObject picked[] = GVRPicker.pickObjects(scene, null, 0, 0, 0, 0, 0, -1.0f);
         Log.d("Picker", "testPickObjects");
-        gvrTestUtils.waitForSceneRendering();
+
         mWaiter.assertNotNull(picked);
         mWaiter.assertTrue(picked.length == 2);
         GVRPicker.GVRPickedObject hit1 = picked[0];
         GVRPicker.GVRPickedObject hit2 = picked[1];
         mWaiter.assertNotNull(hit1);
         mWaiter.assertEquals("box", hit1.hitObject.getName());
-        mWaiter.assertEquals(0, hit1.hitLocation[0]);
+        mWaiter.assertEquals(0.0f, hit1.hitLocation[0]);
         mWaiter.assertEquals(-0.25f, hit1.hitLocation[1]);
         mWaiter.assertEquals(0.5f, hit1.hitLocation[2]);
         mWaiter.assertNotNull(hit2);
         mWaiter.assertEquals("sphere", hit2.hitObject.getName());
-        mWaiter.assertEquals(0, hit2.hitLocation[0]);
-        mWaiter.assertEquals(0, hit2.hitLocation[1]);
-        mWaiter.assertEquals(-2, hit2.hitLocation[2]);
+        mWaiter.assertEquals(0.0f, hit2.hitLocation[0]);
+        mWaiter.assertEquals(0.0f, hit2.hitLocation[1]);
+        mWaiter.assertEquals(1.0f, hit2.hitLocation[2]);
 
         mWaiter.resume();
     }
@@ -460,7 +468,7 @@ public class PickerTests
         Log.d("Picker", "canPickObjectWithRay");
         float distance = GVRPicker.pickSceneObject(sphere1, scene.getMainCameraRig());
         gvrTestUtils.waitForSceneRendering();
-        mWaiter.assertEquals(1, distance);
+        mWaiter.assertEquals(1.0f, distance);
         mWaiter.resume();
     }
 
@@ -531,7 +539,7 @@ public class PickerTests
         mPickHandler.checkHits("sphere", new Vector3f[] { new Vector3f(-1, 0, 0) }, null);
         mWaiter.resume();
     }
-/*
+
     @Test
     public void canPickWithObject()
     {
@@ -573,5 +581,4 @@ public class PickerTests
         mPickHandler.checkNoHits("sphere2");
         mWaiter.resume();
     }
-    */
 }

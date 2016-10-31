@@ -80,7 +80,7 @@
 	        <shape>
 				<Appearance>
 					<Material diffuseColor="1 1 1"/>
-					<ImageTexture url="caltrain.png" repeatS="TRUE" repeatT="TRUE"/>
+					<ImageTexture url="markerthree.png" repeatS="TRUE" repeatT="TRUE"/>
 					<TextureTransform center='.5 .5' rotation='0' scale='1 1' translation='0 0'/>
 				</Appearance>
 				<IndexedFaceSet

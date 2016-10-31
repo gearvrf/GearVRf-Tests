@@ -137,7 +137,7 @@ public class AssetTests
         model.getTransform().setPosition(-bv.center.x, -bv.center.y, -bv.center.z - 1.5f * bv.radius);
     }
 
-    public void loadTestModel(String modelfile, int numTex, String testname) throws TimeoutException
+    public void loadTestModel(String modelfile, int numTex, int texError, String testname) throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
@@ -155,7 +155,7 @@ public class AssetTests
         mTestUtils.waitForAssetLoad();
         centerModel(model);
         mHandler.checkAssetLoaded(mWaiter, FileNameUtils.getFilename(modelfile), numTex);
-        mHandler.checkAssetErrors(mWaiter, 0, 0);
+        mHandler.checkAssetErrors(mWaiter, 0, texError);
         if (testname != null)
         {
             mTestUtils.waitForXFrames(2);
@@ -244,9 +244,9 @@ public class AssetTests
     @Test
     public void canLoadModelInScene() throws TimeoutException
     {
-        loadTestModel("jassimp/astro_boy.dae", 4, "canLoadModelInScene");
+        loadTestModel("jassimp/astro_boy.dae", 4, 0, "canLoadModelInScene");
     }
-/*
+
     @Test
     public void canLoadExternalScene() throws TimeoutException
     {
@@ -266,19 +266,24 @@ public class AssetTests
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot("AssetTests", "canLoadExternalScene", mWaiter, mDoCompare);
     }
-*/
 
+    @Test
+    public void jassimpEmbeddedTextures() throws TimeoutException
+    {
+        loadTestModel("jassimp/bmw.FBX", 4, 2, "jassimpEmbeddedTextures");
+    }
+    
     @Test
     public void jassimpBench() throws TimeoutException
     {
-        loadTestModel("jassimp/bench.dae", 0, "jassimpBench");
+        loadTestModel("jassimp/bench.dae", 0, 0, "jassimpBench");
     }
 
 
     @Test
     public void x3dTeapotTorus() throws TimeoutException
     {
-        loadTestModel("x3d/teapottorusdirlights.x3d", 2, "x3dTeapotTorus");
+        loadTestModel("x3d/teapottorusdirlights.x3d", 2, 0, "x3dTeapotTorus");
     }
 
 }

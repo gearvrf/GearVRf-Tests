@@ -18,6 +18,9 @@ import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRCylinderSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.GVRPhongShader;
+import org.gearvrf.unittestutils.GVRTestUtils;
+import org.gearvrf.unittestutils.GVRTestableActivity;
+
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
@@ -33,7 +36,7 @@ import java.util.concurrent.TimeoutException;
 @RunWith(AndroidJUnit4.class)
 public class SceneObjectTests
 {
-    private static final String TAG = ShadowTests.class.getSimpleName();
+    private static final String TAG = SceneObjectTests.class.getSimpleName();
     private GVRTestUtils mTestUtils;
     private Waiter mWaiter;
     private GVRSceneObject mRoot;
@@ -47,7 +50,10 @@ public class SceneObjectTests
     public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
     {
         protected void afterActivityFinished() {
-            mTestUtils.getMainScene().clear();
+            GVRScene scene = mTestUtils.getMainScene();
+            if (scene != null) {
+                scene.clear();
+            }
         }
     };
 
@@ -160,7 +166,7 @@ public class SceneObjectTests
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
-        GVRTexture tex = ctx.loadTexture(new GVRAndroidResource(ctx, R.drawable.color_sphere));
+        GVRTexture tex = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.color_sphere));
         GVRSceneObject cylinder1 = new GVRCylinderSceneObject(ctx, true, mBlueMtl);
         GVRMaterial mtl = new GVRMaterial(ctx);
         GVRSceneObject cylinder2 = new GVRCylinderSceneObject(ctx, false, mtl);

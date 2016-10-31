@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <!-- head>
+  </head -->
+  <Scene>
+  
+    <NavigationInfo headlight="false"/>
+    <PointLight DEF="redLight" color="1 0 0" location="-5 0 0" on="false"/>
+    <PointLight DEF="greenLight" color="0 1 0" location="0 0 0" on="false"/>
+    <PointLight DEF="blueLight" color="0 0 1" location="5 0 0" on="false"/>
+    <DirectionalLight intensity=".3"/>
+
+      <Transform translation='-2 -2.5 -5'>
+        <TouchSensor DEF='RedCylTouch'/>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='1 0 0'/>
+          </Appearance>
+          <Cylinder radius='.75'/>
+        </Shape>
+      </Transform>
+
+      <Transform translation='0 -2.5 -5'>
+        <TouchSensor DEF='GreenCylTouch'/>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='0 1 0'/>
+          </Appearance>
+          <Cylinder radius='.75'/>
+        </Shape>
+      </Transform>
+    
+      <Transform translation='2 -2.5 -5'>
+        <TouchSensor DEF='BlueCylTouch'/>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='0 0 1'/>
+          </Appearance>
+          <Cylinder radius='.75'/>
+        </Shape>
+      </Transform>
+    
+    
+      <Transform DEF="whiteSphere" translation='0 0 -5'>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='1 1 1'/>
+          </Appearance>
+          <Sphere radius='.5'/>
+        </Shape>
+      </Transform>
+      
+    <BooleanToggle DEF='RedCylToggler'/>
+    <ROUTE fromField='isActive' fromNode='RedCylTouch' toField='set_boolean' toNode='RedCylToggler'/>
+    <ROUTE fromField='toggle_changed' fromNode='RedCylToggler' toField='on' toNode='redLight'/>
+      
+    <BooleanToggle DEF='GreenCylToggler'/>
+    <ROUTE fromField='isActive' fromNode='GreenCylTouch' toField='set_boolean' toNode='GreenCylToggler'/>
+    <ROUTE fromField='toggle_changed' fromNode='GreenCylToggler' toField='on' toNode='greenLight'/>
+      
+    <BooleanToggle DEF='BlueCylToggler'/>
+    <ROUTE fromField='isActive' fromNode='BlueCylTouch' toField='set_boolean' toNode='BlueCylToggler'/>
+    <ROUTE fromField='toggle_changed' fromNode='BlueCylToggler' toField='on' toNode='blueLight'/>
+
+  </Scene>
+</X3D>
