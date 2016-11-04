@@ -2,13 +2,12 @@ package org.gearvrf.scene_object;
 
 import android.media.MediaPlayer;
 
-import org.gearvrf.GVRTestActivity;
-import org.gearvrf.scene_objects.GVRVideoSceneObjectPlayer;
-import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
 import org.gearvrf.ActivityInstrumentationGVRf;
-
 import org.gearvrf.GVRCameraRig;
+import org.gearvrf.GVRNotifications;
+import org.gearvrf.GVRTestActivity;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
+import org.gearvrf.viewmanager.TestDefaultGVRViewManager;
 
 public class GVRVideoSceneObjectTest extends ActivityInstrumentationGVRf {
 
@@ -17,36 +16,38 @@ public class GVRVideoSceneObjectTest extends ActivityInstrumentationGVRf {
     }
 
     public void testCreateGVRVideoSceneObject() {
-
         MediaPlayer mediaPlayer = new MediaPlayer();
         assertNotNull(new GVRVideoSceneObject(TestDefaultGVRViewManager.mGVRContext, 100f, 100f, mediaPlayer, GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO));
     }
 
     public void testCreateNameVideoSceneObject() {
-
         MediaPlayer mediaPlayer = new MediaPlayer();
-        GVRVideoSceneObject videoSceneObject = new GVRVideoSceneObject(TestDefaultGVRViewManager.mGVRContext, 100f, 100f, mediaPlayer, GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO);
+        GVRVideoSceneObject videoSceneObject = makeVideoSceneObject(mediaPlayer, GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO);
+
         videoSceneObject.setName("Test");
         assertEquals(videoSceneObject.getName(), "Test");
     }
 
     public void testStartVideo() {
         MediaPlayer mediaPlayer = new MediaPlayer();
-        GVRVideoSceneObject videoSceneObject = new GVRVideoSceneObject(TestDefaultGVRViewManager.mGVRContext, 100f, 100f, mediaPlayer, GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO);
+        GVRVideoSceneObject videoSceneObject = makeVideoSceneObject(mediaPlayer, GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO);
+
         videoSceneObject.getMediaPlayer().start();
         mediaPlayer.stop();
     }
 
     public void testStopVideo() {
         MediaPlayer mediaPlayer = new MediaPlayer();
-        GVRVideoSceneObject videoSceneObject = new GVRVideoSceneObject(TestDefaultGVRViewManager.mGVRContext, 100f, 100f, mediaPlayer, GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO);
+        GVRVideoSceneObject videoSceneObject = makeVideoSceneObject(mediaPlayer, GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO);
+
         videoSceneObject.getMediaPlayer().start();
         mediaPlayer.stop();
     }
 
     public void testPauseVideo() {
         MediaPlayer mediaPlayer = new MediaPlayer();
-        GVRVideoSceneObject videoSceneObject = new GVRVideoSceneObject(TestDefaultGVRViewManager.mGVRContext, 100f, 100f, mediaPlayer, GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO);
+        GVRVideoSceneObject videoSceneObject = makeVideoSceneObject(mediaPlayer, GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO);
+
         videoSceneObject.getMediaPlayer().start();
         videoSceneObject.getMediaPlayer().pause();
         mediaPlayer.stop();
@@ -54,25 +55,29 @@ public class GVRVideoSceneObjectTest extends ActivityInstrumentationGVRf {
 
     public void testGetGVRVideoSceneObjectTransform() {
         MediaPlayer mediaPlayer = new MediaPlayer();
-        GVRVideoSceneObject videoSceneObject = new GVRVideoSceneObject(TestDefaultGVRViewManager.mGVRContext, 100f, 100f, mediaPlayer, GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO);
+        GVRVideoSceneObject videoSceneObject = makeVideoSceneObject(mediaPlayer, GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO);
+
         assertNotNull(videoSceneObject.getTransform());
     }
 
     public void testGetGVRVideoSceneObjectTimeStamp() {
         MediaPlayer mediaPlayer = new MediaPlayer();
-        GVRVideoSceneObject videoSceneObject = new GVRVideoSceneObject(TestDefaultGVRViewManager.mGVRContext, 100f, 100f, mediaPlayer, GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO);
+        GVRVideoSceneObject videoSceneObject = makeVideoSceneObject(mediaPlayer, GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO);
+
         assertNotNull(videoSceneObject.getTimeStamp());
     }
 
     public void testGetGVRVideoSceneIsActive() {
         MediaPlayer mediaPlayer = new MediaPlayer();
-        GVRVideoSceneObject videoSceneObject = new GVRVideoSceneObject(TestDefaultGVRViewManager.mGVRContext, 100f, 100f, mediaPlayer, GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO);
+        GVRVideoSceneObject videoSceneObject = makeVideoSceneObject(mediaPlayer, GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO);
+
         assertTrue(videoSceneObject.isActive());
     }
 
     public void testGetGVRVideoSceneCameraRig() {
         MediaPlayer mediaPlayer = new MediaPlayer();
-        GVRVideoSceneObject videoSceneObject = new GVRVideoSceneObject(TestDefaultGVRViewManager.mGVRContext, 100f, 100f, mediaPlayer, GVRVideoSceneObject.GVRVideoType.VERTICAL_STEREO);
+        GVRVideoSceneObject videoSceneObject = makeVideoSceneObject(mediaPlayer, GVRVideoSceneObject.GVRVideoType.VERTICAL_STEREO);
+
         GVRCameraRig cameraRig = GVRCameraRig.makeInstance(TestDefaultGVRViewManager.mGVRContext);
         videoSceneObject.attachCameraRig(cameraRig);
         videoSceneObject.getMediaPlayer().start();
@@ -81,16 +86,20 @@ public class GVRVideoSceneObjectTest extends ActivityInstrumentationGVRf {
 
     public void testDeactivateVideo() {
         MediaPlayer mediaPlayer = new MediaPlayer();
-        GVRVideoSceneObject videoSceneObject = new GVRVideoSceneObject(TestDefaultGVRViewManager.mGVRContext, 100f, 100f, mediaPlayer, GVRVideoSceneObject.GVRVideoType.MONO);
+        GVRVideoSceneObject videoSceneObject = makeVideoSceneObject(mediaPlayer, GVRVideoSceneObject.GVRVideoType.MONO);
+
         videoSceneObject.deactivate();
         assertFalse(videoSceneObject.isActive());
     }
 
     public void testReleaseVideo() {
         MediaPlayer mediaPlayer = new MediaPlayer();
-        GVRVideoSceneObject videoSceneObject = new GVRVideoSceneObject(TestDefaultGVRViewManager.mGVRContext, 100f, 100f, mediaPlayer, GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO);
+        GVRVideoSceneObject videoSceneObject = makeVideoSceneObject(mediaPlayer, GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO);
+
         videoSceneObject.getMediaPlayer().start();
         videoSceneObject.release();
+
+        assertTrue(null == videoSceneObject.getMediaPlayer());
     }
 
     public void testSetVideoTypeInvalid() {
@@ -98,19 +107,16 @@ public class GVRVideoSceneObjectTest extends ActivityInstrumentationGVRf {
 
         try {
             new GVRVideoSceneObject(TestDefaultGVRViewManager.mGVRContext, 100f, 100f, mediaPlayer, 320);
-
         } catch (IllegalArgumentException e) {
-            /*assertEquals(e.getMessage(), "IllegalArgumentException for videoType. Types supported: " +
-                    "GVRVideoSceneObject.GVRVideoType.MONO, " +
-                    "GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO, " +
-                    "GVRVideoSceneObject.GVRVideoType.VERTICAL_STEREO");
-                    */
+            return;
         }
+        assertTrue("Ctor should throw an exception on invalid type argument", false);
     }
 
     public void testSetMediaPlayer() { //Created by j.elidelson on 08/17/2015
         MediaPlayer mediaPlayer = new MediaPlayer();
-        GVRVideoSceneObject videoSceneObject = new GVRVideoSceneObject(TestDefaultGVRViewManager.mGVRContext, 100f, 100f, mediaPlayer, GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO);
+        GVRVideoSceneObject videoSceneObject = makeVideoSceneObject(mediaPlayer, GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO);
+
         MediaPlayer mediaPlayer2 = new MediaPlayer();
         videoSceneObject.setMediaPlayer(GVRVideoSceneObject.makePlayerInstance(mediaPlayer2));
         videoSceneObject.activate();
@@ -122,16 +128,23 @@ public class GVRVideoSceneObjectTest extends ActivityInstrumentationGVRf {
         MediaPlayer mediaPlayer = new MediaPlayer();
         try {
             assertNotNull(new GVRVideoSceneObject(TestDefaultGVRViewManager.mGVRContext, 100f, 100f, mediaPlayer, 3));
-        fail("should throws IllegalArgumentException");
-        }catch (IllegalArgumentException e){}
+            fail("should throws IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
     }
 
-    public void testGVRVideotype() { //Created by j.elidelson on 08/17/2015
-        //GVRVideoSceneObject.GVRVideoType gvrVideoType=null;
-        assertEquals(0,GVRVideoSceneObject.GVRVideoType.MONO);
-        assertEquals(1,GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO);
-        assertEquals(2,GVRVideoSceneObject.GVRVideoType.VERTICAL_STEREO);
+    public void testGVRVideotype() {
+        assertEquals(0, GVRVideoSceneObject.GVRVideoType.MONO);
+        assertEquals(1, GVRVideoSceneObject.GVRVideoType.HORIZONTAL_STEREO);
+        assertEquals(2, GVRVideoSceneObject.GVRVideoType.VERTICAL_STEREO);
     }
 
-
+    private GVRVideoSceneObject makeVideoSceneObject(MediaPlayer mediaPlayer, int verticalStereo) {
+        GVRVideoSceneObject videoSceneObject = new GVRVideoSceneObject(TestDefaultGVRViewManager.mGVRContext, 100f, 100f, mediaPlayer, verticalStereo);
+        //have to wait for at least a frame to go past so the texture the video scene object needs
+        //is created
+        GVRNotifications.waitBeforeStep();
+        GVRNotifications.waitAfterStep();
+        return videoSceneObject;
+    }
 }

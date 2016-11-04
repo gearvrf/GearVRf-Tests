@@ -19,6 +19,20 @@ android {
         minSdkVersion 19
         targetSdkVersion 23
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk {
+            moduleName = "framework-tests"
+            abiFilter "armeabi-v7a"
+        }
+        externalNativeBuild {
+            cmake {
+                arguments.add('-DINCLUDE_DIR='+rootProject.projectDir.absolutePath+'/../../GearVRf/GVRf/Framework/')
+                arguments.add('-DPATH_TO_LIBGVRF='+projectDir.absolutePath+'/build/intermediates/exploded-aar/framework-debug/jni/')
+                //difference in sign extension when reinterpret_cast-ing a pointer between
+                //gcc and clang hence overriding the default toolchain to match the one used
+                //by the other modules
+                arguments.add('-DANDROID_TOOLCHAIN=gcc')
+            }
+        }
     }
 
     buildTypes {
@@ -29,7 +43,6 @@ android {
     }
 
     sourceSets.main {
-        jni.srcDirs = [] // no auto generation of Android.mk
         jniLibs.srcDir 'libs' // pre-compiled libraries
     }
 
@@ -38,6 +51,12 @@ android {
             output.outputFile = new File(
                     output.outputFile.parent,
                     rootProject.name + ".apk")
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path 'src/main/cpp/CMakeLists.txt'
         }
     }
 }
