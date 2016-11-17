@@ -7,6 +7,7 @@ import net.jodah.concurrentunit.Waiter;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRExternalScene;
+import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
@@ -63,9 +64,8 @@ public class AssetLightTests
         Future<GVRTexture> tex = ctx.loadFutureCubemapTexture(new GVRAndroidResource(ctx, R.raw.beach));
 
         mWaiter.assertNotNull(scene);
-        mBackground = new GVRCubeSceneObject(ctx, false);
+        mBackground = new GVRCubeSceneObject(ctx, false, new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID));
         mBackground.getTransform().setScale(10, 10, 10);
-        mBackground.getRenderData().setShaderTemplate(GVRPhongShader.class);
         mBackground.setName("background");
         mRoot = scene.getRoot();
         mWaiter.assertNotNull(mRoot);

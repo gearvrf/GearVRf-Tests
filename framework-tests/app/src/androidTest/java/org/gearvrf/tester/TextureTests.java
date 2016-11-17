@@ -71,7 +71,7 @@ public class TextureTests
         Future<GVRTexture> tex = ctx.loadFutureCubemapTexture(new GVRAndroidResource(ctx, R.raw.beach));
 
         mWaiter.assertNotNull(scene);
-        mBlueMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        mBlueMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
         mCubeMapMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Cubemap.ID);
 
         mBackground = new GVRCubeSceneObject(ctx, false);
@@ -114,21 +114,19 @@ public class TextureTests
         rd.setAlphaToCoverage(true);
 
         GVRSceneObject polygon = new GVRSceneObject(ctx, 4, 4);
-        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
 
         rd = polygon.getRenderData();
         polygon.setName("polygon");
         polygon.getTransform().setPosition(0, 1, -3);
         mtl.setDiffuseColor(0, 1, 0, 0.5f);
         rd.setMaterial(mtl);
-        rd.setShaderTemplate(GVRPhongShader.class);
         rd.setAlphaBlend(true);
         rd.setAlphaToCoverage(true);
         rd.setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
         rd.setCullFace(GVRRenderPass.GVRCullFaceEnum.None);
         mRoot.addChildObject(t);
         mRoot.addChildObject(polygon);
-        scene.bindShaders();
         mTestUtils.waitForXFrames(3);
         mTestUtils.screenShot(getClass().getSimpleName(), "testAlphaToCoverage", mWaiter, mDoCompare);
     }
@@ -138,7 +136,7 @@ public class TextureTests
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
-        GVRMaterial layeredMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        GVRMaterial layeredMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
         GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.colortex));
         GVRTexture tex2 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.specularring));
         GVRSceneObject model = new GVRCubeSceneObject(ctx, true, layeredMtl);
@@ -150,7 +148,6 @@ public class TextureTests
         layeredMtl.setTexCoord("diffuseTexture", "a_texcoord", "diffuse_coord");
         layeredMtl.setTexCoord("diffuseTexture1", "a_texcoord", "diffuse_coord1");
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
-        model.getRenderData().setShaderTemplate(GVRPhongShader.class);
         model.getTransform().setPositionZ(-2.0f);
         scene.addSceneObject(model);
         scene.bindShaders();
@@ -163,7 +160,7 @@ public class TextureTests
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
-        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
         GVRSceneObject model = new GVRCubeSceneObject(ctx, true, mtl);
         GVRDirectLight light = new GVRDirectLight(ctx);
         GVRMesh mesh = model.getRenderData().getMesh();
@@ -184,7 +181,6 @@ public class TextureTests
         mtl.setSpecularExponent(4.0f);
         mtl.setTexture("diffuseTexture", tex1);
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
-        model.getRenderData().setShaderTemplate(GVRPhongShader.class);
         model.getTransform().setPositionZ(-2.0f);
         scene.addSceneObject(model);
         scene.bindShaders();
@@ -198,10 +194,9 @@ public class TextureTests
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
-        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
         GVRSceneObject model = new GVRCubeSceneObject(ctx, true, mtl);
         GVRDirectLight light = new GVRDirectLight(ctx);
-        GVRMesh mesh = model.getRenderData().getMesh();
         GVRTexture tex2 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.specularring));
 
         mtl.setDiffuseColor(0.7f, 0, 0.7f, 1);
@@ -210,7 +205,6 @@ public class TextureTests
         mtl.setTexture("specularTexture", tex2);
         mtl.setTexCoord("specularTexture", "a_texcoord", "specular_coord");
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
-        model.getRenderData().setShaderTemplate(GVRPhongShader.class);
         model.getTransform().setPositionZ(-2.0f);
         scene.addSceneObject(model);
         scene.bindShaders();
@@ -224,7 +218,7 @@ public class TextureTests
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
-        GVRMaterial layeredMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        GVRMaterial layeredMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
         GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.wavylines));
         GVRTexture tex2 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.specularring));
         GVRSceneObject model = new GVRCubeSceneObject(ctx, true, layeredMtl);
@@ -239,7 +233,6 @@ public class TextureTests
         layeredMtl.setTexCoord("specularTexture", "a_texcoord", "specular_coord");
         layeredMtl.setTexCoord("specularTexture1", "a_texcoord", "specular_coord1");
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
-        model.getRenderData().setShaderTemplate(GVRPhongShader.class);
         model.getTransform().setPositionZ(-2.0f);
         scene.addSceneObject(model);
         scene.bindShaders();
@@ -252,7 +245,7 @@ public class TextureTests
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
-        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
         GVRSceneObject model = new GVRCubeSceneObject(ctx, true, mtl);
         GVRDirectLight light = new GVRDirectLight(ctx);
         GVRMesh mesh = model.getRenderData().getMesh();
@@ -277,7 +270,6 @@ public class TextureTests
         mtl.setTexCoord("diffuseTexture", "a_texcoord1", "diffuse_coord");
         mtl.setTexCoord("specularTexture", "a_texcoord", "specular_coord");
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
-        model.getRenderData().setShaderTemplate(GVRPhongShader.class);
         model.getTransform().setPositionZ(-2.0f);
         scene.addSceneObject(model);
         scene.bindShaders();
@@ -291,7 +283,7 @@ public class TextureTests
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
-        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
         GVRSceneObject model = new GVRCubeSceneObject(ctx, true, mtl);
         GVRDirectLight light = new GVRDirectLight(ctx);
         GVRMesh mesh = model.getRenderData().getMesh();
@@ -316,7 +308,6 @@ public class TextureTests
         mtl.setTexCoord("diffuseTexture", "a_texcoord1", "diffuse_coord");
         mtl.setTexCoord("normalTexture", "a_texcoord", "normal_coord");
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
-        model.getRenderData().setShaderTemplate(GVRPhongShader.class);
         model.getTransform().setPositionZ(-2.0f);
         scene.addSceneObject(model);
         scene.bindShaders();
