@@ -6,7 +6,11 @@ class gvr::RenderData;
 
 JNIEXPORT jlongArray JNICALL
 Java_org_gearvrf_tester_StateSortTests_getRenderDataVector(JNIEnv *env, jclass type) {
+<<<<<<< HEAD
     const std::vector<gvr::RenderData *> &renderDataVector = gvr::gRenderer->getRenderDataVector();
+=======
+/*    const std::vector<gvr::RenderData *> &renderDataVector = gvr::gRenderer->getRenderDataVector();
+>>>>>>> adding cmakelists for asset-tests
     jlongArray result = env->NewLongArray(renderDataVector.size());
 
     for (int i = 0; i < renderDataVector.size(); ++i) {
@@ -15,6 +19,11 @@ Java_org_gearvrf_tester_StateSortTests_getRenderDataVector(JNIEnv *env, jclass t
         env->SetLongArrayRegion(result, i, 1, &element);
     }
     return result;
+<<<<<<< HEAD
+=======
+    */
+    return env->NewLongArray(0);
+>>>>>>> adding cmakelists for asset-tests
 }
 
 }
