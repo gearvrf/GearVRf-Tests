@@ -190,6 +190,7 @@ public class TextureTests
         mtl.setSpecularColor(1, 1, 1, 1);
         mtl.setSpecularExponent(4.0f);
         mtl.setTexture("diffuseTexture", tex1);
+        scene.getMainCameraRig().getOwnerObject().attachComponent(light);
         model.getTransform().setPositionZ(-2.0f);
 
         GVRSceneObject rig = scene.getMainCameraRig().getOwnerObject();
@@ -274,6 +275,7 @@ public class TextureTests
         mtl.setTexCoord("diffuseTexture", "a_texcoord1", "diffuse_coord");
         mtl.setTexCoord("specularTexture", "a_texcoord", "specular_coord");
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
+        model.getTransform().setPositionZ(-2.0f);
         scene.addSceneObject(model);
         mTestUtils.waitForXFrames(3);
         mTestUtils.screenShot(getClass().getSimpleName(), "testDiffuseSpecularTexture", mWaiter, mDoCompare);

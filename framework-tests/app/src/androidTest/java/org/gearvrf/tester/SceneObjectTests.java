@@ -72,9 +72,9 @@ public class SceneObjectTests
         GVRScene scene = mTestUtils.getMainScene();
         mWaiter.assertNotNull(scene);
         Future<GVRTexture> tex = ctx.loadFutureCubemapTexture(new GVRAndroidResource(ctx, R.raw.beach));
+
         mBlueMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
         mCubeMapMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Cubemap.ID);
-
         mBackground = new GVRCubeSceneObject(ctx, false, new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID));
         mBackground.getTransform().setScale(10, 10, 10);
         mBackground.setName("background");
