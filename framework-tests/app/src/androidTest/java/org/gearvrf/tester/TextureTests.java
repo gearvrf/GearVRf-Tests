@@ -150,8 +150,7 @@ public class TextureTests
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
         model.getTransform().setPositionZ(-2.0f);
         scene.addSceneObject(model);
-        scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(3);
         mTestUtils.screenShot(getClass().getSimpleName(), "testLayeredDiffuseTexture", mWaiter, mDoCompare);
     }
 
@@ -183,8 +182,7 @@ public class TextureTests
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
         model.getTransform().setPositionZ(-2.0f);
         scene.addSceneObject(model);
-        scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(3);
         mTestUtils.screenShot(getClass().getSimpleName(), "testRepeatTexture", mWaiter, mDoCompare);
     }
 
@@ -207,8 +205,7 @@ public class TextureTests
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
         model.getTransform().setPositionZ(-2.0f);
         scene.addSceneObject(model);
-        scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(3);
         mTestUtils.screenShot(getClass().getSimpleName(), "testSpecularTexture", mWaiter, mDoCompare);
     }
 
@@ -235,8 +232,7 @@ public class TextureTests
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
         model.getTransform().setPositionZ(-2.0f);
         scene.addSceneObject(model);
-        scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(3);
         mTestUtils.screenShot(getClass().getSimpleName(), "testLayeredSpecularTexture", mWaiter, mDoCompare);
     }
 
@@ -272,8 +268,7 @@ public class TextureTests
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
         model.getTransform().setPositionZ(-2.0f);
         scene.addSceneObject(model);
-        scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(3);
         mTestUtils.screenShot(getClass().getSimpleName(), "testDiffuseSpecularTexture", mWaiter, mDoCompare);
     }
 
@@ -310,8 +305,7 @@ public class TextureTests
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
         model.getTransform().setPositionZ(-2.0f);
         scene.addSceneObject(model);
-        scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(3);
         mTestUtils.screenShot(getClass().getSimpleName(), "testDiffuseNormalTexture", mWaiter, mDoCompare);
     }
 

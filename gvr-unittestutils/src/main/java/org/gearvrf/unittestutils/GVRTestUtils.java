@@ -302,11 +302,11 @@ public class GVRTestUtils implements GVRMainMonitor {
                     }
 
                     Log.e(category, category + ": %s %f", testname, diff);
-                    if (diff > 1000.0f)
+                    if (diff > 2000.0f)
                     {
                         writeBitmap(category, "diff_" + testname, diffmap);
                     }
-                    waiter.assertTrue(diff <= 1000.0f);
+                    waiter.assertTrue(diff <= 2000.0f);
                 }
             }
 
