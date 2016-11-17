@@ -71,8 +71,8 @@ public class ShadowTests
 
         mWaiter.assertNotNull(scene);
         scene.getMainCameraRig().setFarClippingDistance(20.0f);
-        GVRMaterial material = GVRLightBase.getShadowMaterial(ctx);
-        material.setFloat("shadow_far", 25.0f);
+        //GVRMaterial material = GVRLightBase.getShadowMaterial(ctx);
+        //material.setFloat("shadow_far", 25.0f);
         background = makeBackground(ctx);
         blue.setDiffuseColor(0, 0, 1, 1);
         red.setDiffuseColor(0.8f, 0, 0, 1);
