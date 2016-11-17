@@ -65,21 +65,18 @@ public class LightTests
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject background = new GVRCubeSceneObject(ctx, false);
-        GVRMaterial blue = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
-        GVRMaterial check = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        GVRMaterial blue = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
+        GVRMaterial check = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
         GVRTexture checker = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.checker));
 
         mWaiter.assertNotNull(scene);
         mWaiter.assertNotNull(checker);
         check.setTexture("diffuseTexture", checker);
         background.getTransform().setScale(10, 10, 10);
-        background.getRenderData().setShaderTemplate(GVRPhongShader.class);
         blue.setDiffuseColor(0, 0, 1, 1);
         mSphere = new GVRSphereSceneObject(ctx, true, blue);
-        mSphere.getRenderData().setShaderTemplate(GVRPhongShader.class);
         mSphere.getTransform().setPosition(0, 0, -2);
         mCube = new GVRCubeSceneObject(ctx, true, check, new Vector3f(6, 3, 1));
-        mCube.getRenderData().setShaderTemplate(GVRPhongShader.class);
         mCube.getTransform().setPosition(-1, 0, -4);
         mRoot = scene.getRoot();
         mWaiter.assertNotNull(mRoot);
@@ -98,7 +95,6 @@ public class LightTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        scene.bindShaders();
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "pointLightAtFrontIlluminates", mWaiter, mDoCompare);
     }
@@ -114,7 +110,6 @@ public class LightTests
         light.setDiffuseIntensity(0, 0, 1, 1);
         lightObj.attachComponent(light);
         mRoot.addChildObject(lightObj);
-        scene.bindShaders();
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(),"pointLightIlluminatesInColor", mWaiter, mDoCompare);
     }
@@ -132,7 +127,6 @@ public class LightTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        scene.bindShaders();
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "pointLightAtFrontAttenuates", mWaiter, mDoCompare);
     }
@@ -150,7 +144,6 @@ public class LightTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        scene.bindShaders();
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "pointLightAtCornerIlluminates", mWaiter, mDoCompare);
     }
@@ -171,7 +164,6 @@ public class LightTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        scene.bindShaders();
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "pointLightHasSpecularReflection", mWaiter, mDoCompare);
     }
@@ -190,7 +182,6 @@ public class LightTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        scene.bindShaders();
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "spotLightAtFrontIlluminates", mWaiter, mDoCompare);
    }
@@ -208,7 +199,6 @@ public class LightTests
         light.setInnerConeAngle(30.0f);
         light.setOuterConeAngle(45.0f);
         mRoot.addChildObject(lightObj);
-        scene.bindShaders();
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "spotLightIlluminatesInColor", mWaiter, mDoCompare);
     }
@@ -229,7 +219,6 @@ public class LightTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        scene.bindShaders();
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "spotLightAtCornerIlluminates", mWaiter, mDoCompare);
     }
@@ -251,7 +240,6 @@ public class LightTests
         mSphere.getRenderData().getMaterial().setSpecularColor(0.8f, 0.8f, 0.8f, 1.0f);
         mSphere.getRenderData().getMaterial().setSpecularExponent(8.0f);
         mRoot.addChildObject(mSphere);
-        scene.bindShaders();
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "spotLightHasSpecularReflection", mWaiter, mDoCompare);
     }
@@ -271,7 +259,6 @@ public class LightTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        scene.bindShaders();
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "spotLightAtFrontAttenuates", mWaiter, mDoCompare);
     }
@@ -289,7 +276,6 @@ public class LightTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        scene.bindShaders();
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "directLightRotatedIlluminates", mWaiter, mDoCompare);
     }
@@ -308,7 +294,6 @@ public class LightTests
         lightObj.getTransform().rotateByAxis(-45, 0, 1, 0);
         lightObj.attachComponent(light);
         mRoot.addChildObject(lightObj);
-        scene.bindShaders();
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "directLightIlluminatesInColor", mWaiter, mDoCompare);
     }
@@ -328,7 +313,6 @@ public class LightTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        scene.bindShaders();
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "directLightHasSpecularReflection", mWaiter, mDoCompare);
     }
@@ -354,7 +338,6 @@ public class LightTests
         mRoot.addChildObject(lightObj1);
         mRoot.addChildObject(lightObj2);
         mRoot.addChildObject(mSphere);
-        scene.bindShaders();
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "directAndPointLightsIlluminate", mWaiter, mDoCompare);
     }
@@ -389,7 +372,6 @@ public class LightTests
         mRoot.addChildObject(lightObj2);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        scene.bindShaders();
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "twoSpotLightsIlluminate", mWaiter, mDoCompare);
     }

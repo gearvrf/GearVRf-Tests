@@ -72,12 +72,11 @@ public class SceneObjectTests
         GVRScene scene = mTestUtils.getMainScene();
         mWaiter.assertNotNull(scene);
         Future<GVRTexture> tex = ctx.loadFutureCubemapTexture(new GVRAndroidResource(ctx, R.raw.beach));
-        mBlueMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        mBlueMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
         mCubeMapMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Cubemap.ID);
 
-        mBackground = new GVRCubeSceneObject(ctx, false);
+        mBackground = new GVRCubeSceneObject(ctx, false, new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID));
         mBackground.getTransform().setScale(10, 10, 10);
-        mBackground.getRenderData().setShaderTemplate(GVRPhongShader.class);
         mBackground.setName("background");
         mBlueMtl.setDiffuseColor(0, 0, 1, 1);
         try
@@ -126,7 +125,6 @@ public class SceneObjectTests
         mRoot.addChildObject(text);
         text.setName("text");
         sphere.setName("sphere");
-        scene.bindShaders();
         mTestUtils.waitForSceneRendering();
         scene.clear();
         mWaiter.assertNull(scene.getSceneObjectByName("background"));
@@ -142,7 +140,6 @@ public class SceneObjectTests
         GVRSceneObject sphere1 = new GVRSphereSceneObject(ctx, true, mBlueMtl);
         GVRSceneObject sphere2 = new GVRSphereSceneObject(ctx, false, mCubeMapMtl);
 
-        sphere1.getRenderData().setShaderTemplate(GVRPhongShader.class);
         sphere1.getTransform().setPosition(0, 0, -4);
         sphere2.getTransform().setScale(20, 20, 20);
         sphere1.setName("sphere1");
@@ -164,14 +161,12 @@ public class SceneObjectTests
         GVRSceneObject cube1 = new GVRCubeSceneObject(ctx, true, mBlueMtl);
         GVRSceneObject cube2 = new GVRCubeSceneObject(ctx, false, mCubeMapMtl);
 
-        cube1.getRenderData().setShaderTemplate(GVRPhongShader.class);
         cube1.getTransform().setPosition(0, 0, -4);
         cube1.setName("cube1");
         cube2.getTransform().setScale(20, 20, 20);
         cube2.setName("cube2");
         mRoot.addChildObject(cube1);
         scene.addSceneObject(cube2);
-        scene.bindShaders();
         mTestUtils.waitForXFrames(2);
         mWaiter.assertNotNull(scene.getSceneObjectByName("cube2"));
         mWaiter.assertNotNull(scene.getSceneObjectByName("cube1"));
@@ -190,14 +185,12 @@ public class SceneObjectTests
         GVRSceneObject cylinder2 = new GVRCylinderSceneObject(ctx, false, mtl);
 
         mtl.setMainTexture(tex);
-        cylinder1.getRenderData().setShaderTemplate(GVRPhongShader.class);
         cylinder1.getTransform().setPosition(0, 0, -4);
         cylinder1.setName("cylinder1");
         cylinder2.getTransform().setScale(10, 10, 10);
         cylinder2.setName("cylinder2");
         mRoot.addChildObject(cylinder1);
         scene.addSceneObject(cylinder2);
-        scene.bindShaders();
         mTestUtils.waitForSceneRendering();
         mWaiter.assertNotNull(scene.getSceneObjectByName("cylinder1"));
         mWaiter.assertNotNull(scene.getSceneObjectByName("cylinder2"));

@@ -99,7 +99,7 @@ public class StateSortTests {
         GVRScene scene = gvrTestUtils.getMainScene();
 
         GVRTexture texture = context.getAssetLoader().loadTexture(new GVRAndroidResource(context, R.drawable.gearvr_logo));
-        final GVRSceneObject largestShaderId = new GVRSceneObject(context, 5.0f, 5.0f, texture, GVRMaterial.GVRShaderType.ExternalRenderer.ID);
+        final GVRSceneObject largestShaderId = new GVRSceneObject(context, 5.0f, 5.0f, texture, GVRMaterial.GVRShaderType.Phong.ID);
         largestShaderId.setName("largestShaderId");
         largestShaderId.getTransform().setPosition(1.0f, 0.0f, -15.0f);
         scene.addSceneObject(largestShaderId);
