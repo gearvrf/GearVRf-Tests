@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.4.1)
 
+<<<<<<< HEAD
 project (asset-tests C CXX)
+=======
+project (framework-tests C CXX)
+>>>>>>> adding cmakelists for asset-tests
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fexceptions")
 add_library(asset-tests SHARED helpers.cpp)
 
