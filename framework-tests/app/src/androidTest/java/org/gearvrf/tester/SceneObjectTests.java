@@ -146,7 +146,6 @@ public class SceneObjectTests
         sphere2.setName("sphere2");
         mRoot.addChildObject(sphere1);
         scene.addSceneObject(sphere2);
-        scene.bindShaders();
         mTestUtils.waitForXFrames(2);
         mWaiter.assertNotNull(scene.getSceneObjectByName("sphere2"));
         mWaiter.assertNotNull(scene.getSceneObjectByName("sphere1"));
@@ -191,7 +190,7 @@ public class SceneObjectTests
         cylinder2.setName("cylinder2");
         mRoot.addChildObject(cylinder1);
         scene.addSceneObject(cylinder2);
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mWaiter.assertNotNull(scene.getSceneObjectByName("cylinder1"));
         mWaiter.assertNotNull(scene.getSceneObjectByName("cylinder2"));
         mTestUtils.screenShot(getClass().getSimpleName(), "canDisplayCylinders", mWaiter, mDoCompare);
