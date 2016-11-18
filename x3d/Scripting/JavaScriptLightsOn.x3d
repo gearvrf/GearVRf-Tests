@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <Scene>
+  
+    <Viewpoint position='0 0 0'/>
+    <PointLight DEF='PL1' location='-3 1 -4' color='1 .5 .5' on='true'/>
+    <SpotLight DEF='SL1' location='0 1 -4' color='.5 1 .5' on='false'/>
+    <DirectionalLight DEF='DL1' color='.2 .2 1' on='false'/>
+
+      <Transform DEF='cylinderButtonTouch' translation='0 -.25 -6' rotation='0 1 0 -.25'>
+        <TouchSensor DEF='ButtonTouch' description='touch to toggle'/>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='1 1 1'/>
+            <ImageTexture url='"texture_rotation_tblrm.jpg"'/>
+          </Appearance>
+          <Cylinder/>
+        </Shape>
+      </Transform>
+      <Transform translation='-2 -.5 -5'>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='1 1 1'/>
+            <ImageTexture url='"lattitudelongitude.png"'/>
+          </Appearance>
+          <Sphere/>
+        </Shape>
+      </Transform>
+      <Transform translation='2 -.5 -5'>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='1 1 1'/>
+            <ImageTexture url='"lattitudelongitude.png"'/>
+          </Appearance>
+          <Sphere/>
+        </Shape>
+      </Transform>
+    
+
+    <Script DEF='ControlScript'>
+      <field accessType='inputOnly' name='buttonOver' type='SFBool'/>
+      <field accessType='inputOutput' name='pl1' type='SFBool'/>
+      <field accessType='inputOutput' name='sl1' type='SFBool'/>
+      <field accessType='inputOutput' name='dl1' type='SFBool'/>
+
+      <![CDATA[
+      ecmascript:
+	      function buttonOver (value)
+	      {
+            //GearVRinitJavaScript();
+
+	      	if (value) {
+                if ( pl1.getValue() ) {
+                    pl1.setValue(false);
+                    sl1.setValue(true);
+                    dl1.setValue(false);
+                }
+                else if ( sl1.getValue() ) {
+                    pl1.setValue(false);
+                    sl1.setValue(false);
+                    dl1.setValue(true);
+                }
+                else if ( dl1.getValue() ) {
+                    pl1.setValue(true);
+                    sl1.setValue(false);
+                    dl1.setValue(false);
+                }
+    		}
+	      }
+
+	]]>
+    </Script>
+
+    <ROUTE fromField='isOver' fromNode='ButtonTouch' toField='buttonOver' toNode='ControlScript'/>
+    
+    <ROUTE fromField='on' fromNode='PL1' toField='pl1' toNode='ControlScript'/>
+    <ROUTE fromField='on' fromNode='SL1' toField='sl1' toNode='ControlScript'/>
+    <ROUTE fromField='on' fromNode='DL1' toField='dl1' toNode='ControlScript'/>
+    
+    <ROUTE fromField='pl1' fromNode='ControlScript' toField='on' toNode='PL1'/>
+    <ROUTE fromField='sl1' fromNode='ControlScript' toField='on' toNode='SL1'/>
+    <ROUTE fromField='dl1' fromNode='ControlScript' toField='on' toNode='DL1'/>
+    
+  </Scene>
+</X3D>

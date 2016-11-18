@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <Scene>
+  
+    <Viewpoint position='0 0 0'/>
+    <SpotLight DEF='SL1' direction='-.6 0 -.8' color='1 1 .5' beamWidth='.5' cutOffAngle='.8'/>
+    <SpotLight DEF='SL2' direction='0 .5 -.866' color='.5 .5 1' beamWidth='.5' cutOffAngle='.8'/>
+    <DirectionalLight intensity='.15' direction='0 .5 -.866' />
+
+      <Transform translation='0 -.5 -6'>
+        <TouchSensor DEF='ButtonTouch' description='touch to toggle'/>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='.5 1 .5'/>
+          </Appearance>
+          <Cylinder/>
+        </Shape>
+      </Transform>
+
+      <Transform DEF='sphere1' translation='-2 -.5 -5' rotation='0 1 0 0'>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='1 1 1'/>
+            <ImageTexture url='"lattitudelongitude.png"'/>
+          </Appearance>
+          <Sphere/>
+        </Shape>
+      </Transform>
+      <Transform DEF='sphere2' translation='2 -.5 -5' rotation='0 0 1 1.57'>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='1 1 1'/>
+            <ImageTexture url='"lattitudelongitude.png"'/>
+          </Appearance>
+          <Sphere/>
+        </Shape>
+      </Transform>
+      <Transform DEF='sphere3' translation='0 -3 -3.5' rotation='1 0 0 1.57'>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='1 1 1'/>
+            <ImageTexture url='"lattitudelongitude.png"'/>
+          </Appearance>
+          <Sphere/>
+        </Shape>
+      </Transform>    
+
+
+    <Script DEF='ControlScript'>
+      <field accessType='inputOnly' name='buttonOver' type='SFBool'/>
+      <field accessType='inputOutput' name='sl1direction' type='SFVec3f'/>
+      <field accessType='inputOutput' name='sl2direction' type='SFVec3f'/>
+
+      <![CDATA[
+      
+      ecmascript:
+      function buttonOver (value)
+      {
+        if (value) {
+		    sl1direction.setX( sl1direction.getX() + .1 );
+		    sl2direction.setY( sl2direction.getY() - .15 );
+      	}
+      }
+
+	]]>
+    </Script>
+
+    <ROUTE fromField='isOver' fromNode='ButtonTouch' toField='buttonOver' toNode='ControlScript'/>
+    <ROUTE fromField='direction' fromNode='SL1' toField='sl1direction' toNode='ControlScript'/>
+    <ROUTE fromField='direction' fromNode='SL2' toField='sl2direction' toNode='ControlScript'/>
+    
+    <ROUTE fromField='sl1direction' fromNode='ControlScript' toField='direction' toNode='SL1'/>
+    <ROUTE fromField='sl2direction' fromNode='ControlScript' toField='direction' toNode='SL2'/>
+  </Scene>
+</X3D>

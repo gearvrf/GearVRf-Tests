@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <Scene>
+  
+    <Viewpoint position='0 0 0'/>
+    <PointLight DEF='PL1' color='1 .9 .8'/>
+
+      <Transform translation='-1 -.25 -6'>
+        <TouchSensor DEF='ButtonTouch' description='touch to toggle'/>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='.8 .8 .8'/>
+          </Appearance>
+          <Sphere/>
+        </Shape>
+      </Transform>
+
+      <Transform DEF="rotatedObj" translation='1 -.25 -6'>
+        <Shape>
+          <Appearance>
+            <Material DEF="myMaterial" diffuseColor='1 1 1'/>
+		<ImageTexture url="texture_rotation_tblrm.jpg" repeatS="TRUE" repeatT="TRUE"/>
+          </Appearance>
+          <Cylinder/>
+        </Shape>
+      </Transform>
+    
+    
+        <Script DEF='ControlScript'>
+          <field accessType='inputOnly' name='buttonOver' type='SFBool'/>
+          <field accessType='inputOutput' name='lightColor' type='SFColor'/>
+
+          <![CDATA[
+          ecmascript:
+
+          function initialize () {
+            lightColor.setValue( .5, 1, .5);
+          }
+
+          function buttonOver (value)
+          {
+                red = lightColor.getRed() + .13;
+                if (red > 1.0) red -= 1.0;
+                red = Math.max(red, .25);
+                green = lightColor.getGreen() + .19;
+                if (green > 1.0) green -= 1.0;
+                green = Math.max(green, .25);
+                blue = lightColor.getBlue() + .29;
+                if (blue > 1.0) blue -= 1.0;
+                blue = Math.max(blue, .25);
+                lightColor.setValue( red, green, blue);
+         }
+
+    	]]>
+        </Script>
+    
+        <ROUTE fromField='isOver' fromNode='ButtonTouch' toField='buttonOver' toNode='ControlScript'/>
+        <ROUTE fromField='color' fromNode='PL1' toField='lightColor' toNode='ControlScript'/>
+        <ROUTE fromField='lightColor' fromNode='ControlScript' toField='color' toNode='PL1'/>
+
+  </Scene>
+</X3D>

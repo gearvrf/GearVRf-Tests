@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <head>
+    <meta content='ScriptSimpleStateEvents.x3d' name='title'/>
+    <meta content='A Script node drives an animated push button that turns a light on and off.' name='description'/>
+    <meta content='Leonard Daly and Don Brutzman' name='creator'/>
+    <meta content='10 June 2006' name='created'/>
+    <meta content='10 January 2014' name='modified'/>
+    <meta content='6 June 2016' name='modified by Mitch Williams'/>
+    <meta content='http://X3dGraphics.com' name='reference'/>
+    <meta content='http://www.web3d.org/x3d/content/examples/X3dResources.html' name='reference'/>
+    <meta content='Copyright 2006, Daly Realism and Don Brutzman' name='rights'/>
+    <meta content='X3D book, X3D graphics, X3D-Edit, http://www.x3dGraphics.com' name='subject'/>
+    <meta content='http://X3dGraphics.com/examples/X3dForWebAuthors/Chapter09-EventUtilitiesScripting/ScriptSimpleStateEvents.x3d' name='identifier'/>
+    <meta content='X3D-Edit 3.3, https://savage.nps.edu/X3D-Edit' name='generator'/>
+    <meta content='../license.html' name='license'/>
+  </head>
+  <Scene>
+  
+    <Viewpoint position='0 0 0'/>
+    <PointLight/>
+
+      <Transform translation='-1 -.25 -6'>
+        <TouchSensor DEF='ButtonTouch' description='touch to toggle'/>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='.6 .75 .9'/>
+          </Appearance>
+          <Cylinder radius='.75'/>
+        </Shape>
+      </Transform>
+    
+      <Transform DEF='Bulb' translation='1.5 -.5 -6'>
+        <Shape>
+          <Appearance>
+            <Material DEF='LightBulbMaterial' diffuseColor='.5 .5 .5'/>
+          </Appearance>
+          <Sphere radius='.5'/>
+        </Shape>
+      </Transform>
+    
+      <Transform DEF='ColorCone' translation='0 -2.5 -6'>
+        <Shape>
+          <Appearance>
+            <Material DEF='ColorConeMaterial' diffuseColor='1 1 0'/>
+          </Appearance>
+          <Cone/>
+        </Shape>
+      </Transform>
+
+    <Script DEF='ControlScript'>
+      <field accessType='inputOnly' name='buttonOver' type='SFBool'/>
+      <field accessType='outputOnly' name='lightBulbColor' type='SFColor'/>
+      <field accessType='outputOnly' name='coneLightColor' type='SFColor'/>
+
+      <![CDATA[
+      ecmascript:
+
+
+      function initialize()
+      {
+      	lightBulbColor = new SFColor (1, .2, .1); // red-ish
+      }
+      function buttonOver (value)
+      {
+      	if (value) lightBulbColor = new SFColor (.2, 1, 0.2); // green
+      	else lightBulbColor = new SFColor (.3, .3, 1); // blue-ish
+      	if (value) coneLightColor = new SFColor (1, 0, 1); // magenta
+      	else coneLightColor = new SFColor (0, 1, 1); // cyan
+      }
+	]]>
+    </Script>
+
+    <ROUTE fromField='isActive' fromNode='ButtonTouch' toField='buttonOver' toNode='ControlScript'/>
+    <ROUTE fromField='lightBulbColor' fromNode='ControlScript' toField='diffuseColor' toNode='LightBulbMaterial'/>
+    <ROUTE fromField='coneLightColor' fromNode='ControlScript' toField='diffuseColor' toNode='ColorConeMaterial'/>
+  </Scene>
+</X3D>

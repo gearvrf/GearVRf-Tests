@@ -1,0 +1,194 @@
+<x3d width='500px' height='400px'>
+    <scene>
+
+        <PointLight DEF="redPL" color='1 0 0' on="FALSE"/>
+        <PointLight DEF="greenPL" color='0 1 0' on="FALSE"/>
+        <PointLight DEF="bluePL" color='0 0 1' on="FALSE"/>
+        <SpotLight direction='0 -1 0'/>
+
+        <transform DEF="sphere1" translation="1.5 1 -6" rotation="0 1 0 0">
+	        <shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="lattitudelongitude.png" repeatS="TRUE" repeatT="TRUE"/>
+					<TextureTransform center='.5 .5' rotation='0' scale='1 1' translation='0 0'/>
+				</Appearance>
+				<Sphere/>
+	        </shape>
+        </transform>
+    
+        <timeSensor DEF="timeSphere1" cycleInterval="6" loop="false"></timeSensor>
+        <OrientationInterpolator DEF="rotateSphere1" key="0 0.25 0.5 0.75 1" keyValue="0 1 0 0   0 1 0 1.57   0 1 0 3.14    0 1 0 4.71    0 1 0 6.28"></OrientationInterpolator>
+        
+
+        <Transform DEF="buttonAssembley" translation="-2.25 0 -7" rotation="0 1 0 0">
+            <Transform DEF="button1" translation="0 0 0" rotation="0 1 0 0" scale='3.2 1.6 1'>
+                <TouchSensor DEF='TouchSensor01-SENSOR'/>
+                <shape>
+                    <Appearance>
+                        <Material diffuseColor="1 1 1"/>
+                        <ImageTexture url="rotatebutton.png" repeatS="TRUE" repeatT="TRUE"/>
+                    </Appearance>
+                    <Box/>
+                </shape>
+            </Transform>
+	        <Transform translation='0 0 -.5'>
+                <shape>
+                    <Appearance>
+                        <Material diffuseColor=".6 .6 .6"/>
+                    </Appearance>
+                    <IndexedFaceSet
+                        coordIndex='0 1 2 -1    0 3 1 -1'
+                        texCoordIndex='0 1 2 -1   0 3 1 -1'
+                        normalIndex='0 0 0 -1   0 0 0 -1'
+                    >
+                        <Coordinate point='-2 -1 -0.0    2 1 -0.0    -2 1 0    2 -1 0' />
+                        <TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+                        <Normal vector='0 0 1'/>
+                    </IndexedFaceSet>
+                </shape>
+	        </Transform>
+        </Transform>
+
+        <ROUTE fromNode="timeSphere1" fromField ="fraction_changed" toNode="rotateSphere1" toField="set_fraction"/>
+        <ROUTE fromNode="rotateSphere1" fromField ="value_changed" toNode="sphere1" toField="set_rotation"/>
+
+	<ROUTE fromNode='TouchSensor01-SENSOR' fromField='isActive' toNode='timeSphere1' toField='set_enabled'/>
+
+        <timeSensor DEF="timeButton1" cycleInterval="6.5" loop="false"></timeSensor>
+        <PositionInterpolator DEF="positionButton" key="0 0.125 0.875 1" keyValue="0 0 0   0 0 -.8   0 0 -.8    0 0 0"/>
+
+        <ROUTE fromNode="timeButton1" fromField ="fraction_changed" toNode="positionButton" toField="set_fraction"/>
+        <ROUTE fromNode="positionButton" fromField ="value_changed" toNode="button1" toField="set_translation"/>
+
+	<ROUTE fromNode='TouchSensor01-SENSOR' fromField='isActive' toNode='timeButton1' toField='set_enabled'/>
+
+
+	<!--  LIGHTS  -->
+	<Transform DEF="redButtonAssembley" translation="-2.3 -2.75 -7" rotation="0 1 0 0" scale='.5 .5 .5'>
+		<Transform DEF="redButton" translation="0 0 0" rotation="0 1 0 0" scale='3.2 1.6 1'>
+			<TouchSensor DEF='redLightSensor'/>
+	                <shape>
+	                    <Appearance>
+	                        <Material diffuseColor="1 1 1"/>
+	                        <ImageTexture url="red.jpg" repeatS="TRUE" repeatT="TRUE"/>
+	                    </Appearance>
+	                    <Box/>
+	                </shape>
+		</Transform>
+		<Transform translation='0 0 -.5'>
+	                <shape>
+	                    <Appearance>
+	                        <Material diffuseColor=".6 .6 .6"/>
+	                    </Appearance>
+	                    <IndexedFaceSet
+	                        coordIndex='0 1 2 -1    0 3 1 -1'
+	                        texCoordIndex='0 1 2 -1   0 3 1 -1'
+	                        normalIndex='0 0 0 -1   0 0 0 -1'
+	                    >
+	                        <Coordinate point='-2 -1 -0.0    2 1 -0.0    -2 1 0    2 -1 0' />
+	                        <TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+	                        <Normal vector='0 0 1'/>
+	                    </IndexedFaceSet>
+	                </shape>
+		</Transform>
+	</Transform>
+	<Transform DEF="greenButtonAssembley" translation="0 -2.75 -7" rotation="0 1 0 0" scale='.5 .5 .5'>
+		<Transform DEF="greenButton" translation="0 0 0" rotation="0 1 0 0" scale='3.2 1.6 1'>
+			<TouchSensor DEF='greenLightSensor'/>
+	                <shape>
+	                    <Appearance>
+	                        <Material diffuseColor="1 1 1"/>
+	                        <ImageTexture url="green.jpg" repeatS="TRUE" repeatT="TRUE"/>
+	                    </Appearance>
+	                    <Box/>
+	                </shape>
+		</Transform>
+		<Transform translation='0 0 -.5'>
+	                <shape>
+	                    <Appearance>
+	                        <Material diffuseColor=".6 .6 .6"/>
+	                    </Appearance>
+	                    <IndexedFaceSet
+	                        coordIndex='0 1 2 -1    0 3 1 -1'
+	                        texCoordIndex='0 1 2 -1   0 3 1 -1'
+	                        normalIndex='0 0 0 -1   0 0 0 -1'
+	                    >
+	                        <Coordinate point='-2 -1 -0.0    2 1 -0.0    -2 1 0    2 -1 0' />
+	                        <TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+	                        <Normal vector='0 0 1'/>
+	                    </IndexedFaceSet>
+	                </shape>
+		</Transform>
+	</Transform>
+	<Transform DEF="blueButtonAssembley" translation="2.3 -2.75 -7" rotation="0 1 0 0" scale='.5 .5 .5'>
+		<Transform DEF="blueButton" translation="0 0 0" rotation="0 1 0 0" scale='3.2 1.6 1'>
+			<TouchSensor DEF='blueLightSensor'/>
+	                <shape>
+	                    <Appearance>
+	                        <Material diffuseColor="1 1 1"/>
+	                        <ImageTexture url="blue.jpg" repeatS="TRUE" repeatT="TRUE"/>
+	                    </Appearance>
+	                    <Box/>
+	                </shape>
+		</Transform>
+		<Transform translation='0 0 -.5'>
+	                <shape>
+	                    <Appearance>
+	                        <Material diffuseColor=".6 .6 .6"/>
+	                    </Appearance>
+	                    <IndexedFaceSet
+	                        coordIndex='0 1 2 -1    0 3 1 -1'
+	                        texCoordIndex='0 1 2 -1   0 3 1 -1'
+	                        normalIndex='0 0 0 -1   0 0 0 -1'
+	                    >
+	                        <Coordinate point='-2 -1 -0.0    2 1 -0.0    -2 1 0    2 -1 0' />
+	                        <TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+	                        <Normal vector='0 0 1'/>
+	                    </IndexedFaceSet>
+	                </shape>
+		</Transform>
+	</Transform>
+
+
+    <!--  Red Light -->
+    <TimeSensor DEF="redButtonTimer" cycleInterval=".5" loop="false"/>
+    <PositionInterpolator DEF="redButtonPos" key="0 .5 1" keyValue="0 0 0   0 0 -.8   0 0 0"/>
+
+    <BooleanToggle DEF='redToggler'/>
+    <ROUTE fromField='toggle_changed' fromNode='redToggler' toField='on' toNode='redPL'/>
+	<ROUTE fromNode='redLightSensor' fromField='isActive' toField='set_boolean' toNode='redToggler'/>
+
+	<ROUTE fromNode="redButtonTimer" fromField ="fraction_changed" toNode="redButtonPos" toField="set_fraction"/>
+    <ROUTE fromNode="redButtonPos" fromField ="value_changed" toNode="redButton" toField="set_translation"/>
+    <ROUTE fromNode='redLightSensor' fromField='isActive'  toNode='redButtonTimer' toField='set_enabled'/>
+
+
+    <!--  Green Light -->
+    <TimeSensor DEF="greenButtonTimer" cycleInterval=".5" loop="false"/>
+    <PositionInterpolator DEF="greenButtonPos" key="0 .5 1" keyValue="0 0 0   0 0 -.8   0 0 0"/>
+
+    <BooleanToggle DEF='greenToggler'/>
+    <ROUTE fromField='toggle_changed' fromNode='greenToggler' toField='on' toNode='greenPL'/>
+	<ROUTE fromNode='greenLightSensor' fromField='isActive' toField='set_boolean' toNode='greenToggler'/>
+
+	<ROUTE fromNode="greenButtonTimer" fromField ="fraction_changed" toNode="greenButtonPos" toField="set_fraction"/>
+    <ROUTE fromNode="greenButtonPos" fromField ="value_changed" toNode="greenButton" toField="set_translation"/>
+    <ROUTE fromNode='greenLightSensor' fromField='isActive'  toNode='greenButtonTimer' toField='set_enabled'/>
+
+
+    <!--  Blue Light -->
+    <TimeSensor DEF="blueButtonTimer" cycleInterval=".5" loop="false"/>
+    <PositionInterpolator DEF="blueButtonPos" key="0 .5 1" keyValue="0 0 0   0 0 -.8   0 0 0"/>
+
+    <BooleanToggle DEF='blueToggler'/>
+    <ROUTE fromField='toggle_changed' fromNode='blueToggler' toField='on' toNode='bluePL'/>
+	<ROUTE fromNode='blueLightSensor' fromField='isActive' toField='set_boolean' toNode='blueToggler'/>
+
+	<ROUTE fromNode="blueButtonTimer" fromField ="fraction_changed" toNode="blueButtonPos" toField="set_fraction"/>
+    <ROUTE fromNode="blueButtonPos" fromField ="value_changed" toNode="blueButton" toField="set_translation"/>
+    <ROUTE fromNode='blueLightSensor' fromField='isActive'  toNode='blueButtonTimer' toField='set_enabled'/>
+
+
+    </scene>
+</x3d>

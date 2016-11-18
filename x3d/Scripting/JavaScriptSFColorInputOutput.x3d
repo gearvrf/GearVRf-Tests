@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <Scene>
+  
+    <Viewpoint position='0 0 0'/>
+    <DirectionalLight DEF='PL1'/>
+
+      <Transform translation='0 -.25 -6'>
+        <TouchSensor DEF='ButtonTouch' description='touch to toggle'/>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='.5 .4 .4'/>
+          </Appearance>
+          <Sphere/>
+        </Shape>
+      </Transform>
+
+      <Transform DEF="transformedObj" translation='2 -.25 -6'>
+        <Shape>
+          <Appearance>
+            <Material DEF="myMaterial" diffuseColor='.7 .8 .9'/>
+		    <ImageTexture url="texture_rotation_tblrm.jpg" repeatS="TRUE" repeatT="TRUE"/>
+          </Appearance>
+          <Cylinder/>
+        </Shape>
+      </Transform>
+    
+    
+        <Script DEF='ControlScript'>
+          <field accessType='inputOnly' name='buttonOver' type='SFBool'/>
+          <field accessType='inputOnly' name='objColor' type='SFColor'/>
+          <field accessType='outputOnly' name='orientation' type='SFRotation'/>
+          <field accessType='outputOnly' name='move' type='SFVec3f'/>
+          <field accessType='outputOnly' name='myColor' type='SFColor'/>
+    
+          <![CDATA[
+          ecmascript:
+          function buttonOver (value)
+          {
+          	red = objColor.getRed() + .4;
+          	green = objColor.getGreen();
+          	if (red > 1.0) red -= 1.0;
+          	else {
+          	    green += .35;
+          	    if (green > 1.0) green -= 1.0;
+          	}
+
+          	if (value) orientation = new SFRotation (1, 0, 0, 1.2); //
+          	else orientation = new SFRotation (0, 0, 1, -.4); //
+          	move = new SFVec3f(-2, -.25, -6);
+          	myColor = new SFColor( red, green, objColor.getBlue() );
+          }
+
+    	]]>
+        </Script>
+    
+        <ROUTE fromField='isOver' fromNode='ButtonTouch' toField='buttonOver' toNode='ControlScript'/>
+        <ROUTE fromField='diffuseColor' fromNode='myMaterial' toField='objColor' toNode='ControlScript'/>
+        <ROUTE fromField='orientation' fromNode='ControlScript' toField='rotation' toNode='transformedObj'/>
+        <ROUTE fromField='move' fromNode='ControlScript' toField='translation' toNode='transformedObj'/>
+        <ROUTE fromField='myColor' fromNode='ControlScript' toField='diffuseColor' toNode='myMaterial'/>
+
+  </Scene>
+</X3D>

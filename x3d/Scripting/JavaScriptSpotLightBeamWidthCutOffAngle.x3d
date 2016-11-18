@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <Scene>
+  
+    <Viewpoint position='0 0 0'/>
+    <SpotLight DEF='SL1' location="0 0 -1"/>
+    <DirectionalLight intensity=".1" color='.5 1 .5'/>
+
+      <Transform translation='0 -.5 -6'>
+        <TouchSensor DEF='ButtonTouch' description='touch to toggle'/>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='.8 .8 .8'/>
+          </Appearance>
+          <Sphere/>
+        </Shape>
+      </Transform>
+      <Transform translation='-2.5 -.5 -6'>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='1 1 1'/>
+          </Appearance>
+          <Cylinder/>
+        </Shape>
+      </Transform>
+      <Transform translation='2.5 -.5 -6'>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='1 1 1'/>
+          </Appearance>
+          <Cone/>
+        </Shape>
+      </Transform>
+
+
+    <Script DEF='ControlScript'>
+      <field accessType='inputOnly' name='buttonOver' type='SFBool'/>
+      <field accessType='inputOutput' name='newBeamWidth' type='SFFloat'/>
+      <field accessType='inputOutput' name='newCutOffAngle' type='SFFloat'/>
+
+      <![CDATA[
+      
+      ecmascript:
+      function buttonOver (value)
+      {
+      	if (value) {
+      	    if (newBeamWidth.getValue() < .2) newBeamWidth.setValue( Math.PI / 4 );
+            else newBeamWidth.setValue( newBeamWidth.getValue() * .8 );
+      	    if (newCutOffAngle.getValue() < .2) newCutOffAngle.setValue( Math.PI / 2 );
+            else newCutOffAngle.setValue( newCutOffAngle.getValue() * .8 );
+      	}
+      }
+	]]>
+    </Script>
+
+    <ROUTE fromField='isOver' fromNode='ButtonTouch' toField='buttonOver' toNode='ControlScript'/>
+    <ROUTE fromField='beamWidth' fromNode='SL1' toField='newBeamWidth' toNode='ControlScript'/>
+    <ROUTE fromField='cutOffAngle' fromNode='SL1' toField='newCutOffAngle' toNode='ControlScript'/>
+    <ROUTE fromField='newBeamWidth' fromNode='ControlScript' toField='beamWidth' toNode='SL1'/>
+    <ROUTE fromField='newCutOffAngle' fromNode='ControlScript' toField='cutOffAngle' toNode='SL1'/>
+  </Scene>
+</X3D>
