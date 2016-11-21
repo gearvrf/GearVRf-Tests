@@ -153,6 +153,7 @@ public class TextureTests
         model.getRenderData().setShaderTemplate(GVRPhongShader.class);
         model.getTransform().setPositionZ(-2.0f);
         scene.addSceneObject(model);
+        scene.bindShaders();
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "testLayeredDiffuseTexture", mWaiter, mDoCompare);
     }
@@ -186,6 +187,7 @@ public class TextureTests
         model.getRenderData().setShaderTemplate(GVRPhongShader.class);
         model.getTransform().setPositionZ(-2.0f);
         scene.addSceneObject(model);
+        scene.bindShaders();
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "testRepeatTexture", mWaiter, mDoCompare);
     }
@@ -211,6 +213,7 @@ public class TextureTests
         model.getRenderData().setShaderTemplate(GVRPhongShader.class);
         model.getTransform().setPositionZ(-2.0f);
         scene.addSceneObject(model);
+        scene.bindShaders();
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "testSpecularTexture", mWaiter, mDoCompare);
     }
@@ -239,6 +242,7 @@ public class TextureTests
         model.getRenderData().setShaderTemplate(GVRPhongShader.class);
         model.getTransform().setPositionZ(-2.0f);
         scene.addSceneObject(model);
+        scene.bindShaders();
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "testLayeredSpecularTexture", mWaiter, mDoCompare);
     }
@@ -276,6 +280,7 @@ public class TextureTests
         model.getRenderData().setShaderTemplate(GVRPhongShader.class);
         model.getTransform().setPositionZ(-2.0f);
         scene.addSceneObject(model);
+        scene.bindShaders();
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "testDiffuseSpecularTexture", mWaiter, mDoCompare);
     }
@@ -314,6 +319,7 @@ public class TextureTests
         model.getRenderData().setShaderTemplate(GVRPhongShader.class);
         model.getTransform().setPositionZ(-2.0f);
         scene.addSceneObject(model);
+        scene.bindShaders();
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "testDiffuseNormalTexture", mWaiter, mDoCompare);
     }
@@ -330,7 +336,7 @@ public class TextureTests
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
         try
         {
-            sceneObj = ctx.getAssetLoader().loadModel("jassimp/normal_diffuse_specular_lightmap.fbx", scene);
+            sceneObj = ctx.getAssetLoader().loadModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/asset-tests/app/src/main/assets/jassimp/normal_diffuse_specular_lightmap.fbx", scene);
             GVRTransform trans = sceneObj.getTransform();
             trans.setScale(0.006f, 0.006f, 0.006f);
             trans.rotateByAxis(90.0f, 1, 0, 0);
@@ -356,7 +362,7 @@ public class TextureTests
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
         try
         {
-            sceneObj = ctx.getAssetLoader().loadModel("jassimp/normal_lightmap.fbx", scene);
+            sceneObj = ctx.getAssetLoader().loadModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/asset-tests/app/src/main/assets/jassimp/normal_lightmap.fbx", scene);
             GVRTransform trans = sceneObj.getTransform();
             trans.setScale(0.006f, 0.006f, 0.006f);
             trans.rotateByAxis(90.0f, 1, 0, 0);
@@ -382,7 +388,7 @@ public class TextureTests
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
         try
         {
-            sceneObj = ctx.getAssetLoader().loadModel("jassimp/specular_lightmap.fbx", scene);
+            sceneObj = ctx.getAssetLoader().loadModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/asset-tests/app/src/main/assets/jassimp/specular_lightmap.fbx", scene);
             GVRTransform trans = sceneObj.getTransform();
             trans.rotateByAxis(90.0f, 1, 0, 0);
             centerModel(sceneObj);
