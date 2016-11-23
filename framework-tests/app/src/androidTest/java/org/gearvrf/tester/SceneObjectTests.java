@@ -14,6 +14,7 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSpotLight;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.IAssetEvents;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRCylinderSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
@@ -24,14 +25,18 @@ import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
+import org.gearvrf.utility.Log;
 import org.joml.Vector3f;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.FileNotFoundException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
+
+import static java.lang.Thread.sleep;
 
 @RunWith(AndroidJUnit4.class)
 public class SceneObjectTests
@@ -44,7 +49,6 @@ public class SceneObjectTests
     private GVRMaterial mBlueMtl;
     private GVRMaterial mCubeMapMtl;
     private boolean mDoCompare = true;
-
 
     @Rule
     public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
@@ -64,12 +68,10 @@ public class SceneObjectTests
         mTestUtils = new GVRTestUtils(activity);
         mTestUtils.waitForOnInit();
         mWaiter = new Waiter();
-
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
-        Future<GVRTexture> tex = ctx.loadFutureCubemapTexture(new GVRAndroidResource(ctx, R.raw.beach));
-
         mWaiter.assertNotNull(scene);
+        Future<GVRTexture> tex = ctx.loadFutureCubemapTexture(new GVRAndroidResource(ctx, R.raw.beach));
         mBlueMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
         mCubeMapMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Cubemap.ID);
 
@@ -78,11 +80,26 @@ public class SceneObjectTests
         mBackground.getRenderData().setShaderTemplate(GVRPhongShader.class);
         mBackground.setName("background");
         mBlueMtl.setDiffuseColor(0, 0, 1, 1);
+        try
+        {
+            waitForTexture(tex);
+        }
+        catch (InterruptedException ex)
+        {
+            mWaiter.fail(ex);
+        }
         mCubeMapMtl.setMainTexture(tex);
         mRoot = scene.getRoot();
         mWaiter.assertNotNull(mRoot);
     }
 
+    private void waitForTexture(Future<GVRTexture> futureTex) throws InterruptedException
+    {
+        while (!futureTex.isDone())
+        {
+            sleep(200);
+        }
+    }
 
     @Test
     public void canClearEmptyScene() throws TimeoutException
@@ -133,7 +150,7 @@ public class SceneObjectTests
         mRoot.addChildObject(sphere1);
         scene.addSceneObject(sphere2);
         scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mWaiter.assertNotNull(scene.getSceneObjectByName("sphere2"));
         mWaiter.assertNotNull(scene.getSceneObjectByName("sphere1"));
         mTestUtils.screenShot(getClass().getSimpleName(), "canDisplaySpheres", mWaiter, mDoCompare);
@@ -155,7 +172,7 @@ public class SceneObjectTests
         mRoot.addChildObject(cube1);
         scene.addSceneObject(cube2);
         scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mWaiter.assertNotNull(scene.getSceneObjectByName("cube2"));
         mWaiter.assertNotNull(scene.getSceneObjectByName("cube1"));
         mTestUtils.screenShot(getClass().getSimpleName(), "canDisplayCubes", mWaiter, mDoCompare);
