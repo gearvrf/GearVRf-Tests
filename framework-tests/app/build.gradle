@@ -61,7 +61,10 @@ android {
     }
 }
 
+project.ext.jomlVersion = "1.9.1-SNAPSHOT"
+
 dependencies {
+    compile "org.joml:joml-android:${jomlVersion}"
     compile(name:'framework-debug', ext:'aar')
 	compile(name: 'backend_oculus-debug', ext: 'aar')
     androidTestCompile 'com.android.support:support-annotations:23.0.1'
