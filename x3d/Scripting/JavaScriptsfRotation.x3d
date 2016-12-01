@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <Scene>
+  
+    <Viewpoint position='0 0 0'/>
+    <DirectionalLight DEF='DL1' direction='0 0 -1'/>
+
+      <Transform translation='0 -.25 -6'>
+        <TouchSensor DEF='ButtonTouch' description='touch to toggle'/>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='.8 .8 .8'/>
+          </Appearance>
+          <Cylinder/>
+        </Shape>
+      </Transform>
+      <Transform DEF='sphere1' translation='-2 -.5 -5' rotation='0 1 0 0'>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='1 1 1'/>
+            <ImageTexture url='"lattitudelongitude.png"'/>
+          </Appearance>
+          <Sphere/>
+        </Shape>
+      </Transform>
+      <Transform DEF='sphere2' translation='2 -.5 -5' rotation='0 1 0 0'>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='1 1 1'/>
+            <ImageTexture url='"lattitudelongitude.png"'/>
+          </Appearance>
+          <Sphere/>
+        </Shape>
+      </Transform>
+      <Transform DEF='sphere3' translation='0 -3 -3.5' rotation='.6 0 .8 0'>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='1 1 1'/>
+            <ImageTexture url='"lattitudelongitude.png"'/>
+          </Appearance>
+          <Sphere/>
+        </Shape>
+      </Transform>
+
+
+    <Script DEF='ControlScript'>
+      <field accessType='inputOnly' name='buttonOver' type='SFBool'/>
+      <field accessType='inputOutput' name='rotation1' type='SFRotation'/>
+      <field accessType='inputOutput' name='rotation2' type='SFRotation'/>
+      <field accessType='inputOutput' name='rotation3' type='SFRotation'/>
+
+      <![CDATA[
+      ecmascript:
+      function buttonOver (value)
+      {
+
+      	if (value) {
+      		angle1 = rotation1.getAngle() + .2;
+		    rotation1.setAngle(angle1);
+      		angle2 = rotation2.getAngle() + .3;
+		    rotation2.setAngle(angle2);
+      	}
+
+      	angle3 = rotation3.getAngle() + .1;
+		rotation3.setAngle(angle3);
+      }
+
+	]]>
+    </Script>
+
+    <ROUTE fromField='isOver' fromNode='ButtonTouch' toField='buttonOver' toNode='ControlScript'/>
+
+    <ROUTE fromField='rotation' fromNode='sphere1' toField='rotation1' toNode='ControlScript'/>
+    <ROUTE fromField='rotation' fromNode='sphere2' toField='rotation2' toNode='ControlScript'/>
+    <ROUTE fromField='rotation' fromNode='sphere3' toField='rotation3' toNode='ControlScript'/>
+
+    <ROUTE fromField='rotation1' fromNode='ControlScript' toField='rotation' toNode='sphere1'/>
+    <ROUTE fromField='rotation2' fromNode='ControlScript' toField='rotation' toNode='sphere2'/>
+    <ROUTE fromField='rotation3' fromNode='ControlScript' toField='rotation' toNode='sphere3'/>
+
+  </Scene>
+</X3D>

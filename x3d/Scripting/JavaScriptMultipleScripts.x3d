@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <Scene>
+  
+    <Viewpoint position='0 0 0'/>
+    <PointLight DEF='PL1'/>
+
+      <Transform translation='-1 -.25 -6'>
+        <TouchSensor DEF='ButtonTouchSphere' description='touch to toggle'/>
+        <Shape>
+          <Appearance>
+            <Material DEF="myMaterial" diffuseColor='1 1 1'/>
+          </Appearance>
+          <Sphere/>
+        </Shape>
+      </Transform>
+
+      <Transform translation='1 -.25 -6'>
+        <TouchSensor DEF='ButtonTouchCylinder' description='touch to toggle'/>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='1 1 1'/>
+          </Appearance>
+          <Cylinder/>
+        </Shape>
+      </Transform>
+    
+
+    <Script DEF='ControlMaterialProperties'>
+      <field accessType='inputOnly' name='buttonOver' type='SFBool'/>
+      <field accessType='outputOnly' name='dColor' type='SFColor'/>
+      <field accessType='outputOnly' name='sColor' type='SFColor'/>
+      <field accessType='outputOnly' name='eColor' type='SFColor'/>
+
+      <![CDATA[
+      ecmascript:
+      function buttonOver (value)
+      {
+      	if (value) dColor = new SFColor (.2, 1, 0.2); // green
+      	else dColor = new SFColor (.5, .5, 1); // blue-ish
+      	if (value) sColor = new SFColor (.1, .1, .1); // little white specular color
+      	else sColor = new SFColor (0, 0, 0); // black specular color
+      	if (value) eColor = new SFColor (1, 0, 0); // red emissive color
+      	else eColor = new SFColor (1, 0, 1); // magenta emissive color
+      }
+	]]>
+    </Script>
+
+    <ROUTE fromField='isOver' fromNode='ButtonTouchCylinder' toField='buttonOver' toNode='ControlMaterialProperties'/>
+    <ROUTE fromField='dColor' fromNode='ControlMaterialProperties' toField='diffuseColor' toNode='myMaterial'/>
+    <ROUTE fromField='sColor' fromNode='ControlMaterialProperties' toField='specularColor' toNode='myMaterial'/>
+    <ROUTE fromField='eColor' fromNode='ControlMaterialProperties' toField='emissiveColor' toNode='myMaterial'/>
+
+    
+        <Script DEF='ControlLightColor'>
+          <field accessType='inputOnly' name='buttonOver' type='SFBool'/>
+          <field accessType='outputOnly' name='lightColor' type='SFColor'/>
+
+          <![CDATA[
+          ecmascript:
+          function buttonOver (value)
+          {
+          	if (value) lightColor = new SFColor (1, .5, .5); // red
+          	else lightColor = new SFColor (1, 1, 0); // yellow
+          }
+    	]]>
+        </Script>
+    
+        <ROUTE fromField='isOver' fromNode='ButtonTouchSphere' toField='buttonOver' toNode='ControlLightColor'/>
+        <ROUTE fromField='lightColor' fromNode='ControlLightColor' toField='color' toNode='PL1'/>
+
+  </Scene>
+</X3D>
