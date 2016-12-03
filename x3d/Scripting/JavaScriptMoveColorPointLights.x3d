@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <Scene>
+  
+    <Viewpoint position='0 0 0'/>
+
+    <PointLight DEF='PLred' location='-5 1 -4' color='1 0 0'/>
+    <PointLight DEF='PLgreen' location='0 5 -3' color='0 10 0'/>
+    <PointLight DEF='PLblue' location='0 2 0' color='0 0 1'/>
+
+      <Transform translation='0 -.25 -6'>
+        <TouchSensor DEF='ButtonTouch' description='touch to toggle'/>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='1 1 1'/>
+          </Appearance>
+          <Sphere/>
+        </Shape>
+      </Transform>
+      <Transform translation='-1.75 -.5 -6'>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='1 1 1'/>
+          </Appearance>
+          <Cylinder/>
+        </Shape>
+      </Transform>
+      <Transform translation='1.75 -.5 -6'>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='1 1 1'/>
+          </Appearance>
+          <Cone/>
+        </Shape>
+      </Transform>
+    
+
+    <Script DEF='ControlScript'>
+      <field accessType='inputOnly' name='buttonOver' type='SFBool'/>
+      <field accessType='inputOutput' name='redLocation' type='SFVec3f'/>
+      <field accessType='inputOutput' name='greenLocation' type='SFVec3f'/>
+      <field accessType='inputOutput' name='blueLocation' type='SFVec3f'/>
+
+      <![CDATA[
+      ecmascript:
+      function buttonOver (value)
+      {
+      	if (value) {
+      		x = redLocation.getX() + 1;
+		    redLocation.setX(x);
+      		y = greenLocation.getY() - 1;
+		    greenLocation.setY(y);
+      		z = blueLocation.getZ() - 1;
+		    blueLocation.setZ(z);
+      	}
+      }
+	]]>
+    </Script>
+
+    <ROUTE fromField='isOver' fromNode='ButtonTouch' toField='buttonOver' toNode='ControlScript'/>
+    <ROUTE fromField='location' fromNode='PLred' toField='redLocation' toNode='ControlScript'/>
+    <ROUTE fromField='redLocation' fromNode='ControlScript' toField='location' toNode='PLred'/>
+    <ROUTE fromField='location' fromNode='PLgreen' toField='greenLocation' toNode='ControlScript'/>
+    <ROUTE fromField='greenLocation' fromNode='ControlScript' toField='location' toNode='PLgreen'/>
+    <ROUTE fromField='location' fromNode='PLblue' toField='blueLocation' toNode='ControlScript'/>
+    <ROUTE fromField='blueLocation' fromNode='ControlScript' toField='location' toNode='PLblue'/>
+  </Scene>
+</X3D>
