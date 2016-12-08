@@ -9,6 +9,10 @@ import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRBitmapTexture;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRNotifications;
+import org.gearvrf.GVRRenderPass;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.unittestutils.GVRTestUtils;
@@ -88,5 +92,57 @@ public class MiscTests {
         final Integer id = f.get(5, TimeUnit.SECONDS);
 
         mWaiter.assertTrue(0 != id);
+    }
+
+
+    /**
+     * Used to crash; verifies it doesn't anymore.
+     * @throws TimeoutException
+     * @throws InterruptedException
+     * @throws ExecutionException
+     */
+    @Test
+    public void stressRenderDataDirty() throws TimeoutException, InterruptedException, ExecutionException {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        final GVRScene scene = mTestUtils.getMainScene();
+
+        final Bitmap gearvr_logo = BitmapFactory.decodeResource(ctx.getActivity().getResources(), R.drawable.gearvr_logo);
+        final GVRMaterial material = new GVRMaterial(ctx);
+        final GVRMesh mesh = ctx.createQuad(4, 2);
+        final GVRRenderPass pass = new GVRRenderPass(ctx);
+        pass.setMaterial(material);
+
+        try {
+            for (int testRun = 0; testRun < 2000; ++testRun) {
+                GVRBitmapTexture t = new GVRBitmapTexture(ctx, gearvr_logo);
+
+                final GVRSceneObject so1 = new GVRSceneObject(ctx, 3, 2, t);
+                so1.getTransform().setPosition(0, 0, -3);
+                so1.getRenderData().setMaterial(material);
+                so1.getRenderData().setMesh(mesh);
+                so1.getRenderData().addPass(pass);
+                scene.addSceneObject(so1);
+
+                final GVRSceneObject so2 = new GVRSceneObject(ctx, 2, 1, t);
+                so2.getTransform().setPosition(-1, -1, -3);
+                so2.getRenderData().setMaterial(material);
+                so2.getRenderData().setMesh(mesh);
+                so2.getRenderData().addPass(pass);
+                scene.addSceneObject(so2);
+
+                //dirty the render data; allocate a big buffer to create some memory pressure
+                //and have the gc run sooner
+                scene.clear();
+                byte[] b = new byte[1*1024*1024];
+                pass.setCullFace(GVRRenderPass.GVRCullFaceEnum.None);
+                final float[] texCoords = mesh.getTexCoords();
+                mesh.setVec2Vector("a_texcoord", texCoords);
+                material.setDiffuseColor(0, 0, 0, 0);
+                GVRNotifications.waitAfterStep();
+          }
+        } catch (final Throwable t) {
+            t.printStackTrace();
+            mWaiter.assertTrue(false);
+        }
     }
 }

@@ -31,7 +31,7 @@ class GVRTestableMain extends GVRMain{
     private static final String TAG = GVRTestableMain.class.getSimpleName();
     private static final int WAIT_DISABLED = -1;
     private GVRContext gvrContext;
-    private GVRScene mainScene;
+    private volatile GVRScene mainScene;
     private GVRMainMonitor mainMonitor;
     private boolean sceneRendered = false;
     private int framesRendered = 0;

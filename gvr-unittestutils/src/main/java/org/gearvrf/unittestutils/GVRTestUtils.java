@@ -88,6 +88,7 @@ public class GVRTestUtils implements GVRMainMonitor {
         if (gvrContext == null) {
             if (testableMain.isOnInitCalled()) {
                 gvrContext = testableMain.getGVRContext();
+                mainScene = gvrContext.getMainScene();
                 return gvrContext;
             }
             synchronized (onInitLock) {
