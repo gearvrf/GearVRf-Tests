@@ -71,8 +71,8 @@ public class ShadowTests
 
         mWaiter.assertNotNull(scene);
         scene.getMainCameraRig().setFarClippingDistance(20.0f);
-        //GVRMaterial material = GVRLightBase.getShadowMaterial(ctx);
-        //material.setFloat("shadow_far", 25.0f);
+        GVRMaterial material = GVRLightBase.getShadowMaterial(ctx);
+        material.setFloat("shadow_far", 25.0f);
         background = makeBackground(ctx);
         blue.setDiffuseColor(0, 0, 1, 1);
         red.setDiffuseColor(0.8f, 0, 0, 1);
@@ -342,17 +342,17 @@ public class ShadowTests
         floor.getTransform().setPosition(0, -2.0f, -2.0f);
 
         rightside.getRenderData().setMaterial(rightmtl);
-        //rightside.getRenderData().setCastShadows(false);
+        rightside.getRenderData().setCastShadows(false);
         rightside.getTransform().rotateByAxis(90, 0, 1, 0);
         rightside.getTransform().setPosition(-2.0f, 0.0f, -2.0f);
 
         leftside.getRenderData().setMaterial(leftmtl);
-        //leftside.getRenderData().setCastShadows(false);
+        leftside.getRenderData().setCastShadows(false);
         leftside.getTransform().rotateByAxis(-90, 0, 1, 0);
         leftside.getTransform().setPosition(2.0f, 0.0f, -2.0f);
 
         back.getRenderData().setMaterial(backmtl);
-        //back.getRenderData().setCastShadows(false);
+        back.getRenderData().setCastShadows(false);
         back.getTransform().setPosition(0.0f, 0.0f, -4.0f);
 
         background.addChildObject(floor);
