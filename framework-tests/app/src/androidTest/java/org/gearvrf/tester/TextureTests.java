@@ -180,14 +180,9 @@ public class TextureTests
         texparams.setWrapSType(GVRTextureParameters.TextureWrapType.GL_REPEAT);
         texparams.setWrapTType(GVRTextureParameters.TextureWrapType.GL_REPEAT);
 
-        float[] texcoords = mesh.getTexCoords();
         GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.colortex), texparams);
 
-        for (int i = 0; i < texcoords.length; i++)
-        {
-            texcoords[i] *= 2.0f;
-        }
-        mesh.setTexCoords(texcoords);
+        repeatTexcoords(mesh);
         mtl.setDiffuseColor(0.7f, 0.7f, 0.7f, 1);
         mtl.setSpecularColor(1, 1, 1, 1);
         mtl.setSpecularExponent(4.0f);
@@ -195,7 +190,6 @@ public class TextureTests
         model.getTransform().setPositionZ(-2.0f);
 
         GVRSceneObject rig = scene.getMainCameraRig().getOwnerObject();
-        rig.setName("camera_rig");
         rig.attachComponent(light);
         scene.addSceneObject(model);
         mTestUtils.waitForXFrames(3);
