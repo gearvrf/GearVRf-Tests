@@ -7,6 +7,7 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.IAssetEvents;
+import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.utility.FileNameUtils;
 
@@ -38,6 +39,11 @@ class AssetEventHandler implements IAssetEvents
         AssetErrors = errors;
         if (model != null)
         {
+            GVRAnimator animator = (GVRAnimator) model.getComponent(GVRAnimator.getComponentType());
+            if (animator != null)
+            {
+                animator.stop();
+            }
             mScene.addSceneObject(model);
             mTester.onAssetLoaded(model);
         }
@@ -88,7 +94,7 @@ class AssetEventHandler implements IAssetEvents
     public void centerModel(GVRSceneObject model)
     {
         GVRSceneObject.BoundingVolume bv = model.getBoundingVolume();
-        float sf = 1; // / bv.radius;
+        float sf = 1 / bv.radius;
         model.getTransform().setScale(sf, sf, sf);
         bv = model.getBoundingVolume();
         model.getTransform().setPosition(-bv.center.x, -bv.center.y, -bv.center.z - 1.5f * bv.radius);
