@@ -36,6 +36,7 @@ class GVRTestableMain extends GVRMain{
     private boolean sceneRendered = false;
     private int framesRendered = 0;
     private final Object waitXFramesLock = new Object();
+    private final Object waitForMonitor = new Object();
     private int waitForXFrames = WAIT_DISABLED;
 
     @Override
@@ -45,18 +46,21 @@ class GVRTestableMain extends GVRMain{
 
         //Freeze the camera rig for the tests
         mainScene.getMainCameraRig().setCameraRigType(GVRCameraRig.GVRCameraRigType.Freeze.ID);
-        if (mainMonitor != null) {
-            mainMonitor.onInitCalled(gvrContext, mainScene);
-        } else {
-            Log.d(TAG, "On Init callback is null when on init is called");
+        synchronized (waitForMonitor) {
+            if(mainMonitor == null) {
+                try {
+                    waitForMonitor.wait();
+                } catch (InterruptedException e) {
+                    Log.e(TAG,"Interrupted wait for main monitor");
+                }
+            }
         }
+        mainMonitor.onInitCalled(gvrContext, mainScene);
     }
 
     @Override
     public void onStep() {
-        if (mainMonitor != null) {
-            sceneRendered = true;
-        }
+        sceneRendered = true;
         synchronized (waitXFramesLock) {
             if (waitForXFrames != WAIT_DISABLED) {
                 framesRendered++;
@@ -71,7 +75,10 @@ class GVRTestableMain extends GVRMain{
     }
 
     public void setMainMonitor(GVRMainMonitor mainMonitor) {
-        this.mainMonitor = mainMonitor;
+        synchronized (waitForMonitor) {
+            this.mainMonitor = mainMonitor;
+            waitForMonitor.notifyAll();
+        }
     }
 
     public boolean isOnInitCalled() {

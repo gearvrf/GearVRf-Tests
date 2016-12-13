@@ -180,7 +180,6 @@ public class GVRTestUtils implements GVRMainMonitor {
         synchronized (onStepLock) {
             onStepLock.notifyAll();
         }
-        Log.d(TAG, "OnSceneRenderedCalled");
     }
 
     public void xFramesRendered() {
