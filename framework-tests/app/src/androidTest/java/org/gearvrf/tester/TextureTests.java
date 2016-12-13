@@ -98,12 +98,11 @@ public class TextureTests
     {
         float[] texcoords = mesh.getTexCoords();
 
-        mesh.setVec2Vector("a_texcoord1", texcoords);
         for (int i = 0; i < texcoords.length; i++)
         {
             texcoords[i] *= 2.0f;
         }
-        mesh.setVec2Vector("a_texcoord", texcoords);
+        mesh.setVec2Vector("a_texcoord1", texcoords);
     }
 
     @Test
@@ -180,8 +179,13 @@ public class TextureTests
         texparams.setWrapTType(GVRTextureParameters.TextureWrapType.GL_REPEAT);
 
         GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.colortex), texparams);
+        float[] texcoords = mesh.getTexCoords();
 
-        repeatTexcoords(mesh);
+        for (int i = 0; i < texcoords.length; i++)
+        {
+            texcoords[i] *= 2.0f;
+        }
+        mesh.setVec2Vector("a_texcoord", texcoords);
         mtl.setDiffuseColor(0.7f, 0.7f, 0.7f, 1);
         mtl.setSpecularColor(1, 1, 1, 1);
         mtl.setSpecularExponent(4.0f);
