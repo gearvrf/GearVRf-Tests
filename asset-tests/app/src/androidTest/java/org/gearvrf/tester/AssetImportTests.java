@@ -37,7 +37,7 @@ public class AssetImportTests
     private Waiter mWaiter;
     private GVRSceneObject mRoot;
     private GVRSceneObject mBackground;
-    private boolean mDoCompare = false;
+    private boolean mDoCompare = true;
     private AssetEventHandler mHandler;
 
     @Rule
@@ -94,8 +94,8 @@ public class AssetImportTests
         mHandler.checkAssetErrors(mWaiter, 0, 0);
         scene.addSceneObject(model);
         mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
-        mTestUtils.waitForXFrames(2);
-        mTestUtils.screenShot("AssetTests", "canLoadModel", mWaiter, mDoCompare);
+        mTestUtils.waitForXFrames(3);
+        mTestUtils.screenShot("AssetImportTests", "canLoadModel", mWaiter, mDoCompare);
     }
 
     @Test
@@ -115,14 +115,12 @@ public class AssetImportTests
         }
         mTestUtils.waitForAssetLoad();
         mHandler.checkAssetLoaded(mWaiter, null, 4);
-        mWaiter.assertNull(scene.getSceneObjectByName("astro_boy.dae"));
         mWaiter.assertTrue(model.getChildrenCount() > 0);
         mHandler.checkAssetErrors(mWaiter, 0, 0);
         mHandler.centerModel(model);
-        scene.addSceneObject(model);
         mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
-        mTestUtils.waitForXFrames(2);
-        mTestUtils.screenShot("AssetTests", "canLoadModelWithHandler", mWaiter, false);
+        mTestUtils.waitForXFrames(3);
+        mTestUtils.screenShot("AssetImportTests", "canLoadModelWithHandler", mWaiter, mDoCompare);
     }
 
     @Test

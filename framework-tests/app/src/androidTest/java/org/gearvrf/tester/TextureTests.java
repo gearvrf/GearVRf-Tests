@@ -98,12 +98,11 @@ public class TextureTests
     {
         float[] texcoords = mesh.getTexCoords();
 
-        mesh.setVec2Vector("a_texcoord1", texcoords);
         for (int i = 0; i < texcoords.length; i++)
         {
             texcoords[i] *= 2.0f;
         }
-        mesh.setVec2Vector("a_texcoord", texcoords);
+        mesh.setVec2Vector("a_texcoord1", texcoords);
     }
 
     @Test
@@ -149,7 +148,7 @@ public class TextureTests
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
-        GVRMaterial layeredMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
+        GVRMaterial layeredMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.PhongLayered.ID);
         GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.colortex));
         GVRTexture tex2 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.specularring));
         GVRSceneObject model = new GVRCubeSceneObject(ctx, true, layeredMtl);
@@ -157,7 +156,7 @@ public class TextureTests
 
         layeredMtl.setTexture("diffuseTexture", tex1);
         layeredMtl.setTexture("diffuseTexture1", tex2);
-        layeredMtl.setFloat("diffuseTexture1_blendop", 1);
+        layeredMtl.setInt("diffuseTexture1_blendop", 1);
         layeredMtl.setTexCoord("diffuseTexture", "a_texcoord", "diffuse_coord");
         layeredMtl.setTexCoord("diffuseTexture1", "a_texcoord", "diffuse_coord1");
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
@@ -181,8 +180,13 @@ public class TextureTests
         texparams.setWrapTType(GVRTextureParameters.TextureWrapType.GL_REPEAT);
 
         GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.colortex), texparams);
+        float[] texcoords = mesh.getTexCoords();
 
-        repeatTexcoords(mesh);
+        for (int i = 0; i < texcoords.length; i++)
+        {
+            texcoords[i] *= 2.0f;
+        }
+        mesh.setVec2Vector("a_texcoord", texcoords);
         mtl.setDiffuseColor(0.7f, 0.7f, 0.7f, 1);
         mtl.setSpecularColor(1, 1, 1, 1);
         mtl.setSpecularExponent(4.0f);
@@ -219,13 +223,12 @@ public class TextureTests
         mTestUtils.screenShot(getClass().getSimpleName(), "testSpecularTexture", mWaiter, mDoCompare);
     }
 
-
     @Test
     public void testLayeredSpecularTexture() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
-        GVRMaterial layeredMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
+        GVRMaterial layeredMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.PhongLayered.ID);
         GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.wavylines));
         GVRTexture tex2 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.specularring));
         GVRSceneObject model = new GVRCubeSceneObject(ctx, true, layeredMtl);
@@ -236,7 +239,7 @@ public class TextureTests
         layeredMtl.setSpecularExponent(4.0f);
         layeredMtl.setTexture("specularTexture", tex1);
         layeredMtl.setTexture("specularTexture1", tex2);
-        layeredMtl.setFloat("specularTexture1_blendop", 0);
+        layeredMtl.setInt("specularTexture1_blendop", 0);
         layeredMtl.setTexCoord("specularTexture", "a_texcoord", "specular_coord");
         layeredMtl.setTexCoord("specularTexture1", "a_texcoord", "specular_coord1");
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
@@ -294,6 +297,7 @@ public class TextureTests
         GVRSceneObject model = new GVRSceneObject(ctx, mesh, mtl);
 
         repeatTexcoords(mesh);
+        model.getRenderData().setMesh(mesh);
         mtl.setDiffuseColor(0.7f, 0.7f, 0.7f, 1);
         mtl.setSpecularColor(1, 1, 1, 1);
         mtl.setSpecularExponent(4.0f);
@@ -332,7 +336,7 @@ public class TextureTests
             mWaiter.fail(ex);
         }
         mTestUtils.waitForXFrames(3);
-        mTestUtils.screenShot(getClass().getSimpleName(), "testNormalDiffuseSpecularLightmap", mWaiter, false);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testNormalDiffuseSpecularLightmap", mWaiter, mDoCompare);
     }
 
     @Test
@@ -358,7 +362,7 @@ public class TextureTests
             mWaiter.fail(ex);
         }
         mTestUtils.waitForXFrames(3);
-        mTestUtils.screenShot(getClass().getSimpleName(), "testNormaLightmap", mWaiter, false);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testNormaLightmap", mWaiter, mDoCompare);
     }
 
     @Test
@@ -382,7 +386,7 @@ public class TextureTests
             mWaiter.fail(ex);
         }
         mTestUtils.waitForXFrames(3);
-        mTestUtils.screenShot(getClass().getSimpleName(), "testSpecularLightmap", mWaiter, false);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testSpecularLightmap", mWaiter, mDoCompare);
     }
 }
 

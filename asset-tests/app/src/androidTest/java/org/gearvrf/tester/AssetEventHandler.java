@@ -20,7 +20,6 @@ class AssetEventHandler implements IAssetEvents
     public int TextureErrors = 0;
     public int ModelErrors = 0;
     public String AssetErrors = null;
-    public int AssetsLoaded = 0;
     protected GVRScene mScene;
     protected Waiter mWaiter;
     protected GVRTestUtils mTester;
@@ -37,7 +36,11 @@ class AssetEventHandler implements IAssetEvents
     public void onAssetLoaded(GVRContext context, GVRSceneObject model, String filePath, String errors)
     {
         AssetErrors = errors;
-        mTester.onAssetLoaded(model);
+        if (model != null)
+        {
+            mScene.addSceneObject(model);
+            mTester.onAssetLoaded(model);
+        }
     }
 
     public void onModelLoaded(GVRContext context, GVRSceneObject model, String filePath)
@@ -49,6 +52,7 @@ class AssetEventHandler implements IAssetEvents
     {
         TexturesLoaded++;
     }
+
     public void onModelError(GVRContext context, String error, String filePath)
     {
         ModelErrors++;
@@ -73,20 +77,18 @@ class AssetEventHandler implements IAssetEvents
         {
             mWaiter.assertNotNull(mScene.getSceneObjectByName(name));
         }
-        mWaiter.resume();
     }
 
     public void checkAssetErrors(Waiter waiter, int numModelErrors, int numTexErrors)
     {
         mWaiter.assertEquals(numModelErrors, ModelErrors);
         mWaiter.assertEquals(numTexErrors, TextureErrors);
-        mWaiter.resume();
     }
 
     public void centerModel(GVRSceneObject model)
     {
         GVRSceneObject.BoundingVolume bv = model.getBoundingVolume();
-        float sf = 1 / bv.radius;
+        float sf = 1; // / bv.radius;
         model.getTransform().setScale(sf, sf, sf);
         bv = model.getBoundingVolume();
         model.getTransform().setPosition(-bv.center.x, -bv.center.y, -bv.center.z - 1.5f * bv.radius);
@@ -95,13 +97,11 @@ class AssetEventHandler implements IAssetEvents
     public GVRSceneObject loadTestModel(String modelfile, int numTex, int texError, String testname) throws TimeoutException
     {
         GVRContext ctx  = mTester.getGvrContext();
-        GVRScene scene = mTester.getMainScene();
         GVRSceneObject model = null;
 
-        ctx.getEventReceiver().addListener(this);
         try
         {
-            model = ctx.getAssetLoader().loadModel(modelfile, scene);
+            model = ctx.getAssetLoader().loadModel(modelfile, this);
         }
         catch (IOException ex)
         {
@@ -117,31 +117,6 @@ class AssetEventHandler implements IAssetEvents
             mTester.screenShot(mCategory, testname, mWaiter, mDoCompare);
         }
         return model;
-    }
-
-    public void loadTestScene(String modelfile, int numTex, String testname) throws TimeoutException
-    {
-        GVRContext ctx  = mTester.getGvrContext();
-        GVRScene scene = mTester.getMainScene();
-        GVRSceneObject model = null;
-
-        ctx.getEventReceiver().addListener(this);
-        try
-        {
-            model = ctx.getAssetLoader().loadScene(modelfile, scene);
-        }
-        catch (IOException ex)
-        {
-            mWaiter.fail(ex);
-        }
-        mTester.waitForAssetLoad();
-        checkAssetLoaded(mWaiter, FileNameUtils.getFilename(modelfile), numTex);
-        checkAssetErrors(mWaiter, 0, 0);
-        if (testname != null)
-        {
-            mTester.waitForXFrames(2);
-            mTester.screenShot(mCategory, testname, mWaiter, mDoCompare);
-        }
     }
 
 };
