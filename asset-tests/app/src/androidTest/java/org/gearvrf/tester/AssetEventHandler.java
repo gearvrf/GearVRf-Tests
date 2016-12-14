@@ -39,11 +39,6 @@ class AssetEventHandler implements IAssetEvents
         AssetErrors = errors;
         if (model != null)
         {
-            GVRAnimator animator = (GVRAnimator) model.getComponent(GVRAnimator.getComponentType());
-            if (animator != null)
-            {
-                animator.stop();
-            }
             mScene.addSceneObject(model);
             mTester.onAssetLoaded(model);
         }
