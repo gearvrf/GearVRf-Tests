@@ -109,7 +109,6 @@ public class TextureTests
     public void testAlphaToCoverage() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRTextViewSceneObject t = new GVRTextViewSceneObject(ctx, 2, 2, "very very long test text");
         GVRRenderData rd = t.getRenderData();
         GVRMaterial m = rd.getMaterial();
