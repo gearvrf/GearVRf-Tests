@@ -95,7 +95,6 @@ public class ShadowTests
     public void spotLightAtCornerCastsShadow() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRSpotLight light = new GVRSpotLight(ctx);
 
@@ -117,7 +116,6 @@ public class ShadowTests
     public void spotLightAtFrontCastsShadow() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRSpotLight light = new GVRSpotLight(ctx);
 
@@ -139,7 +137,6 @@ public class ShadowTests
     public void spotLightAtSideCastsShadow() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRSpotLight light = new GVRSpotLight(ctx);
 
@@ -161,7 +158,6 @@ public class ShadowTests
     public void spotLightAtTopCastsShadow() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRSpotLight light = new GVRSpotLight(ctx);
 
@@ -182,7 +178,6 @@ public class ShadowTests
     public void directLightAtCornerCastsShadow() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRDirectLight light = new GVRDirectLight(ctx);
 
@@ -203,7 +198,6 @@ public class ShadowTests
     public void directLightAtFrontCastsShadow() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRDirectLight light = new GVRDirectLight(ctx);
 
@@ -221,7 +215,6 @@ public class ShadowTests
     public void directLightAtSideCastsShadow() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRDirectLight light = new GVRDirectLight(ctx);
 
@@ -239,7 +232,6 @@ public class ShadowTests
     public void directLightAtTopCastsShadow() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRDirectLight light = new GVRDirectLight(ctx);
 
@@ -257,7 +249,6 @@ public class ShadowTests
     public void twoLightsCastShadows() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj1 = new GVRSceneObject(ctx);
         GVRSceneObject lightObj2 = new GVRSceneObject(ctx);
         GVRDirectLight light1 = new GVRDirectLight(ctx);
@@ -285,7 +276,6 @@ public class ShadowTests
     public void threeLightsCastShadows() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj1 = new GVRSceneObject(ctx);
         GVRSceneObject lightObj2 = new GVRSceneObject(ctx);
         GVRSceneObject lightObj3 = new GVRSceneObject(ctx);
