@@ -48,7 +48,7 @@ public class BoundingVolumeTests {
     public void testSimpleQuadBV() {
         GVRContext context = gvrTestUtils.getGvrContext();
         GVRScene scene = gvrTestUtils.getMainScene();
-        GVRTexture texture = context.loadTexture(new GVRAndroidResource(
+        GVRTexture texture = context.getAssetLoader().loadTexture(new GVRAndroidResource(
                 context, R.drawable.gearvr_logo));
         GVRSceneObject sceneObject = new GVRSceneObject(context, 5.0f, 5.0f, texture);
         sceneObject.getTransform().setPosition(0.0f, 0.0f, -5.0f);
@@ -66,7 +66,7 @@ public class BoundingVolumeTests {
     public void testRotatedQuadBV() {
         GVRContext context = gvrTestUtils.getGvrContext();
         GVRScene scene = gvrTestUtils.getMainScene();
-        GVRTexture texture = context.loadTexture(new GVRAndroidResource(
+        GVRTexture texture = context.getAssetLoader().loadTexture(new GVRAndroidResource(
                 context, R.drawable.gearvr_logo));
         GVRSceneObject sceneObject = new GVRSceneObject(context, 5.0f, 5.0f, texture);
 
@@ -86,7 +86,7 @@ public class BoundingVolumeTests {
     public void testBoxBV() {
         GVRContext context = gvrTestUtils.getGvrContext();
         GVRScene scene = gvrTestUtils.getMainScene();
-        Future<GVRTexture> texture = context.loadFutureTexture(new GVRAndroidResource(
+        GVRTexture texture = context.getAssetLoader().loadTexture(new GVRAndroidResource(
                 context, R.drawable.gearvr_logo));
 
         GVRCubeSceneObject cubeSceneObject = new GVRCubeSceneObject(context, true, texture);

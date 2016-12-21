@@ -71,33 +71,21 @@ public class SceneObjectTests
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
         mWaiter.assertNotNull(scene);
-        Future<GVRTexture> tex = ctx.loadFutureCubemapTexture(new GVRAndroidResource(ctx, R.raw.beach));
+        GVRTexture tex = ctx.getAssetLoader().loadCubemapTexture(new GVRAndroidResource(ctx, R.raw.beach));
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils);
 
+        ctx.getEventReceiver().addListener(texHandler);
         mBlueMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
         mCubeMapMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Cubemap.ID);
         mBackground = new GVRCubeSceneObject(ctx, false, new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID));
         mBackground.getTransform().setScale(10, 10, 10);
         mBackground.setName("background");
         mBlueMtl.setDiffuseColor(0, 0, 1, 1);
-        try
-        {
-            waitForTexture(tex);
-        }
-        catch (InterruptedException ex)
-        {
-            mWaiter.fail(ex);
-        }
-        mCubeMapMtl.setMainTexture(tex);
+
+        mCubeMapMtl.setTexture("u_texture", tex);
         mRoot = scene.getRoot();
         mWaiter.assertNotNull(mRoot);
-    }
-
-    private void waitForTexture(Future<GVRTexture> futureTex) throws InterruptedException
-    {
-        while (!futureTex.isDone())
-        {
-            sleep(200);
-        }
+        mTestUtils.waitForAssetLoad();
     }
 
     @Test
@@ -180,10 +168,11 @@ public class SceneObjectTests
         GVRScene scene = mTestUtils.getMainScene();
         GVRTexture tex = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.color_sphere));
         GVRSceneObject cylinder1 = new GVRCylinderSceneObject(ctx, true, mBlueMtl);
-        GVRMaterial mtl = new GVRMaterial(ctx);
+        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Texture.ID);
         GVRSceneObject cylinder2 = new GVRCylinderSceneObject(ctx, false, mtl);
 
-        mtl.setMainTexture(tex);
+        //mtl.setMainTexture(tex);
+        mtl.setTexture("diffuseTexture", tex);
         cylinder1.getTransform().setPosition(0, 0, -4);
         cylinder1.setName("cylinder1");
         cylinder2.getTransform().setScale(10, 10, 10);

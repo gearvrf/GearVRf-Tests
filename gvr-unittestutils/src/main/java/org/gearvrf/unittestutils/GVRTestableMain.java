@@ -102,6 +102,8 @@ class GVRTestableMain extends GVRMain{
                 gvrContext.getContext().getResources(),
                 R.mipmap.ic_launcher);
         // return the correct splash screen bitmap
-        return new GVRBitmapTexture(gvrContext, bitmap);
+        GVRTexture tex = new GVRTexture(gvrContext);
+        tex.setImage(new GVRBitmapTexture(gvrContext, bitmap));
+        return tex;
     }
 }
