@@ -171,8 +171,7 @@ public class SceneObjectTests
         GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Texture.ID);
         GVRSceneObject cylinder2 = new GVRCylinderSceneObject(ctx, false, mtl);
 
-        //mtl.setMainTexture(tex);
-        mtl.setTexture("diffuseTexture", tex);
+        mtl.setTexture("u_texture", tex);
         cylinder1.getTransform().setPosition(0, 0, -4);
         cylinder1.setName("cylinder1");
         cylinder2.getTransform().setScale(10, 10, 10);

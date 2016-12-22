@@ -42,7 +42,7 @@ import java.util.concurrent.TimeoutException;
 public class GVRTestUtils implements GVRMainMonitor {
     private static final String TAG = GVRTestUtils.class.getSimpleName();
     public static final int TEST_TIMEOUT = 2000;
-    protected static final int SCREENSHOT_TEST_TIMEOUT = 20000;
+    protected static final int SCREENSHOT_TEST_TIMEOUT = 50000;
 
     private GVRContext gvrContext;
     private final Object onInitLock;
