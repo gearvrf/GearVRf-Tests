@@ -130,11 +130,15 @@ public class GVRTestUtils implements GVRMainMonitor {
 
     public void waitForAssetLoad() {
         if (mAssetIsLoaded)
+        {
+            mAssetIsLoaded = false;
             return;
+        }
         synchronized (onAssetLock) {
             try {
                 Log.d(TAG, "Waiting for OnAssetLoaded");
                 onAssetLock.wait();
+                mAssetIsLoaded = false;
             } catch (InterruptedException e) {
                 Log.e(TAG, "", e);
                 return;

@@ -132,7 +132,7 @@ public class MiscTests {
                 so2.getRenderData().addPass(pass);
                 scene.addSceneObject(so2);
 
-                //dirty the render data; allocate a big buffer to create some memory pressure
+                //dirty the updateGPU data; allocate a big buffer to create some memory pressure
                 //and have the gc run sooner
                 scene.clear();
                 byte[] b = new byte[1*1024*1024];

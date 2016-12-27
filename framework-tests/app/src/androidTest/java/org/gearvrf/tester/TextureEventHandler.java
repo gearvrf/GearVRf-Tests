@@ -18,10 +18,12 @@ class TextureEventHandler implements IAssetEvents
     public int TexturesLoaded = 0;
     public int TextureErrors = 0;
     protected GVRTestUtils mTester;
+    protected int mNumTextures = 0;
 
-    TextureEventHandler(GVRTestUtils tester)
+    TextureEventHandler(GVRTestUtils tester, int numTex)
     {
         mTester = tester;
+        mNumTextures = numTex;
     }
 
     public void onAssetLoaded(GVRContext context, GVRSceneObject model, String filePath, String errors) { }
@@ -31,13 +33,19 @@ class TextureEventHandler implements IAssetEvents
     public void onTextureLoaded(GVRContext context, GVRTexture texture, String filePath)
     {
         TexturesLoaded++;
-        mTester.onAssetLoaded(null);
+        if ((TexturesLoaded + TextureErrors) == mNumTextures)
+        {
+            mTester.onAssetLoaded(null);
+        }
     }
 
     public void onTextureError(GVRContext context, String error, String filePath)
     {
         TextureErrors++;
-        mTester.onAssetLoaded(null);
+        if ((TexturesLoaded + TextureErrors) == mNumTextures)
+        {
+            mTester.onAssetLoaded(null);
+        }
     }
 
     public void checkTextureLoaded(Waiter waiter)
