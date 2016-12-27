@@ -148,6 +148,9 @@ public class TextureTests
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
         GVRMaterial layeredMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.PhongLayered.ID);
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 2);
+        ctx.getEventReceiver().addListener(texHandler);
+
         GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.colortex));
         GVRTexture tex2 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.specularring));
         GVRSceneObject model = new GVRCubeSceneObject(ctx, true, layeredMtl);
@@ -160,6 +163,7 @@ public class TextureTests
         layeredMtl.setTexCoord("diffuseTexture1", "a_texcoord", "diffuse_coord1");
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
         model.getTransform().setPositionZ(-2.0f);
+        mTestUtils.waitForAssetLoad();
         scene.addSceneObject(model);
         mTestUtils.waitForXFrames(3);
         mTestUtils.screenShot(getClass().getSimpleName(), "testLayeredDiffuseTexture", mWaiter, mDoCompare);
@@ -175,6 +179,8 @@ public class TextureTests
         GVRDirectLight light = new GVRDirectLight(ctx);
         GVRMesh mesh = model.getRenderData().getMesh();
         GVRTextureParameters texparams = new GVRTextureParameters(ctx);
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
+        ctx.getEventReceiver().addListener(texHandler);
         texparams.setWrapSType(GVRTextureParameters.TextureWrapType.GL_REPEAT);
         texparams.setWrapTType(GVRTextureParameters.TextureWrapType.GL_REPEAT);
 
@@ -194,6 +200,7 @@ public class TextureTests
 
         GVRSceneObject rig = scene.getMainCameraRig().getOwnerObject();
         rig.attachComponent(light);
+        mTestUtils.waitForAssetLoad();
         scene.addSceneObject(model);
         mTestUtils.waitForXFrames(3);
         mTestUtils.screenShot(getClass().getSimpleName(), "testRepeatTexture", mWaiter, mDoCompare);
@@ -208,6 +215,8 @@ public class TextureTests
         GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
         GVRSceneObject model = new GVRCubeSceneObject(ctx, true, mtl);
         GVRDirectLight light = new GVRDirectLight(ctx);
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
+        ctx.getEventReceiver().addListener(texHandler);
         GVRTexture tex2 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.specularring));
 
         mtl.setDiffuseColor(0.7f, 0, 0.7f, 1);
@@ -217,6 +226,7 @@ public class TextureTests
         mtl.setTexCoord("specularTexture", "a_texcoord", "specular_coord");
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
         model.getTransform().setPositionZ(-2.0f);
+        mTestUtils.waitForAssetLoad();
         scene.addSceneObject(model);
         mTestUtils.waitForXFrames(3);
         mTestUtils.screenShot(getClass().getSimpleName(), "testSpecularTexture", mWaiter, mDoCompare);
@@ -228,6 +238,9 @@ public class TextureTests
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
         GVRMaterial layeredMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.PhongLayered.ID);
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 2);
+        ctx.getEventReceiver().addListener(texHandler);
+
         GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.wavylines));
         GVRTexture tex2 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.specularring));
         GVRSceneObject model = new GVRCubeSceneObject(ctx, true, layeredMtl);
@@ -243,6 +256,7 @@ public class TextureTests
         layeredMtl.setTexCoord("specularTexture1", "a_texcoord", "specular_coord1");
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
         model.getTransform().setPositionZ(-2.0f);
+        mTestUtils.waitForAssetLoad();
         scene.addSceneObject(model);
         mTestUtils.waitForXFrames(3);
         mTestUtils.screenShot(getClass().getSimpleName(), "testLayeredSpecularTexture", mWaiter, mDoCompare);
@@ -254,8 +268,11 @@ public class TextureTests
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
         GVRTextureParameters texparams = new GVRTextureParameters(ctx);
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 2);
+        ctx.getEventReceiver().addListener(texHandler);
         texparams.setWrapSType(GVRTextureParameters.TextureWrapType.GL_REPEAT);
         texparams.setWrapTType(GVRTextureParameters.TextureWrapType.GL_REPEAT);
+
         GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.colortex), texparams);
         GVRTexture tex2 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.specularring));
         GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
@@ -274,6 +291,7 @@ public class TextureTests
         mtl.setTexCoord("diffuseTexture", "a_texcoord1", "diffuse_coord");
         mtl.setTexCoord("specularTexture", "a_texcoord", "specular_coord");
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
+        mTestUtils.waitForAssetLoad();
         scene.addSceneObject(model);
         mTestUtils.waitForXFrames(3);
         mTestUtils.screenShot(getClass().getSimpleName(), "testDiffuseSpecularTexture", mWaiter, mDoCompare);
@@ -286,8 +304,11 @@ public class TextureTests
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
         GVRTextureParameters texparams = new GVRTextureParameters(ctx);
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 2);
+        ctx.getEventReceiver().addListener(texHandler);
         texparams.setWrapSType(GVRTextureParameters.TextureWrapType.GL_REPEAT);
         texparams.setWrapTType(GVRTextureParameters.TextureWrapType.GL_REPEAT);
+
         GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.colortex), texparams);
         GVRTexture tex2 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.rock_normal));
         GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
@@ -306,12 +327,13 @@ public class TextureTests
         mtl.setTexCoord("normalTexture", "a_texcoord", "normal_coord");
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
         model.getTransform().setPositionZ(-2.0f);
+        mTestUtils.waitForAssetLoad();
         scene.addSceneObject(model);
         mTestUtils.waitForXFrames(3);
         mTestUtils.screenShot(getClass().getSimpleName(), "testDiffuseNormalTexture", mWaiter, mDoCompare);
     }
 
-    // TODO: wait for asset to load so the screen shot captures the render
+    // TODO: wait for asset to load so the screen shot captures the updateGPU
     @Test
     public void testNormalDiffuseSpecularLightmap() throws TimeoutException
     {

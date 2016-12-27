@@ -69,7 +69,7 @@ public class LightTests
         GVRMaterial blue = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
         GVRMaterial check = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
         GVRTexture checker = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.checker));
-        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils);
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
 
         ctx.getEventReceiver().addListener(texHandler);
         mWaiter.assertNotNull(scene);

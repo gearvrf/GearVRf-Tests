@@ -71,10 +71,10 @@ public class SceneObjectTests
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
         mWaiter.assertNotNull(scene);
-        GVRTexture tex = ctx.getAssetLoader().loadCubemapTexture(new GVRAndroidResource(ctx, R.raw.beach));
-        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils);
-
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
         ctx.getEventReceiver().addListener(texHandler);
+        GVRTexture tex = ctx.getAssetLoader().loadCubemapTexture(new GVRAndroidResource(ctx, R.raw.beach));
+
         mBlueMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
         mCubeMapMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Cubemap.ID);
         mBackground = new GVRCubeSceneObject(ctx, false, new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID));
@@ -86,6 +86,7 @@ public class SceneObjectTests
         mRoot = scene.getRoot();
         mWaiter.assertNotNull(mRoot);
         mTestUtils.waitForAssetLoad();
+        ctx.getEventReceiver().removeListener(texHandler);
     }
 
     @Test
@@ -166,6 +167,8 @@ public class SceneObjectTests
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
+        ctx.getEventReceiver().addListener(texHandler);
         GVRTexture tex = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.color_sphere));
         GVRSceneObject cylinder1 = new GVRCylinderSceneObject(ctx, true, mBlueMtl);
         GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Texture.ID);
@@ -176,6 +179,7 @@ public class SceneObjectTests
         cylinder1.setName("cylinder1");
         cylinder2.getTransform().setScale(10, 10, 10);
         cylinder2.setName("cylinder2");
+        mTestUtils.waitForAssetLoad();
         mRoot.addChildObject(cylinder1);
         scene.addSceneObject(cylinder2);
         mTestUtils.waitForXFrames(2);
