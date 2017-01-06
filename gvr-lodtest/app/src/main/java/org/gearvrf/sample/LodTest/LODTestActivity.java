@@ -1,10 +1,10 @@
 package org.gearvrf.sample.LodTest;
 
-import org.gearvrf.GVRActivity;
-import org.gearvrf.sample.LodTest.LODTestMain;
-
-import android.app.Activity;
 import android.os.Bundle;
+import android.view.MotionEvent;
+
+import org.gearvrf.GVRActivity;
+import org.gearvrf.GVRScene;
 
 public class LODTestActivity extends GVRActivity
 {
@@ -18,4 +18,14 @@ public class LODTestActivity extends GVRActivity
         lodMain = new LODTestMain();
         setMain(lodMain, "gvr.xml");
     }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            final GVRScene mainScene = getGVRContext().getMainScene();
+            mainScene.setStatsEnabled(!mainScene.getStatsEnabled());
+        }
+        return super.dispatchTouchEvent(event);
+    }
+
 }

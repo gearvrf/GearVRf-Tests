@@ -85,5 +85,4 @@ public class LODTestMain extends GVRMain {
         animation.setRepeatMode(GVRRepeatMode.PINGPONG).setRepeatCount(-1);
         animations.add(animation);
     }
-
 }
