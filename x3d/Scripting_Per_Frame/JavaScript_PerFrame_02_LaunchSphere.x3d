@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <Scene>
+  
+  
+    <Viewpoint DEF='VP1' position='0 0 0'/>
+    <PointLight DEF='PL1' location='-3 -3 -10' on='false' color='1 1 1'/>
+    <DirectionalLight color='.8 .8 .8'/>
+
+    <Transform DEF='developerMode' translation='0 0 0'>
+
+
+   <Transform translation='-1 0 -12'>
+        <Shape>
+          <Appearance>
+            <Material DEF="CylinderMaterial" diffuseColor='.5 .5 .5'/>
+          </Appearance>
+          <Cylinder/>
+        </Shape>
+    </Transform>
+
+	<Transform DEF="Ball">
+        <TouchSensor DEF='BallTouch'/>
+		<Transform DEF='BallRotate'>
+		    <Transform DEF='BallTranslate' translation='2 -.25 -10'>
+				<Transform DEF='BallSpin'>
+					<Shape>
+						<Appearance>
+							<Material DEF="myMaterial" diffuseColor='1 1 1'/>
+							<ImageTexture url="lattitudelongitude.png" repeatS="TRUE" repeatT="TRUE"/>
+						</Appearance>
+						<Sphere/>
+					</Shape>
+				</Transform>
+			</Transform>
+		</Transform>
+	</Transform>
+
+
+	<Transform DEF="ResetObject" translation='3 0 -10'>
+        	<TouchSensor DEF='ResetTouch'/>
+			<Shape>
+				<Appearance>
+					<Material DEF='ResetMaterial' diffuseColor='.5 .5 .5'/>
+		    		<ImageTexture url="reset.png"/>
+          		</Appearance>
+				<IndexedFaceSet  DEF='texturedPlaneIFS' coordIndex='0 1 2 -1    0 3 1 -1'  texCoordIndex='0 1 2 -1   0 3 1 -1'  normalIndex='0 0 0 -1   0 0 0 -1'>
+					<Coordinate point='-1 -1 -0.0    1 1 -0.0    -1 1 0    1 -1 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+			</Shape>
+	</Transform>
+
+	<Transform DEF="ColorChgObject" translation='-3 0 -10'>
+        	<TouchSensor DEF='ColorChgTouch'/>
+			<Shape>
+				<Appearance>
+					<Material DEF='ColorChgMaterial' diffuseColor='.5 .5 .5'/>
+		    		<ImageTexture url="chg_color_anim.png"/>
+          		</Appearance>
+				<IndexedFaceSet  USE='texturedPlaneIFS'/>
+			</Shape>
+	</Transform>
+
+
+   </Transform>
+
+
+
+        <Script DEF='ResetScript'>
+          <field accessType='inputOnly' name='buttonOverReset' type='SFBool'/>
+          <field accessType='outputOnly' name='material' type='SFColor'/>
+
+          <![CDATA[
+          ecmascript:
+          function buttonOverReset(value)
+          {
+          	if (value) material = new SFColor (1, 1, 1);
+          	else material = new SFColor (.5, .5, .5);
+          }
+    	]]>
+        </Script>
+
+        <ROUTE fromField='isOver' fromNode='ResetTouch' toField='buttonOverReset' toNode='ResetScript'/>
+        <ROUTE fromField='material' fromNode='ResetScript' toField='diffuseColor' toNode='ResetMaterial'/>
+
+
+        <Script DEF='ResetClickScript'>
+          <field accessType='inputOnly' name='buttonResetClick' type='SFBool'/>
+          <field accessType='inputOnly' name='viewpointRotation' type='SFRotation'/>
+          <field accessType='inputOutput' name='ballRotate' type='SFRotation'/>
+          <field accessType='inputOutput' name='ballTranslate' type='SFVec3f'/>
+          <field accessType='outputOnly' name='material' type='SFColor'/>
+
+          <![CDATA[
+          ecmascript:
+          function buttonResetClick(value)
+          {
+          	ballTranslate.setValue(0, 0, -10 );
+          	ballRotate.setValue(viewpointRotation.getAngle(), viewpointRotation.getX(), viewpointRotation.getY(), viewpointRotation.getZ() );
+          }
+    	]]>
+        </Script>
+
+        <ROUTE fromField='isActive' fromNode='ResetTouch' toField='buttonOverReset' toNode='ResetClickScript'/>
+        <ROUTE fromField='orientation' fromNode='VP1' toField='viewpointRotation' toNode='ResetClickScript'/>
+
+        <ROUTE fromField='rotation' fromNode='BallRotate' toField='ballRotate' toNode='ResetClickScript'/>
+        <ROUTE fromField='translation' fromNode='BallTranslate' toField='ballTranslate' toNode='ResetClickScript'/>
+        <ROUTE fromField='ballRotate' fromNode='ResetClickScript' toField='rotation' toNode='BallRotate'/>
+        <ROUTE fromField='ballTranslate' fromNode='ResetClickScript' toField='translation' toNode='BallTranslate'/>
+
+
+
+        <Script DEF='ColorChgScript'>
+          <field accessType='inputOnly' name='buttonOverColorChg' type='SFBool'/>
+          <field accessType='outputOnly' name='material' type='SFColor'/>
+
+          <![CDATA[
+          ecmascript:
+          function buttonOverColorChg(value)
+          {
+          	if (value) material = new SFColor (1, 1, 1);
+          	else material = new SFColor (.5, .5, .5);
+          }
+    	]]>
+        </Script>
+
+        <ROUTE fromField='isOver' fromNode='ColorChgTouch' toField='buttonOverColorChg' toNode='ColorChgScript'/>
+        <ROUTE fromField='material' fromNode='ColorChgScript' toField='diffuseColor' toNode='ColorChgMaterial'/>
+
+
+    <BooleanToggle DEF='ColorChgToggler'/>
+    <ROUTE fromField='isActive' fromNode='ColorChgTouch' toField='set_boolean' toNode='ColorChgToggler'/>
+    <BooleanToggle DEF='BallToggler'/>
+    <ROUTE fromField='isActive' fromNode='BallTouch' toField='set_boolean' toNode='BallToggler'/>
+
+
+      <Script DEF='AnimateScript' mustEvaluate='true'>
+        <field accessType='inputOnly' name='value_changed' type='SFFloat'/>
+        <field accessType='inputOnly' name='cycleTime' type='SFFloat'/>
+        <field accessType='inputOnly' name='colorChgTogglerValue' type='SFBool'/>
+        <field accessType='inputOnly' name='BallTogglerValue' type='SFBool'/>
+          <field accessType='inputOnly' name='viewpointRotation' type='SFRotation'/>
+          <field accessType='inputOutput' name='ballRotate' type='SFRotation'/>
+          <field accessType='inputOutput' name='ballTranslate' type='SFVec3f'/>
+          <field accessType='inputOutput' name='ballSpin' type='SFRotation'/>
+        <field accessType='outputOnly' name='output_Cyl_Mat' type='SFColor'/>
+       <![CDATA[
+	ecmascript:
+          function initialize() {
+            angle = 0;
+            x = 0;
+            y = 0;
+            z = 0;
+            speedZ = .05;
+            ballSpinAmt = 0;
+          }
+	  function value_changed (eventValue) {
+	    if ( colorChgTogglerValue.getValue() ) {
+              output_Cyl_Mat = new SFColor( 0,  (cycleTime - eventValue)/cycleTime,  eventValue/cycleTime );
+            }
+            else {
+              output_Cyl_Mat = new SFColor( 1,  eventValue/cycleTime,  eventValue/cycleTime );
+            }
+ 	    if ( ! BallTogglerValue.getValue() ) {
+         	ballTranslate.setValue(0, 0, ballTranslate.getZ() );
+          	angle = viewpointRotation.getAngle();
+          	x = viewpointRotation.getX();
+          	y = viewpointRotation.getY();
+          	z = viewpointRotation.getZ();
+         }
+         else {
+          	ballTranslate.setValue(0, 0, (ballTranslate.getZ() - speedZ) );
+          	ballSpinAmt += .15;
+         }
+         ballRotate.setValue(angle, x, y, z );
+         ballSpin.setValue(ballSpinAmt, 1, 0, 0 );
+	  }
+	]]>
+      </Script>
+    <TimeSensor DEF='AnimationClock' cycleInterval='10' loop='true'/>
+    <ROUTE fromField='fraction_changed' fromNode='AnimationClock' toField='value_changed' toNode='AnimateScript'/>
+    <ROUTE fromField='cycleInterval' fromNode='AnimationClock' toField='cycleTime' toNode='AnimateScript'/>
+    <ROUTE fromField='output_Cyl_Mat' fromNode='AnimateScript' toField='diffuseColor' toNode='CylinderMaterial'/>
+
+    <ROUTE fromField='toggle_changed' fromNode='ColorChgToggler' toField='colorChgTogglerValue' toNode='AnimateScript'/>
+
+    <ROUTE fromField='toggle_changed' fromNode='BallToggler' toField='BallTogglerValue' toNode='AnimateScript'/>
+
+            <ROUTE fromField='orientation' fromNode='VP1' toField='viewpointRotation' toNode='AnimateScript'/>
+
+            <ROUTE fromField='rotation' fromNode='BallRotate' toField='ballRotate' toNode='AnimateScript'/>
+            <ROUTE fromField='translation' fromNode='BallTranslate' toField='ballTranslate' toNode='AnimateScript'/>
+            <ROUTE fromField='ballRotate' fromNode='AnimateScript' toField='rotation' toNode='BallRotate'/>
+            <ROUTE fromField='ballTranslate' fromNode='AnimateScript' toField='translation' toNode='BallTranslate'/>
+
+            <ROUTE fromField='rotation' fromNode='BallSpin' toField='ballSpin' toNode='AnimateScript'/>
+            <ROUTE fromField='ballSpin' fromNode='AnimateScript' toField='rotation' toNode='BallSpin'/>
+
+
+  </Scene>
+</X3D>
