@@ -142,6 +142,38 @@ public class TextureTests
         mTestUtils.screenShot(getClass().getSimpleName(), "testAlphaToCoverage", mWaiter, mDoCompare);
     }
 
+
+    @Test
+    public void testCompressedTextureASTC() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
+        GVRSceneObject model = new GVRCubeSceneObject(ctx, true, mtl);
+        GVRDirectLight light = new GVRDirectLight(ctx);
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
+        ctx.getEventReceiver().addListener(texHandler);
+        try
+        {
+            GVRTexture tex2 =
+                    ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, "sunmap.astc"));
+            mtl.setTexture("diffuseTexture", tex2);
+        }
+        catch (IOException ex)
+        {
+            mWaiter.fail(ex);
+        }
+        mtl.setDiffuseColor(0.7f, 0, 0.7f, 1);
+        mtl.setSpecularColor(1, 1, 1, 1);
+        mtl.setSpecularExponent(4.0f);
+        scene.getMainCameraRig().getOwnerObject().attachComponent(light);
+        model.getTransform().setPositionZ(-2.0f);
+        mTestUtils.waitForAssetLoad();
+        scene.addSceneObject(model);
+        mTestUtils.waitForXFrames(3);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testCompressedTextureASTC", mWaiter, mDoCompare);
+    }
+
     @Test
     public void testLayeredDiffuseTexture() throws TimeoutException
     {
