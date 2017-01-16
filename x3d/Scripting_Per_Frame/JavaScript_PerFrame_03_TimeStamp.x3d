@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <Scene>
+  
+	<Viewpoint description='GearVR location' position='0 0 0'/>
+	<PointLight location='0 10 0'/>
+	<PointLight location='0 0 0'/>
+
+	<Transform DEF="GearVRposition" rotation='1 0 0 .5' translation='0 -1 -8'>
+		<Transform DEF='Pointer' translation='1 0 1'>
+			<Transform rotation='1 0 0 1.57'>
+				<Shape>
+					<Cone bottomRadius='0.5' height='1.5'/>
+	    				<Appearance>
+	    					<Material DEF='ConeMaterial' diffuseColor='0.4 1 0.16'/>
+	    				</Appearance>
+	    			</Shape>
+	    		</Transform>
+	    	</Transform>
+	</Transform>
+
+	<Transform DEF='Ball' translation='0 -2 -10'>
+    	<Transform DEF='BallSpin'>
+    		<Shape>
+    			<Appearance>
+    				<Material DEF="myMaterial" diffuseColor='1 1 1'/>
+    				<ImageTexture url="lattitudelongitude.png" repeatS="TRUE" repeatT="TRUE"/>
+    			</Appearance>
+    			<Sphere/>
+    		</Shape>
+    	</Transform>
+    </Transform>
+
+
+	<Script DEF='myScript' mustEvaluate='true'>
+		<field accessType='inputOnly' name='value_changed' type='SFFloat'/>
+	    <field accessType='outputOnly' name='newColor' type='SFColor'/>
+        <field accessType='inputOutput' name='ballSpin' type='SFRotation'/>
+
+		<![CDATA[
+			ecmascript:
+				function value_changed (eventValue, timeStamp) {
+
+                    ballSpin.setValue( (timeStamp * 180/Math.PI)/10, 1, 0, 0 );
+
+                      red = Math.max((10.0 - eventValue) / 10, .3);
+                      green = Math.max(eventValue / 10, .5);
+                      blue = Math.max(eventValue/10.0, .6);
+                      newColor = new SFColor(red, green, blue);
+				}
+		]]>
+	</Script>
+    
+	<TimeSensor DEF='AnimationClock' cycleInterval='10' loop='true'/>
+
+	<PositionInterpolator DEF='PositionAnimator' key='0 0.2 0.25 0.45 0.5 0.7 0.75 0.95 1' keyValue='-4 0 -4 -4 0 4 -4 0 4 4 0 4 4 0 4 4 0 -4 4 0 -4 -4 0 -4 -4 0 -4'/>
+	<ROUTE fromField='fraction_changed' fromNode='AnimationClock' toField='set_fraction' toNode='PositionAnimator'/>
+	<ROUTE fromField='value_changed' fromNode='PositionAnimator' toField='translation' toNode='Pointer'/>
+
+	<OrientationInterpolator DEF='OrientationAnimator' key='0 0.2 0.25 0.45 0.5 0.7 0.75 0.95 1' keyValue='0 1 0 0 0 1 0 0 0 1 0 1.57 0 1 0 1.57 0 1 0 3.14 0 1 0 3.14 0 1 0 4.71 0 1 0 4.71 0 1 0 6.283'/>
+	<ROUTE fromField='fraction_changed' fromNode='AnimationClock' toField='set_fraction' toNode='OrientationAnimator'/>
+	<ROUTE fromField='value_changed' fromNode='OrientationAnimator' toField='set_rotation' toNode='Pointer'/>
+
+	<ROUTE fromField='fraction_changed' fromNode='AnimationClock' toField='value_changed' toNode='myScript'/>
+    <ROUTE fromField='newColor' fromNode='myScript' toField='diffuseColor' toNode='ConeMaterial'/>
+
+    <ROUTE fromField='rotation' fromNode='BallSpin' toField='ballSpin' toNode='myScript'/>
+    <ROUTE fromField='ballSpin' fromNode='myScript' toField='rotation' toNode='BallSpin'/>
+
+  </Scene>
+</X3D>
