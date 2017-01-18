@@ -3,9 +3,6 @@ apply plugin: 'com.android.application'
 allprojects {
     repositories {
         jcenter()
-        flatDir {
-            dirs '../../gearvrf-libs'
-        }
     }
 }
 
@@ -25,8 +22,8 @@ android {
         }
         externalNativeBuild {
             cmake {
-                arguments.add('-DINCLUDE_DIR='+rootProject.projectDir.absolutePath+'/../../GearVRf/GVRf/Framework/')
-                arguments.add('-DPATH_TO_LIBGVRF='+projectDir.absolutePath+'/build/intermediates/exploded-aar/framework-debug/jni/')
+                arguments.add('-DINCLUDE_DIR='+rootProject.projectDir.absolutePath)
+                arguments.add('-DPATH_TO_LIBGVRF='+rootProject.projectDir.absolutePath+'/framework/build/intermediates/bundles/debug/jni/')
                 //difference in sign extension when reinterpret_cast-ing a pointer between
                 //gcc and clang hence overriding the default toolchain to match the one used
                 //by the other modules
@@ -65,12 +62,18 @@ project.ext.jomlVersion = "1.9.1-SNAPSHOT"
 
 dependencies {
     compile "org.joml:joml-android:${jomlVersion}"
-    compile(name:'framework-debug', ext:'aar')
-	compile(name: 'backend_oculus-debug', ext: 'aar')
+    compile project(':framework')
+    compile project(':backend_oculus')
     androidTestCompile 'com.android.support:support-annotations:23.0.1'
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
     compile 'net.jodah:concurrentunit:0.4.2'
     compile project(path: ':gvr-unittestutils')
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == 'externalNativeBuildDebug') {
+        task.dependsOn ':framework:bundleDebug'
+    }
 }
