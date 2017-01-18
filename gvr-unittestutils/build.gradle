@@ -3,9 +3,6 @@ apply plugin: 'com.android.library'
 allprojects {
     repositories {
         jcenter()
-        flatDir {
-            dirs '../gearvrf-libs'
-        }
     }
 }
 
@@ -30,6 +27,6 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile(name:'framework-debug', ext:'aar')
+    compile project(':framework')
     compile 'net.jodah:concurrentunit:0.4.2'
 }
