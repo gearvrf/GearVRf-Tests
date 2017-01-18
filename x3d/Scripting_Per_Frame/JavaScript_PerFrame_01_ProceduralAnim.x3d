@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <Scene>
+    <Viewpoint description='GearVR location' position='0 0 0'/>
+    <DirectionalLight DEF='light1'/>
+
+    <Transform DEF="ConeObject" translation='0 0 -6'>
+        <Transform DEF="ConePosition" translation='.5 -3.5 -5.5'>
+            <Shape>
+                <Cone/>
+                <Appearance>
+                    <Material DEF='ConeMaterial' diffuseColor='0.8 1 0.8'/>
+                </Appearance>
+            </Shape>
+        </Transform>
+    </Transform>
+
+    <Transform DEF="Sphere1" translation='-2 -2 -6'>
+        <Shape>
+            <Sphere/>
+            <Appearance>
+                <Material DEF='SphereMaterial' diffuseColor='0 1 0.25'/>
+            </Appearance>
+        </Shape>
+    </Transform>
+
+      <Script DEF='ColorChangeScript' mustEvaluate='true'>
+        <field accessType='inputOnly' name='value_changed' type='SFFloat'/>
+        <field accessType='inputOnly' name='cone_Pos' type='SFVec3f'/>
+        <field accessType='inputOutput' name='sphere1Loc' type='SFVec3f'/>
+        <field accessType='outputOnly' name='newColor' type='SFColor'/>
+        <field accessType='outputOnly' name='new_cone_Pos' type='SFVec3f'/>
+        <field accessType='outputOnly' name='new_cone_Rot' type='SFRotation'/>
+       <![CDATA[
+	ecmascript:
+	      function initialize()
+          {
+          	ballDir = 1;
+          }
+
+	    function value_changed (eventValue) {
+	      red = (10.0 - eventValue) / 20;
+	      green = Math.max(eventValue / 10, .4);
+	      blue = Math.max(eventValue/10.0, .3);
+	      newColor = new SFColor(red, green, blue);
+
+      	   x = eventValue/1.5 - 2;
+      	   y = Math.sin( ((eventValue - 10)/5) * Math.PI ) * 6;
+      	   z = -eventValue;
+
+	      new_cone_Pos = new SFVec3f (x, y, z);
+      	  new_cone_Rot = new SFRotation (0, 0, 1, eventValue);
+
+      	  sphere1LocX = sphere1Loc.getX() + (.04 * ballDir);
+      	  if ( (sphere1LocX >= 3) || (sphere1LocX <= -3) ) ballDir = -ballDir;
+      	  y = sphere1Loc.getY();
+      	  z = sphere1Loc.getZ();
+      	  sphere1Loc = new SFVec3f (sphere1LocX, y, z);
+	    }
+	]]>
+      </Script>
+
+    <TimeSensor DEF='AnimationClock' cycleInterval='10' loop='true'/>
+    <ROUTE fromField='fraction_changed' fromNode='AnimationClock' toField='value_changed' toNode='ColorChangeScript'/>
+    <ROUTE fromField='newColor' fromNode='ColorChangeScript' toField='diffuseColor' toNode='SphereMaterial'/>
+
+    <ROUTE fromField='translation' fromNode='ConePosition' toField='cone_Pos' toNode='ColorChangeScript'/>
+    <ROUTE fromField='new_cone_Pos' fromNode='ColorChangeScript' toField='translation' toNode='ConePosition'/>
+    <ROUTE fromField='new_cone_Rot' fromNode='ColorChangeScript' toField='rotation' toNode='ConePosition'/>
+
+    <ROUTE fromField='translation' fromNode='Sphere1' toField='sphere1Loc' toNode='ColorChangeScript'/>
+    <ROUTE fromField='sphere1Loc' fromNode='ColorChangeScript' toField='translation' toNode='Sphere1'/>
+
+  </Scene>
+</X3D>
