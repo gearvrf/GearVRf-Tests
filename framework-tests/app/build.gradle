@@ -25,7 +25,7 @@ android {
         }
         externalNativeBuild {
             cmake {
-                arguments.add('-DINCLUDE_DIR='+rootProject.projectDir.absolutePath+'/../../GearVRf/GVRf/Framework/')
+                arguments.add('-DINCLUDE_DIR='+rootProject.projectDir.absolutePath)
                 arguments.add('-DPATH_TO_LIBGVRF='+projectDir.absolutePath+'/build/intermediates/exploded-aar/framework-debug/jni/')
                 //difference in sign extension when reinterpret_cast-ing a pointer between
                 //gcc and clang hence overriding the default toolchain to match the one used
