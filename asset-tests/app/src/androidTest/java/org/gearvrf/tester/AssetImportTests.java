@@ -36,7 +36,7 @@ public class AssetImportTests
     private Waiter mWaiter;
     private GVRSceneObject mRoot;
     private GVRSceneObject mBackground;
-    private boolean mDoCompare = false;
+    private boolean mDoCompare = true;
     private AssetEventHandler mHandler;
 
     @Rule
@@ -166,6 +166,24 @@ public class AssetImportTests
     public void jassimpHippoOBJ() throws TimeoutException
     {
         mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/hippo/hippo.obj", 1, 0, "jassimpHippoOBJ");
+    }
+
+    @Test
+    public void jassimpDeerOBJ() throws TimeoutException
+    {
+        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/animals/deer-obj.obj", 1, 0, "jassimpDeerOBJ");
+    }
+
+    @Test
+    public void jassimpBearOBJ() throws TimeoutException
+    {
+        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/bear/bear-obj.obj", 5, 0, "jassimpBearOBJ");
+    }
+
+    @Test
+    public void jassimpWolfOBJ() throws TimeoutException
+    {
+        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/animals/wolf-obj.obj", 5, 0, "jassimpWolfOBJ");
     }
 
     @Test
