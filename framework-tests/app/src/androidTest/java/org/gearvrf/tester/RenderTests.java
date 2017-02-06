@@ -65,8 +65,10 @@ public class RenderTests {
     public void testBlendFunc() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
         final GVRScene scene = mTestUtils.getMainScene();
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 2);
 
-        GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.checker));
+        ctx.getEventReceiver().addListener(texHandler);
+        GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.checker));;
         GVRTexture tex2 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.donut));
         GVRMaterial mat1 = new GVRMaterial(ctx);
         GVRSceneObject cube1 = new GVRCubeSceneObject(ctx, true, mat1);
@@ -85,6 +87,8 @@ public class RenderTests {
         scene.addSceneObject(quad2);
         mWaiter.assertEquals(GL_ONE, rdata2.getSourceAlphaBlendFunc());
         mWaiter.assertEquals(GL_SRC_ALPHA, rdata2.getDestAlphaBlendFunc());
+        mTestUtils.waitForAssetLoad();
+        ctx.getEventReceiver().removeListener(texHandler);
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "testBlendFunc", mWaiter, true);
     }
