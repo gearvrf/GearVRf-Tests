@@ -146,6 +146,7 @@ public class TextureTests
         light.setSpecularIntensity(0.5f, 0.5f, 0.5f, 1.0f);
         lightObj.attachComponent(light);
         scene.addSceneObject(lightObj);
+
         GVRAndroidResource.TextureCallback texLoadCallback = new GVRAndroidResource.TextureCallback()
         {
             public boolean stillWanted(GVRAndroidResource r) { return true; }
