@@ -163,8 +163,8 @@ public class TextureTests
         {
             mWaiter.fail(ex);
         }
-        mtl.setDiffuseColor(0.7f, 0, 0.7f, 1);
-        mtl.setSpecularColor(1, 1, 1, 1);
+        mtl.setDiffuseColor(0.7f, 0.7f, 0.7f, 1);
+        mtl.setSpecularColor(0.5f, 0.5f, 0.5f, 1.0f);
         mtl.setSpecularExponent(4.0f);
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
         model.getTransform().setPositionZ(-2.0f);
