@@ -65,7 +65,7 @@ public class LightTests
 
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
-        GVRSceneObject background = new GVRCubeSceneObject(ctx, false);
+        GVRSceneObject background = new GVRCubeSceneObject(ctx, false, new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID));
         GVRMaterial blue = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
         GVRMaterial check = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
         GVRTexture checker = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.checker));
