@@ -187,4 +187,29 @@ public class SceneObjectTests
         mWaiter.assertNotNull(scene.getSceneObjectByName("cylinder2"));
         mTestUtils.screenShot(getClass().getSimpleName(), "canDisplayCylinders", mWaiter, mDoCompare);
     }
+
+
+    @Test
+    public void canDisplayNonTextured() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRMaterial redMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
+        GVRMaterial greenMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Texture.ID);
+        GVRSceneObject cylinder1 = new GVRCylinderSceneObject(ctx, true, redMtl);
+        GVRSceneObject cylinder2 = new GVRCylinderSceneObject(ctx, false, greenMtl);
+
+        redMtl.setDiffuseColor(1, 0, 0, 1);
+        greenMtl.setDiffuseColor(0, 1, 0, 1);
+        cylinder1.getTransform().setPosition(0, 0, -4);
+        cylinder1.setName("cylinder1");
+        cylinder2.getTransform().setScale(10, 10, 10);
+        cylinder2.setName("cylinder2");
+        mRoot.addChildObject(cylinder1);
+        scene.addSceneObject(cylinder2);
+        mTestUtils.waitForXFrames(2);
+        mWaiter.assertNotNull(scene.getSceneObjectByName("cylinder1"));
+        mWaiter.assertNotNull(scene.getSceneObjectByName("cylinder2"));
+        mTestUtils.screenShot(getClass().getSimpleName(), "canDisplayNonTextured", mWaiter, mDoCompare);
+    }
 }
