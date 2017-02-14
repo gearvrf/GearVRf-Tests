@@ -285,7 +285,6 @@ public class GVRTestUtils implements GVRMainMonitor {
                     waiter.assertEquals(golden.getWidth(), bitmap.getWidth());
                     waiter.assertEquals(golden.getHeight(), bitmap.getHeight());
 
-                    Log.i(category, "compareWithGolden starting");
                     Bitmap diffmap = golden.copy(golden.getConfig(), true);
                     float diff = 0;
                     try {
@@ -300,6 +299,13 @@ public class GVRTestUtils implements GVRMainMonitor {
                                 diff += (float) r / 255.0f + g / 255.0f + b / 255.0f;
                             }
                         }
+<<<<<<< HEAD
+=======
+                    }
+                    catch (Throwable t)
+                    {
+                        waiter.fail(t);
+>>>>>>> update golden images & paths for unit tests
                     }
                     catch (Throwable t)
                     {
@@ -346,9 +352,9 @@ public class GVRTestUtils implements GVRMainMonitor {
                     {
                         writeBitmap(category, basename, bitmap);
                     }
-                    catch (Throwable e)
+                    catch (Exception e)
                     {
-                        Log.e(category, "Exception while comparing screenshot for %s %s", testname, e.getMessage());
+                        Log.e(category, "Could not save screenshot of %s", testname);
                         waiter.fail(e);
                     }
                     try
