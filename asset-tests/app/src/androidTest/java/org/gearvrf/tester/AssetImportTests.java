@@ -94,7 +94,7 @@ public class AssetImportTests
         scene.addSceneObject(model);
         mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
         mTestUtils.waitForXFrames(2);
-        mTestUtils.screenShot("AssetTests", "canLoadModel", mWaiter, mDoCompare);
+        mTestUtils.screenShot("AssetImportTests", "canLoadModel", mWaiter, mDoCompare);
     }
 
     @Test
@@ -121,7 +121,7 @@ public class AssetImportTests
         scene.addSceneObject(model);
         mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
         mTestUtils.waitForXFrames(2);
-        mTestUtils.screenShot("AssetTests", "canLoadModelWithHandler", mWaiter, false);
+        mTestUtils.screenShot("AssetImportTests", "canLoadModelWithHandler", mWaiter, mDoCompare);
     }
 
     @Test
@@ -147,7 +147,7 @@ public class AssetImportTests
         mHandler.checkAssetLoaded(mWaiter, "astro_boy.dae", 4);
         mHandler.checkAssetErrors(mWaiter, 0, 0);
         mTestUtils.waitForSceneRendering();
-        mTestUtils.screenShot("AssetTests", "canLoadExternalScene", mWaiter, mDoCompare);
+        mTestUtils.screenShot("AssetImportTests", "canLoadExternalScene", mWaiter, mDoCompare);
     }
 
     @Test
@@ -177,7 +177,7 @@ public class AssetImportTests
     @Test
     public void jassimpBearOBJ() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/bear/bear-obj.obj", 5, 0, "jassimpBearOBJ");
+        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/animals/bear-obj.obj", 5, 0, "jassimpBearOBJ");
     }
 
     @Test
