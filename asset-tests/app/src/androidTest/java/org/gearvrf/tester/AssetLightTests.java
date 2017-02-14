@@ -72,12 +72,6 @@ public class AssetLightTests
     }
 
     @Test
-    public void jassimpCubeDiffuseAmbient() throws TimeoutException
-    {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/cube/cube_diffuse_directionallight.fbx", 1, 0, "jassimpCubeDiffuseAmbient");
-    }
-
-    @Test
     public void jassimpCubeDiffuseDirectional() throws TimeoutException
     {
         mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/cube/cube_diffuse_directionallight.fbx", 1, 0, "jassimpCubeDiffuseDirectional");
