@@ -285,7 +285,6 @@ public class GVRTestUtils implements GVRMainMonitor {
                     waiter.assertEquals(golden.getWidth(), bitmap.getWidth());
                     waiter.assertEquals(golden.getHeight(), bitmap.getHeight());
 
-                    Log.i(category, "compareWithGolden starting");
                     Bitmap diffmap = golden.copy(golden.getConfig(), true);
                     float diff = 0;
                     try {
@@ -300,8 +299,10 @@ public class GVRTestUtils implements GVRMainMonitor {
                                 diff += (float) r / 255.0f + g / 255.0f + b / 255.0f;
                             }
                         }
-                    } catch (Throwable t) {
-                        t.printStackTrace();
+                    }
+                    catch (Throwable t)
+                    {
+                        waiter.fail(t);
                     }
 
                     Log.e(category, category + ": %s %f", testname, diff);
@@ -309,7 +310,7 @@ public class GVRTestUtils implements GVRMainMonitor {
                     {
                         writeBitmap(category, "diff_" + testname, diffmap);
                     }
-                    waiter.assertTrue(diff <= 1000.0f);
+                    waiter.assertTrue(diff <= 30000.0f);
                 }
             }
 
@@ -328,8 +329,8 @@ public class GVRTestUtils implements GVRMainMonitor {
                     fo.write(bytes.toByteArray());
                     fo.close();
                 }
-                catch (IOException ex)
-                {
+                catch (Throwable ex)
+                {ex.printStackTrace();
                     waiter.fail(ex);
                 }
             }
@@ -343,18 +344,22 @@ public class GVRTestUtils implements GVRMainMonitor {
                     try {
                         writeBitmap(category, basename, bitmap);
                     }
-                    catch (Throwable e)
+                    catch (Exception e)
                     {
-                        Log.d(category, "Could not save screenshot of %s", testname);
+                        Log.e(category, "Could not save screenshot of %s", testname);
                         waiter.fail(e);
                     }
-                    try {
+                    try
+                    {
                         Log.d(category, "Saved screenshot of %s", testname);
-                        if (doCompare) {
+                        if (doCompare)
+                        {
                             compareWithGolden(bitmap, basename, waiter);
                         }
-                    } catch (Throwable t) {
-                        Log.d(category, "Exception while comparing screenshot for %s", testname);
+                    }
+                    catch (Exception t)
+                    {
+                        Log.e(category, "Exception while comparing screenshot for %s %s", testname, t.getMessage());
                         waiter.fail(t);
                     }
                     waiter.resume();
