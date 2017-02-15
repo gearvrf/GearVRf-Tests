@@ -464,7 +464,7 @@ Objects:  {
 		}
 		UseMipMap: 0
 		Filename: "D:/projects/UX_Source_Art/gvrf_test_scenes/fbx/cube_normal.png"
-		RelativeFilename: "..\fbx\cube_normal.png"
+		RelativeFilename: "cube_normal.png"
 	}
 	Video: 803530553120, "Video::spotLight1", "Clip" {
 		Type: "Clip"
@@ -486,7 +486,7 @@ Objects:  {
 		}
 		Media: "Video::file1"
 		FileName: "D:/projects/UX_Source_Art/gvrf_test_scenes/fbx/cube_diffuse.png"
-		RelativeFilename: "..\fbx\cube_diffuse.png"
+		RelativeFilename: "cube_diffuse.png"
 		ModelUVTranslation: 0,0
 		ModelUVScaling: 1,1
 		Texture_Alpha_Source: "None"
@@ -503,7 +503,7 @@ Objects:  {
 		}
 		Media: "Video::file2"
 		FileName: "D:/projects/UX_Source_Art/gvrf_test_scenes/fbx/cube_normal.png"
-		RelativeFilename: "..\fbx\cube_normal.png"
+		RelativeFilename: "cube_normal.png"
 		ModelUVTranslation: 0,0
 		ModelUVScaling: 1,1
 		Texture_Alpha_Source: "None"
