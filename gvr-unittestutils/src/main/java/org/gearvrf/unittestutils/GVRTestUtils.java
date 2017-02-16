@@ -311,6 +311,14 @@ public class GVRTestUtils implements GVRMainMonitor {
                     {
                         waiter.fail(t);
                     }
+<<<<<<< HEAD
+=======
+                    catch (Throwable t)
+                    {
+                        waiter.fail(t);
+                    }
+
+>>>>>>> assimpdecay
                     Log.e(category, category + ": %s %f", testname, diff);
                     if (diff > 1000.0f)
                     {
