@@ -307,6 +307,10 @@ public class GVRTestUtils implements GVRMainMonitor {
                     {
                         waiter.fail(t);
                     }
+                    catch (Throwable t)
+                    {
+                        waiter.fail(t);
+                    }
 
                     Log.e(category, category + ": %s %f", testname, diff);
                     if (diff > 1000.0f)
@@ -344,6 +348,7 @@ public class GVRTestUtils implements GVRMainMonitor {
                 synchronized (onScreenshotLock)
                 {
                     String basename = testname + ".png";
+
                     try
                     {
                         writeBitmap(category, basename, bitmap);
