@@ -87,8 +87,8 @@ public class AssetLightTests
     public void jassimpCubeDiffuseSpot() throws TimeoutException
     {
         mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/cube/cube_diffuse_spotlight.fbx", 1, 0, "jassimpCubeDiffuseSpot");
-     }
-    
+    }
+
     @Test
     public void jassimpCubeDiffuseSpotLinearDecay() throws TimeoutException
     {
@@ -128,13 +128,13 @@ public class AssetLightTests
     @Test
     public void jassimpCubeNormalDiffuseSpotLinearDecay() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/cube/cube_normal_diffuse_spotlight_linear_decay.fbx", 2, 0, "jassimpCubeNormalDiffuseSpot");
+        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/cube/cube_normal_diffuse_spotlight_linear_decay.fbx", 2, 0, "jassimpCubeNormalDiffuseSpotLinearDecay");
     }
 
     @Test
     public void jassimpCubeNormalDiffuseSpotQuadraticDecay() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/cube/cube_normal_diffuse_spotlight_quadratic_decay.fbx", 1, 0, "jassimpCubeNormalDiffuseSpotQuadraticDecay");
+        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/cube/cube_normal_diffuse_spotlight_quadratic_decay.fbx", 2, 0, "jassimpCubeNormalDiffuseSpotQuadraticDecay");
     }
 
     @Test
@@ -210,6 +210,7 @@ public class AssetLightTests
     {
         mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/x3d/generate_normals/nonormalswithptlights.x3d", 2, 0, "x3dGenerateNormalsPoint");
     }
+    
  /*
     @Test
     public void VRBenchmark() throws TimeoutException
