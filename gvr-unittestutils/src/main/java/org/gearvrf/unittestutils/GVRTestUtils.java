@@ -300,14 +300,11 @@ public class GVRTestUtils implements GVRMainMonitor {
                                 diff += (float) r / 255.0f + g / 255.0f + b / 255.0f;
                             }
                         }
-                    } catch (Throwable t) {
-                        t.printStackTrace();
                     }
                     catch (Throwable t)
                     {
                         waiter.fail(t);
                     }
-
                     Log.e(category, category + ": %s %f", testname, diff);
                     if (diff > 1000.0f)
                     {
@@ -344,6 +341,7 @@ public class GVRTestUtils implements GVRMainMonitor {
                 synchronized (onScreenshotLock)
                 {
                     String basename = testname + ".png";
+
                     try
                     {
                         writeBitmap(category, basename, bitmap);
@@ -351,7 +349,7 @@ public class GVRTestUtils implements GVRMainMonitor {
                     catch (Throwable e)
                     {
                         Log.e(category, "Exception while comparing screenshot for %s %s", testname, e.getMessage());
-                        waiter.fail(e;
+                        waiter.fail(e);
                     }
                     try
                     {
