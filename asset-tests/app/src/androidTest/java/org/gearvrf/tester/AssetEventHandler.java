@@ -73,14 +73,12 @@ class AssetEventHandler implements IAssetEvents
         {
             mWaiter.assertNotNull(mScene.getSceneObjectByName(name));
         }
-        mWaiter.resume();
     }
 
     public void checkAssetErrors(Waiter waiter, int numModelErrors, int numTexErrors)
     {
         mWaiter.assertEquals(numModelErrors, ModelErrors);
         mWaiter.assertEquals(numTexErrors, TextureErrors);
-        mWaiter.resume();
     }
 
     public void centerModel(GVRSceneObject model)
