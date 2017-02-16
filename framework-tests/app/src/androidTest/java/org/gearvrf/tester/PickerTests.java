@@ -276,7 +276,6 @@ public class PickerTests
         gvrTestUtils.waitForXFrames(2);
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkHits("sphere", new Vector3f[] { new Vector3f(0, 0, 1) }, null);
-        mWaiter.resume();
     }
 
     @Test
@@ -298,7 +297,6 @@ public class PickerTests
         gvrTestUtils.waitForXFrames(2);
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkHits("sphere", new Vector3f[] { new Vector3f(0, 0, 1) }, null);
-        mWaiter.resume();
     }
 
     @Test
@@ -321,7 +319,6 @@ public class PickerTests
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkObject("sphere", sphere, 1, 0, 1, 1);
         mPickHandler.checkHits("sphere", new Vector3f[] { new Vector3f(0, 0, 1) }, null);
-        mWaiter.resume();
     }
 
     @Test
@@ -344,7 +341,6 @@ public class PickerTests
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkObject("cube", cube, 1, 0, 1, 1);
         mPickHandler.checkHits("cube", new Vector3f[] { new Vector3f(0, 0, 0.5f) }, null);
-        mWaiter.resume();
     }
 
     @Test
@@ -369,7 +365,6 @@ public class PickerTests
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkObject("quad", sceneObj, 1, 0, 1, 1);
         mPickHandler.checkHits("quad", new Vector3f[] { new Vector3f(0, 0, 0) }, null);
-        mWaiter.resume();
     }
 
     @Test
@@ -400,7 +395,6 @@ public class PickerTests
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkObject("Triangle", sceneObjTriangle, 1, 0, 1, 1);
         mPickHandler.checkHits("Triangle", new Vector3f[] { new Vector3f(0.4f, 0.8f, 0.4f) }, null);
-        mWaiter.resume();
     }
 
     @Test
@@ -446,8 +440,6 @@ public class PickerTests
         mWaiter.assertEquals(0.0f, hit2.hitLocation[0]);
         mWaiter.assertEquals(0.0f, hit2.hitLocation[1]);
         mWaiter.assertEquals(1.0f, hit2.hitLocation[2]);
-
-        mWaiter.resume();
     }
 
     @Test
@@ -469,7 +461,6 @@ public class PickerTests
         float distance = GVRPicker.pickSceneObject(sphere1, scene.getMainCameraRig());
         gvrTestUtils.waitForXFrames(2);
         mWaiter.assertEquals(1.0f, distance);
-        mWaiter.resume();
     }
 
     @Test
@@ -503,7 +494,6 @@ public class PickerTests
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkHits("sphere", new Vector3f[] { new Vector3f(0, 0, -2) }, null);
         mPickHandler.checkNoHits("box");
-        mWaiter.resume();
     }
 
 
@@ -537,7 +527,6 @@ public class PickerTests
         gvrTestUtils.waitForXFrames(2);
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkHits("sphere", new Vector3f[] { new Vector3f(-1, 0, 0) }, null);
-        mWaiter.resume();
     }
 
     @Test
@@ -579,6 +568,5 @@ public class PickerTests
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkHits("sphere1", new Vector3f[] { new Vector3f(0, 0, -2) }, null);
         mPickHandler.checkNoHits("sphere2");
-        mWaiter.resume();
     }
 }
