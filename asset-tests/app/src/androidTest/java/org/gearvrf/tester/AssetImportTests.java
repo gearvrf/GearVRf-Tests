@@ -175,6 +175,57 @@ public class AssetImportTests
     }
 
     @Test
+    public void canLoadModelWithCustomIO() throws TimeoutException
+    {
+        class ResourceLoader extends GVRResourceVolume
+        {
+            class Resource extends GVRAndroidResource
+            {
+                public Resource(GVRContext ctx, String path) throws IOException
+                {
+                    super(ctx, path);
+                }
+
+                public synchronized void openStream() throws IOException
+                {
+                    // do some special stuff here
+                    super.openStream();
+                }
+            }
+            public int ResourcesLoaded = 0;
+
+            public ResourceLoader(GVRContext ctx, String fileName)
+            {
+                super(ctx, fileName);
+            }
+
+            public GVRAndroidResource openResource(String filePath) throws IOException
+            {
+                ++ResourcesLoaded;
+                Resource resource = new Resource(gvrContext, getFullPath(defaultPath, filePath));
+                return super.addResource(resource);
+            }
+        };
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRModelSceneObject model = new GVRModelSceneObject(ctx);
+        ResourceLoader volume = new ResourceLoader(ctx, "jassimp/astro_boy.dae");
+
+        ctx.getAssetLoader().loadModel(volume, model, GVRImportSettings.getRecommendedSettings(), false, mHandler);
+        mTestUtils.waitForAssetLoad();
+        mWaiter.assertEquals(8, volume.ResourcesLoaded);
+        mHandler.checkAssetLoaded(mWaiter, null, 4);
+        mWaiter.assertNull(scene.getSceneObjectByName("astro_boy.dae"));
+        mWaiter.assertTrue(model.getChildrenCount() > 0);
+        mHandler.checkAssetErrors(mWaiter, 0, 0);
+        mHandler.centerModel(model);
+        scene.addSceneObject(model);
+        mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
+        mTestUtils.waitForXFrames(2);
+        mTestUtils.screenShot("AssetTests", "canLoadModelWithCustomIO", mWaiter, false);
+    }
+
+    @Test
     public void canLoadModelInScene() throws TimeoutException
     {
         mHandler.loadTestModel("jassimp/astro_boy.dae", 4, 0, "canLoadModelInScene");
