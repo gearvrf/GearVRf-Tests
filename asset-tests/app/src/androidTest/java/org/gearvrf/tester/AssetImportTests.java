@@ -1,5 +1,6 @@
 package org.gearvrf.tester;
 
+
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import net.jodah.concurrentunit.Waiter;
@@ -9,23 +10,21 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRExternalScene;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRTexture;
-import org.gearvrf.IErrorEvents;
+import org.gearvrf.GVRResourceVolume;
+import org.gearvrf.GVRImportSettings;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.GVRPhongShader;
-import org.gearvrf.IAssetEvents;
 
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
-import org.gearvrf.utility.FileNameUtils;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
 @RunWith(AndroidJUnit4.class)
@@ -125,6 +124,108 @@ public class AssetImportTests
     }
 
     @Test
+    public void canLoadModelWithCustomIO() throws TimeoutException
+    {
+        class ResourceLoader extends GVRResourceVolume
+        {
+            class Resource extends GVRAndroidResource
+            {
+                public Resource(GVRContext ctx, String path) throws IOException
+                {
+                    super(ctx, path);
+                }
+
+                public synchronized void openStream() throws IOException
+                {
+                    // do some special stuff here
+                    super.openStream();
+                }
+            }
+            public int ResourcesLoaded = 0;
+
+            public ResourceLoader(GVRContext ctx, String fileName)
+            {
+                super(ctx, fileName);
+            }
+
+            public GVRAndroidResource openResource(String filePath) throws IOException
+            {
+                ++ResourcesLoaded;
+                Resource resource = new Resource(gvrContext, getFullPath(defaultPath, filePath));
+                return super.addResource(resource);
+            }
+        };
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRModelSceneObject model = new GVRModelSceneObject(ctx);
+        ResourceLoader volume = new ResourceLoader(ctx, "jassimp/astro_boy.dae");
+
+        ctx.getAssetLoader().loadModel(volume, model, GVRImportSettings.getRecommendedSettings(), false, mHandler);
+        mTestUtils.waitForAssetLoad();
+        mWaiter.assertEquals(8, volume.ResourcesLoaded);
+        mHandler.checkAssetLoaded(mWaiter, null, 4);
+        mWaiter.assertNull(scene.getSceneObjectByName("astro_boy.dae"));
+        mWaiter.assertTrue(model.getChildrenCount() > 0);
+        mHandler.checkAssetErrors(mWaiter, 0, 0);
+        mHandler.centerModel(model);
+        scene.addSceneObject(model);
+        mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
+        mTestUtils.waitForXFrames(2);
+        mTestUtils.screenShot("AssetTests", "canLoadModelWithCustomIO", mWaiter, false);
+    }
+
+    @Test
+    public void canLoadModelWithCustomIO() throws TimeoutException
+    {
+        class ResourceLoader extends GVRResourceVolume
+        {
+            class Resource extends GVRAndroidResource
+            {
+                public Resource(GVRContext ctx, String path) throws IOException
+                {
+                    super(ctx, path);
+                }
+
+                public synchronized void openStream() throws IOException
+                {
+                    // do some special stuff here
+                    super.openStream();
+                }
+            }
+            public int ResourcesLoaded = 0;
+
+            public ResourceLoader(GVRContext ctx, String fileName)
+            {
+                super(ctx, fileName);
+            }
+
+            public GVRAndroidResource openResource(String filePath) throws IOException
+            {
+                ++ResourcesLoaded;
+                Resource resource = new Resource(gvrContext, getFullPath(defaultPath, filePath));
+                return super.addResource(resource);
+            }
+        };
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRModelSceneObject model = new GVRModelSceneObject(ctx);
+        ResourceLoader volume = new ResourceLoader(ctx, "jassimp/astro_boy.dae");
+
+        ctx.getAssetLoader().loadModel(volume, model, GVRImportSettings.getRecommendedSettings(), false, mHandler);
+        mTestUtils.waitForAssetLoad();
+        mWaiter.assertEquals(8, volume.ResourcesLoaded);
+        mHandler.checkAssetLoaded(mWaiter, null, 4);
+        mWaiter.assertNull(scene.getSceneObjectByName("astro_boy.dae"));
+        mWaiter.assertTrue(model.getChildrenCount() > 0);
+        mHandler.checkAssetErrors(mWaiter, 0, 0);
+        mHandler.centerModel(model);
+        scene.addSceneObject(model);
+        mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
+        mTestUtils.waitForXFrames(2);
+        mTestUtils.screenShot("AssetTests", "canLoadModelWithCustomIO", mWaiter, false);
+    }
+
+    @Test
     public void canLoadModelInScene() throws TimeoutException
     {
         mHandler.loadTestModel("jassimp/astro_boy.dae", 4, 0, "canLoadModelInScene");
@@ -141,7 +242,7 @@ public class AssetImportTests
         ctx.getEventReceiver().addListener(mHandler);
         model.attachComponent(sceneLoader);
         scene.addSceneObject(model);
-        mWaiter.assertTrue(sceneLoader.load(scene));
+        sceneLoader.load(scene);
         mWaiter.assertNotNull(model);
         mTestUtils.waitForAssetLoad();
         mHandler.checkAssetLoaded(mWaiter, "astro_boy.dae", 4);
@@ -167,7 +268,7 @@ public class AssetImportTests
     {
         mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/hippo/hippo.obj", 1, 0, "jassimpHippoOBJ");
     }
-
+/*
     @Test
     public void jassimpDeerOBJ() throws TimeoutException
     {
@@ -185,7 +286,7 @@ public class AssetImportTests
     {
         mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/animals/wolf-obj.obj", 5, 0, "jassimpWolfOBJ");
     }
-
+*/
     @Test
     public void jassimpSkinningTREX() throws TimeoutException
     {
