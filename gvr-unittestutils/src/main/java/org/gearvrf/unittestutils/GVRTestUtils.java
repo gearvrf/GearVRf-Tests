@@ -299,26 +299,12 @@ public class GVRTestUtils implements GVRMainMonitor {
                                 diff += (float) r / 255.0f + g / 255.0f + b / 255.0f;
                             }
                         }
-<<<<<<< HEAD
-=======
                     }
-                    catch (Throwable t)
-                    {
-                        waiter.fail(t);
->>>>>>> update golden images & paths for unit tests
-                    }
-                    catch (Throwable t)
-                    {
-                        waiter.fail(t);
-                    }
-<<<<<<< HEAD
-=======
                     catch (Throwable t)
                     {
                         waiter.fail(t);
                     }
 
->>>>>>> assimpdecay
                     Log.e(category, category + ": %s %f", testname, diff);
                     if (diff > 1000.0f)
                     {
