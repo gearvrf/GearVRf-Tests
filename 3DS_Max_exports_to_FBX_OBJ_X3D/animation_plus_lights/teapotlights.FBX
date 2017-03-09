@@ -10,11 +10,11 @@ FBXHeaderExtension:  {
 		Version: 1000
 		Year: 2017
 		Month: 3
-		Day: 7
-		Hour: 13
-		Minute: 55
-		Second: 54
-		Millisecond: 478
+		Day: 8
+		Hour: 17
+		Minute: 10
+		Second: 49
+		Millisecond: 637
 	}
 	Creator: "FBX SDK/FBX Plugins version 2013.3"
 	SceneInfo: "SceneInfo::GlobalInfo", "UserData" {
@@ -36,13 +36,13 @@ FBXHeaderExtension:  {
 			P: "Original|ApplicationVendor", "KString", "", "", "Autodesk"
 			P: "Original|ApplicationName", "KString", "", "", "3ds Max"
 			P: "Original|ApplicationVersion", "KString", "", "", "2009.0"
-			P: "Original|DateTime_GMT", "DateTime", "", "", "07/03/2017 18:52:51.452"
+			P: "Original|DateTime_GMT", "DateTime", "", "", "07/03/2017 19:37:55.611"
 			P: "Original|FileName", "KString", "", "", "teapotlights.FBX"
 			P: "LastSaved", "Compound", "", ""
 			P: "LastSaved|ApplicationVendor", "KString", "", "", "Autodesk"
 			P: "LastSaved|ApplicationName", "KString", "", "", "3ds Max"
 			P: "LastSaved|ApplicationVersion", "KString", "", "", "2009.0"
-			P: "LastSaved|DateTime_GMT", "DateTime", "", "", "07/03/2017 18:52:51.452"
+			P: "LastSaved|DateTime_GMT", "DateTime", "", "", "07/03/2017 19:37:55.611"
 		}
 	}
 }
@@ -73,7 +73,7 @@ GlobalSettings:  {
 
 Documents:  {
 	Count: 1
-	Document: 60027264, "", "Scene" {
+	Document: 63958880, "", "Scene" {
 		Properties70:  {
 			P: "SourceObject", "object", "", ""
 			P: "ActiveAnimStackName", "KString", "", "", "Take 001"
@@ -93,19 +93,9 @@ References:  {
 
 Definitions:  {
 	Version: 100
-	Count: 18
+	Count: 20
 	ObjectType: "GlobalSettings" {
 		Count: 1
-	}
-	ObjectType: "NodeAttribute" {
-		Count: 3
-		PropertyTemplate: "FbxNull" {
-			Properties70:  {
-				P: "Color", "ColorRGB", "Color", "",0.8,0.8,0.8
-				P: "Size", "double", "Number", "",100
-				P: "Look", "enum", "", "",1
-			}
-		}
 	}
 	ObjectType: "Model" {
 		Count: 4
@@ -185,6 +175,53 @@ Definitions:  {
 			}
 		}
 	}
+	ObjectType: "Geometry" {
+		Count: 1
+		PropertyTemplate: "FbxMesh" {
+			Properties70:  {
+				P: "Color", "ColorRGB", "Color", "",0.8,0.8,0.8
+				P: "BBoxMin", "Vector3D", "Vector", "",0,0,0
+				P: "BBoxMax", "Vector3D", "Vector", "",0,0,0
+				P: "Primary Visibility", "bool", "", "",1
+				P: "Casts Shadows", "bool", "", "",1
+				P: "Receive Shadows", "bool", "", "",1
+			}
+		}
+	}
+	ObjectType: "NodeAttribute" {
+		Count: 3
+		PropertyTemplate: "FbxLight" {
+			Properties70:  {
+				P: "Color", "Color", "", "A",1,1,1
+				P: "LightType", "enum", "", "",0
+				P: "CastLightOnObject", "bool", "", "",1
+				P: "DrawVolumetricLight", "bool", "", "",1
+				P: "DrawGroundProjection", "bool", "", "",1
+				P: "DrawFrontFacingVolumetricLight", "bool", "", "",0
+				P: "Intensity", "Number", "", "A",100
+				P: "InnerAngle", "Number", "", "A",0
+				P: "OuterAngle", "Number", "", "A",45
+				P: "Fog", "Number", "", "A",50
+				P: "DecayType", "enum", "", "",0
+				P: "DecayStart", "Number", "", "A",0
+				P: "FileName", "KString", "", "", ""
+				P: "EnableNearAttenuation", "bool", "", "",0
+				P: "NearAttenuationStart", "Number", "", "A",0
+				P: "NearAttenuationEnd", "Number", "", "A",0
+				P: "EnableFarAttenuation", "bool", "", "",0
+				P: "FarAttenuationStart", "Number", "", "A",0
+				P: "FarAttenuationEnd", "Number", "", "A",0
+				P: "CastShadows", "bool", "", "",0
+				P: "ShadowColor", "Color", "", "A",0,0,0
+				P: "AreaLightShape", "enum", "", "",0
+				P: "LeftBarnDoor", "Float", "", "A",20
+				P: "RightBarnDoor", "Float", "", "A",20
+				P: "TopBarnDoor", "Float", "", "A",20
+				P: "BottomBarnDoor", "Float", "", "A",20
+				P: "EnableBarnDoor", "Bool", "", "A",0
+			}
+		}
+	}
 	ObjectType: "Material" {
 		Count: 1
 		PropertyTemplate: "FbxSurfacePhong" {
@@ -259,19 +296,6 @@ Definitions:  {
 			}
 		}
 	}
-	ObjectType: "Geometry" {
-		Count: 1
-		PropertyTemplate: "FbxMesh" {
-			Properties70:  {
-				P: "Color", "ColorRGB", "Color", "",0.8,0.8,0.8
-				P: "BBoxMin", "Vector3D", "Vector", "",0,0,0
-				P: "BBoxMax", "Vector3D", "Vector", "",0,0,0
-				P: "Primary Visibility", "bool", "", "",1
-				P: "Casts Shadows", "bool", "", "",1
-				P: "Receive Shadows", "bool", "", "",1
-			}
-		}
-	}
 	ObjectType: "AnimationStack" {
 		Count: 1
 		PropertyTemplate: "FbxAnimStack" {
@@ -301,7 +325,7 @@ Definitions:  {
 		}
 	}
 	ObjectType: "AnimationCurveNode" {
-		Count: 1
+		Count: 3
 		PropertyTemplate: "FbxAnimCurveNode" {
 			Properties70:  {
 				P: "d", "Compound", "", ""
@@ -317,16 +341,7 @@ Definitions:  {
 ;------------------------------------------------------------------
 
 Objects:  {
-	NodeAttribute: 60417920, "NodeAttribute::", "Null" {
-		TypeFlags: "Null"
-	}
-	NodeAttribute: 60418256, "NodeAttribute::", "Null" {
-		TypeFlags: "Null"
-	}
-	NodeAttribute: 60418592, "NodeAttribute::", "Null" {
-		TypeFlags: "Null"
-	}
-	Geometry: 60408080, "Geometry::Teapot01", "Mesh" {
+	Geometry: 64413648, "Geometry::Teapot01", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.23921568627451,0.529411764705882,0.0235294117647059
 		}
@@ -528,7 +543,112 @@ Objects:  {
 			}
 		}
 	}
-	Model: 60441120, "Model::Teapot01", "Mesh" {
+	NodeAttribute: 94518736, "NodeAttribute::", "Light" {
+		Properties70:  {
+			P: "Color", "Color", "", "A+",0,0,1
+			P: "DrawGroundProjection", "bool", "", "",0
+			P: "Fog", "Number", "", "A+",0
+			P: "DecayStart", "Number", "", "A+",40
+			P: "NearAttenuationEnd", "Number", "", "A+",40
+			P: "FarAttenuationStart", "Number", "", "A+",80
+			P: "FarAttenuationEnd", "Number", "", "A+",200
+			P: "HotSpot", "Number", "", "A+",0
+			P: "Cone angle", "Number", "", "A+",45
+			P: "3dsMax", "Compound", "", ""
+			P: "3dsMax|ClassIDa", "int", "Integer", "",4113
+			P: "3dsMax|ClassIDb", "int", "Integer", "",0
+			P: "3dsMax|SuperClassID", "int", "Integer", "",48
+			P: "3dsMax|ParamBlock_0", "Compound", "", ""
+			P: "3dsMax|ParamBlock_0|Color", "Color", "", "A",0,0,1
+			P: "3dsMax|ParamBlock_0|Multiplier", "Float", "", "A",1
+			P: "3dsMax|ParamBlock_0|Contrast", "Float", "", "A",0
+			P: "3dsMax|ParamBlock_0|Diffuse Soften", "Float", "", "A",0
+			P: "3dsMax|ParamBlock_0|Attenuation Near Start", "Float", "", "A",0
+			P: "3dsMax|ParamBlock_0|Attenuation Near End", "Float", "", "A",40
+			P: "3dsMax|ParamBlock_0|Attenuation Far Start", "Float", "", "A",80
+			P: "3dsMax|ParamBlock_0|Attenuation Far End", "Float", "", "A",200
+			P: "3dsMax|ParamBlock_0|Decay Falloff", "Float", "", "A",40
+			P: "3dsMax|ParamBlock_0|Shadow Color", "Color", "", "A",0,0,0
+			P: "3dsMax|ParamBlock_0|_Unnamed_Parameter_10", "int", "Integer", "",0
+			P: "3dsMax|ParamBlock_0|Atmosphere Opacity", "Float", "", "A",1
+			P: "3dsMax|ParamBlock_0|Atmosphere Color Amount", "Float", "", "A",1
+			P: "3dsMax|ParamBlock_0|Shadow Density", "Float", "", "A",1
+			P: "3dsMax|ParamBlock_0|_Unnamed_Parameter_14", "int", "Integer", "",0
+		}
+		TypeFlags: "Light"
+		GeometryVersion: 124
+	}
+	NodeAttribute: 64416912, "NodeAttribute::", "Light" {
+		Properties70:  {
+			P: "Color", "Color", "", "A+",0,1,0
+			P: "DrawGroundProjection", "bool", "", "",0
+			P: "Fog", "Number", "", "A+",0
+			P: "DecayStart", "Number", "", "A+",40
+			P: "NearAttenuationEnd", "Number", "", "A+",40
+			P: "FarAttenuationStart", "Number", "", "A+",80
+			P: "FarAttenuationEnd", "Number", "", "A+",200
+			P: "HotSpot", "Number", "", "A+",0
+			P: "Cone angle", "Number", "", "A+",45
+			P: "3dsMax", "Compound", "", ""
+			P: "3dsMax|ClassIDa", "int", "Integer", "",4113
+			P: "3dsMax|ClassIDb", "int", "Integer", "",0
+			P: "3dsMax|SuperClassID", "int", "Integer", "",48
+			P: "3dsMax|ParamBlock_0", "Compound", "", ""
+			P: "3dsMax|ParamBlock_0|Color", "Color", "", "A",0,1,0
+			P: "3dsMax|ParamBlock_0|Multiplier", "Float", "", "A",1
+			P: "3dsMax|ParamBlock_0|Contrast", "Float", "", "A",0
+			P: "3dsMax|ParamBlock_0|Diffuse Soften", "Float", "", "A",0
+			P: "3dsMax|ParamBlock_0|Attenuation Near Start", "Float", "", "A",0
+			P: "3dsMax|ParamBlock_0|Attenuation Near End", "Float", "", "A",40
+			P: "3dsMax|ParamBlock_0|Attenuation Far Start", "Float", "", "A",80
+			P: "3dsMax|ParamBlock_0|Attenuation Far End", "Float", "", "A",200
+			P: "3dsMax|ParamBlock_0|Decay Falloff", "Float", "", "A",40
+			P: "3dsMax|ParamBlock_0|Shadow Color", "Color", "", "A",0,0,0
+			P: "3dsMax|ParamBlock_0|_Unnamed_Parameter_10", "int", "Integer", "",0
+			P: "3dsMax|ParamBlock_0|Atmosphere Opacity", "Float", "", "A",1
+			P: "3dsMax|ParamBlock_0|Atmosphere Color Amount", "Float", "", "A",1
+			P: "3dsMax|ParamBlock_0|Shadow Density", "Float", "", "A",1
+			P: "3dsMax|ParamBlock_0|_Unnamed_Parameter_14", "int", "Integer", "",0
+		}
+		TypeFlags: "Light"
+		GeometryVersion: 124
+	}
+	NodeAttribute: 95529392, "NodeAttribute::", "Light" {
+		Properties70:  {
+			P: "Color", "Color", "", "A+",1,0,0
+			P: "DrawGroundProjection", "bool", "", "",0
+			P: "Fog", "Number", "", "A+",0
+			P: "DecayStart", "Number", "", "A+",40
+			P: "NearAttenuationEnd", "Number", "", "A+",40
+			P: "FarAttenuationStart", "Number", "", "A+",80
+			P: "FarAttenuationEnd", "Number", "", "A+",200
+			P: "HotSpot", "Number", "", "A+",0
+			P: "Cone angle", "Number", "", "A+",45
+			P: "3dsMax", "Compound", "", ""
+			P: "3dsMax|ClassIDa", "int", "Integer", "",4113
+			P: "3dsMax|ClassIDb", "int", "Integer", "",0
+			P: "3dsMax|SuperClassID", "int", "Integer", "",48
+			P: "3dsMax|ParamBlock_0", "Compound", "", ""
+			P: "3dsMax|ParamBlock_0|Color", "Color", "", "A",1,0,0
+			P: "3dsMax|ParamBlock_0|Multiplier", "Float", "", "A",1
+			P: "3dsMax|ParamBlock_0|Contrast", "Float", "", "A",0
+			P: "3dsMax|ParamBlock_0|Diffuse Soften", "Float", "", "A",0
+			P: "3dsMax|ParamBlock_0|Attenuation Near Start", "Float", "", "A",0
+			P: "3dsMax|ParamBlock_0|Attenuation Near End", "Float", "", "A",40
+			P: "3dsMax|ParamBlock_0|Attenuation Far Start", "Float", "", "A",80
+			P: "3dsMax|ParamBlock_0|Attenuation Far End", "Float", "", "A",200
+			P: "3dsMax|ParamBlock_0|Decay Falloff", "Float", "", "A",40
+			P: "3dsMax|ParamBlock_0|Shadow Color", "Color", "", "A",0,0,0
+			P: "3dsMax|ParamBlock_0|_Unnamed_Parameter_10", "int", "Integer", "",0
+			P: "3dsMax|ParamBlock_0|Atmosphere Opacity", "Float", "", "A",1
+			P: "3dsMax|ParamBlock_0|Atmosphere Color Amount", "Float", "", "A",1
+			P: "3dsMax|ParamBlock_0|Shadow Density", "Float", "", "A",1
+			P: "3dsMax|ParamBlock_0|_Unnamed_Parameter_14", "int", "Integer", "",0
+		}
+		TypeFlags: "Light"
+		GeometryVersion: 124
+	}
+	Model: 64273488, "Model::Teapot01", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "InheritType", "enum", "", "",1
@@ -538,40 +658,49 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 86282400, "Model::Omni03", "Null" {
+	Model: 64269376, "Model::Omni03", "Light" {
 		Version: 232
 		Properties70:  {
+			P: "PostRotation", "Vector3D", "Vector", "",-90,-0,0
+			P: "RotationActive", "bool", "", "",1
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMin", "Vector3D", "Vector", "",1,1,1
+			P: "DefaultAttributeIndex", "int", "Integer", "",0
 			P: "Lcl Translation", "Lcl Translation", "", "A+",80.3439788818359,-2.52387621912931e-006,57.739559173584
 			P: "Lcl Rotation", "Lcl Rotation", "", "A+",90.0000025044781,-0,0
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 60399456, "Model::Omni02", "Null" {
+	Model: 95524880, "Model::Omni02", "Light" {
 		Version: 232
 		Properties70:  {
+			P: "PostRotation", "Vector3D", "Vector", "",-90,-0,0
+			P: "RotationActive", "bool", "", "",1
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMin", "Vector3D", "Vector", "",1,1,1
+			P: "DefaultAttributeIndex", "int", "Integer", "",0
 			P: "Lcl Translation", "Lcl Translation", "", "A+",0.245700240135193,-2.5668357466202e-006,58.7223587036133
 			P: "Lcl Rotation", "Lcl Rotation", "", "A+",90.0000025044781,-0,0
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 60401712, "Model::Omni01", "Null" {
+	Model: 95527136, "Model::Omni01", "Light" {
 		Version: 232
 		Properties70:  {
+			P: "PostRotation", "Vector3D", "Vector", "",-90,-0,0
+			P: "RotationActive", "bool", "", "",1
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMin", "Vector3D", "Vector", "",1,1,1
+			P: "DefaultAttributeIndex", "int", "Integer", "",0
 			P: "Lcl Translation", "Lcl Translation", "", "A+",-78.3783798217773,-2.54535598287475e-006,58.23095703125
 			P: "Lcl Rotation", "Lcl Rotation", "", "A+",90.0000025044781,-0,0
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Material: 60419264, "Material::01 - Default", "" {
+	Material: 95530128, "Material::01 - Default", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -593,7 +722,7 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	Video: 60444128, "Video::Map #1", "Clip" {
+	Video: 64272384, "Video::Map #1", "Clip" {
 		Type: "Clip"
 		Properties70:  {
 			P: "Path", "KString", "XRefUrl", "", "teapot.png"
@@ -602,7 +731,7 @@ Objects:  {
 		Filename: "teapot.png"
 		RelativeFilename: "teapot.png"
 	}
-	Texture: 60443376, "Texture::Map #1", "" {
+	Texture: 64271632, "Texture::Map #1", "" {
 		Type: "TextureVideoClip"
 		Version: 202
 		TextureName: "Texture::Map #1"
@@ -618,22 +747,36 @@ Objects:  {
 		Texture_Alpha_Source: "Alpha_Black"
 		Cropping: 0,0,0,0
 	}
-	AnimationStack: 60343920, "AnimStack::Take 001", "" {
+	AnimationStack: 64273024, "AnimStack::Take 001", "" {
 		Properties70:  {
 			P: "LocalStop", "KTime", "Time", "",153953860000
 			P: "ReferenceStop", "KTime", "Time", "",153953860000
 		}
 	}
-	AnimationLayer: 60481968, "AnimLayer::Layer0", "" {
+	AnimationLayer: 94493088, "AnimLayer::Layer0", "" {
 	}
-	AnimationCurveNode: 60482400, "AnimCurveNode::R", "" {
+	AnimationCurveNode: 94486448, "AnimCurveNode::T", "" {
 		Properties70:  {
 			P: "d|X", "Number", "", "A",0
 			P: "d|Y", "Number", "", "A",0
 			P: "d|Z", "Number", "", "A",0
 		}
 	}
-	AnimationCurve: 60482768, "AnimCurve::", "" {
+	AnimationCurveNode: 94486816, "AnimCurveNode::R", "" {
+		Properties70:  {
+			P: "d|X", "Number", "", "A",0
+			P: "d|Y", "Number", "", "A",0
+			P: "d|Z", "Number", "", "A",0
+		}
+	}
+	AnimationCurveNode: 94487184, "AnimCurveNode::S", "" {
+		Properties70:  {
+			P: "d|X", "Number", "", "A",1
+			P: "d|Y", "Number", "", "A",1
+			P: "d|Z", "Number", "", "A",1
+		}
+	}
+	AnimationCurve: 64411584, "AnimCurve::", "" {
 		Default: 0
 		KeyVer: 4008
 		KeyTime: *4 {
@@ -654,7 +797,7 @@ Objects:  {
 			a: 3,1
 		} 
 	}
-	AnimationCurve: 60483088, "AnimCurve::", "" {
+	AnimationCurve: 64411904, "AnimCurve::", "" {
 		Default: 0
 		KeyVer: 4008
 		KeyTime: *4 {
@@ -675,7 +818,7 @@ Objects:  {
 			a: 3,1
 		} 
 	}
-	AnimationCurve: 60483408, "AnimCurve::", "" {
+	AnimationCurve: 64412224, "AnimCurve::", "" {
 		Default: 0
 		KeyVer: 4008
 		KeyTime: *4 {
@@ -704,55 +847,67 @@ Objects:  {
 Connections:  {
 	
 	;Model::Teapot01, Model::RootNode
-	C: "OO",60441120,0
+	C: "OO",64273488,0
 	
 	;Model::Omni03, Model::RootNode
-	C: "OO",86282400,0
+	C: "OO",64269376,0
 	
 	;Model::Omni02, Model::RootNode
-	C: "OO",60399456,0
+	C: "OO",95524880,0
 	
 	;Model::Omni01, Model::RootNode
-	C: "OO",60401712,0
+	C: "OO",95527136,0
 	
 	;Geometry::Teapot01, Model::Teapot01
-	C: "OO",60408080,60441120
+	C: "OO",64413648,64273488
 	
 	;Material::01 - Default, Model::Teapot01
-	C: "OO",60419264,60441120
+	C: "OO",95530128,64273488
+	
+	;AnimCurveNode::T, Model::Teapot01
+	C: "OP",94486448,64273488, "Lcl Translation"
 	
 	;AnimCurveNode::R, Model::Teapot01
-	C: "OP",60482400,60441120, "Lcl Rotation"
+	C: "OP",94486816,64273488, "Lcl Rotation"
+	
+	;AnimCurveNode::S, Model::Teapot01
+	C: "OP",94487184,64273488, "Lcl Scaling"
 	
 	;NodeAttribute::, Model::Omni03
-	C: "OO",60417920,86282400
+	C: "OO",94518736,64269376
 	
 	;NodeAttribute::, Model::Omni02
-	C: "OO",60418256,60399456
+	C: "OO",64416912,95524880
 	
 	;NodeAttribute::, Model::Omni01
-	C: "OO",60418592,60401712
+	C: "OO",95529392,95527136
 	
 	;Texture::Map #1, Material::01 - Default
-	C: "OP",60443376,60419264, "DiffuseColor"
+	C: "OP",64271632,95530128, "DiffuseColor"
 	
 	;Video::Map #1, Texture::Map #1
-	C: "OO",60444128,60443376
+	C: "OO",64272384,64271632
 	
 	;AnimLayer::Layer0, AnimStack::Take 001
-	C: "OO",60481968,60343920
+	C: "OO",94493088,64273024
+	
+	;AnimCurveNode::T, AnimLayer::Layer0
+	C: "OO",94486448,94493088
 	
 	;AnimCurveNode::R, AnimLayer::Layer0
-	C: "OO",60482400,60481968
+	C: "OO",94486816,94493088
+	
+	;AnimCurveNode::S, AnimLayer::Layer0
+	C: "OO",94487184,94493088
 	
 	;AnimCurve::, AnimCurveNode::R
-	C: "OP",60482768,60482400, "d|X"
+	C: "OP",64411584,94486816, "d|X"
 	
 	;AnimCurve::, AnimCurveNode::R
-	C: "OP",60483088,60482400, "d|Y"
+	C: "OP",64411904,94486816, "d|Y"
 	
 	;AnimCurve::, AnimCurveNode::R
-	C: "OP",60483408,60482400, "d|Z"
+	C: "OP",64412224,94486816, "d|Z"
 }
 ;Takes section
 ;----------------------------------------------------

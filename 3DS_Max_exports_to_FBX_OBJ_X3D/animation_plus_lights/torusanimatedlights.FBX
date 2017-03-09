@@ -10,11 +10,11 @@ FBXHeaderExtension:  {
 		Version: 1000
 		Year: 2017
 		Month: 3
-		Day: 7
-		Hour: 13
-		Minute: 13
-		Second: 17
-		Millisecond: 220
+		Day: 8
+		Hour: 17
+		Minute: 10
+		Second: 48
+		Millisecond: 851
 	}
 	Creator: "FBX SDK/FBX Plugins version 2013.3"
 	SceneInfo: "SceneInfo::GlobalInfo", "UserData" {
@@ -73,7 +73,7 @@ GlobalSettings:  {
 
 Documents:  {
 	Count: 1
-	Document: 85455840, "", "Scene" {
+	Document: 91551504, "", "Scene" {
 		Properties70:  {
 			P: "SourceObject", "object", "", ""
 			P: "ActiveAnimStackName", "KString", "", "", "Take 001"
@@ -341,7 +341,7 @@ Definitions:  {
 ;------------------------------------------------------------------
 
 Objects:  {
-	Geometry: 16893424, "Geometry::Torus Knot01", "Mesh" {
+	Geometry: 92259824, "Geometry::Torus Knot01", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.580392156862745,0.694117647058824,0.105882352941176
 		}
@@ -774,7 +774,7 @@ Objects:  {
 			}
 		}
 	}
-	NodeAttribute: 85771872, "NodeAttribute::", "Light" {
+	NodeAttribute: 95284384, "NodeAttribute::", "Light" {
 		Properties70:  {
 			P: "Color", "Color", "", "A+",1,0,0
 			P: "DrawGroundProjection", "bool", "", "",0
@@ -809,7 +809,7 @@ Objects:  {
 		TypeFlags: "Light"
 		GeometryVersion: 124
 	}
-	NodeAttribute: 20028336, "NodeAttribute::", "Light" {
+	NodeAttribute: 91866480, "NodeAttribute::", "Light" {
 		Properties70:  {
 			P: "Color", "Color", "", "A+",0,1,0
 			P: "DrawGroundProjection", "bool", "", "",0
@@ -844,7 +844,7 @@ Objects:  {
 		TypeFlags: "Light"
 		GeometryVersion: 124
 	}
-	NodeAttribute: 17402544, "NodeAttribute::", "Light" {
+	NodeAttribute: 92272016, "NodeAttribute::", "Light" {
 		Properties70:  {
 			P: "Color", "Color", "", "A+",0,0,1
 			P: "DrawGroundProjection", "bool", "", "",0
@@ -879,7 +879,7 @@ Objects:  {
 		TypeFlags: "Light"
 		GeometryVersion: 124
 	}
-	Model: 85880848, "Model::Torus Knot01", "Mesh" {
+	Model: 91862464, "Model::Torus Knot01", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "InheritType", "enum", "", "",1
@@ -892,7 +892,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 85908736, "Model::Omni01", "Light" {
+	Model: 92404992, "Model::Omni01", "Light" {
 		Version: 232
 		Properties70:  {
 			P: "PostRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -906,7 +906,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 85910992, "Model::Omni02", "Light" {
+	Model: 91854256, "Model::Omni02", "Light" {
 		Version: 232
 		Properties70:  {
 			P: "PostRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -920,7 +920,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 85759328, "Model::Omni03", "Light" {
+	Model: 92269760, "Model::Omni03", "Light" {
 		Version: 232
 		Properties70:  {
 			P: "PostRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -934,7 +934,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Material: 17403280, "Material::02 - Default", "" {
+	Material: 92407248, "Material::02 - Default", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -956,7 +956,7 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	Video: 85766448, "Video::Map #2", "Clip" {
+	Video: 92407888, "Video::Map #2", "Clip" {
 		Type: "Clip"
 		Properties70:  {
 			P: "Path", "KString", "XRefUrl", "", "torus.png"
@@ -965,7 +965,7 @@ Objects:  {
 		Filename: "torus.png"
 		RelativeFilename: "torus.png"
 	}
-	Texture: 85765696, "Texture::Map #2", "" {
+	Texture: 92276864, "Texture::Map #2", "" {
 		Type: "TextureVideoClip"
 		Version: 202
 		TextureName: "Texture::Map #2"
@@ -981,36 +981,36 @@ Objects:  {
 		Texture_Alpha_Source: "Alpha_Black"
 		Cropping: 0,0,0,0
 	}
-	AnimationStack: 85767088, "AnimStack::Take 001", "" {
+	AnimationStack: 92408528, "AnimStack::Take 001", "" {
 		Properties70:  {
 			P: "LocalStop", "KTime", "Time", "",153953860000
 			P: "ReferenceStop", "KTime", "Time", "",153953860000
 		}
 	}
-	AnimationLayer: 85879632, "AnimLayer::Layer0", "" {
+	AnimationLayer: 92301376, "AnimLayer::Layer0", "" {
 	}
-	AnimationCurveNode: 85752928, "AnimCurveNode::T", "" {
+	AnimationCurveNode: 92302144, "AnimCurveNode::T", "" {
 		Properties70:  {
 			P: "d|X", "Number", "", "A",0
 			P: "d|Y", "Number", "", "A",-1.06877136230469
 			P: "d|Z", "Number", "", "A",0
 		}
 	}
-	AnimationCurveNode: 85753824, "AnimCurveNode::R", "" {
+	AnimationCurveNode: 91860896, "AnimCurveNode::R", "" {
 		Properties70:  {
 			P: "d|X", "Number", "", "A",0
 			P: "d|Y", "Number", "", "A",-0
 			P: "d|Z", "Number", "", "A",84.6991729736328
 		}
 	}
-	AnimationCurveNode: 85872656, "AnimCurveNode::S", "" {
+	AnimationCurveNode: 91852848, "AnimCurveNode::S", "" {
 		Properties70:  {
 			P: "d|X", "Number", "", "A",1
 			P: "d|Y", "Number", "", "A",1
 			P: "d|Z", "Number", "", "A",1
 		}
 	}
-	AnimationCurve: 85873200, "AnimCurve::", "" {
+	AnimationCurve: 91862128, "AnimCurve::", "" {
 		Default: 0
 		KeyVer: 4008
 		KeyTime: *4 {
@@ -1031,7 +1031,7 @@ Objects:  {
 			a: 3,1
 		} 
 	}
-	AnimationCurve: 85873520, "AnimCurve::", "" {
+	AnimationCurve: 91852208, "AnimCurve::", "" {
 		Default: -0
 		KeyVer: 4008
 		KeyTime: *4 {
@@ -1052,7 +1052,7 @@ Objects:  {
 			a: 3,1
 		} 
 	}
-	AnimationCurve: 85873840, "AnimCurve::", "" {
+	AnimationCurve: 91852528, "AnimCurve::", "" {
 		Default: 84.6991729736328
 		KeyVer: 4008
 		KeyTime: *4 {
@@ -1081,67 +1081,67 @@ Objects:  {
 Connections:  {
 	
 	;Model::Torus Knot01, Model::RootNode
-	C: "OO",85880848,0
+	C: "OO",91862464,0
 	
 	;Model::Omni01, Model::RootNode
-	C: "OO",85908736,0
+	C: "OO",92404992,0
 	
 	;Model::Omni02, Model::RootNode
-	C: "OO",85910992,0
+	C: "OO",91854256,0
 	
 	;Model::Omni03, Model::RootNode
-	C: "OO",85759328,0
+	C: "OO",92269760,0
 	
 	;Geometry::Torus Knot01, Model::Torus Knot01
-	C: "OO",16893424,85880848
+	C: "OO",92259824,91862464
 	
 	;Material::02 - Default, Model::Torus Knot01
-	C: "OO",17403280,85880848
+	C: "OO",92407248,91862464
 	
 	;AnimCurveNode::T, Model::Torus Knot01
-	C: "OP",85752928,85880848, "Lcl Translation"
+	C: "OP",92302144,91862464, "Lcl Translation"
 	
 	;AnimCurveNode::R, Model::Torus Knot01
-	C: "OP",85753824,85880848, "Lcl Rotation"
+	C: "OP",91860896,91862464, "Lcl Rotation"
 	
 	;AnimCurveNode::S, Model::Torus Knot01
-	C: "OP",85872656,85880848, "Lcl Scaling"
+	C: "OP",91852848,91862464, "Lcl Scaling"
 	
 	;NodeAttribute::, Model::Omni01
-	C: "OO",85771872,85908736
+	C: "OO",95284384,92404992
 	
 	;NodeAttribute::, Model::Omni02
-	C: "OO",20028336,85910992
+	C: "OO",91866480,91854256
 	
 	;NodeAttribute::, Model::Omni03
-	C: "OO",17402544,85759328
+	C: "OO",92272016,92269760
 	
 	;Texture::Map #2, Material::02 - Default
-	C: "OP",85765696,17403280, "DiffuseColor"
+	C: "OP",92276864,92407248, "DiffuseColor"
 	
 	;Video::Map #2, Texture::Map #2
-	C: "OO",85766448,85765696
+	C: "OO",92407888,92276864
 	
 	;AnimLayer::Layer0, AnimStack::Take 001
-	C: "OO",85879632,85767088
+	C: "OO",92301376,92408528
 	
 	;AnimCurveNode::T, AnimLayer::Layer0
-	C: "OO",85752928,85879632
+	C: "OO",92302144,92301376
 	
 	;AnimCurveNode::R, AnimLayer::Layer0
-	C: "OO",85753824,85879632
+	C: "OO",91860896,92301376
 	
 	;AnimCurveNode::S, AnimLayer::Layer0
-	C: "OO",85872656,85879632
+	C: "OO",91852848,92301376
 	
 	;AnimCurve::, AnimCurveNode::R
-	C: "OP",85873200,85753824, "d|X"
+	C: "OP",91862128,91860896, "d|X"
 	
 	;AnimCurve::, AnimCurveNode::R
-	C: "OP",85873520,85753824, "d|Y"
+	C: "OP",91852208,91860896, "d|Y"
 	
 	;AnimCurve::, AnimCurveNode::R
-	C: "OP",85873840,85753824, "d|Z"
+	C: "OP",91852528,91860896, "d|Z"
 }
 ;Takes section
 ;----------------------------------------------------
