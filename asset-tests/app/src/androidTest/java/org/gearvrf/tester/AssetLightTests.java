@@ -196,13 +196,37 @@ public class AssetLightTests
         mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/x3d/lighting/spotlighttest4.x3d", 4, 0, "x3dSpotLight4");
     }
 
-
     @Test
     public void x3dGenerateNormalsPoint() throws TimeoutException
     {
         mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/x3d/generate_normals/nonormalswithptlights.x3d", 2, 0, "x3dGenerateNormalsPoint");
     }
-    
+
+    @Test
+    public void FBXTeapotLights() throws TimeoutException
+    {
+        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/3DS_Max_exports_to_FBX_OBJ_X3D/animation_plus_lights/teapotlights.FBX", 1, 0, "FBXTeapotLights");
+    }
+
+    @Test
+    public void x3dTeapotLights() throws TimeoutException
+    {
+        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/3DS_Max_exports_to_FBX_OBJ_X3D/animation_plus_lights/teapotlights.x3d", 1, 0, "x3dTeapotLights");
+    }
+
+    @Test
+    public void FBXTorusAnimLights() throws TimeoutException
+    {
+        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/3DS_Max_exports_to_FBX_OBJ_X3D/animation_plus_lights/torusanimatedlights.FBX", 1, 0, "FBXTorusAnimLights");
+    }
+
+    @Test
+    public void x3dTorusAnimLights() throws TimeoutException
+    {
+        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/3DS_Max_exports_to_FBX_OBJ_X3D/animation_plus_lights/torusanimatedlights.x3d", 1, 0, "x3dTorusAnimLights");
+    }
+
+
  /*
     @Test
     public void VRBenchmark() throws TimeoutException
