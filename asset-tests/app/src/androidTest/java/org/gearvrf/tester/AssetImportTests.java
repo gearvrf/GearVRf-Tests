@@ -272,4 +272,30 @@ public class AssetImportTests
     {
         mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/x3d/general/twoplaneswithchildren.x3d", 5, 0, "x3dHierarchy");
     }
+
+
+    @Test
+    public void FBXTeapotAnimated() throws TimeoutException
+    {
+        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/3DS_Max_exports_to_FBX_OBJ_X3D/animation/teapotanimated.FBX", 1, 0, "FBXTeapotAnimated");
+    }
+
+    @Test
+    public void x3dTeapotAnimated() throws TimeoutException
+    {
+        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/3DS_Max_exports_to_FBX_OBJ_X3D/animation/teapotanimated.x3d", 1, 0, "x3dTeapotAnimated");
+    }
+
+
+    @Test
+    public void FBXTorusAnimated() throws TimeoutException
+    {
+        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/3DS_Max_exports_to_FBX_OBJ_X3D/animation/torusanimated.FBX", 1, 0, "FBXTorusAnimated");
+    }
+
+    @Test
+    public void x3dTorusAnimated() throws TimeoutException
+    {
+        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/3DS_Max_exports_to_FBX_OBJ_X3D/animation/teapotanimated.x3d", 1, 0, "x3dTorusAnimated");
+    }
 }

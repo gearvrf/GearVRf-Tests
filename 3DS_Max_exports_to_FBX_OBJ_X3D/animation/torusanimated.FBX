@@ -780,7 +780,7 @@ Objects:  {
 		}
 		UseMipMap: 0
 		Filename: "C:\fbx\torus\torus\torus.png"
-		RelativeFilename: "..\torus.png"
+		RelativeFilename: "torus.png"
 	}
 	Texture: 87624768, "Texture::Map #2", "" {
 		Type: "TextureVideoClip"
