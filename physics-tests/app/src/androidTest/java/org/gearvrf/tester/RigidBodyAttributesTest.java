@@ -57,11 +57,9 @@ public class RigidBodyAttributesTest {
     public void createRigidBody() throws Exception {
         GVRRigidBody mSphereRigidBody = new GVRRigidBody(gvrTestUtils.getGvrContext());
         addSphere(gvrTestUtils.getMainScene(), mSphereRigidBody, 1.0f, 1.5f, 40.0f, -10.0f, 2.5f);
-        //Assert.checkNotNull("GVRRigidBody", mSphereRigidBody);
         mWaiter.assertTrue(mSphereRigidBody.getMass() == 2.5f);
         mWaiter.assertTrue(mSphereRigidBody.getRestitution() == 1.5f);
         mWaiter.assertTrue(mSphereRigidBody.getFriction() == 0.5f);
-        gvrTestUtils.getMainScene().removeSceneObject(mSphereRigidBody.getOwnerObject());
     }
 
     @Test
@@ -106,6 +104,38 @@ public class RigidBodyAttributesTest {
 
     }
 
+    @Test
+    public void enableRigidBody() throws Exception {
+        GVRRigidBody mSphereRigidBody = new GVRRigidBody(gvrTestUtils.getGvrContext());
+        addSphere(gvrTestUtils.getMainScene(), mSphereRigidBody, 1.0f, 1.0f, 10.0f, -10.0f, 2.5f);
+
+        GVRRigidBody mSphereRigidBody2 = new GVRRigidBody(gvrTestUtils.getGvrContext());
+        addSphere(gvrTestUtils.getMainScene(), mSphereRigidBody2, 1.0f, 2.0f, 10.0f, -10.0f, 2.5f);
+
+        gvrTestUtils.waitForXFrames(10);
+
+        float lastY = mSphereRigidBody.getTransform().getPositionY();
+        float lastY2 =  mSphereRigidBody2.getTransform().getPositionY();
+        gvrTestUtils.waitForXFrames(10);
+        mWaiter.assertTrue( lastY > mSphereRigidBody.getTransform().getPositionY());//balls are falling
+        mWaiter.assertTrue( lastY2 > mSphereRigidBody2.getTransform().getPositionY());
+
+        lastY = mSphereRigidBody.getTransform().getPositionY();
+        lastY2 =  mSphereRigidBody2.getTransform().getPositionY();
+        mSphereRigidBody.setEnable(false);
+        gvrTestUtils.waitForXFrames(60);
+        mWaiter.assertTrue( lastY == mSphereRigidBody.getTransform().getPositionY()); //ball1 stoped falling
+        mWaiter.assertTrue( lastY2 > mSphereRigidBody2.getTransform().getPositionY()); //ball2 is falling
+
+        lastY = mSphereRigidBody.getTransform().getPositionY();
+        lastY2 =  mSphereRigidBody2.getTransform().getPositionY();
+        mSphereRigidBody.setEnable(true);
+        gvrTestUtils.waitForXFrames(10);
+        mWaiter.assertTrue( lastY > mSphereRigidBody.getTransform().getPositionY()); //ball1 is falling again
+        mWaiter.assertTrue( lastY2 > mSphereRigidBody2.getTransform().getPositionY()); //ball2 kept falling
+
+    }
+
     private GVRSceneObject meshWithTexture(String mesh, String texture) {
         GVRSceneObject object = null;
         try {
@@ -113,7 +143,7 @@ public class RigidBodyAttributesTest {
                     gvrTestUtils.getGvrContext(), mesh), new GVRAndroidResource(gvrTestUtils.getGvrContext(),
                     texture));
         } catch (IOException e) {
-            e.printStackTrace();
+            mWaiter.fail(e);
         }
         return object;
     }
