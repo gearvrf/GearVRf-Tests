@@ -1,6 +1,6 @@
 precision mediump float;
 
-in mat4 u_mvp;
+uniform mat4 u_mvp;
 in vec3 a_position;
 in vec2 a_texcoord;
 in vec4 a_color;
