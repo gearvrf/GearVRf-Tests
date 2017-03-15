@@ -443,5 +443,22 @@ public class TextureTests
         mTestUtils.waitForXFrames(3);
         mTestUtils.screenShot(getClass().getSimpleName(), "testSpecularLightmap", mWaiter, false);
     }
+
+    @Test
+    public void testLoadTextureFromResource() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRTexture texture = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.colortex));
+        GVRMaterial material = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        GVRSceneObject groundObject = new GVRCubeSceneObject(ctx, true, material);
+
+        material.setTexture("diffuseTexture", texture);
+        groundObject.getRenderData().setShaderTemplate(GVRPhongShader.class);
+        groundObject.getTransform().setPositionZ(-2.0f);
+        scene.addSceneObject(groundObject);
+        mTestUtils.waitForXFrames(3);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testLoadTextureFromResource", mWaiter, mDoCompare);
+    }
 }
 
