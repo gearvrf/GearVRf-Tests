@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -46,7 +47,7 @@ public class GVRTestUtils implements GVRMainMonitor {
 
     private GVRContext gvrContext;
     private final Object onInitLock;
-    private final Object onStepLock;
+    private final CountDownLatch onStepLatch = new CountDownLatch(1);
     private final Object onScreenshotLock;
     private final Object xFramesLock;
     private final Object onAssetLock;
@@ -63,7 +64,6 @@ public class GVRTestUtils implements GVRMainMonitor {
     public GVRTestUtils(GVRTestableActivity testableGVRActivity) {
         gvrContext = null;
         onInitLock = new Object();
-        onStepLock = new Object();
         xFramesLock = new Object();
         onScreenshotLock = new Object();
         onAssetLock = new Object();
@@ -112,19 +112,16 @@ public class GVRTestUtils implements GVRMainMonitor {
      * returns immediately. This is a blocking call.
      */
     public void waitForSceneRendering() {
-
         if (testableMain.isSceneRendered()) {
             return;
         }
 
-        synchronized (onStepLock) {
-            try {
-                Log.d(TAG, "Waiting for OnStep");
-                onStepLock.wait();
-            } catch (InterruptedException e) {
-                Log.e(TAG, "", e);
-                return;
-            }
+        try {
+            Log.d(TAG, "Waiting for OnStep");
+            onStepLatch.await();
+        } catch (InterruptedException e) {
+            Log.e(TAG, "", e);
+            return;
         }
     }
 
@@ -177,9 +174,7 @@ public class GVRTestUtils implements GVRMainMonitor {
         if (onRenderCallback != null) {
             onRenderCallback.onSceneRendered();
         }
-        synchronized (onStepLock) {
-            onStepLock.notifyAll();
-        }
+        onStepLatch.countDown();
     }
 
     public void xFramesRendered() {
