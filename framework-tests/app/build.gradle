@@ -4,7 +4,7 @@ allprojects {
     repositories {
         jcenter()
         flatDir {
-            dirs '../../gearvrf-libs'
+            dirs '../../../GearVRf/GVRf/gearvrf-libs'
         }
     }
 }
@@ -23,6 +23,7 @@ android {
             moduleName = "framework-tests"
             abiFilter "armeabi-v7a"
         }
+
         externalNativeBuild {
             cmake {
                 arguments.add('-DINCLUDE_DIR='+rootProject.projectDir.absolutePath)
@@ -66,7 +67,7 @@ project.ext.jomlVersion = "1.9.1-SNAPSHOT"
 dependencies {
     compile "org.joml:joml-android:${jomlVersion}"
     compile(name:'framework-debug', ext:'aar')
-	compile(name: 'backend_oculus-debug', ext: 'aar')
+    compile(name: 'backend_oculus-debug', ext: 'aar')
     androidTestCompile 'com.android.support:support-annotations:23.0.1'
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'

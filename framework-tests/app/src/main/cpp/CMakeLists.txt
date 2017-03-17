@@ -6,6 +6,8 @@ add_library(framework-tests SHARED helpers.cpp)
 
 include_directories(${INCLUDE_DIR}/framework/src/main/jni)
 include_directories(${INCLUDE_DIR}/framework/src/main/jni/contrib)
+include_directories(${INCLUDE_DIR}/../../GearVRf/GVRf/Framework/framework/src/main/jni)
+include_directories(${INCLUDE_DIR}/../../GearVRf/GVRf/Framework/framework/src/main/jni/contrib)
 
 add_library(gvrf SHARED IMPORTED)
 set_property(TARGET gvrf PROPERTY IMPORTED_LOCATION

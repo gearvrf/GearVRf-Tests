@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 
+System.setProperty("appName", "org.gearvrf.unit-tests")
+
 if(file("../../common.gradle").exists()) {
     apply from: '../../common.gradle'
 }
@@ -11,7 +13,7 @@ allprojects {
     repositories {
         jcenter()
         flatDir {
-            dirs '../../gearvrf-libs'
+            dirs '../../../GearVRf/GVRf/gearvrf-libs'
         }
     }
 }
