@@ -26,6 +26,7 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
+import org.gearvrf.tester.R;
 
 @RunWith(AndroidJUnit4.class)
 public class AssetImportTests
@@ -222,7 +223,8 @@ public class AssetImportTests
     @Test
     public void jassimpDeerOBJ() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/animals/deer-obj.obj", 1, 0, "jassimpDeerOBJ");
+        GVRAndroidResource res = new GVRAndroidResource(mTestUtils.getGvrContext(), R.raw.deerobj);
+        mHandler.loadTestModel(res, 1, 0, "jassimpDeerOBJ");
     }
 
     @Test
