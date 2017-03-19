@@ -202,6 +202,21 @@ public class TextureTests
     }
 
     @Test
+    public void testMissingTexture() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRMaterial mtl = new GVRMaterial(ctx);
+        GVRSceneObject model = new GVRCubeSceneObject(ctx, true, mtl);
+
+        mtl.setColor(0.7f, 0.4f, 0.6f);
+        mtl.setMainTexture((GVRTexture) null);
+        model.getTransform().setPositionZ(-2.0f);
+        scene.addSceneObject(model);
+        mTestUtils.waitForSceneRendering();
+    }
+
+    @Test
     public void testRepeatTexture() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
