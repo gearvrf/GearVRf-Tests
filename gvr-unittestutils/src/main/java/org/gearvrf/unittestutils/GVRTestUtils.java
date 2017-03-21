@@ -325,7 +325,8 @@ public class GVRTestUtils implements GVRMainMonitor {
                     fo.close();
                 }
                 catch (Throwable ex)
-                {ex.printStackTrace();
+                {
+                    ex.printStackTrace();
                     waiter.fail(ex);
                 }
             }
