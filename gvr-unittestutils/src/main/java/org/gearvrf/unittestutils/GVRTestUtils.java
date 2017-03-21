@@ -46,7 +46,7 @@ public class GVRTestUtils implements GVRMainMonitor {
     protected static final int SCREENSHOT_TEST_TIMEOUT = 10000;
 
     private GVRContext gvrContext;
-    private final Object onInitLock;
+    private final CountDownLatch onInitLatch = new CountDownLatch(1);
     private final CountDownLatch onStepLatch = new CountDownLatch(1);
     private final Object onScreenshotLock;
     private final Object xFramesLock;
@@ -63,7 +63,6 @@ public class GVRTestUtils implements GVRMainMonitor {
      */
     public GVRTestUtils(GVRTestableActivity testableGVRActivity) {
         gvrContext = null;
-        onInitLock = new Object();
         xFramesLock = new Object();
         onScreenshotLock = new Object();
         onAssetLock = new Object();
@@ -91,16 +90,14 @@ public class GVRTestUtils implements GVRMainMonitor {
                 mainScene = gvrContext.getMainScene();
                 return gvrContext;
             }
-            synchronized (onInitLock) {
-                try {
-                    Log.d(TAG, "Waiting for OnInit");
-                    onInitLock.wait();
-                } catch (InterruptedException e) {
-                    Log.e(TAG, "", e);
-                    return null;
-                }
-                return gvrContext;
+            try {
+                Log.d(TAG, "Waiting for OnInit");
+                onInitLatch.await();
+            } catch (InterruptedException e) {
+                Log.e(TAG, "", e);
+                return null;
             }
+            return gvrContext;
         } else {
             return gvrContext;
         }
@@ -163,9 +160,7 @@ public class GVRTestUtils implements GVRMainMonitor {
         if (onInitCallback != null) {
             onInitCallback.onInit(gvrContext);
         }
-        synchronized (onInitLock) {
-            onInitLock.notifyAll();
-        }
+        onInitLatch.countDown();
         Log.d(TAG, "On Init called");
     }
 
