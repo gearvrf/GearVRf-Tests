@@ -92,6 +92,27 @@ class AssetEventHandler implements IAssetEvents
         model.getTransform().setPosition(-bv.center.x, -bv.center.y, -bv.center.z - 1.5f * bv.radius);
     }
 
+    public GVRSceneObject loadTestModel(String modelfile, int numtex)
+    {
+        GVRContext ctx  = mTester.getGvrContext();
+        GVRScene scene = mTester.getMainScene();
+        GVRSceneObject model = null;
+
+        ctx.getEventReceiver().addListener(this);
+        try
+        {
+            model = ctx.getAssetLoader().loadModel(modelfile, scene);
+        }
+        catch (IOException ex)
+        {
+            mWaiter.fail(ex);
+        }
+        mTester.waitForAssetLoad();
+        centerModel(model);
+        checkAssetLoaded(mWaiter, FileNameUtils.getFilename(modelfile), numtex);
+        return model;
+    }
+
     public GVRSceneObject loadTestModel(String modelfile, int numTex, int texError, String testname) throws TimeoutException
     {
         GVRContext ctx  = mTester.getGvrContext();

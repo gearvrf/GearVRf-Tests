@@ -5,6 +5,7 @@ import android.support.test.runner.AndroidJUnit4;
 import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRPointLight;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
@@ -202,7 +203,22 @@ public class AssetLightTests
     {
         mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/x3d/generate_normals/nonormalswithptlights.x3d", 2, 0, "x3dGenerateNormalsPoint");
     }
-    
+
+    @Test
+    public void x3dShininess() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRPointLight pointLight = new GVRPointLight(ctx);
+        GVRSceneObject lightNode = new GVRSceneObject(ctx);
+
+        mHandler.loadTestModel("x3d/teapotandtorus.x3d", 1);
+        lightNode.attachLight(pointLight);
+        scene.addSceneObject(lightNode);
+        mTestUtils.waitForXFrames(2);
+        mTestUtils.screenShot(getClass().getSimpleName(), "x3dShininess", mWaiter, mDoCompare);
+    }
+
  /*
     @Test
     public void VRBenchmark() throws TimeoutException
