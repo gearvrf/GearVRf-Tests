@@ -8,6 +8,7 @@ import net.jodah.concurrentunit.Waiter;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRExternalScene;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRResourceVolume;
@@ -25,6 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 import org.gearvrf.tester.R;
 
@@ -200,6 +202,39 @@ public class AssetImportTests
         mHandler.checkAssetErrors(mWaiter, 0, 0);
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot("AssetImportTests", "canLoadExternalScene", mWaiter, mDoCompare);
+    }
+
+    @Test
+    public void PLYVertexColors() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRSceneObject model = null;
+        String modelName = "man128.ply";
+
+        ctx.getEventReceiver().addListener(mHandler);
+        try
+        {
+            model = ctx.getAssetLoader().loadModel("jassimp/" + modelName, (GVRScene) null);
+        }
+        catch (IOException ex)
+        {
+            mWaiter.fail(ex);
+        }
+        mTestUtils.waitForAssetLoad();
+        mHandler.checkAssetLoaded(mWaiter, null, 0);
+        mHandler.centerModel(model);
+        mWaiter.assertNull(scene.getSceneObjectByName(modelName));
+        mHandler.checkAssetErrors(mWaiter, 0, 0);
+        List<GVRRenderData> rdatas = model.getAllComponents(GVRRenderData.getComponentType());
+        for (GVRRenderData rdata : rdatas)
+        {
+            rdata.setShaderTemplate(VertexColorShader.class);
+        }
+        scene.addSceneObject(model);
+        mWaiter.assertNotNull(scene.getSceneObjectByName(modelName));
+        mTestUtils.waitForXFrames(2);
+        mTestUtils.screenShot("AssetImportTests", "PLYVertexColors", mWaiter, mDoCompare);
     }
 
     @Test
