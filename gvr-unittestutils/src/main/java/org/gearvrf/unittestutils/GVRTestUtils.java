@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -45,8 +46,8 @@ public class GVRTestUtils implements GVRMainMonitor {
     protected static final int SCREENSHOT_TEST_TIMEOUT = 10000;
 
     private GVRContext gvrContext;
-    private final Object onInitLock;
-    private final Object onStepLock;
+    private final CountDownLatch onInitLatch = new CountDownLatch(1);
+    private final CountDownLatch onStepLatch = new CountDownLatch(1);
     private final Object onScreenshotLock;
     private final Object xFramesLock;
     private final Object onAssetLock;
@@ -62,8 +63,6 @@ public class GVRTestUtils implements GVRMainMonitor {
      */
     public GVRTestUtils(GVRTestableActivity testableGVRActivity) {
         gvrContext = null;
-        onInitLock = new Object();
-        onStepLock = new Object();
         xFramesLock = new Object();
         onScreenshotLock = new Object();
         onAssetLock = new Object();
@@ -88,18 +87,17 @@ public class GVRTestUtils implements GVRMainMonitor {
         if (gvrContext == null) {
             if (testableMain.isOnInitCalled()) {
                 gvrContext = testableMain.getGVRContext();
+                mainScene = gvrContext.getMainScene();
                 return gvrContext;
             }
-            synchronized (onInitLock) {
-                try {
-                    Log.d(TAG, "Waiting for OnInit");
-                    onInitLock.wait();
-                } catch (InterruptedException e) {
-                    Log.e(TAG, "", e);
-                    return null;
-                }
-                return gvrContext;
+            try {
+                Log.d(TAG, "Waiting for OnInit");
+                onInitLatch.await();
+            } catch (InterruptedException e) {
+                Log.e(TAG, "", e);
+                return null;
             }
+            return gvrContext;
         } else {
             return gvrContext;
         }
@@ -111,19 +109,16 @@ public class GVRTestUtils implements GVRMainMonitor {
      * returns immediately. This is a blocking call.
      */
     public void waitForSceneRendering() {
-
         if (testableMain.isSceneRendered()) {
             return;
         }
 
-        synchronized (onStepLock) {
-            try {
-                Log.d(TAG, "Waiting for OnStep");
-                onStepLock.wait();
-            } catch (InterruptedException e) {
-                Log.e(TAG, "", e);
-                return;
-            }
+        try {
+            Log.d(TAG, "Waiting for OnStep");
+            onStepLatch.await();
+        } catch (InterruptedException e) {
+            Log.e(TAG, "", e);
+            return;
         }
     }
 
@@ -165,9 +160,7 @@ public class GVRTestUtils implements GVRMainMonitor {
         if (onInitCallback != null) {
             onInitCallback.onInit(gvrContext);
         }
-        synchronized (onInitLock) {
-            onInitLock.notifyAll();
-        }
+        onInitLatch.countDown();
         Log.d(TAG, "On Init called");
     }
 
@@ -176,10 +169,7 @@ public class GVRTestUtils implements GVRMainMonitor {
         if (onRenderCallback != null) {
             onRenderCallback.onSceneRendered();
         }
-        synchronized (onStepLock) {
-            onStepLock.notifyAll();
-        }
-        Log.d(TAG, "OnSceneRenderedCalled");
+        onStepLatch.countDown();
     }
 
     public void xFramesRendered() {
@@ -276,7 +266,7 @@ public class GVRTestUtils implements GVRMainMonitor {
                     InputStream stream = gvrContext.getContext().getAssets().open(category + "/" + testname);
                     golden = BitmapFactory.decodeStream(stream);
                 }
-                catch (IOException ex)
+                catch (Throwable ex)
                 {
                     waiter.fail(ex);
                 }
@@ -287,18 +277,22 @@ public class GVRTestUtils implements GVRMainMonitor {
 
                     Bitmap diffmap = golden.copy(golden.getConfig(), true);
                     float diff = 0;
-                    for (int y = 0; y < golden.getHeight(); y++)
-                    {
-                        for (int x = 0; x < golden.getWidth(); x++)
-                        {
-                            int p1 = golden.getPixel(x, y);
-                            int p2 = bitmap.getPixel(x, y);
-                            int r = Math.abs(Color.red(p1) - Color.red(p2));
-                            int g = Math.abs(Color.green(p1) - Color.green(p2));
-                            int b = Math.abs(Color.blue(p1) - Color.blue(p2));
-                            diffmap.setPixel(x, y, Color.argb(255, r, g, b));
-                            diff += (float) r / 255.0f + g / 255.0f + b / 255.0f;
+                    try {
+                        for (int y = 0; y < golden.getHeight(); y++) {
+                            for (int x = 0; x < golden.getWidth(); x++) {
+                                int p1 = golden.getPixel(x, y);
+                                int p2 = bitmap.getPixel(x, y);
+                                int r = Math.abs(Color.red(p1) - Color.red(p2));
+                                int g = Math.abs(Color.green(p1) - Color.green(p2));
+                                int b = Math.abs(Color.blue(p1) - Color.blue(p2));
+                                diffmap.setPixel(x, y, Color.argb(255, r, g, b));
+                                diff += (float) r / 255.0f + g / 255.0f + b / 255.0f;
+                            }
                         }
+                    }
+                    catch (Throwable t)
+                    {
+                        waiter.fail(t);
                     }
 
                     Log.e(category, category + ": %s %f", testname, diff);
@@ -306,7 +300,7 @@ public class GVRTestUtils implements GVRMainMonitor {
                     {
                         writeBitmap(category, "diff_" + testname, diffmap);
                     }
-                    waiter.assertTrue(diff <= 1000.0f);
+                    waiter.assertTrue(diff <= 30000.0f);
                 }
             }
 
@@ -325,8 +319,8 @@ public class GVRTestUtils implements GVRMainMonitor {
                     fo.write(bytes.toByteArray());
                     fo.close();
                 }
-                catch (IOException ex)
-                {
+                catch (Throwable ex)
+                {ex.printStackTrace();
                     waiter.fail(ex);
                 }
             }
@@ -336,22 +330,31 @@ public class GVRTestUtils implements GVRMainMonitor {
             {
                 synchronized (onScreenshotLock)
                 {
+                    String basename = testname + ".png";
+
                     try
                     {
-                        String basename = testname + ".png";
                         writeBitmap(category, basename, bitmap);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.e(category, "Could not save screenshot of %s", testname);
+                        waiter.fail(e);
+                    }
+                    try
+                    {
                         Log.d(category, "Saved screenshot of %s", testname);
                         if (doCompare)
                         {
                             compareWithGolden(bitmap, basename, waiter);
                         }
-                        waiter.resume();
                     }
-                    catch (Exception e)
+                    catch (Throwable t)
                     {
-                        Log.d(category, "Could not save screenshot of %s", testname);
-                        waiter.fail(e);
+                        Log.d(category, "Exception while comparing screenshot for %s", testname);
+                        waiter.fail(t);
                     }
+                    waiter.resume();
                 }
             }
         };

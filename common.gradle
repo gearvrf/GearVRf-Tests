@@ -4,11 +4,17 @@ allprojects {
         flatDir {
             dirs '../../gearvrf-libs', '../../../GearVRf/GVRf/Framework/framework/build/outputs/aar'
         }
+        maven {
+            url "http://google.bintray.com/googlevr"
+        }
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
     }
 }
 
 android {
-    compileSdkVersion 21
+    compileSdkVersion 24
     buildToolsVersion "25.0.0"
 
     buildTypes {
@@ -35,8 +41,11 @@ android {
 
     // ignore the x86 and arm-v8 files from the google vr libraries
     packagingOptions {
-        exclude 'lib/x86/libgvrbase.so'
-        exclude 'lib/arm64-v8a/libgvrbase.so'
+        exclude 'lib/x86/libgvr.so'
+        exclude 'lib/arm64-v8a/libgvr.so'
+        if (!rootProject.hasProperty("ARM64")) {
+            exclude 'lib/arm64-v8a/*.so'
+        }
     }
 }
 
@@ -52,22 +61,37 @@ task copyOculusSignature(type: Copy) {
 
 preBuild {}.dependsOn copyOculusSignature
 
+ext.gearvrfVersion='3.1.1-SNAPSHOT'
+project.ext.jomlVersion = "1.9.1-SNAPSHOT"
+
 dependencies {
-    compile(name: 'framework-debug', ext: 'aar')
+    compile "org.joml:joml-android:${jomlVersion}"
+    if(rootProject.useLocalDependencies) {
+        compile(name: 'framework-debug', ext: 'aar')
+    } else {
+        compile "org.gearvrf:framework:$gearvrfVersion"
+    }
 
     if (rootProject.hasProperty("only_daydream")) {
-        compile(name: 'backend_daydream-debug', ext: 'aar')
-        compile(name: 'google-vr-base', ext: 'aar')
-        compile(name: 'google-vr-common', ext: 'aar')
+        if(rootProject.useLocalDependencies) {
+            compile(name: 'backend_daydream-debug', ext: 'aar')
+        } else {
+            compile "org.gearvrf:backend_daydream:$gearvrfVersion"
+        }
+        compile 'com.google.vr:sdk-base:1.10.0'
         compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
     } else {
         if (rootProject.hasProperty("no_oculus")) {
             compile(name: 'backend-debug', ext: 'aar')
         } else { //default oculus+daydream
-            compile(name: 'backend_oculus-debug', ext: 'aar')
-            compile(name: 'backend_daydream-debug', ext: 'aar')
-            compile(name: 'google-vr-base', ext: 'aar')
-            compile(name: 'google-vr-common', ext: 'aar')
+            if(rootProject.useLocalDependencies) {
+                compile(name: 'backend_daydream-debug', ext: 'aar')
+                compile(name: 'backend_oculus-debug', ext: 'aar')
+            } else {
+                compile "org.gearvrf:backend_daydream:$gearvrfVersion"
+                compile "org.gearvrf:backend_oculus:$gearvrfVersion"
+            }
+            compile 'com.google.vr:sdk-base:1.10.0'
             compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
         }
     }

@@ -7,6 +7,8 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.IAssetEvents;
+import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRImportSettings;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.utility.FileNameUtils;
 
@@ -73,14 +75,12 @@ class AssetEventHandler implements IAssetEvents
         {
             mWaiter.assertNotNull(mScene.getSceneObjectByName(name));
         }
-        mWaiter.resume();
     }
 
     public void checkAssetErrors(Waiter waiter, int numModelErrors, int numTexErrors)
     {
         mWaiter.assertEquals(numModelErrors, ModelErrors);
         mWaiter.assertEquals(numTexErrors, TextureErrors);
-        mWaiter.resume();
     }
 
     public void centerModel(GVRSceneObject model)
@@ -90,6 +90,27 @@ class AssetEventHandler implements IAssetEvents
         model.getTransform().setScale(sf, sf, sf);
         bv = model.getBoundingVolume();
         model.getTransform().setPosition(-bv.center.x, -bv.center.y, -bv.center.z - 1.5f * bv.radius);
+    }
+
+    public GVRSceneObject loadTestModel(String modelfile, int numtex)
+    {
+        GVRContext ctx  = mTester.getGvrContext();
+        GVRScene scene = mTester.getMainScene();
+        GVRSceneObject model = null;
+
+        ctx.getEventReceiver().addListener(this);
+        try
+        {
+            model = ctx.getAssetLoader().loadModel(modelfile, scene);
+        }
+        catch (IOException ex)
+        {
+            mWaiter.fail(ex);
+        }
+        mTester.waitForAssetLoad();
+        centerModel(model);
+        checkAssetLoaded(mWaiter, FileNameUtils.getFilename(modelfile), numtex);
+        return model;
     }
 
     public GVRSceneObject loadTestModel(String modelfile, int numTex, int texError, String testname) throws TimeoutException
@@ -110,6 +131,34 @@ class AssetEventHandler implements IAssetEvents
         mTester.waitForAssetLoad();
         centerModel(model);
         checkAssetLoaded(mWaiter, FileNameUtils.getFilename(modelfile), numTex);
+        checkAssetErrors(mWaiter, 0, texError);
+        if (testname != null)
+        {
+            mTester.waitForXFrames(2);
+            mTester.screenShot(mCategory, testname, mWaiter, mDoCompare);
+        }
+        return model;
+    }
+
+    public GVRSceneObject loadTestModel(GVRAndroidResource res, int numTex, int texError, String testname) throws TimeoutException
+    {
+        GVRContext ctx  = mTester.getGvrContext();
+        GVRScene scene = mTester.getMainScene();
+        GVRSceneObject model = null;
+
+        ctx.getEventReceiver().addListener(this);
+        try
+        {
+            model = ctx.getAssetLoader().loadModel(res,
+                    GVRImportSettings.getRecommendedSettings(), true, scene);
+        }
+        catch (IOException ex)
+        {
+            mWaiter.fail(ex);
+        }
+        mTester.waitForAssetLoad();
+        centerModel(model);
+        checkAssetLoaded(mWaiter, res.getResourceFilename(), numTex);
         checkAssetErrors(mWaiter, 0, texError);
         if (testname != null)
         {
