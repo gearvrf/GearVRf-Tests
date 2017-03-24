@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <Scene>
+  
+    <Viewpoint DEF='VP1' position='0 0 0'/>
+    <PointLight DEF='PL1'/>
+
+      <Transform translation='-1 -.25 -6'>
+        <TouchSensor DEF='ButtonTouch' description='touch to toggle'/>
+        <Transform>
+            <Shape>
+              <Appearance>
+                <Material diffuseColor='1 1 1'/>
+              </Appearance>
+              <Sphere/>
+            </Shape>
+        </Transform>
+      </Transform>
+    
+    <Script DEF='ControlScript'>
+      <field accessType='inputOnly' name='buttonOver' type='SFBool'/>
+      <field accessType='outputOnly' name='lightColor' type='SFColor'/>
+
+      <![CDATA[
+      ecmascript:
+	    function initialize() {
+	        colorChange = false;
+	    }
+      function buttonOver (value)
+      {
+        colorChange = !colorChange;
+      	if (colorChange) lightColor = new SFColor (1, .6, .3); // orange
+      	else lightColor = new SFColor (1, 1, 1); // white
+      }
+	]]>
+    </Script>
+
+    <ROUTE fromField='isActive' fromNode='ButtonTouch' toField='buttonOver' toNode='ControlScript'/>
+    <ROUTE fromField='lightColor' fromNode='ControlScript' toField='color' toNode='PL1'/>
+
+
+
+      <Transform DEF='ConeTransform' translation='1 -.25 -6'>
+        <TouchSensor DEF='ConeTouch' description='touch to toggle'/>
+        <Transform>
+            <Shape>
+              <Appearance>
+                <Material DEF='ConeMat' diffuseColor='.5 .5 .5'/>
+              </Appearance>
+              <Cone/>
+            </Shape>
+        </Transform>
+      </Transform>
+
+    <Script DEF='ControlConeScript'>
+      <field accessType='inputOnly' name='coneActive' type='SFBool'/>
+      <field accessType='outputOnly' name='coneColor' type='SFColor'/>
+
+      <![CDATA[
+      ecmascript:
+	    function initialize() {
+	        coneGrab = false;
+	    }
+      function coneActive (value)
+      {
+        coneGrab = !coneGrab;
+      	if (coneGrab) coneColor = new SFColor (1, 1, .4); // yellow-ish
+      	else coneColor = new SFColor (.6, .6, .6);
+      }
+	]]>
+    </Script>
+
+    <ROUTE fromField='isActive' fromNode='ConeTouch' toField='coneActive' toNode='ControlConeScript'/>
+    <ROUTE fromField='coneColor' fromNode='ControlConeScript' toField='diffuseColor' toNode='ConeMat'/>
+
+
+
+
+    <TimeSensor DEF='AnimationClock' cycleInterval='1' loop='true'/>
+      <Script DEF='AnimateScript' mustEvaluate='true'>
+        <field accessType='inputOnly' name='perFrameCall' type='SFFloat'/>
+        <field accessType='inputOnly' name='vpRot' type='SFRotation'/>
+        <field accessType='inputOutput' name='coneTranslation' type='SFVec3f'/>
+       <![CDATA[
+	ecmascript:
+          function initialize() {
+          }
+	  function perFrameCall (eventValue) {
+
+		 coneX = coneTranslation.getX();
+		 coneY = coneTranslation.getY();
+		 coneZ = coneTranslation.getZ();
+
+		 currQuaternion = new Quaternionf(vpRot);
+		 matrix = new Matrix4f();
+		 currQuaternion.get(matrix);
+		 camDirVector = new SFVec3f(0,0,-1);
+		 camDirVector.mulDirection( matrix, camDirVector );
+
+		 if ( coneGrab ) {
+			coneX = camDirVector.getX()*coneTranslation.getZ()/camDirVector.getZ();
+			coneY = camDirVector.getY()*coneTranslation.getZ()/camDirVector.getZ();
+		 }
+		 coneTranslation.setValue( coneX, coneY, coneZ );
+	  }
+	]]>
+      </Script>
+
+        <ROUTE fromField='fraction_changed' fromNode='AnimationClock' toField='perFrameCall' toNode='AnimateScript'/>
+
+        <ROUTE fromField='orientation' fromNode='VP1' toField='vpRot' toNode='AnimateScript'/>
+
+        <ROUTE fromField='translation' fromNode='ConeTransform' toField='coneTranslation' toNode='AnimateScript'/>
+        <ROUTE fromField='coneTranslation' fromNode='AnimateScript' toField='translation' toNode='ConeTransform'/>
+
+
+  </Scene>
+</X3D>
