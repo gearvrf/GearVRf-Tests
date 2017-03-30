@@ -5,6 +5,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import net.jodah.concurrentunit.Waiter;
 
+import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRFrustumPicker;
@@ -31,9 +32,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
 @RunWith(AndroidJUnit4.class)
@@ -568,5 +571,50 @@ public class PickerTests
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkHits("sphere1", new Vector3f[] { new Vector3f(0, 0, -2) }, null);
         mPickHandler.checkNoHits("sphere2");
+    }
+
+    @Test
+    public void canPickMeshWithObject(){
+        GVRContext context = gvrTestUtils.getGvrContext();
+        GVRScene scene = gvrTestUtils.getMainScene();
+        try {
+            GVRMesh mesh = context.loadMesh(new GVRAndroidResource(context,
+                    "PickerTests/bunny.obj"));
+            GVRSceneObject bunny = new GVRSceneObject(context, mesh);
+            bunny.getRenderData().setShaderTemplate(GVRPhongShader.class);
+            bunny.getRenderData().setMaterial(mBlue);
+            bunny.attachComponent(new GVRMeshCollider(context, false));
+
+            bunny.getTransform().setPositionZ(-10.0f);
+
+            //add the bunny to the scene
+            scene.addSceneObject(bunny);
+
+            scene.getEventReceiver().addListener(mPickHandler);
+
+            mPicker = new GVRPicker(context, scene);
+            GVRMesh sphereMesh = context.loadMesh(new GVRAndroidResource(context,
+                    "PickerTests/sphere.obj"));
+            GVRSceneObject sceneObject = new GVRSceneObject(context, sphereMesh);
+            sceneObject.getRenderData().setShaderTemplate(GVRPhongShader.class);
+            sceneObject.getRenderData().setMaterial(mRed);
+            GVRSceneObject parent = new GVRSceneObject(context);
+            parent.getTransform().setPosition(0.2f, -0.4f, -0.4f);
+            parent.getTransform().setRotation(1.0f, 0.04f, 0.01f, 0.01f);
+
+            sceneObject.getTransform().setPositionZ(-10.0f);
+
+
+            parent.addChildObject(sceneObject);
+            sceneObject.attachComponent(mPicker);
+
+            //place the object behind the bunny
+            scene.addSceneObject(parent);
+            gvrTestUtils.waitForXFrames(2);
+            mPickHandler.checkResults(1, 0);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
