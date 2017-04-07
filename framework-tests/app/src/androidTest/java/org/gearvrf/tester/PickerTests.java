@@ -694,6 +694,7 @@ public class PickerTests
         mPickHandler.checkNoHits("quad2");
     }
 
+    @Test
     public void canPickMeshWithObject(){
         GVRContext context = gvrTestUtils.getGvrContext();
         GVRScene scene = gvrTestUtils.getMainScene();
@@ -712,7 +713,6 @@ public class PickerTests
 
             scene.getEventReceiver().addListener(mPickHandler);
 
-            mPicker = new GVRPicker(context, scene);
             GVRMesh sphereMesh = context.loadMesh(new GVRAndroidResource(context,
                     "PickerTests/sphere.obj"));
             GVRSceneObject sceneObject = new GVRSceneObject(context, sphereMesh);
@@ -724,18 +724,17 @@ public class PickerTests
 
             sceneObject.getTransform().setPositionZ(-10.0f);
 
-
             parent.addChildObject(sceneObject);
-            sceneObject.attachComponent(mPicker);
+
+            mPicker = new GVRPicker(sceneObject, scene);
 
             //place the object behind the bunny
             scene.addSceneObject(parent);
             gvrTestUtils.waitForXFrames(2);
-            mPickHandler.checkResults(1, 0);
 
+            mPickHandler.checkResults(1, 0);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 }
