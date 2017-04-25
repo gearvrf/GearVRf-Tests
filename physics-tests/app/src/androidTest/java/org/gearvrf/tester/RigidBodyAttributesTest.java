@@ -63,48 +63,6 @@ public class RigidBodyAttributesTest {
     }
 
     @Test
-    public void updateRigidBody() throws Exception {
-        GVRRigidBody mSphereRigidBody = new GVRRigidBody(gvrTestUtils.getGvrContext());
-        addSphere(gvrTestUtils.getMainScene(), mSphereRigidBody, 1.0f, 1.5f, 40.0f, -10.0f, 2.5f);
-
-        float[] lastPos = new float[4];
-        float[] newPos = new float[4];
-        float lastTransform = mSphereRigidBody.getOwnerObject().getTransform().getPositionY();
-
-        lastPos[0] = mSphereRigidBody.getCenterX();
-        lastPos[1] = mSphereRigidBody.getCenterY();
-        lastPos[2] = mSphereRigidBody.getCenterZ();
-
-        gvrTestUtils.waitForSceneRendering();
-        mSphereRigidBody.applyCentralForce(-20.0f, 900.0f, 0.0f);
-        gvrTestUtils.waitForXFrames(5 * 60);
-
-        newPos[0] = mSphereRigidBody.getCenterX();
-        newPos[1] = mSphereRigidBody.getCenterY();
-        newPos[2] = mSphereRigidBody.getCenterZ();
-        mWaiter.assertTrue(lastPos[0] == newPos[0] && lastPos[1] == newPos[1] && lastPos[2] == newPos[2]);
-
-        lastPos[0] = mSphereRigidBody.getRotationW();
-        lastPos[1] = mSphereRigidBody.getRotationX();
-        lastPos[2] = mSphereRigidBody.getRotationY();
-        lastPos[3] = mSphereRigidBody.getRotationZ();
-        gvrTestUtils.waitForSceneRendering();
-
-        mSphereRigidBody.applyTorque(5.0f, 0.5f, 0.0f);
-        gvrTestUtils.waitForXFrames(5 * 60);
-
-        newPos[0] = mSphereRigidBody.getRotationW();
-        newPos[1] = mSphereRigidBody.getRotationX();
-        newPos[2] = mSphereRigidBody.getRotationY();
-        newPos[3] = mSphereRigidBody.getRotationZ();
-        mWaiter.assertTrue(lastPos[0] == newPos[0] && lastPos[1] == newPos[1]);
-
-        mWaiter.assertTrue(mSphereRigidBody.getOwnerObject().getTransform().getPositionY() != lastTransform);
-
-
-    }
-
-    @Test
     public void enableRigidBody() throws Exception {
         GVRRigidBody mSphereRigidBody = new GVRRigidBody(gvrTestUtils.getGvrContext());
         addSphere(gvrTestUtils.getMainScene(), mSphereRigidBody, 1.0f, 1.0f, 10.0f, -10.0f, 2.5f);
