@@ -32,7 +32,6 @@ import org.gearvrf.utility.Log;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeoutException;
@@ -62,19 +61,29 @@ public class GVRTestUtils implements GVRMainMonitor {
      * @param testableGVRActivity The instance of the activity to be tested.
      */
     public GVRTestUtils(GVRTestableActivity testableGVRActivity) {
+        this(testableGVRActivity, null);
+    }
+
+    /**
+     * Constructor, needs an instance of {@link GVRTestableActivity} && GVRTestUtils.OnInitCallback.
+     * @param testableGVRActivity The instance of the activity to be tested.
+     */
+    public GVRTestUtils(GVRTestableActivity testableGVRActivity, OnInitCallback onInitCallback) {
         gvrContext = null;
         xFramesLock = new Object();
         onScreenshotLock = new Object();
         onAssetLock = new Object();
+        this.onInitCallback = onInitCallback;
 
         if (testableGVRActivity == null) {
             throw new IllegalArgumentException();
         }
+
         testableMain = testableGVRActivity.getGVRTestableMain();
         if (testableMain != null) {
             testableMain.setMainMonitor(this);
         }
-        onInitCallback = null;
+
     }
 
     /**
