@@ -102,7 +102,7 @@ public class TextureTests
         {
             texcoords[i] *= 2.0f;
         }
-        mesh.setVec2Vector("a_texcoord1", texcoords);
+        mesh.setFloatVec("a_texcoord1", texcoords);
     }
 
     @Test
@@ -223,7 +223,7 @@ public class TextureTests
         {
             texcoords[i] *= 2.0f;
         }
-        mesh.setVec2Vector("a_texcoord", texcoords);
+        mesh.setFloatVec("a_texcoord", texcoords);
         mtl.setDiffuseColor(0.7f, 0.7f, 0.7f, 1);
         mtl.setSpecularColor(1, 1, 1, 1);
         mtl.setSpecularExponent(4.0f);
