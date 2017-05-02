@@ -9,6 +9,7 @@ import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;

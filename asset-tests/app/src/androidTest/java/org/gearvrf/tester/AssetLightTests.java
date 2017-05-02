@@ -5,6 +5,7 @@ import android.support.test.runner.AndroidJUnit4;
 import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRPointLight;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;

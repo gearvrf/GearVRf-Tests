@@ -14,6 +14,7 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRResourceVolume;
 import org.gearvrf.GVRImportSettings;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.GVRPhongShader;
@@ -225,9 +226,10 @@ public class AssetImportTests
         mWaiter.assertNull(scene.getSceneObjectByName(modelName));
         mHandler.checkAssetErrors(mWaiter, 0, 0);
         List<GVRRenderData> rdatas = model.getAllComponents(GVRRenderData.getComponentType());
+        GVRMaterial vertexColorMtl = new GVRMaterial(ctx, new GVRShaderId(VertexColorShader.class));
         for (GVRRenderData rdata : rdatas)
         {
-            rdata.setShaderTemplate(VertexColorShader.class);
+            rdata.setMaterial(vertexColorMtl);
         }
         scene.addSceneObject(model);
         mWaiter.assertNotNull(scene.getSceneObjectByName(modelName));
