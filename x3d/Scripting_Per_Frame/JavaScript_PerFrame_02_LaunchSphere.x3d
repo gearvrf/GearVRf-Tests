@@ -160,10 +160,10 @@
           }
 	  function value_changed (eventValue) {
 	    if ( colorChgTogglerValue.getValue() ) {
-              output_Cyl_Mat = new SFColor( 0,  (cycleTime - eventValue)/cycleTime,  eventValue/cycleTime );
+              output_Cyl_Mat = new SFColor( 0,  (cycleTime.getValue() - eventValue)/cycleTime.getValue(),  eventValue/cycleTime.getValue() );
             }
             else {
-              output_Cyl_Mat = new SFColor( 1,  eventValue/cycleTime,  eventValue/cycleTime );
+              output_Cyl_Mat = new SFColor( 1,  eventValue/cycleTime.getValue(),  eventValue/cycleTime.getValue() );
             }
  	    if ( ! BallTogglerValue.getValue() ) {
          	ballTranslate.setValue(0, 0, ballTranslate.getZ() );

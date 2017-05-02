@@ -50,7 +50,7 @@ class TextureEventHandler implements IAssetEvents
 
     public void checkTextureLoaded(Waiter waiter)
     {
-         waiter.assertEquals(1, TexturesLoaded);
+        waiter.assertEquals(1, TexturesLoaded);
     }
 
 };

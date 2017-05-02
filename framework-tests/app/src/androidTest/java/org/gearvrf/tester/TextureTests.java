@@ -202,6 +202,21 @@ public class TextureTests
     }
 
     @Test
+    public void testMissingTexture() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRMaterial mtl = new GVRMaterial(ctx);
+        GVRSceneObject model = new GVRCubeSceneObject(ctx, true, mtl);
+
+        mtl.setColor(0.7f, 0.4f, 0.6f);
+        mtl.setMainTexture((GVRTexture) null);
+        model.getTransform().setPositionZ(-2.0f);
+        scene.addSceneObject(model);
+        mTestUtils.waitForSceneRendering();
+    }
+
+    @Test
     public void testRepeatTexture() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
@@ -363,6 +378,23 @@ public class TextureTests
         scene.addSceneObject(model);
         mTestUtils.waitForXFrames(3);
         mTestUtils.screenShot(getClass().getSimpleName(), "testDiffuseNormalTexture", mWaiter, mDoCompare);
+    }
+
+    @Test
+    public void testLoadTextureFromResource() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRTexture texture = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.colortex));
+        GVRMaterial material = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        GVRSceneObject groundObject = new GVRCubeSceneObject(ctx, true, material);
+
+        material.setTexture("diffuseTexture", texture);
+        groundObject.getRenderData().setShaderTemplate(GVRPhongShader.class);
+        groundObject.getTransform().setPositionZ(-2.0f);
+        scene.addSceneObject(groundObject);
+        mTestUtils.waitForXFrames(3);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testLoadTextureFromResource", mWaiter, mDoCompare);
     }
 }
 

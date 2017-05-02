@@ -4,29 +4,21 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import net.jodah.concurrentunit.Waiter;
 
-import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRExternalScene;
-import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRPointLight;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRTexture;
-import org.gearvrf.IErrorEvents;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
-import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.GVRPhongShader;
-import org.gearvrf.IAssetEvents;
 
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
-import org.gearvrf.utility.FileNameUtils;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.IOException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
 @RunWith(AndroidJUnit4.class)
@@ -37,7 +29,7 @@ public class AssetLightTests
     private Waiter mWaiter;
     private GVRSceneObject mRoot;
     private GVRSceneObject mBackground;
-    private boolean mDoCompare = false;
+    private boolean mDoCompare = true;
     private AssetEventHandler mHandler;
 
     @Rule
@@ -72,12 +64,6 @@ public class AssetLightTests
     }
 
     @Test
-    public void jassimpCubeDiffuseAmbient() throws TimeoutException
-    {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/cube/cube_diffuse_directionallight.fbx", 1, 0, "jassimpCubeDiffuseAmbient");
-    }
-
-    @Test
     public void jassimpCubeDiffuseDirectional() throws TimeoutException
     {
         mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/cube/cube_diffuse_directionallight.fbx", 1, 0, "jassimpCubeDiffuseDirectional");
@@ -93,6 +79,18 @@ public class AssetLightTests
     public void jassimpCubeDiffuseSpot() throws TimeoutException
     {
         mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/cube/cube_diffuse_spotlight.fbx", 1, 0, "jassimpCubeDiffuseSpot");
+    }
+
+    @Test
+    public void jassimpCubeDiffuseSpotLinearDecay() throws TimeoutException
+    {
+        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/cube/cube_diffuse_spotlight_linear.fbx", 1, 0, "jassimpCubeDiffuseSpotLinearDecay");
+    }
+
+    @Test
+    public void jassimpCubeDiffuseSpotLinearDecay9() throws TimeoutException
+    {
+        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/cube/cube_diffuse_spotlight_linear9.fbx", 1, 0, "jassimpCubeDiffuseSpotLinearDecay9");
     }
 
     @Test
@@ -117,6 +115,18 @@ public class AssetLightTests
     public void jassimpCubeNormalDiffuseSpot() throws TimeoutException
     {
         mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/cube/cube_normal_diffuse_spotlight.fbx", 2, 0, "jassimpCubeNormalDiffuseSpot");
+    }
+
+    @Test
+    public void jassimpCubeNormalDiffuseSpotLinearDecay() throws TimeoutException
+    {
+        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/cube/cube_normal_diffuse_spotlight_linear_decay.fbx", 2, 0, "jassimpCubeNormalDiffuseSpotLinearDecay");
+    }
+
+    @Test
+    public void jassimpCubeNormalDiffuseSpotQuadraticDecay() throws TimeoutException
+    {
+        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/cube/cube_normal_diffuse_spotlight_quadratic_decay.fbx", 2, 0, "jassimpCubeNormalDiffuseSpotQuadraticDecay");
     }
 
     @Test
@@ -192,6 +202,22 @@ public class AssetLightTests
     {
         mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/x3d/generate_normals/nonormalswithptlights.x3d", 2, 0, "x3dGenerateNormalsPoint");
     }
+
+    @Test
+    public void x3dShininess() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRPointLight pointLight = new GVRPointLight(ctx);
+        GVRSceneObject lightNode = new GVRSceneObject(ctx);
+
+        mHandler.loadTestModel("x3d/teapotandtorus.x3d", 1);
+        lightNode.attachLight(pointLight);
+        scene.addSceneObject(lightNode);
+        mTestUtils.waitForXFrames(2);
+        mTestUtils.screenShot(getClass().getSimpleName(), "x3dShininess", mWaiter, mDoCompare);
+    }
+
  /*
     @Test
     public void VRBenchmark() throws TimeoutException

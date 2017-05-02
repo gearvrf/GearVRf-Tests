@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <Scene>
+  
+
+    <Viewpoint DEF='VP1' position='0 0 0'/>
+    <Transform DEF='developerMode'>
+
+       <DirectionalLight DEF='DL1' color='.3 .3 .3'/>
+
+       <Transform DEF='LightBulb' translation='0 0 -10'>
+         <PointLight DEF='PL1' location='0 0 2' color='1 1 1'/>
+         <Transform>
+             <TouchSensor DEF='LightBulbTouchSensor' description='light bulb translation controller'/>
+             <Transform DEF='upperSphere' translation='0 .5 0'>
+                <Shape>
+                  <Appearance DEF='LightBulbAppearance'>
+                    <Material DEF="LightBulbColor" diffuseColor='1 1 1'/>
+                  </Appearance>
+                  <Sphere/>
+                </Shape>
+              </Transform>
+              <Transform DEF='lowerCylinder' translation='0 -.5 0'>
+                <Shape>
+                  <Appearance>
+                    <Material diffuseColor='.7 .7 0'/>
+                  </Appearance>
+                  <Cylinder radius='.5' height='.75'/>
+                </Shape>
+              </Transform>
+          </Transform>
+        </Transform>
+
+
+        <Transform DEF='lightZdepthMenu' translation='-6 -6 -24' >
+                <transform DEF="zNegMenu" translation=".75 .75 -.5">
+                    <TouchSensor DEF='zNegMenuTouchSensor' description='xMenu controller'/>
+        	        <shape>
+                        <Appearance>
+        				    <Material DEF='zNegMenuMat' diffuseColor=".5 .5 .5"/>
+        				    <ImageTexture url='pointlightbuttonnegz.png'/>
+        		        </Appearance>
+        		        <IndexedFaceSet DEF='menuIFS'
+        				    coordIndex='0 1 2 -1    0 3 1 -1'
+        				    texCoordIndex='0 1 2 -1   0 3 1 -1'
+        				    normalIndex='0 0 0 -1   0 0 0 -1' >
+                            <Coordinate point='-1 -1 0    1 1 0    -1 1 0    1 -1 0' />
+                            <TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+                            <Normal vector='0 0 1'/>
+                        </IndexedFaceSet>
+        	        </shape>
+                </transform>
+                <transform DEF="zPosMenu" translation="-.75 -.75 0">
+                    <TouchSensor DEF='zPosMenuTouchSensor' description='zMenu controller'/>
+        	        <shape>
+        			<Appearance>
+        				<Material DEF='zPosMenuMat' diffuseColor=".5 .5 .5"/>
+        				<ImageTexture url="pointlightbuttonposz.png"/>
+        			</Appearance>
+        			<IndexedFaceSet USE='menuIFS'/>
+        	        </shape>
+                </transform>
+        </Transform>
+
+    <Transform DEF="LightControllers"  translation='0 -6 0'>
+
+      <Transform DEF="RedController"  translation='0 1.25 0'>
+        <TouchSensor DEF='RedTouchSensor' description='red controller'/>
+        <Transform DEF="RedRotate">
+            <Transform DEF="RedTranslate"  translation='2.5 0 -24'>
+            <Shape>
+              <Appearance>
+                <Material DEF="RedControllerMaterial" diffuseColor='.4 0 0' emissiveColor='1 0 0' specularColor='.1 0 0'/>
+              </Appearance>
+              <Box/>
+            </Shape>
+          </Transform>
+        </Transform>
+      </Transform>
+
+      <Transform DEF="GreenController" translation='0 0 0'>
+        <TouchSensor DEF='GreenTouchSensor' description='green controller'/>
+        <Transform DEF="GreenTranslate"  translation='2.5 0 -24'>
+            <Shape>
+              <Appearance>
+                <Material DEF="GreenControllerMaterial" diffuseColor='0 .4 0' emissiveColor='0 .6 0'/>
+              </Appearance>
+              <Box/>
+            </Shape>
+          </Transform>
+      </Transform>
+
+      <Transform DEF="BlueController" translation='0 -1.25 0'>
+        <TouchSensor DEF='BlueTouchSensor' description='touch to toggle'/>
+        <Transform DEF="BlueTranslate"  translation='2.5 0 -24'>
+            <Shape>
+              <Appearance>
+                <Material DEF="BlueControllerMaterial" diffuseColor='0 0 .4' emissiveColor='0 0 .6'/>
+              </Appearance>
+              <Box/>
+            </Shape>
+          </Transform>
+      </Transform>
+
+    </Transform>  <!-- end LightControllers Transform -->
+
+
+  </Transform>  <!-- end developerMode Transform -->
+
+
+   <Transform translation='6 3 -20'>
+     <Transform DEF='sphereRot'>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='.5 .5 .5'/>
+			<ImageTexture url="lattitudelongitude.png"/>
+          </Appearance>
+          <Sphere/>
+        </Shape>
+      </Transform>
+    </Transform>
+
+
+   <Transform translation='6 -3 -20'>
+     <Transform DEF="cylObj">
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='.5 .5 .5'/>
+			<ImageTexture url="texture_rotation_testpattern.jpg"/>
+          </Appearance>
+          <Cylinder/>
+        </Shape>
+      </Transform>
+    </Transform>
+    <timeSensor DEF="cylTimer" cycleInterval="17" loop="true"/>
+    <OrientationInterpolator DEF="cylRotate" key="0 0.5 1" keyValue=".8 0 -.6 0   .8 0 -.6 3.14    .8 0 -.6 6.28"/>
+    <Route fromNode="cylTimer" fromField ="fraction_changed" toNode="cylRotate" toField="set_fraction"/>
+    <Route fromNode="cylRotate" fromField ="value_changed" toNode="cylObj" toField="set_rotation"/>
+
+   <Transform translation='-6 3 -20'>
+     <Transform DEF="coneObj">
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='.5 .5 .5'/>
+			<ImageTexture url="news_texture_map.jpg"/>
+          </Appearance>
+          <Cone/>
+        </Shape>
+      </Transform>
+    </Transform>
+    <timeSensor DEF="coneTimer" cycleInterval="11" loop="true"/>
+    <OrientationInterpolator DEF="coneRotate" key="0 0.5 1" keyValue=".8 0 -.6 0   .8 0 -.6 3.14    .8 0 -.6 6.28"/>
+    <Route fromNode="coneTimer" fromField ="fraction_changed" toNode="coneRotate" toField="set_fraction"/>
+    <Route fromNode="coneRotate" fromField ="value_changed" toNode="coneObj" toField="set_rotation"/>
+
+
+
+
+   <!-- BEGIN SCRIPTS -->
+   <Script DEF='IsOverRedControllerScript'>
+        <field accessType='inputOnly' name='IsOverRedController' type='SFBool'/>
+        <field accessType='outputOnly' name='material' type='SFColor'/>
+
+        <![CDATA[
+            ecmascript:
+    	    function initialize() {
+    	        offColor = .3;
+    	        onColor = 1;
+    	        redSelected = false;
+    	    }
+            function IsOverRedController( isOverBoolean )
+            {
+              	if ( isOverBoolean ) {
+              	    redSelected = true;
+              	    red = onColor;
+              	}
+              	else {
+              	    redSelected = false;
+              	    red = offColor;
+              	}
+              	material = new SFColor (red, 0, 0);
+            }
+        ]]>
+   </Script>
+   <ROUTE fromField='isOver' fromNode='RedTouchSensor' toField='IsOverRedController' toNode='IsOverRedControllerScript'/>
+   <ROUTE fromField='material' fromNode='IsOverRedControllerScript' toField='diffuseColor' toNode='RedControllerMaterial'/>
+
+
+
+
+   <Script DEF='IsOverGreenControllerScript'>
+        <field accessType='inputOnly' name='IsOverGreenController' type='SFBool'/>
+        <field accessType='outputOnly' name='material' type='SFColor'/>
+
+        <![CDATA[
+          ecmascript:
+          function initialize() {
+                greenSelected = false;
+          }
+          function IsOverGreenController( isOverBoolean )
+          {
+          	 if ( isOverBoolean ) {
+          	    green = onColor;
+          	    greenSelected = true;
+          	}
+          	else {
+          	    green = offColor;
+          	    greenSelected = false;
+          	}
+          	material = new SFColor (0, green, 0);
+          }
+    	]]>
+   </Script>
+   <ROUTE fromField='isOver' fromNode='GreenTouchSensor' toField='IsOverGreenController' toNode='IsOverGreenControllerScript'/>
+   <ROUTE fromField='material' fromNode='IsOverGreenControllerScript' toField='diffuseColor' toNode='GreenControllerMaterial'/>
+
+
+
+   <Script DEF='IsOverBlueControllerScript'>
+        <field accessType='inputOnly' name='IsOverBlueController' type='SFBool'/>
+        <field accessType='outputOnly' name='material' type='SFColor'/>
+
+        <![CDATA[
+          ecmascript:
+          function initialize() {
+                blueSelected = false;
+          }
+          function IsOverBlueController( isOverBoolean )
+          {
+          	if ( isOverBoolean ) {
+          	    blue = onColor;
+          	    blueSelected = true;
+          	}
+          	else {
+          	    blue = offColor;
+          	    blueSelected = false;
+          	}
+          	material = new SFColor (0, 0, blue);
+          }
+    	]]>
+   </Script>
+   <ROUTE fromField='isOver' fromNode='BlueTouchSensor' toField='IsOverBlueController' toNode='IsOverBlueControllerScript'/>
+   <ROUTE fromField='material' fromNode='IsOverBlueControllerScript' toField='diffuseColor' toNode='BlueControllerMaterial'/>
+
+
+
+
+
+   <Script DEF='IsOverZNegMenuControllerScript'>
+        <field accessType='inputOnly' name='IsOverZNegMenuController' type='SFBool'/>
+         <field accessType='outputOnly' name='material' type='SFColor'/>
+
+         <![CDATA[
+          ecmascript:
+            function initialize() {
+                zNegMenuSelected = false;
+                zPosMenuSelected = false;
+            }
+          function IsOverZNegMenuController(value)
+          {
+          	if (value) {
+          	    color = onColor;
+          	    zNegMenuSelected = true;
+          	}
+          	else {
+          	    color = offColor;
+           	    zNegMenuSelected = false;
+         	}
+          	material = new SFColor (color, color, color);
+          }
+    	]]>
+   </Script>
+   <ROUTE fromField='isOver' fromNode='zNegMenuTouchSensor' toField='IsOverZNegMenuController' toNode='IsOverZNegMenuControllerScript'/>
+   <ROUTE fromField='material' fromNode='IsOverZNegMenuControllerScript' toField='diffuseColor' toNode='zNegMenuMat'/>
+
+
+
+   <Script DEF='IsOverZPosMenuControllerScript'>
+        <field accessType='inputOnly' name='IsOverZPosMenuController' type='SFBool'/>
+        <field accessType='outputOnly' name='material' type='SFColor'/>
+
+        <![CDATA[
+          ecmascript:
+          function IsOverZPosMenuController(value)
+          {
+          	if (value) {
+          	    color = onColor;
+          	    zPosMenuSelected = true;
+          	}
+          	else {
+          	    color = offColor;
+          	    zPosMenuSelected = false;
+          	}
+    		material = new SFColor (color, color, color);
+          }
+    	]]>
+   </Script>
+   <ROUTE fromField='isOver' fromNode='zPosMenuTouchSensor' toField='IsOverZPosMenuController' toNode='IsOverZPosMenuControllerScript'/>
+   <ROUTE fromField='material' fromNode='IsOverZPosMenuControllerScript' toField='diffuseColor' toNode='zPosMenuMat'/>
+
+
+
+
+
+  <Script DEF='IsActiveLightBulbControllerScript'>
+    <field accessType='inputOnly' name='IsActiveLightBulbController' type='SFBool'/>
+
+    <![CDATA[
+          ecmascript:
+	    function initialize() {
+	        lightBulbSelected = false;
+	    }
+        function IsActiveLightBulbController( value )
+        {
+            lightBulbSelected = !lightBulbSelected;
+        }
+    ]]>
+  </Script>
+
+  <ROUTE fromField='isActive' fromNode='LightBulbTouchSensor' toField='IsActiveLightBulbController' toNode='IsActiveLightBulbControllerScript'/>
+
+
+  <TimeSensor DEF='AnimationClock' cycleInterval='1' loop='true'/>
+  <Script DEF='AnimateScript' mustEvaluate='true'>
+    <field accessType='inputOnly' name='perFrameCall' type='SFFloat'/>
+    <field accessType='inputOnly' name='vpRot' type='SFRotation'/>
+    <field accessType='inputOutput' name='ballRotate' type='SFRotation'/>
+    <field accessType='inputOutput' name='redCtrlTranslation' type='SFVec3f'/>
+    <field accessType='inputOutput' name='greenCtrlTranslation' type='SFVec3f'/>
+    <field accessType='inputOutput' name='blueCtrlTranslation' type='SFVec3f'/>
+    <field accessType='inputOutput' name='lightBulbTranslation' type='SFVec3f'/>
+
+    <field accessType='inputOutput' name='lightColor' type='SFColor'/>
+    <field accessType='inputOutput' name='lbColor' type='SFColor'/>
+    <![CDATA[
+	    ecmascript:
+          function initialize() {
+            bulbRed = 0;
+            bulbGreen = 0;
+            bulbBlue = 0;
+          }
+          function perFrameCall (eventValue) {
+
+	         ballRotate.setValue(vpRot.getAngle(), vpRot.getX(), vpRot.getY(), vpRot.getZ() );
+
+             bulbRed = lightColor.getRed();
+             bulbGreen = lightColor.getGreen();
+             bulbBlue = lightColor.getBlue();
+
+             lightBulbX = lightBulbTranslation.getX();
+             lightBulbY = lightBulbTranslation.getY();
+             lightBulbZ = lightBulbTranslation.getZ();
+
+             currQuaternion = new Quaternionf(vpRot);
+             matrix = new Matrix4f();
+             currQuaternion.get(matrix);
+             camDirVector = new SFVec3f(0,0,-1);
+             camDirVector.mulDirection( matrix, camDirVector );
+
+             if ( redSelected ) {
+                 redCtrlX = camDirVector.getX()*redCtrlTranslation.getZ()/camDirVector.getZ();
+                 if ( redCtrlX < -2.5 ) redCtrlX = -2.5;
+                 else if ( redCtrlX > 2.5 ) redCtrlX = 2.5;
+                 redCtrlTranslation.setValue( redCtrlX, 0, redCtrlTranslation.getZ() );
+                 bulbRed = ( redCtrlX + 2.5 ) / 5.0;
+             }
+             else if ( greenSelected ) {
+                 greenCtrlX = camDirVector.getX()*greenCtrlTranslation.getZ()/camDirVector.getZ();
+                 if ( greenCtrlX < -2.5 ) greenCtrlX = -2.5;
+                 else if ( greenCtrlX > 2.5 ) greenCtrlX = 2.5;
+                 greenCtrlTranslation.setValue( greenCtrlX, 0, greenCtrlTranslation.getZ() );
+                 bulbGreen = ( greenCtrlX + 2.5 ) / 5.0;
+             }
+             else if ( blueSelected ) {
+                 blueCtrlX = camDirVector.getX()*blueCtrlTranslation.getZ()/camDirVector.getZ();
+                 if ( blueCtrlX < -2.5 ) blueCtrlX = -2.5;
+                 else if ( blueCtrlX > 2.5 ) blueCtrlX = 2.5;
+                 blueCtrlTranslation.setValue( blueCtrlX, 0, blueCtrlTranslation.getZ() );
+                 bulbBlue = ( blueCtrlX + 2.5 ) / 5.0;
+             }
+             else if ( lightBulbSelected ) {
+                lightBulbX = camDirVector.getX()*lightBulbTranslation.getZ()/camDirVector.getZ();
+                lightBulbY = camDirVector.getY()*lightBulbTranslation.getZ()/camDirVector.getZ();
+             }
+             else if ( zPosMenuSelected ) lightBulbZ = lightBulbTranslation.getZ() + .05;
+             else if ( zNegMenuSelected )  lightBulbZ = lightBulbTranslation.getZ() - .05;
+             lightBulbTranslation.setValue( lightBulbX, lightBulbY, lightBulbZ );
+
+             lightColor.setValue( bulbRed,  bulbGreen, bulbBlue );
+             lbColor.setValue( bulbRed,  bulbGreen, bulbBlue );
+          }
+	]]>
+  </Script>
+
+  <ROUTE fromField='fraction_changed' fromNode='AnimationClock' toField='perFrameCall' toNode='AnimateScript'/>
+
+  <ROUTE fromField='orientation' fromNode='VP1' toField='vpRot' toNode='AnimateScript'/>
+
+  <ROUTE fromField='rotation' fromNode='sphereRot' toField='ballRotate' toNode='AnimateScript'/>
+  <ROUTE fromField='ballRotate' fromNode='AnimateScript' toField='rotation' toNode='sphereRot'/>
+
+  <ROUTE fromField='color' fromNode='PL1' toField='lightColor' toNode='AnimateScript'/>
+  <ROUTE fromField='lightColor' fromNode='AnimateScript' toField='color' toNode='PL1'/>
+
+  <ROUTE fromField='diffuseColor' fromNode='LightBulbColor' toField='lbColor' toNode='AnimateScript'/>
+  <ROUTE fromField='lbColor' fromNode='AnimateScript' toField='diffuseColor' toNode='LightBulbColor'/>
+  <ROUTE fromField='translation' fromNode='LightBulb' toField='lightBulbTranslation' toNode='AnimateScript'/>
+  <ROUTE fromField='lightBulbTranslation' fromNode='AnimateScript' toField='translation' toNode='LightBulb'/>
+
+  <ROUTE fromField='translation' fromNode='RedTranslate' toField='redCtrlTranslation' toNode='AnimateScript'/>
+  <ROUTE fromField='redCtrlTranslation' fromNode='AnimateScript' toField='translation' toNode='RedTranslate'/>
+  <ROUTE fromField='translation' fromNode='GreenTranslate' toField='greenCtrlTranslation' toNode='AnimateScript'/>
+  <ROUTE fromField='greenCtrlTranslation' fromNode='AnimateScript' toField='translation' toNode='GreenTranslate'/>
+  <ROUTE fromField='translation' fromNode='BlueTranslate' toField='blueCtrlTranslation' toNode='AnimateScript'/>
+  <ROUTE fromField='blueCtrlTranslation' fromNode='AnimateScript' toField='translation' toNode='BlueTranslate'/>
+
+  </Scene>
+</X3D>
