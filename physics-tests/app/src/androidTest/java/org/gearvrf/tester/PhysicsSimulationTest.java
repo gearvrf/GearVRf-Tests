@@ -72,10 +72,10 @@ public class PhysicsSimulationTest {
     public void updatedOwnerTransformTest() throws Exception {
         addGroundMesh(gvrTestUtils.getMainScene(), 0.0f,0.0f,0.0f, 0.0f);
 
-        GVRSceneObject[] objects = new GVRSceneObject[8];
-        GVRRigidBody[] bodies = new GVRRigidBody[8];
+        GVRSceneObject[] objects = new GVRSceneObject[10];
+        GVRRigidBody[] bodies = new GVRRigidBody[10];
 
-        for(int i = 0; i < 8; i = i + 2) {
+        for(int i = 0; i < 10; i = i + 2) {
             GVRBoxCollider boxCollider = new GVRBoxCollider(gvrTestUtils.getGvrContext());
             boxCollider.setHalfExtents(0.5f, 0.5f, 0.5f);
             objects[i] = meshWithTexture("cube.obj", "cube.jpg");
@@ -92,8 +92,11 @@ public class PhysicsSimulationTest {
                 case 4 : bodies[i].setMass(0.0f);  //object moves, rigid body doesn't
                          bodies[i].setSimulationType(GVRRigidBody.KINEMATIC);
                          break;
-                case 6 : bodies[i].setMass(100.0f); //rigid body is "sleeping", until it is hit by another
+                case 6 : bodies[i].setMass(1.0f); //rigid body is "sleeping", until it is hit by another
                          bodies[i].setSimulationType(GVRRigidBody.KINEMATIC);
+                         break;
+                case 8 : bodies[i].setMass(1.0f); //rigid body is obbeys all external forces
+                         bodies[i].setSimulationType(GVRRigidBody.DYNAMIC);
                          break;
             }
             objects[i].attachComponent(bodies[i]);
@@ -111,13 +114,13 @@ public class PhysicsSimulationTest {
 
         }
 
-        gvrTestUtils.waitForXFrames(160);
+        gvrTestUtils.waitForXFrames(47);
 
-        for(int i = 0; i < 4; i++) {
+        for(int i = 0; i < 5; i++) {
             objects[i*2].getTransform().setPositionX(2.0f);
         }
 
-        gvrTestUtils.waitForXFrames(160);
+        gvrTestUtils.waitForXFrames(600);
 
         float d = (bodies[1].getTransform().getPositionY()
                 - bodies[0].getTransform().getPositionY()); //sphere is on top of the cube rigid body
@@ -135,8 +138,16 @@ public class PhysicsSimulationTest {
                 - bodies[6].getTransform().getPositionY()); //sphere fell of the cube
         mWaiter.assertTrue(d <= 0.5f);
 
+        d = (bodies[9].getTransform().getPositionY()
+                - bodies[8].getTransform().getPositionY()); //sphere fell of the cube
+        mWaiter.assertTrue(d <= 0.5f);
 
-        gvrTestUtils.waitForXFrames(1600);
+        for(int i = 0; i < 5; i++) {
+            mWaiter.assertTrue(objects[i*2].getTransform().getPositionX() == bodies[i*2].getTransform().getPositionX());
+        }
+
+
+        gvrTestUtils.waitForXFrames(60);
     }
 
     @Test
