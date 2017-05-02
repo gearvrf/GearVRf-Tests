@@ -30,6 +30,17 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile(name:'framework-debug', ext:'aar')
+
+    if (findProject(':framework')) {
+        compile project (':framework')
+    } else {
+        compile(name:'framework-debug', ext:'aar')
+    }
+    if (findProject(':backend_oculus')) {
+        compile project (':backend_oculus')
+    } else {
+        compile(name:'backend_oculus-debug', ext:'aar')
+    }
+
     compile 'net.jodah:concurrentunit:0.4.2'
 }
