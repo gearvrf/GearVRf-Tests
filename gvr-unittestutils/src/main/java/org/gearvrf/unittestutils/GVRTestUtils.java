@@ -32,8 +32,8 @@ import org.gearvrf.utility.Log;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -45,8 +45,8 @@ public class GVRTestUtils implements GVRMainMonitor {
     protected static final int SCREENSHOT_TEST_TIMEOUT = 10000;
 
     private GVRContext gvrContext;
-    private final Object onInitLock;
-    private final Object onStepLock;
+    private final CountDownLatch onInitLatch = new CountDownLatch(1);
+    private final CountDownLatch onStepLatch = new CountDownLatch(1);
     private final Object onScreenshotLock;
     private final Object xFramesLock;
     private final Object onAssetLock;
@@ -61,21 +61,29 @@ public class GVRTestUtils implements GVRMainMonitor {
      * @param testableGVRActivity The instance of the activity to be tested.
      */
     public GVRTestUtils(GVRTestableActivity testableGVRActivity) {
+        this(testableGVRActivity, null);
+    }
+
+    /**
+     * Constructor, needs an instance of {@link GVRTestableActivity} && GVRTestUtils.OnInitCallback.
+     * @param testableGVRActivity The instance of the activity to be tested.
+     */
+    public GVRTestUtils(GVRTestableActivity testableGVRActivity, OnInitCallback onInitCallback) {
         gvrContext = null;
-        onInitLock = new Object();
-        onStepLock = new Object();
         xFramesLock = new Object();
         onScreenshotLock = new Object();
         onAssetLock = new Object();
+        this.onInitCallback = onInitCallback;
 
         if (testableGVRActivity == null) {
             throw new IllegalArgumentException();
         }
+
         testableMain = testableGVRActivity.getGVRTestableMain();
         if (testableMain != null) {
             testableMain.setMainMonitor(this);
         }
-        onInitCallback = null;
+
     }
 
     /**
@@ -91,16 +99,14 @@ public class GVRTestUtils implements GVRMainMonitor {
                 mainScene = gvrContext.getMainScene();
                 return gvrContext;
             }
-            synchronized (onInitLock) {
-                try {
-                    Log.d(TAG, "Waiting for OnInit");
-                    onInitLock.wait();
-                } catch (InterruptedException e) {
-                    Log.e(TAG, "", e);
-                    return null;
-                }
-                return gvrContext;
+            try {
+                Log.d(TAG, "Waiting for OnInit");
+                onInitLatch.await();
+            } catch (InterruptedException e) {
+                Log.e(TAG, "", e);
+                return null;
             }
+            return gvrContext;
         } else {
             return gvrContext;
         }
@@ -112,19 +118,16 @@ public class GVRTestUtils implements GVRMainMonitor {
      * returns immediately. This is a blocking call.
      */
     public void waitForSceneRendering() {
-
         if (testableMain.isSceneRendered()) {
             return;
         }
 
-        synchronized (onStepLock) {
-            try {
-                Log.d(TAG, "Waiting for OnStep");
-                onStepLock.wait();
-            } catch (InterruptedException e) {
-                Log.e(TAG, "", e);
-                return;
-            }
+        try {
+            Log.d(TAG, "Waiting for OnStep");
+            onStepLatch.await();
+        } catch (InterruptedException e) {
+            Log.e(TAG, "", e);
+            return;
         }
     }
 
@@ -166,9 +169,7 @@ public class GVRTestUtils implements GVRMainMonitor {
         if (onInitCallback != null) {
             onInitCallback.onInit(gvrContext);
         }
-        synchronized (onInitLock) {
-            onInitLock.notifyAll();
-        }
+        onInitLatch.countDown();
         Log.d(TAG, "On Init called");
     }
 
@@ -177,9 +178,7 @@ public class GVRTestUtils implements GVRMainMonitor {
         if (onRenderCallback != null) {
             onRenderCallback.onSceneRendered();
         }
-        synchronized (onStepLock) {
-            onStepLock.notifyAll();
-        }
+        onStepLatch.countDown();
     }
 
     public void xFramesRendered() {

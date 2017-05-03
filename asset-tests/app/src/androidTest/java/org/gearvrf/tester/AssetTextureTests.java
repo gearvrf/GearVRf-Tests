@@ -2,8 +2,12 @@ package org.gearvrf.tester;
 
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+
+import junit.framework.Assert;
+
 import net.jodah.concurrentunit.Waiter;
 
+import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
@@ -18,6 +22,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
 @RunWith(AndroidJUnit4.class)
@@ -112,5 +120,23 @@ public class AssetTextureTests
     public void x3dTexcoordTest4() throws TimeoutException
     {
         mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/x3d/texture_coordinates/texturecoordinatetestsubset3.x3d", 2, 0, "x3dTexcoordTest4");
+    }
+
+    @Test
+    public void testDownloadTextureCache() throws MalformedURLException {
+        final GVRContext gvr = mTestUtils.getGvrContext();
+        final String urlString = "https://github.com/gearvrf/GearVRf-Tests/raw/master/asset-tests/app/src/main/res/drawable-xxxhdpi/gearvr_logo.jpg";
+
+        final String directoryPath = gvr.getContext().getCacheDir().getAbsolutePath();
+        final String outputFilename = directoryPath + File.separator + UUID.nameUUIDFromBytes(urlString.getBytes()).toString() + "gearvr_logo.jpg";
+        final File file = new File(outputFilename);
+        Assert.assertFalse(file.exists());
+
+        final URL url = new URL(urlString);
+        gvr.getAssetLoader().loadTexture(new GVRAndroidResource(gvr, url, true));
+
+        Assert.assertTrue(file.exists());
+        file.delete();
+        Assert.assertFalse(file.exists());
     }
 }
