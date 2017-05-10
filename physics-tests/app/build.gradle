@@ -4,7 +4,7 @@ allprojects {
     repositories {
         jcenter()
         flatDir {
-            dirs '../../gearvrf-libs'
+            dirs '../../../GearVRf/GVRf/gearvrf-libs'
         }
     }
 }
@@ -12,7 +12,7 @@ allprojects {
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '23.0.3'
+    buildToolsVersion '25.0.3'
 
     defaultConfig {
         applicationId "org.gearvrf.tester"
@@ -50,9 +50,23 @@ project.ext.jomlVersion = "1.9.1-SNAPSHOT"
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile "org.joml:joml-android:${jomlVersion}"
-    compile(name:'framework-debug', ext:'aar')
-	compile(name: 'backend_oculus-debug', ext: 'aar')
-    compile(name: 'gvrf-physics-debug', ext: 'aar')
+
+    if (findProject(':framework')) {
+        compile project (':framework')
+    } else {
+        compile(name:'framework-debug', ext:'aar')
+    }
+    if (findProject(':backend_oculus')) {
+        compile project (':backend_oculus')
+    } else {
+        compile(name:'backend_oculus-debug', ext:'aar')
+    }
+    if (findProject(':gvrf-physics')) {
+        compile project (':gvrf-physics')
+    } else {
+        compile(name: 'gvrf-physics-debug', ext: 'aar')
+    }
+
     androidTestCompile 'com.android.support:support-annotations:23.0.1'
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'
