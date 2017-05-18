@@ -61,6 +61,54 @@ public class RenderTests {
         mWaiter.assertNotNull(scene);
     }
 
+    boolean compareArrays(float[] arr1, float[] arr2)
+    {
+        if (arr1.length != arr2.length)
+        {
+            return false;
+        }
+        for (int i =- 0; i < arr1.length; ++i)
+        {
+            if (Math.abs(arr1[i] - arr2[i]) > 0.00001f)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    boolean compareArrays(char[] arr1, char[] arr2)
+    {
+        if (arr1.length != arr2.length)
+        {
+            return false;
+        }
+        for (int i =- 0; i < arr1.length; ++i)
+        {
+            if (arr1[i] != arr2[i])
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    boolean compareArrays(int[] arr1, int[] arr2)
+    {
+        if (arr1.length != arr2.length)
+        {
+            return false;
+        }
+        for (int i =- 0; i < arr1.length; ++i)
+        {
+            if (arr1[i] != arr2[i])
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Test
     public void testBlendFunc() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
@@ -91,6 +139,58 @@ public class RenderTests {
         ctx.getEventReceiver().removeListener(texHandler);
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "testBlendFunc", mWaiter, true);
+    }
+
+    @Test
+    public void testAccessMeshShort() throws TimeoutException
+    {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        final float[] vertices = { -1, 1, 0, -1, -1, 0, 1, 1, 0, 1, -1, 0 };
+        final float[] normals = { 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1 };
+        final float[] texCoords = { 0, 0, 0, 1, 1, 0, 1, 1 };
+        final char[] triangles = { 0, 1, 2, 1, 3, 2 };
+        GVRMesh mesh = new GVRMesh(ctx, "float3 a_position float2 a_texcoord float3 a_normal");
+        float[] ftmp;
+        char[] itmp;
+
+        mesh.setVertices(vertices);
+        mesh.setNormals(normals);
+        mesh.setTexCoords(texCoords);
+        mesh.setTriangles(triangles);
+        ftmp = mesh.getFloatVec("a_position");
+        mWaiter.assertTrue(compareArrays(vertices, ftmp));
+        ftmp = mesh.getFloatVec("a_texcoord");
+        mWaiter.assertTrue(compareArrays(texCoords, ftmp));
+        ftmp = mesh.getFloatVec("a_normal");
+        mWaiter.assertTrue(compareArrays(normals, ftmp));
+        itmp = mesh.getIndexBuffer().asCharArray();
+        mWaiter.assertTrue(compareArrays(triangles, itmp));
+    }
+
+    @Test
+    public void testAccessMeshInt() throws TimeoutException
+    {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        final float[] vertices = { -1, 1, 0, -1,  -1, 0, 1, 1, 0, 1, -1, 0 };
+        final float[] normals = { 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1 };
+        final float[] texCoords = { 0, 0, 0, 1, 1, 0, 1, 1 };
+        final int[] triangles = { 0, 1, 2, 1, 3, 2 };
+        GVRMesh mesh = new GVRMesh(ctx, "float3 a_position float2 a_texcoord float3 a_normal");
+        float[] ftmp;
+        int[] itmp;
+
+        mesh.setVertices(vertices);
+        mesh.setNormals(normals);
+        mesh.setTexCoords(texCoords);
+        mesh.setIndices(triangles);
+        ftmp = mesh.getFloatVec("a_position");
+        mWaiter.assertTrue(compareArrays(vertices, ftmp));
+        ftmp = mesh.getFloatVec("a_texcoord");
+        mWaiter.assertTrue(compareArrays(texCoords, ftmp));
+        ftmp = mesh.getFloatVec("a_normal");
+        mWaiter.assertTrue(compareArrays(normals, ftmp));
+        itmp = mesh.getIndexBuffer().asIntArray();
+        mWaiter.assertTrue(compareArrays(triangles, itmp));
     }
 }
 
