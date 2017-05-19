@@ -195,7 +195,7 @@ public class SceneObjectTests
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
         GVRMaterial redMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
-        GVRMaterial greenMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Texture.ID);
+        GVRMaterial greenMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
         GVRSceneObject cylinder1 = new GVRCylinderSceneObject(ctx, true, redMtl);
         GVRSceneObject cylinder2 = new GVRCylinderSceneObject(ctx, false, greenMtl);
 
@@ -207,7 +207,7 @@ public class SceneObjectTests
         cylinder2.setName("cylinder2");
         mRoot.addChildObject(cylinder1);
         scene.addSceneObject(cylinder2);
-        mTestUtils.waitForXFrames(2);
+        mTestUtils.waitForXFrames(20);
         mWaiter.assertNotNull(scene.getSceneObjectByName("cylinder1"));
         mWaiter.assertNotNull(scene.getSceneObjectByName("cylinder2"));
         mTestUtils.screenShot(getClass().getSimpleName(), "canDisplayNonTextured", mWaiter, mDoCompare);
