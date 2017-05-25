@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 import org.gearvrf.tester.R;
@@ -97,6 +98,32 @@ public class AssetImportTests
         mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
         mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot("AssetImportTests", "canLoadModel", mWaiter, mDoCompare);
+    }
+
+    @Test
+    public void canStartAnimations() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(GVRImportSettings.START_ANIMATIONS));
+        GVRSceneObject model = null;
+
+        ctx.getEventReceiver().addListener(mHandler);
+        try
+        {
+            model = ctx.getAssetLoader().loadModel("jassimp/astro_boy.dae", settings, false, scene);
+        }
+        catch (IOException ex)
+        {
+            mWaiter.fail(ex);
+        }
+        mTestUtils.waitForAssetLoad();
+        mHandler.centerModel(model);
+        mHandler.checkAssetLoaded(mWaiter, null, 4);
+        mHandler.checkAssetErrors(mWaiter, 0, 0);
+        mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
+        mTestUtils.waitForXFrames(2);
+        mTestUtils.screenShot("AssetImportTests", "canStartAnimations", mWaiter, mDoCompare);
     }
 
     @Test
@@ -184,11 +211,17 @@ public class AssetImportTests
         mHandler.loadTestModel("jassimp/astro_boy.dae", 4, 0, "canLoadModelInScene");
     }
 
+
     @Test
     public void canLoadExternalScene() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
+        GVRCubeSceneObject cube = new GVRCubeSceneObject(ctx);
+
+        cube.setName("cube");
+        scene.addSceneObject(cube);
+
         GVRExternalScene sceneLoader = new GVRExternalScene(ctx, "jassimp/astro_boy.dae", true);
         GVRSceneObject model = new GVRSceneObject(ctx);
 
@@ -200,6 +233,7 @@ public class AssetImportTests
         mTestUtils.waitForAssetLoad();
         mHandler.checkAssetLoaded(mWaiter, "astro_boy.dae", 4);
         mHandler.checkAssetErrors(mWaiter, 0, 0);
+        mWaiter.assertNull(scene.getSceneObjectByName("cube"));
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot("AssetImportTests", "canLoadExternalScene", mWaiter, mDoCompare);
     }
