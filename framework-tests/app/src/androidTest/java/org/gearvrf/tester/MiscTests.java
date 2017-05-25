@@ -138,7 +138,7 @@ public class MiscTests {
                 byte[] b = new byte[1*1024*1024];
                 pass.setCullFace(GVRRenderPass.GVRCullFaceEnum.None);
                 final float[] texCoords = mesh.getTexCoords();
-                mesh.setFloatVec("a_texcoord", texCoords);
+                mesh.setFloatArray("a_texcoord", texCoords);
                 material.setDiffuseColor(0, 0, 0, 0);
                 GVRNotifications.waitAfterStep();
           }

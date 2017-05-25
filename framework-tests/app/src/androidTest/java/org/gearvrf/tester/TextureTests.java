@@ -102,7 +102,7 @@ public class TextureTests
         {
             texcoords[i] *= 2.0f;
         }
-        mesh.setFloatVec("a_texcoord1", texcoords);
+        mesh.setFloatArray("a_texcoord1", texcoords);
     }
 
     @Test
@@ -155,8 +155,7 @@ public class TextureTests
         ctx.getEventReceiver().addListener(texHandler);
         try
         {
-            GVRTexture tex2 =
-                    ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, "sunmap.astc"));
+            GVRTexture tex2 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, "sunmap.astc"));
             mtl.setTexture("diffuseTexture", tex2);
         }
         catch (IOException ex)
@@ -238,7 +237,7 @@ public class TextureTests
         {
             texcoords[i] *= 2.0f;
         }
-        mesh.setFloatVec("a_texcoord", texcoords);
+        mesh.setFloatArray("a_texcoord", texcoords);
         mtl.setDiffuseColor(0.7f, 0.7f, 0.7f, 1);
         mtl.setSpecularColor(1, 1, 1, 1);
         mtl.setSpecularExponent(4.0f);
