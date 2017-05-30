@@ -1,0 +1,125 @@
+<X3D>
+    <Scene>
+        <Viewpoint position='0 0 0'/>
+        <PointLight/>
+        <Background skyColor='0 0 .2'/>
+
+
+        <Transform  DEF='obj3' translation="-3 2 -2.5" rotation="0 1 0 .785">
+	        <Shape>
+	          <Text DEF='TextMessage3' string='"Nanosecond" "Thick" "size=1.0"'>
+	          	   <FontStyle family='"nsecthck.ttf"' size='1.0' justify='"BEGIN" "BEGIN" "BEGIN"'/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="1 1 1"/>
+	          </Appearance>
+	        </Shape>
+        </Transform>
+        <Transform  DEF='obj3' translation="-3 .6 -2.5" rotation="0 1 0 .785">
+	        <Shape>
+	          <Text DEF='TextMessage3' string='"Nanosecond" "Thick" "size=2.0"'>
+	          	   <FontStyle family='"nsecthck.ttf"' size='2.0' justify='"BEGIN" "BEGIN" "BEGIN"'/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="1 1 1"/>
+	          </Appearance>
+	        </Shape>
+        </Transform>
+        <Transform  DEF='obj3' translation="-3 -2 -2.5" rotation="0 1 0 .785">
+	        <Shape>
+	          <Text DEF='TextMessage3' string='"Nanosecond" "Thick" "size=3.0"'>
+	          	   <FontStyle family='"nsecthck.ttf"' size='3.0' justify='"BEGIN" "BEGIN" "BEGIN"'/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="1 1 1"/>
+	          </Appearance>
+	        </Shape>
+        </Transform>
+
+
+
+        <Transform  DEF='obj3' translation="2.5 1.5 -2.5" rotation="0 1 0 -.785">
+	        <Shape>
+	          <Text DEF='TextMessage3' string='"Prisma" "Plain"'>
+	          	   <FontStyle family='"Prisma.ttf"' size='1.0' style="PLAIN" />
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="1 1 1"/>
+	          </Appearance>
+	        </Shape>
+        </Transform>
+        <Transform  DEF='obj3' translation="2.5 .5 -2.5" rotation="0 1 0 -.785">
+	        <Shape>
+	          <Text DEF='TextMessage3' string='"Prisma" "Bold"'>
+	          	   <FontStyle family='"Prisma.ttf"' size='1.0' style="BOLD"/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="1 1 1"/>
+	          </Appearance>
+	        </Shape>
+        </Transform>
+        <Transform  DEF='obj3' translation="2.5 -.5 -2.5" rotation="0 1 0 -.785">
+	        <Shape>
+	          <Text DEF='TextMessage3' string='"Prisma" "Italic" '>
+	          	   <FontStyle family='"Prisma.ttf"' size='1.0' style="ITALIC"/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="1 1 1"/>
+	          </Appearance>
+	        </Shape>
+        </Transform>
+        <Transform  DEF='obj3' translation="2.5 -1.5 -2.5" rotation="0 1 0 -.785">
+	        <Shape>
+	          <Text DEF='TextMessage3' string='"Prisma" "Bold Italic   "'>
+	          	   <FontStyle family='"Prisma.ttf"' size='1.0' style="BOLDITALIC"/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="1 1 1"/>
+	          </Appearance>
+	        </Shape>
+        </Transform>
+
+        <Transform DEF='obj4' translation="0 1.25 -4">
+	        <Shape>
+	          <Text DEF='TextMessage4' string='"Air" "Americana" "Justify=BEGIN"'>
+	            <FontStyle family='Air Americana.ttf' justify='BEGIN'/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="1 1 1"/>
+	          </Appearance>
+	        </Shape>
+	    </Transform>
+        <Transform DEF='obj4' translation="0 0 -4">
+	        <Shape>
+	          <Text DEF='TextMessage4' string='"Air" "Americana" "Justify=MIDDLE"'>
+	            <FontStyle family='Air Americana.ttf' justify='MIDDLE'/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="1 1 1"/>
+	          </Appearance>
+	        </Shape>
+	    </Transform>
+        <Transform DEF='obj4' translation="0 -1.25 -4">
+	        <Shape>
+	          <Text DEF='TextMessage4' string='"Air" "Americana" "Justify=END"'>
+	            <FontStyle family='Air Americana.ttf' justify='END'/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="1 1 1"/>
+	          </Appearance>
+	        </Shape>
+	    </Transform>
+
+
+        <Transform DEF='defaultFont' translation="0 -2 -3">
+	        <Shape>
+	          <Text string='"Default" "Font"'>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="1 1 0"/>
+	          </Appearance>
+	        </Shape>
+	    </Transform>
+
+    </Scene>
+</X3D>
