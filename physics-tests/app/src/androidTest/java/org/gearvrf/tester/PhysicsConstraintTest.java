@@ -17,6 +17,7 @@ import org.gearvrf.physics.GVRFixedConstraint;
 import org.gearvrf.physics.GVRPoint2PointConstraint;
 import org.gearvrf.physics.GVRRigidBody;
 import org.gearvrf.physics.GVRWorld;
+import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.junit.Before;
@@ -79,6 +80,38 @@ public class PhysicsConstraintTest {
         mWaiter.assertTrue( d - (sphere.getTransform().getPositionY() - cube.getTransform().getPositionY()) < 1.0f);
 
         gvrTestUtils.waitForXFrames(60);
+    }
+
+    @Test
+    public void fixedConstraintTest2() throws Exception {
+        GVRSceneObject ground = addGround(gvrTestUtils.getMainScene(), 0f, 0f, -15f);
+
+        GVRSceneObject box1 = addCube(gvrTestUtils.getMainScene(), 0f, 0.5f, -30f, 1.0f);
+        ((GVRRigidBody)box1.getComponent(GVRRigidBody.getComponentType())).setSimulationType(GVRRigidBody.DYNAMIC);
+
+        GVRSceneObject box2 = addCube(gvrTestUtils.getMainScene(), 0f, 0.5f, -15f, 1.0f);
+        ((GVRRigidBody)box2.getComponent(GVRRigidBody.getComponentType())).setSimulationType(GVRRigidBody.DYNAMIC);
+
+        GVRFixedConstraint constraint = new GVRFixedConstraint(gvrTestUtils.getGvrContext(), (GVRRigidBody)box2.getComponent(GVRRigidBody.getComponentType()));
+        box1.attachComponent(constraint);
+
+        gvrTestUtils.waitForXFrames(30);
+        float distance = transformsDistance(box1.getTransform(), box2.getTransform());
+
+        ((GVRRigidBody)box1.getComponent(GVRRigidBody.getComponentType())).applyTorque(0, 0, 200);
+        gvrTestUtils.waitForXFrames(120);
+        float rotation = Math.abs(box1.getTransform().getRotationX() - box2.getTransform().getRotationX())
+                + Math.abs(box1.getTransform().getRotationY() - box2.getTransform().getRotationY())
+                + Math.abs(box1.getTransform().getRotationZ() - box2.getTransform().getRotationZ());
+        mWaiter.assertTrue(rotation < 0.2f);
+        mWaiter.assertTrue(Math.abs(distance - transformsDistance(box1.getTransform(), box2.getTransform())) < 0.2);
+
+        ((GVRRigidBody)box2.getComponent(GVRRigidBody.getComponentType())).applyCentralForce(300,0,300);
+        gvrTestUtils.waitForXFrames(180);
+        mWaiter.assertTrue(rotation < 0.2f);
+        mWaiter.assertTrue(Math.abs(distance - transformsDistance(box1.getTransform(), box2.getTransform())) < 0.2);
+
+        gvrTestUtils.waitForXFrames(30);
     }
 
     @Test
@@ -176,6 +209,26 @@ public class PhysicsConstraintTest {
 
         scene.addSceneObject(cubeObject);
         return cubeObject;
+    }
+
+    private GVRSceneObject addGround(GVRScene scene, float x, float y, float z) {
+
+        GVRSceneObject groundObject = new GVRCubeSceneObject(gvrTestUtils.getGvrContext());
+
+        groundObject.getTransform().setScale(100f, 0.5f, 100f);
+        groundObject.getTransform().setPosition(x, y, z);
+
+        GVRBoxCollider boxCollider = new GVRBoxCollider(gvrTestUtils.getGvrContext());
+        boxCollider.setHalfExtents(0.5f, 0.5f, 0.5f);
+        groundObject.attachCollider(boxCollider);
+
+        GVRRigidBody body = new GVRRigidBody(gvrTestUtils.getGvrContext());
+        body.setMass(0f);
+        groundObject.attachComponent(body);
+
+        scene.addSceneObject(groundObject);
+
+        return groundObject;
     }
 
     public static float transformsDistance(GVRTransform a, GVRTransform b) {
