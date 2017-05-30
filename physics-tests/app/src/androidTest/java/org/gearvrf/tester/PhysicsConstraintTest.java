@@ -12,7 +12,9 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.GVRTransform;
 import org.gearvrf.physics.GVRFixedConstraint;
+import org.gearvrf.physics.GVRPoint2PointConstraint;
 import org.gearvrf.physics.GVRRigidBody;
 import org.gearvrf.physics.GVRWorld;
 import org.gearvrf.unittestutils.GVRTestUtils;
@@ -75,6 +77,31 @@ public class PhysicsConstraintTest {
         gvrTestUtils.waitForXFrames(60);
         mWaiter.assertTrue((sphere.getTransform().getPositionX() == cube.getTransform().getPositionX()));
         mWaiter.assertTrue( d - (sphere.getTransform().getPositionY() - cube.getTransform().getPositionY()) < 1.0f);
+
+        gvrTestUtils.waitForXFrames(60);
+    }
+
+    @Test
+    public void point2pointConstraintTest() throws Exception {
+        float pivotInA[] = {0f, -1.5f, 0f};
+        float pivotInB[] = {-8f, -1.5f, 0f};
+
+        GVRSceneObject ball = addSphere(gvrTestUtils.getMainScene(), 0.0f, 10.0f, -10.0f, 0.0f);
+        GVRSceneObject box = addCube(gvrTestUtils.getMainScene(), 8.0f, 10.0f, -10.0f, 1.0f);
+        ((GVRRigidBody)box.getComponent(GVRRigidBody.getComponentType())).setSimulationType(GVRRigidBody.DYNAMIC);
+
+        GVRPoint2PointConstraint constraint = new GVRPoint2PointConstraint(gvrTestUtils.getGvrContext(), (GVRRigidBody)box.getComponent(GVRRigidBody.getComponentType()), pivotInA, pivotInB);
+        ball.attachComponent(constraint);
+
+        gvrTestUtils.waitForXFrames(30);
+
+        gvrTestUtils.waitForXFrames(60);
+        float distance = transformsDistance(ball.getTransform(), box.getTransform());
+        mWaiter.assertTrue(distance < 9.8);
+
+        gvrTestUtils.waitForXFrames(60);
+        distance = transformsDistance(ball.getTransform(), box.getTransform());
+        mWaiter.assertTrue(distance < 9.5);
 
         gvrTestUtils.waitForXFrames(60);
     }
@@ -149,5 +176,13 @@ public class PhysicsConstraintTest {
 
         scene.addSceneObject(cubeObject);
         return cubeObject;
+    }
+
+    public static float transformsDistance(GVRTransform a, GVRTransform b) {
+        float x = a.getPositionX() - b.getPositionX();
+        float y = a.getPositionY() - b.getPositionY();
+        float z = a.getPositionZ() - b.getPositionZ();
+
+        return (float)Math.sqrt(x * x + y * y + z * z);
     }
 }
