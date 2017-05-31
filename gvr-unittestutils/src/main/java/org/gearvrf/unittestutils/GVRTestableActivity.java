@@ -50,7 +50,7 @@ public class GVRTestableActivity extends GVRActivity {
 
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    1);
+                    REQUEST_READ_EXTERNAL_STORAGE);
         }
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -58,7 +58,7 @@ public class GVRTestableActivity extends GVRActivity {
 
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    2);
+                    REQUEST_WRITE_EXTERNAL_STORAGE);
         }
     }
 
@@ -66,8 +66,8 @@ public class GVRTestableActivity extends GVRActivity {
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case 1:
-            case 2: {
+            case REQUEST_READ_EXTERNAL_STORAGE:
+            case REQUEST_WRITE_EXTERNAL_STORAGE: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 } else {
@@ -106,4 +106,7 @@ public class GVRTestableActivity extends GVRActivity {
     GVRTestableMain getGVRTestableMain() {
         return testableMain;
     }
+
+    private final static int REQUEST_READ_EXTERNAL_STORAGE = 1;
+    private final static int REQUEST_WRITE_EXTERNAL_STORAGE = 2;
 }
