@@ -1,0 +1,17 @@
+All fonts in these demonstrations were from:
+http://www.1001freefonts.com/
+
+The ttf files are not property of Samsung.  They are listed as free without registration on the web site.
+
+Air Americana: Air Americana.ttf (STL Open Font License v1.10)
+Broadcast Tiling: BroadcastTiling.ttf
+Cats Alphabet: CatsAlphabet.ttf
+Cheap Sign: CheapSign.ttf  (free for personal use)
+CAUTION: CAUTION.ttf
+Nanosecond thick: nsecthck.ttf
+One dance: One_dance.ttf
+Prisma: Prisma.ttf
+Vacation Postcard: VacationPostcardNF.ttf  (free for personal use, can donate to designer)
+
+
+Load fonts into the assets directory, similar to texture maps, x3d files, etc.
