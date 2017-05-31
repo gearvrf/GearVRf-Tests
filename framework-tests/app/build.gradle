@@ -16,7 +16,7 @@ android {
 
     defaultConfig {
         applicationId "org.gearvrf.tester"
-        minSdkVersion 19
+        minSdkVersion 23
         targetSdkVersion 23
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
@@ -90,7 +90,7 @@ dependencies {
         compile(name:'backend_oculus-debug', ext:'aar')
     }
 
-    androidTestCompile 'com.android.support:support-annotations:23.0.1'
+    androidTestCompile 'com.android.support:support-annotations:23.+'
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
