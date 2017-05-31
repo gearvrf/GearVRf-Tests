@@ -14,6 +14,7 @@ import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.physics.GVRFixedConstraint;
+import org.gearvrf.physics.GVRHingeConstraint;
 import org.gearvrf.physics.GVRPoint2PointConstraint;
 import org.gearvrf.physics.GVRRigidBody;
 import org.gearvrf.physics.GVRWorld;
@@ -137,6 +138,52 @@ public class PhysicsConstraintTest {
         mWaiter.assertTrue(distance < 9.5);
 
         gvrTestUtils.waitForXFrames(60);
+    }
+
+    @Test
+    public void hingeConstraintTest() throws Exception {
+        float pivotInA[] = {0f, -3f, 0f};
+        float pivotInB[] = {0f, 3f, 0f};
+        float axisInA[] = {1f, 0f, 0f};
+        float axisInB[] = {1f, 0f, 0f};
+
+        GVRSceneObject ball = addSphere(gvrTestUtils.getMainScene(), 0.0f, 10.0f, -10.0f, 0.0f);
+        GVRSceneObject box = addCube(gvrTestUtils.getMainScene(), 0.0f, 4.0f, -10.0f, 1.0f);
+
+        GVRRigidBody boxBody = (GVRRigidBody)box.getComponent(GVRRigidBody.getComponentType());
+        boxBody.setSimulationType(GVRRigidBody.DYNAMIC);
+
+        GVRHingeConstraint constraint = new GVRHingeConstraint(gvrTestUtils.getGvrContext(),
+                boxBody, pivotInA, pivotInB, axisInA, axisInB);
+        constraint.setLimits(-1f, 1f);
+        ball.attachComponent(constraint);
+
+        final float maxDistabceX = 0.000001f;
+        final float minDistanceY = 3.f + 1.62f;
+        final float maxDIstanceZ = 2.52f;
+
+        gvrTestUtils.waitForXFrames(30);
+
+        boxBody.applyCentralForce(0f, 0f, 1000f); // Must move towards camera
+        gvrTestUtils.waitForXFrames(180);
+        float dx = Math.abs(ball.getTransform().getPositionX() - box.getTransform().getPositionX());
+        float dy = Math.abs(ball.getTransform().getPositionY() - box.getTransform().getPositionY());
+        float dz = Math.abs(ball.getTransform().getPositionZ() - box.getTransform().getPositionZ());
+        mWaiter.assertTrue(dx < maxDistabceX && dy > minDistanceY && dz < maxDIstanceZ);
+
+        boxBody.applyCentralForce(0f, 1000f, 0f); // May have some effect
+        gvrTestUtils.waitForXFrames(180);
+        dx = Math.abs(ball.getTransform().getPositionX() - box.getTransform().getPositionX());
+        dy = Math.abs(ball.getTransform().getPositionY() - box.getTransform().getPositionY());
+        dz = Math.abs(ball.getTransform().getPositionZ() - box.getTransform().getPositionZ());
+        mWaiter.assertTrue(dx < maxDistabceX && dy > minDistanceY && dz < maxDIstanceZ);
+
+        boxBody.applyCentralForce(1000f, 0f, 0f); // Must have no effect
+        gvrTestUtils.waitForXFrames(180);
+        dx = Math.abs(ball.getTransform().getPositionX() - box.getTransform().getPositionX());
+        dy = Math.abs(ball.getTransform().getPositionY() - box.getTransform().getPositionY());
+        dz = Math.abs(ball.getTransform().getPositionZ() - box.getTransform().getPositionZ());
+        mWaiter.assertTrue(dx < maxDistabceX && dy > minDistanceY && dz < maxDIstanceZ);
     }
 
     /*
