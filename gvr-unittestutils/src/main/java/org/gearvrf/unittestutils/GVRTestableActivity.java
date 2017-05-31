@@ -15,7 +15,11 @@
 
 package org.gearvrf.unittestutils;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import org.gearvrf.GVRActivity;
@@ -31,9 +35,48 @@ public class GVRTestableActivity extends GVRActivity {
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
+
+        requestPermissions();
+
         testableMain = new GVRTestableMain();
         setMain(testableMain, "gvr.xml");
         Log.d(TAG, "OnCreate called");
+    }
+
+    private void requestPermissions() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    1);
+        }
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    2);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+            case 2: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                } else {
+                    Log.e(TAG, "Permission not granted");
+                    finish();
+                }
+                return;
+            }
+        }
     }
 
     @Override
