@@ -1,6 +1,7 @@
 package org.gearvrf.tester;
 
 import android.support.test.rule.ActivityTestRule;
+import android.util.Log;
 
 import net.jodah.concurrentunit.Waiter;
 
@@ -17,6 +18,7 @@ import org.gearvrf.physics.GVRFixedConstraint;
 import org.gearvrf.physics.GVRHingeConstraint;
 import org.gearvrf.physics.GVRPoint2PointConstraint;
 import org.gearvrf.physics.GVRRigidBody;
+import org.gearvrf.physics.GVRSliderConstraint;
 import org.gearvrf.physics.GVRWorld;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.unittestutils.GVRTestUtils;
@@ -184,6 +186,39 @@ public class PhysicsConstraintTest {
         dy = Math.abs(ball.getTransform().getPositionY() - box.getTransform().getPositionY());
         dz = Math.abs(ball.getTransform().getPositionZ() - box.getTransform().getPositionZ());
         mWaiter.assertTrue(dx < maxDistabceX && dy > minDistanceY && dz < maxDIstanceZ);
+    }
+
+    @Test
+    public void sliderConstraintTest() throws Exception {
+        GVRSceneObject ground = addGround(gvrTestUtils.getMainScene(), 0f, 0f, -15f);
+
+        GVRSceneObject box1 = addCube(gvrTestUtils.getMainScene(), 3.0f, 0.5f, -15.0f, 1.0f);
+        ((GVRRigidBody)box1.getComponent(GVRRigidBody.getComponentType())).setSimulationType(GVRRigidBody.DYNAMIC);
+
+        GVRSceneObject box2 = addCube(gvrTestUtils.getMainScene(), -2.0f, 0.5f, -15.0f, 1.0f);
+        ((GVRRigidBody)box2.getComponent(GVRRigidBody.getComponentType())).setSimulationType(GVRRigidBody.DYNAMIC);
+
+        GVRSliderConstraint constraint = new GVRSliderConstraint(gvrTestUtils.getGvrContext(), (GVRRigidBody)box2.getComponent(GVRRigidBody.getComponentType()));
+        constraint.setAngularLowerLimit(-2f);
+        constraint.setAngularUpperLimit(2f);
+        constraint.setLinearLowerLimit(-5f);
+        constraint.setLinearUpperLimit(-2f);
+        box1.attachComponent(constraint);
+
+        gvrTestUtils.waitForXFrames(30);
+
+        ((GVRRigidBody)box2.getComponent(GVRRigidBody.getComponentType())).applyCentralForce(400f, 0f, 0f);
+        gvrTestUtils.waitForXFrames(180);
+        float d = transformsDistance(box1.getTransform(), box2.getTransform());
+        mWaiter.assertTrue(d >= 2.0f && d <= 5.0f);
+
+        ((GVRRigidBody)box2.getComponent(GVRRigidBody.getComponentType())).applyCentralForce(-500f, 0f, 0f);
+        gvrTestUtils.waitForXFrames(180);
+        d = transformsDistance(box1.getTransform(), box2.getTransform());
+        mWaiter.assertTrue(d >= 2.0f && d <= 5.0f);
+
+        ((GVRRigidBody)box1.getComponent(GVRRigidBody.getComponentType())).applyTorque(100f, 0f, 0f);
+        gvrTestUtils.waitForXFrames(180);
     }
 
     /*
