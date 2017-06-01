@@ -475,5 +475,132 @@ public class TextureTests
         mTestUtils.waitForXFrames(3);
         mTestUtils.screenShot(getClass().getSimpleName(), "testLoadTextureFromResource", mWaiter, mDoCompare);
     }
+
+    public void checkResults(int actual, int truth)
+    {
+        mWaiter.assertTrue(actual == truth);
+    }
+
+    /*
+     * how to test futureTexture?
+     */
+    @Test
+    public void testTextureTransparencyDetection() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRTexture jpg_geometry = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.jpg_geometry));
+        GVRMaterial material = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        material.setTexture("diffuseTexture", jpg_geometry);
+        GVRSceneObject groundObject = new GVRCubeSceneObject(ctx, true, material);
+
+        // load jpg, RenderOrder == GEOMETRY
+        GVRRenderData renderData = groundObject.getRenderData();
+        renderData.setShaderTemplate(GVRPhongShader.class);
+        int order = renderData.getRenderingOrder();
+        checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
+
+        // load png, 4 component, transparency, RenderOrder == TRANSPARENT
+        GVRTexture png_4_transparent = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.png_4_transparent));
+        material.setTexture("diffuseTexture", png_4_transparent);
+        renderData.setMaterial(material);
+        order = renderData.getRenderingOrder();
+        checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
+
+        // load png, 3 component, RenderOrder == GEOMETRY
+        GVRTexture png_3_opaque = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.png_3_opaque));
+        material.setTexture("diffuseTexture", png_3_opaque);
+        renderData.setMaterial(material);
+        order = renderData.getRenderingOrder();
+        checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
+
+        // load tga, 4 component, transparency, RenderOrder == TRANSPARENT 
+        GVRTexture tga_4_transparency = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.tga_4_transparency));
+        material.setTexture("diffuseTexture", tga_4_transparency);
+        renderData.setMaterial(material);
+        order = renderData.getRenderingOrder();
+        checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
+
+        // load png, 4 component, opaque, RenderOrder == GEOMETRY
+        GVRTexture png_4_opaque = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.png_4_opaque));
+        material.setTexture("diffuseTexture", png_4_opaque);
+        renderData.setMaterial(material);
+        order = renderData.getRenderingOrder();
+        checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
+
+        // load astc, RenderOrder == TRANSPARENT
+        GVRTexture astc_transparency = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.astc_transparency));
+        material.setTexture("diffuseTexture", astc_transparency);
+        renderData.setMaterial(material);
+        order = renderData.getRenderingOrder();
+        checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
+
+        // load tga, 3 component, RenderOrder == GEOMETRY
+        GVRTexture tga_3_opaque = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.tga_3_opaque));
+        material.setTexture("diffuseTexture", tga_3_opaque);
+        renderData.setMaterial(material);
+        order = renderData.getRenderingOrder();
+        checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
+
+        // load etc2, GL_COMPRESSED_RG11_EAC, RenderOrder == TRANSPARENT 
+        GVRTexture etc2_rg11_transparency = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.etc2_rg11_transparency));
+        material.setTexture("diffuseTexture", etc2_rg11_transparency);
+        renderData.setMaterial(material);
+        order = renderData.getRenderingOrder();
+        checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
+
+        // load tga, 4 component, opaque, RenderOrder == GEOMETRY
+        GVRTexture tga_4_opaque = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.tga_4_opaque));
+        material.setTexture("diffuseTexture", tga_4_opaque);
+        renderData.setMaterial(material);
+        order = renderData.getRenderingOrder();
+        checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
+
+
+        // load etc2, GL_COMPRESSED_SIGNED_RG11_EAC, RenderOrder == TRANSPARENT
+        GVRTexture etc2_signed_rg11_transparency = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.etc2_signed_rg11_transparency));
+        material.setTexture("diffuseTexture", etc2_signed_rg11_transparency);
+        renderData.setMaterial(material);
+        order = renderData.getRenderingOrder();
+        checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
+
+        // load etc2, GL_COMPRESSED_R11_EAC, RenderOrder == GEOMETRY
+        GVRTexture etc2_r11_opaque = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.etc2_r11_opaque));
+        material.setTexture("diffuseTexture", etc2_r11_opaque);
+        renderData.setMaterial(material);
+        order = renderData.getRenderingOrder();
+        checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
+
+        // load etc2, GL_COMPRESSED_RGBA8_ETC2_EAC, RenderOrder == TRANSPARENT
+        GVRTexture etc2_rgba8_transparency = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.etc2_rgba8_transparency));
+        material.setTexture("diffuseTexture", etc2_rgba8_transparency);
+        renderData.setMaterial(material);
+        order = renderData.getRenderingOrder();
+        checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
+
+        // load etc2, GL_COMPRESSED_SIGNED_R11_EAC, RenderOrder == GEOMETRY
+        GVRTexture etc2_signed_r11_opaque = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.etc2_signed_r11_opaque));
+        material.setTexture("diffuseTexture", etc2_signed_r11_opaque);
+        renderData.setMaterial(material);
+        order = renderData.getRenderingOrder();
+        checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
+
+        // load etc2, GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2, RenderOrder == TRANSPARENT
+        GVRTexture etc2_rgb8_punchthrough_alpha1_transparency = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.etc2_rgb8_punchthrough_alpha1_transparency));
+        material.setTexture("diffuseTexture", etc2_rgb8_punchthrough_alpha1_transparency);
+        renderData.setMaterial(material);
+        order = renderData.getRenderingOrder();
+        checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
+
+        // load etc2, GL_COMPRESSED_RGB8_ETC2, RenderOrder == GEOMETRY
+        // test setting texture after setting material
+        GVRTexture etc2_rgb8_opaque = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.etc2_rgb8_opaque));
+        renderData.setMaterial(material);
+        material.setTexture("diffuseTexture", etc2_rgb8_opaque);
+        order = renderData.getRenderingOrder();
+        checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
+
+    }
+
 }
 
