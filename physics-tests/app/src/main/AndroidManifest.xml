@@ -5,6 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
+        tools:overrideLibrary="org.gearvrf.unittestutils"
         android:minSdkVersion="19"
         android:targetSdkVersion="21" />
 
