@@ -111,6 +111,9 @@ public class PhysicsConstraintTest {
 
         ((GVRRigidBody)box2.getComponent(GVRRigidBody.getComponentType())).applyCentralForce(300,0,300);
         gvrTestUtils.waitForXFrames(180);
+        rotation = Math.abs(box1.getTransform().getRotationX() - box2.getTransform().getRotationX())
+                + Math.abs(box1.getTransform().getRotationY() - box2.getTransform().getRotationY())
+                + Math.abs(box1.getTransform().getRotationZ() - box2.getTransform().getRotationZ());
         mWaiter.assertTrue(rotation < 0.2f);
         mWaiter.assertTrue(Math.abs(distance - transformsDistance(box1.getTransform(), box2.getTransform())) < 0.2);
 
