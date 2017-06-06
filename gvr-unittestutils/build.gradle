@@ -6,6 +6,9 @@ allprojects {
         flatDir {
             dirs '../../GearVRf/GVRf/gearvrf-libs'
         }
+        maven {
+            url "https://maven.google.com"
+        }
     }
 }
 
@@ -43,4 +46,5 @@ dependencies {
     }
 
     compile 'net.jodah:concurrentunit:0.4.2'
+    compile 'com.android.support:appcompat-v7:23.+'
 }
