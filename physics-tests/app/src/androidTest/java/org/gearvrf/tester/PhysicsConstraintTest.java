@@ -14,6 +14,7 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
+import org.gearvrf.physics.GVRConeTwistConstraint;
 import org.gearvrf.physics.GVRFixedConstraint;
 import org.gearvrf.physics.GVRHingeConstraint;
 import org.gearvrf.physics.GVRPoint2PointConstraint;
@@ -222,6 +223,32 @@ public class PhysicsConstraintTest {
 
         ((GVRRigidBody)box1.getComponent(GVRRigidBody.getComponentType())).applyTorque(100f, 0f, 0f);
         gvrTestUtils.waitForXFrames(180);
+    }
+
+    @Test
+    public void ConeTwistConstraintTest() throws Exception {
+        GVRSceneObject box = addCube(gvrTestUtils.getMainScene(), 0f, -5f, -15f, 0f);
+
+        GVRSceneObject ball = addSphere(gvrTestUtils.getMainScene(), 0, 5f, -15f, 1f);
+
+        float pivot[] = {0f, -5f, 0f};
+        float rotation[] = {0f, -1f, 0f, 1f, 0f, 0f, 0f, 0f, 1f};
+
+        GVRConeTwistConstraint constraint = new GVRConeTwistConstraint(gvrTestUtils.getGvrContext(),
+                (GVRRigidBody)box.getComponent(GVRRigidBody.getComponentType()), pivot,
+                rotation, rotation);
+
+        ball.attachComponent(constraint);
+
+        final float maxDistance = (float)(Math.sin(Math.PI * 0.375) * 10.0);
+
+        ((GVRRigidBody)ball.getComponent(GVRRigidBody.getComponentType())).applyCentralForce(100f, 0f, 100f);
+        gvrTestUtils.waitForXFrames(180);
+        mWaiter.assertTrue(maxDistance >= transformsDistance(ball.getTransform(), box.getTransform()));
+
+        ((GVRRigidBody)ball.getComponent(GVRRigidBody.getComponentType())).applyCentralForce(-500f, 0f, 0f);
+        gvrTestUtils.waitForXFrames(180);
+        mWaiter.assertTrue(maxDistance >= transformsDistance(ball.getTransform(), box.getTransform()));
     }
 
     /*
