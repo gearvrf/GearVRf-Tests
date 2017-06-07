@@ -93,7 +93,6 @@ public class TextureTests
         model.getTransform().setPosition(-bv.center.x, -bv.center.y, -bv.center.z - 1.5f * bv.radius);
     }
 
-/*
     @Test
     public void testAlphaToCoverage() throws TimeoutException
     {
@@ -476,7 +475,6 @@ public class TextureTests
         mTestUtils.waitForXFrames(3);
         mTestUtils.screenShot(getClass().getSimpleName(), "testLoadTextureFromResource", mWaiter, mDoCompare);
     }
-*/
 
     public void checkResults(int actual, int truth)
     {
@@ -507,7 +505,6 @@ public class TextureTests
                 renderData.setShaderTemplate(GVRPhongShader.class);
                 material.setTexture("diffuseTexture", tex);
                 renderData.setMaterial(material);
-                android.util.Log.d("gvrf", "jpg_geometry = " + tex);
                 order = renderData.getRenderingOrder();
                 android.util.Log.d("gvrf", "done with JPG, order = " + order);
                 checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
@@ -515,7 +512,7 @@ public class TextureTests
             }
             public void failed(Throwable t, GVRAndroidResource r) { mWaiter.fail(t); }
         };
-        ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.jpg_geometry), jpgTexLoadCallback);
+        ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.jpg_opaque), jpgTexLoadCallback);
         mWaiter.await();
 
         // load png, 4 component, transparency, RenderOrder == TRANSPARENT
@@ -524,21 +521,20 @@ public class TextureTests
             public boolean stillWanted(GVRAndroidResource r) { return true; }
             public void loaded(GVRTexture tex, GVRAndroidResource r)
             {
-                android.util.Log.d("gvrf", "trying png transparent now");
+                android.util.Log.d("gvrf", "trying png 4 transparent now");
                 int order = 0;
                 GVRRenderData renderData = groundObject.getRenderData();
                 renderData.setShaderTemplate(GVRPhongShader.class);
                 material.setTexture("diffuseTexture", tex);
                 renderData.setMaterial(material);
-                android.util.Log.d("gvrf", "png transparent = " + tex);
                 order = renderData.getRenderingOrder();
-                android.util.Log.d("gvrf", "done with png transparent, order = " + order);
+                android.util.Log.d("gvrf", "done with png 4 transparent, order = " + order);
                 checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
                 mWaiter.resume();
             }
             public void failed(Throwable t, GVRAndroidResource r) { mWaiter.fail(t); }
         };
-        ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.png_4_transparent), png4transparentTexLoadCallback);
+        ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.png_4_transparency), png4transparentTexLoadCallback);
         mWaiter.await();
 
         // load png, 3 component, RenderOrder == GEOMETRY
@@ -553,7 +549,6 @@ public class TextureTests
                 renderData.setShaderTemplate(GVRPhongShader.class);
                 material.setTexture("diffuseTexture", tex);
                 renderData.setMaterial(material);
-                android.util.Log.d("gvrf", "png 3 opaque = " + tex);
                 order = renderData.getRenderingOrder();
                 android.util.Log.d("gvrf", "done with png 3 opaque, order = " + order);
                 checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
@@ -570,7 +565,7 @@ public class TextureTests
             public boolean stillWanted(GVRAndroidResource r) { return true; }
             public void loaded(GVRTexture tex, GVRAndroidResource r)
             {
-                android.util.Log.d("gvrf", "trying tga transparent now");
+                android.util.Log.d("gvrf", "trying tga 4 transparent now");
                 int order = 0;
                 GVRRenderData renderData = groundObject.getRenderData();
                 renderData.setShaderTemplate(GVRPhongShader.class);
@@ -578,7 +573,7 @@ public class TextureTests
                 renderData.setMaterial(material);
                 android.util.Log.d("gvrf", "tga transparent = " + tex);
                 order = renderData.getRenderingOrder();
-                android.util.Log.d("gvrf", "done with tga transparent, order = " + order);
+                android.util.Log.d("gvrf", "done with tga 4 transparent, order = " + order);
                 checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
                 mWaiter.resume();
             }
@@ -600,7 +595,6 @@ public class TextureTests
                 renderData.setShaderTemplate(GVRPhongShader.class);
                 material.setTexture("diffuseTexture", tex);
                 renderData.setMaterial(material);
-                android.util.Log.d("gvrf", "png 4 opaque = " + tex);
                 order = renderData.getRenderingOrder();
                 android.util.Log.d("gvrf", "done with png 4 opaque, order = " + order);
                 checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
@@ -623,7 +617,6 @@ public class TextureTests
                 renderData.setShaderTemplate(GVRPhongShader.class);
                 material.setTexture("diffuseTexture", tex);
                 renderData.setMaterial(material);
-                android.util.Log.d("gvrf", "astc_transparency = " + tex);
                 order = renderData.getRenderingOrder();
                 android.util.Log.d("gvrf", "done with ASTC, order = " + order);
                 checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
@@ -646,7 +639,6 @@ public class TextureTests
                 renderData.setShaderTemplate(GVRPhongShader.class);
                 material.setTexture("diffuseTexture", tex);
                 renderData.setMaterial(material);
-                android.util.Log.d("gvrf", "tga 3 opaque = " + tex);
                 order = renderData.getRenderingOrder();
                 android.util.Log.d("gvrf", "done with tga 3 opaque, order = " + order);
                 checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
@@ -669,7 +661,6 @@ public class TextureTests
                 renderData.setShaderTemplate(GVRPhongShader.class);
                 material.setTexture("diffuseTexture", tex);
                 renderData.setMaterial(material);
-                android.util.Log.d("gvrf", "rg11_transparency = " + tex);
                 order = renderData.getRenderingOrder();
                 android.util.Log.d("gvrf", "done with rg11, order = " + order);
                 checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
@@ -692,7 +683,6 @@ public class TextureTests
                 renderData.setShaderTemplate(GVRPhongShader.class);
                 material.setTexture("diffuseTexture", tex);
                 renderData.setMaterial(material);
-                android.util.Log.d("gvrf", "tga 4 opaque = " + tex);
                 order = renderData.getRenderingOrder();
                 android.util.Log.d("gvrf", "done with tga 4 opaque, order = " + order);
                 checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
@@ -715,7 +705,6 @@ public class TextureTests
                 renderData.setShaderTemplate(GVRPhongShader.class);
                 material.setTexture("diffuseTexture", tex);
                 renderData.setMaterial(material);
-                android.util.Log.d("gvrf", "signed_rg11_transparency = " + tex);
                 order = renderData.getRenderingOrder();
                 android.util.Log.d("gvrf", "done with signed rg11, order = " + order);
                 checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
@@ -738,7 +727,6 @@ public class TextureTests
                 renderData.setShaderTemplate(GVRPhongShader.class);
                 material.setTexture("diffuseTexture", tex);
                 renderData.setMaterial(material);
-                android.util.Log.d("gvrf", "r11_opaque = " + tex);
                 order = renderData.getRenderingOrder();
                 android.util.Log.d("gvrf", "done with r11, order = " + order);
                 checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
@@ -762,7 +750,6 @@ public class TextureTests
                 renderData.setShaderTemplate(GVRPhongShader.class);
                 material.setTexture("diffuseTexture", tex);
                 renderData.setMaterial(material);
-                android.util.Log.d("gvrf", "rgba8_transparency = " + tex);
                 order = renderData.getRenderingOrder();
                 android.util.Log.d("gvrf", "done with rgba8, order = " + order);
                 checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
@@ -785,7 +772,6 @@ public class TextureTests
                 renderData.setShaderTemplate(GVRPhongShader.class);
                 material.setTexture("diffuseTexture", tex);
                 renderData.setMaterial(material);
-                android.util.Log.d("gvrf", "sr11_opaque = " + tex);
                 order = renderData.getRenderingOrder();
                 android.util.Log.d("gvrf", "done with sr11, order = " + order);
                 checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
@@ -808,7 +794,6 @@ public class TextureTests
                 renderData.setShaderTemplate(GVRPhongShader.class);
                 material.setTexture("diffuseTexture", tex);
                 renderData.setMaterial(material);
-                android.util.Log.d("gvrf", "rgba1_transparency = " + tex);
                 order = renderData.getRenderingOrder();
                 android.util.Log.d("gvrf", "done with rgba1, order = " + order);
                 checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
@@ -833,7 +818,6 @@ public class TextureTests
                 // XXX need to pass case of setting this after setMaterial
                 material.setTexture("diffuseTexture", tex);
                 renderData.setMaterial(material);
-                android.util.Log.d("gvrf", "rgb8_transparency = " + tex);
                 order = renderData.getRenderingOrder();
                 android.util.Log.d("gvrf", "done with rgb8, order = " + order);
                 checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
