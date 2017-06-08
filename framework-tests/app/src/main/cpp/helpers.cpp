@@ -2,8 +2,6 @@
 
 extern "C" {
 
-class gvr::RenderData;
-
 JNIEXPORT jlongArray JNICALL
 Java_org_gearvrf_tester_StateSortTests_getRenderDataVector(JNIEnv *env, jclass type) {
     const std::vector<gvr::RenderData *> &renderDataVector = gvr::gRenderer->getRenderDataVector();
