@@ -151,7 +151,13 @@ public class TextureTests
         GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
         GVRSceneObject model = new GVRCubeSceneObject(ctx, true, mtl);
         GVRDirectLight light = new GVRDirectLight(ctx);
+        GVRSceneObject lightObj = new GVRSceneObject(ctx);
+
+        light.setSpecularIntensity(0.5f, 0.5f, 0.5f, 1.0f);
+        lightObj.attachComponent(light);
+        scene.addSceneObject(lightObj);
         TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
+
         ctx.getEventReceiver().addListener(texHandler);
         try
         {
@@ -189,7 +195,7 @@ public class TextureTests
 
         layeredMtl.setTexture("diffuseTexture", tex1);
         layeredMtl.setTexture("diffuseTexture1", tex2);
-        layeredMtl.setInt("diffuseTexture1_blendop", 1);
+        layeredMtl.setInt("diffuseTexture1_blendop", 0);
         layeredMtl.setTexCoord("diffuseTexture", "a_texcoord", "diffuse_coord");
         layeredMtl.setTexCoord("diffuseTexture1", "a_texcoord", "diffuse_coord1");
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
