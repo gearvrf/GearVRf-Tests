@@ -815,7 +815,7 @@ public class TextureTests
                 int order = 0;
                 GVRRenderData renderData = groundObject.getRenderData();
                 renderData.setShaderTemplate(GVRPhongShader.class);
-                // XXX need to pass case of setting this after setMaterial
+                // TODO need to move setting of this texture after setMaterial once that is supported
                 material.setTexture("diffuseTexture", tex);
                 renderData.setMaterial(material);
                 order = renderData.getRenderingOrder();
