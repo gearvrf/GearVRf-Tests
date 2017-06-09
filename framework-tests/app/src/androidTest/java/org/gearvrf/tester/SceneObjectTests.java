@@ -6,6 +6,7 @@ import android.support.test.runner.AndroidJUnit4;
 import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRBillboard;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRMaterial;
@@ -202,5 +203,21 @@ public class SceneObjectTests
         mWaiter.assertNotNull(scene.getSceneObjectByName("cylinder1"));
         mWaiter.assertNotNull(scene.getSceneObjectByName("cylinder2"));
         mTestUtils.screenShot(getClass().getSimpleName(), "canDisplayCylinders", mWaiter, mDoCompare);
+    }
+
+    @Test
+    public void attachBillboard() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRTexture tex = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.colortex));
+        GVRSceneObject quadObj = new GVRSceneObject(ctx, 0.8f, 0.8f, tex);
+
+        quadObj.getTransform().setPosition(0.4f, 0, -1);
+        quadObj.attachComponent(new GVRBillboard(ctx));
+
+        scene.getMainCameraRig().addChildObject(quadObj);
+        mTestUtils.waitForSceneRendering();
+        mTestUtils.screenShot(getClass().getSimpleName(), "testBillboards", mWaiter, mDoCompare);
     }
 }
