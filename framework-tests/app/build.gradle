@@ -107,8 +107,10 @@ android.applicationVariants.all { variant ->
             description = 'Grants android permissions before running the application.'
 
             def adb = android.getAdbExe().toString()
-            def mypermission = 'android.permission.READ_EXTERNAL_STORAGE android.permission.WRITE_EXTERNAL_STORAGE android.permission.ACCESS_NETWORK_STATE android.permission.INTERNET'
-            commandLine "$adb shell pm grant ${variant.applicationId} $mypermission".split(' ')
+            def permissions = [ 'android.permission.READ_EXTERNAL_STORAGE','android.permission.WRITE_EXTERNAL_STORAGE']
+            for ( permission in permissions ) {
+                commandLine "$adb shell pm grant ${variant.applicationId} $permission".split(' ')
+            }
         }
         variant.testVariant.connectedInstrumentTest.dependsOn "configDevice${variant.name.capitalize()}"
     }
