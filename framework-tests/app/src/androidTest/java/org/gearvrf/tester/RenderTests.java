@@ -7,6 +7,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import net.jodah.concurrentunit.Waiter;
 
+import org.gearvrf.GVRIndexBuffer;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
@@ -15,15 +16,22 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRVertexBuffer;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
+import org.gearvrf.utility.Log;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.CharBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -34,6 +42,7 @@ import static android.opengl.GLES20.GL_ONE;
 import static android.opengl.GLES20.GL_SRC_ALPHA;
 
 @RunWith(AndroidJUnit4.class)
+
 
 public class RenderTests {
     private GVRTestUtils mTestUtils;
@@ -109,6 +118,63 @@ public class RenderTests {
         return true;
     }
 
+    boolean compareBuffers(FloatBuffer buf1, FloatBuffer buf2)
+    {
+        int n = buf1.capacity();
+        if (n != buf2.capacity())
+        {
+            return false;
+        }
+        for (int i = 0; i < n; ++i)
+        {
+            float a = buf1.get(i);
+            float b = buf2.get(i);
+            if (Math.abs(a - b) > 0.00001f)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    boolean compareBuffers(IntBuffer buf1, IntBuffer buf2)
+    {
+        int n = buf1.capacity();
+        if (n != buf2.capacity())
+        {
+            return false;
+        }
+        for (int i = 0; i < n; ++i)
+        {
+            int a = buf1.get(i);
+            int b = buf2.get(i);
+            if (a != b)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    boolean compareBuffers(CharBuffer buf1, CharBuffer buf2)
+    {
+        int n = buf1.capacity();
+        if (n != buf2.capacity())
+        {
+            return false;
+        }
+        for (int i = 0; i < n; ++i)
+        {
+            char a = buf1.get(i);
+            char b = buf2.get(i);
+            if (a != b)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Test
     public void testBlendFunc() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
@@ -142,7 +208,7 @@ public class RenderTests {
     }
 
     @Test
-    public void testAccessMeshShort() throws TimeoutException
+    public void testAccessMeshShortArray() throws TimeoutException
     {
         final GVRContext ctx = mTestUtils.getGvrContext();
         final float[] vertices = { -1, 1, 0, -1, -1, 0, 1, 1, 0, 1, -1, 0 };
@@ -168,7 +234,7 @@ public class RenderTests {
     }
 
     @Test
-    public void testAccessMeshInt() throws TimeoutException
+    public void testAccessMeshIntArray() throws TimeoutException
     {
         final GVRContext ctx = mTestUtils.getGvrContext();
         final float[] vertices = { -1, 1, 0, -1,  -1, 0, 1, 1, 0, 1, -1, 0 };
@@ -191,6 +257,73 @@ public class RenderTests {
         mWaiter.assertTrue(compareArrays(normals, ftmp));
         itmp = mesh.getIndexBuffer().asIntArray();
         mWaiter.assertTrue(compareArrays(triangles, itmp));
+    }
+
+    @Test
+    public void testAccessMeshIntBuffer() throws TimeoutException
+    {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        final float[] vertices = { -1, 1, 0, -1,  -1, 0, 1, 1, 0, 1, -1, 0 };
+        final float[] normals = { 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1 };
+        final float[] texCoords = { 0, 0, 0, 1, 1, 0, 1, 1 };
+        final int[] triangles = { 0, 1, 2, 1, 3, 2 };
+        FloatBuffer posBuf = FloatBuffer.wrap(vertices);
+        FloatBuffer normBuf = FloatBuffer.wrap(normals);
+        FloatBuffer texBuf = FloatBuffer.wrap(texCoords);
+        IntBuffer indBuf = ByteBuffer.allocateDirect(triangles.length * 4).asIntBuffer();
+        GVRMesh mesh = new GVRMesh(ctx, "float3 a_position float2 a_texcoord float3 a_normal");
+        GVRIndexBuffer ibuf = new GVRIndexBuffer(ctx, 4, triangles.length);
+        GVRVertexBuffer vbuf = mesh.getVertexBuffer();
+
+        mesh.setFloatVec("a_position", posBuf);
+        mesh.setFloatVec("a_normal", normBuf);
+        mesh.setFloatVec("a_texcoord", texBuf);
+        ibuf.setIntVec(indBuf);
+        mesh.setIndexBuffer(ibuf);
+        FloatBuffer fbtmp = vbuf.getFloatVec("a_position");
+        mWaiter.assertTrue(compareBuffers(posBuf, fbtmp));
+        fbtmp = vbuf.getFloatVec("a_texcoord");
+        mWaiter.assertTrue(compareBuffers(texBuf, fbtmp));
+        fbtmp = vbuf.getFloatVec("a_normal");
+        mWaiter.assertTrue(compareBuffers(normBuf, fbtmp));
+        IntBuffer ibtmp = ibuf.asIntBuffer();
+        mWaiter.assertTrue(compareBuffers(indBuf, ibtmp));
+    }
+
+    @Test
+    public void testAccessMeshShortBuffer() throws TimeoutException
+    {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        final float[] vertices = { -1, 1, 0, -1,  -1, 0, 1, 1, 0, 1, -1, 0 };
+        final float[] normals = { 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1 };
+        final float[] texCoords = { 0, 0, 0, 1, 1, 0, 1, 1 };
+        final char[] triangles = { 0, 1, 2, 1, 3, 2 };
+        FloatBuffer posBuf = FloatBuffer.wrap(vertices);
+        FloatBuffer normBuf = FloatBuffer.wrap(normals);
+        FloatBuffer texBuf = FloatBuffer.wrap(texCoords);
+        int n = triangles.length;
+        CharBuffer indBuf = ByteBuffer.allocateDirect(n * 2).order(ByteOrder.nativeOrder()).asCharBuffer();
+        GVRMesh mesh = new GVRMesh(ctx, "float3 a_position float2 a_texcoord float3 a_normal");
+        GVRIndexBuffer ibuf = new GVRIndexBuffer(ctx, 2, n);
+        GVRVertexBuffer vbuf = mesh.getVertexBuffer();
+
+        for (int i = 0; i < n; ++i)
+        {
+            indBuf.put(i, triangles[i]);
+        }
+        mesh.setFloatVec("a_position", posBuf);
+        mesh.setFloatVec("a_normal", normBuf);
+        mesh.setFloatVec("a_texcoord", texBuf);
+        ibuf.setShortVec(indBuf);
+        mesh.setIndexBuffer(ibuf);
+        FloatBuffer fbtmp = vbuf.getFloatVec("a_position");
+        mWaiter.assertTrue(compareBuffers(posBuf, fbtmp));
+        fbtmp = vbuf.getFloatVec("a_texcoord");
+        mWaiter.assertTrue(compareBuffers(texBuf, fbtmp));
+        fbtmp = vbuf.getFloatVec("a_normal");
+        mWaiter.assertTrue(compareBuffers(normBuf, fbtmp));
+        CharBuffer ibtmp = ibuf.asCharBuffer();
+        mWaiter.assertTrue(compareBuffers(indBuf, ibtmp));
     }
 }
 
