@@ -16,6 +16,7 @@ import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.physics.GVRConeTwistConstraint;
 import org.gearvrf.physics.GVRFixedConstraint;
+import org.gearvrf.physics.GVRGenericConstraint;
 import org.gearvrf.physics.GVRHingeConstraint;
 import org.gearvrf.physics.GVRPoint2PointConstraint;
 import org.gearvrf.physics.GVRRigidBody;
@@ -251,6 +252,51 @@ public class PhysicsConstraintTest {
         mWaiter.assertTrue(maxDistance >= transformsDistance(ball.getTransform(), box.getTransform()));
     }
 
+    @Test
+    public void GenericConstraintTest() throws Exception {
+        GVRSceneObject ground = addGround(gvrTestUtils.getMainScene(), 0f, -0.5f, -15f);
+
+        GVRSceneObject box = addCube(gvrTestUtils.getMainScene(), -3f, 0f, -10f, 1f);
+        ((GVRRigidBody)box.getComponent(GVRRigidBody.getComponentType())).setSimulationType(GVRRigidBody.DYNAMIC);
+
+        GVRSceneObject ball = addSphere(gvrTestUtils.getMainScene(), 3f, 0f, -10f, 1f);
+
+        final float joint[] = {-6f, 0f, 0f};
+        final float rotation[] = {1f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f};
+
+        GVRGenericConstraint constraint = new GVRGenericConstraint(
+                gvrTestUtils.getGvrContext(), (GVRRigidBody)box.getComponent(
+                        GVRRigidBody.getComponentType()), joint, rotation, rotation);
+        constraint.setAngularLowerLimits((float)-Math.PI, (float)-Math.PI, (float)-Math.PI);
+        constraint.setAngularUpperLimits((float)Math.PI, (float)Math.PI, (float)Math.PI);
+        constraint.setLinearLowerLimits(-3f, -10f, -3f);
+        constraint.setLinearUpperLimits(3f, 10f, 3f);
+
+        ball.attachComponent(constraint);
+
+        gvrTestUtils.waitForXFrames(30);
+
+        float anchor[] = {ball.getTransform().getPositionX(), ball.getTransform().getPositionY(),
+                ball.getTransform().getPositionZ()};
+        float offsetLimit = 0.005f;
+
+        ((GVRRigidBody)box.getComponent(GVRRigidBody.getComponentType())).applyCentralForce(100f, 200f, 100f);
+        gvrTestUtils.waitForXFrames(90);
+        mWaiter.assertTrue(checkTransformOffset(ball.getTransform(), anchor, offsetLimit));
+
+        ((GVRRigidBody)box.getComponent(GVRRigidBody.getComponentType())).applyCentralForce(-100f, 200f, -100f);
+        gvrTestUtils.waitForXFrames(90);
+        mWaiter.assertTrue(checkTransformOffset(ball.getTransform(), anchor, offsetLimit));
+
+        ((GVRRigidBody)box.getComponent(GVRRigidBody.getComponentType())).applyTorque(0f, 1000f, 0f);
+        gvrTestUtils.waitForXFrames(180);
+        mWaiter.assertTrue(checkTransformOffset(ball.getTransform(), anchor, offsetLimit));
+
+        ((GVRRigidBody)box.getComponent(GVRRigidBody.getComponentType())).applyCentralForce(-1000f, 500f, 500f);
+        gvrTestUtils.waitForXFrames(180);
+        mWaiter.assertTrue(!checkTransformOffset(ball.getTransform(), anchor, offsetLimit));
+    }
+
     /*
     * Function to add a sphere of dimension and position specified in the
     * Bullet physics world and scene graph
@@ -343,11 +389,17 @@ public class PhysicsConstraintTest {
         return groundObject;
     }
 
-    public static float transformsDistance(GVRTransform a, GVRTransform b) {
+    static float transformsDistance(GVRTransform a, GVRTransform b) {
         float x = a.getPositionX() - b.getPositionX();
         float y = a.getPositionY() - b.getPositionY();
         float z = a.getPositionZ() - b.getPositionZ();
 
         return (float)Math.sqrt(x * x + y * y + z * z);
+    }
+
+    static boolean checkTransformOffset(GVRTransform tr, float comp[], float limit) {
+        return Math.abs(tr.getPositionX() - comp[0]) < limit
+                && Math.abs(tr.getPositionY() - comp[1]) < limit
+                && Math.abs(tr.getPositionZ() - comp[2]) < limit;
     }
 }
