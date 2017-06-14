@@ -97,3 +97,21 @@ dependencies {
     compile 'net.jodah:concurrentunit:0.4.2'
     compile project(path: ':gvr-unittestutils')
 }
+
+android.applicationVariants.all { variant ->
+    if (variant.getBuildType().name == "debug") {
+        task "configDevice${variant.name.capitalize()}" (type: Exec){
+            dependsOn variant.install
+
+            group = 'Device Configuration'
+            description = 'Grants android permissions before running the application.'
+
+            def adb = android.getAdbExe().toString()
+            def permissions = [ 'android.permission.READ_EXTERNAL_STORAGE','android.permission.WRITE_EXTERNAL_STORAGE']
+            for ( permission in permissions ) {
+                commandLine "$adb shell pm grant ${variant.applicationId} $permission".split(' ')
+            }
+        }
+        variant.testVariant.connectedInstrumentTest.dependsOn "configDevice${variant.name.capitalize()}"
+    }
+}
