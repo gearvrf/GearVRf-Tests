@@ -223,7 +223,6 @@ public class AssetImportTests
         mTestUtils.waitForAssetLoad();
         mHandler.checkAssetLoaded(mWaiter, null, 0);
         mHandler.centerModel(model);
-        mWaiter.assertNull(scene.getSceneObjectByName(modelName));
         mHandler.checkAssetErrors(mWaiter, 0, 0);
         List<GVRRenderData> rdatas = model.getAllComponents(GVRRenderData.getComponentType());
         GVRMaterial vertexColorMtl = new GVRMaterial(ctx, new GVRShaderId(VertexColorShader.class));
