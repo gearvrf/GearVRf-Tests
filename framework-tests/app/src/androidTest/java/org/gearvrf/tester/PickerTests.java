@@ -6,7 +6,6 @@ import android.support.test.runner.AndroidJUnit4;
 import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRFrustumPicker;
 import org.gearvrf.GVRMaterial;
@@ -14,7 +13,6 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRObjectPicker;
 import org.gearvrf.GVRPicker;
-//import org.gearvrf.GVRObjectPicker;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
@@ -22,7 +20,6 @@ import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.IPickEvents;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
-import org.gearvrf.GVRPhongShader;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.gearvrf.utility.Log;
@@ -32,11 +29,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
 @RunWith(AndroidJUnit4.class)
