@@ -623,9 +623,9 @@ public class PickerTests
     {
         GVRContext context = gvrTestUtils.getGvrContext();
         GVRScene scene = gvrTestUtils.getMainScene();
-        GVRSceneObject quad1 = new GVRSceneObject(context, 2.0f, 2.0f, null, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        GVRSceneObject quad1 = new GVRSceneObject(context, 2.0f, 2.0f, null, GVRMaterial.GVRShaderType.Phong.ID);
         GVRMeshCollider collider1 = new GVRMeshCollider(context, false);
-        GVRSceneObject quad2 = new GVRSceneObject(context, 2.0f, 2.0f, null, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        GVRSceneObject quad2 = new GVRSceneObject(context, 2.0f, 2.0f, null, GVRMaterial.GVRShaderType.Phong.ID);
         GVRMeshCollider collider2 = new GVRMeshCollider(context, false);
         GVRSceneObject origin = new GVRSceneObject(context);
 
@@ -637,13 +637,11 @@ public class PickerTests
 
         quad1.setName("quad1");
         quad1.getRenderData().setMaterial(mBlue);
-        quad1.getRenderData().setShaderTemplate(GVRPhongShader.class);
         quad1.getTransform().setPosition(-2, 0, -2);
         quad1.attachComponent(collider1);
         scene.addSceneObject(quad1);
         quad2.setName("quad2");
         quad2.getRenderData().setMaterial(mRed);
-        quad2.getRenderData().setShaderTemplate(GVRPhongShader.class);
         quad2.getTransform().setPosition(2, 0, -2);
         quad2.attachComponent(collider2);
         scene.addSceneObject(quad2);
