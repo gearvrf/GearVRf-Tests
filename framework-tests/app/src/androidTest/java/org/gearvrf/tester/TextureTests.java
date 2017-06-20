@@ -17,10 +17,7 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTextureParameters;
-import org.gearvrf.GVRTransform;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
-import org.gearvrf.scene_objects.GVRSphereSceneObject;
-import org.gearvrf.GVRPhongShader;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 import org.joml.Vector3f;
 import org.junit.Before;
@@ -29,7 +26,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
@@ -49,16 +45,8 @@ public class TextureTests
 
     @Rule
     public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
-    {
-        /*
-        protected void afterActivityFinished() {
-            GVRScene scene = mTestUtils.getMainScene();
-            if (scene != null) {
-                scene.clear();
-            }
-        }
-        */
-    };
+    { };
+
     @Before
     public void setUp() throws TimeoutException
     {

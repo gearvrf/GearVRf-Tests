@@ -11,6 +11,7 @@ import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRShaderManager;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
@@ -93,28 +94,43 @@ public class StateSortTests {
         mWaiter.assertTrue(geometryFar.getRenderData().getNative() == mRenderDataVector[2]);
     }
 
+    /*
+     * Shader IDs are generated in the the are added by GVRShaderManager.
+     * The test below gets the native shader IDs from the shader manager
+     * and ensures the scene objects are rendered in the same order.
+     */
     @Test
     public void testSortOnShaderType() throws InterruptedException {
         GVRContext context = gvrTestUtils.getGvrContext();
         GVRScene scene = gvrTestUtils.getMainScene();
+        GVRShaderManager shaderMgr = context.getMaterialShaderManager();
 
         GVRTexture texture = context.getAssetLoader().loadTexture(new GVRAndroidResource(context, R.drawable.gearvr_logo));
-        final GVRSceneObject largestShaderId = new GVRSceneObject(context, 5.0f, 5.0f, texture, GVRMaterial.GVRShaderType.Phong.ID);
-        largestShaderId.setName("largestShaderId");
-        largestShaderId.getTransform().setPosition(1.0f, 0.0f, -15.0f);
-        scene.addSceneObject(largestShaderId);
+        final GVRSceneObject phongObj = new GVRSceneObject(context, 5.0f, 5.0f, texture, GVRMaterial.GVRShaderType.Phong.ID);
+        phongObj.setName("Phong");
+        phongObj.getTransform().setPosition(1.0f, 0.0f, -15.0f);
+        scene.addSceneObject(phongObj);
 
-        final GVRSceneObject middleShaderId = new GVRSceneObject(context, 5.0f, 5.0f, texture, GVRMaterial.GVRShaderType.Texture.ID);
-        middleShaderId.setName("middleShaderId");
-        middleShaderId.getTransform().setPosition(-1.0f, 0.0f, -5.0f);
-        scene.addSceneObject(middleShaderId);
+        final GVRSceneObject textureObj = new GVRSceneObject(context, 5.0f, 5.0f, texture, GVRMaterial.GVRShaderType.Texture.ID);
+        textureObj.setName("Texture");
+        textureObj.getTransform().setPosition(-1.0f, 0.0f, -5.0f);
+        scene.addSceneObject(textureObj);
 
-        final GVRSceneObject smallestShaderId = new GVRSceneObject(context, 5.0f, 5.0f, texture, GVRMaterial.GVRShaderType.OES.ID);
-        smallestShaderId.setName("smallestShaderId");
-        smallestShaderId.getTransform().setPosition(-1.5f, 0.0f, -10.0f);
-        scene.addSceneObject(smallestShaderId);
+        final GVRSceneObject oesObj = new GVRSceneObject(context, 5.0f, 5.0f, texture, GVRMaterial.GVRShaderType.OES.ID);
+        oesObj.setName("OES");
+        oesObj.getTransform().setPosition(-1.5f, 0.0f, -10.0f);
+        scene.addSceneObject(oesObj);
 
         gvrTestUtils.waitForSceneRendering();
+
+        final int phongId = shaderMgr.getShader("GVRPhongShader$a_texcoord");
+        final int textureId = shaderMgr.getShader("GVRTextureShader$u_texture-#a_texcoord#");
+        final int oesId = shaderMgr.getShader("GVROESShader");
+        final int minId = Math.min(Math.min(phongId, textureId), oesId);
+
+        mWaiter.assertTrue(phongId >= 0);
+        mWaiter.assertTrue(textureId >= 0);
+        mWaiter.assertTrue(oesId >= 0);
 
         final CountDownLatch cdl = new CountDownLatch(1);
         context.runOnGlThreadPostRender(10, new Runnable() {
@@ -127,9 +143,9 @@ public class StateSortTests {
         cdl.await();
 
         //different shaders, sort on shader id ascending
-        mWaiter.assertTrue(smallestShaderId.getRenderData().getNative() == mRenderDataVector[0]);
-        mWaiter.assertTrue(middleShaderId.getRenderData().getNative() == mRenderDataVector[1]);
-        mWaiter.assertTrue(largestShaderId.getRenderData().getNative() == mRenderDataVector[2]);
+        mWaiter.assertTrue(oesObj.getRenderData().getNative() == mRenderDataVector[oesId - minId]);
+        mWaiter.assertTrue(textureObj.getRenderData().getNative() == mRenderDataVector[textureId - minId]);
+        mWaiter.assertTrue(phongObj.getRenderData().getNative() == mRenderDataVector[phongId - minId]);
     }
 
     @Test
