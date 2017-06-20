@@ -6,14 +6,18 @@ import android.support.test.runner.AndroidJUnit4;
 import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRCamera;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRCubemapTexture;
 import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRLightBase;
 import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVROrthogonalCamera;
+import org.gearvrf.GVRPerspectiveCamera;
 import org.gearvrf.GVRPointLight;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRShadowMap;
 import org.gearvrf.GVRSpotLight;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
@@ -71,8 +75,6 @@ public class ShadowTests
 
         mWaiter.assertNotNull(scene);
         scene.getMainCameraRig().setFarClippingDistance(20.0f);
-        GVRMaterial material = GVRLightBase.getShadowMaterial(ctx);
-        material.setFloat("shadow_far", 25.0f);
         background = makeBackground(ctx);
         blue.setDiffuseColor(0, 0, 1, 1);
         red.setDiffuseColor(0.8f, 0, 0, 1);
@@ -86,10 +88,20 @@ public class ShadowTests
         mCube.setName("cube");
         mRoot = scene.getRoot();
         mWaiter.assertNotNull(mRoot);
-
         scene.addSceneObject(background);
     }
 
+    void setupShadow(GVRDirectLight light, GVRSceneObject owner)
+    {
+        owner.attachComponent(light);
+        light.setShadowRange(0.1f, 25.0f);
+    }
+
+    void setupShadow(GVRSpotLight light, GVRSceneObject owner)
+    {
+        owner.attachComponent(light);
+        light.setShadowRange(0.1f, 25.0f);
+    }
 
     @Test
     public void spotLightAtCornerCastsShadow() throws TimeoutException
@@ -98,8 +110,7 @@ public class ShadowTests
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRSpotLight light = new GVRSpotLight(ctx);
 
-        light.setCastShadow(true);
-        lightObj.attachComponent(light);
+        setupShadow(light, lightObj);
         lightObj.getTransform().rotateByAxis(-45, 1, 0, 0);
         lightObj.getTransform().rotateByAxis(35, 0, 1, 0);
         lightObj.getTransform().setPosition(3, 3, 0);
@@ -119,8 +130,7 @@ public class ShadowTests
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRSpotLight light = new GVRSpotLight(ctx);
 
-        light.setCastShadow(true);
-        lightObj.attachComponent(light);
+        setupShadow(light, lightObj);
         lightObj.getTransform().rotateByAxis(-45, 1, 0, 0);
         lightObj.getTransform().setPosition(0, 3, 0);
         light.setInnerConeAngle(30.0f);
@@ -140,8 +150,7 @@ public class ShadowTests
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRSpotLight light = new GVRSpotLight(ctx);
 
-        light.setCastShadow(true);
-        lightObj.attachComponent(light);
+        setupShadow(light, lightObj);
         lightObj.getTransform().rotateByAxis(-90, 0, 1, 0);
         lightObj.getTransform().setPosition(-3, 0, -3);
         light.setInnerConeAngle(30.0f);
@@ -161,8 +170,7 @@ public class ShadowTests
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRSpotLight light = new GVRSpotLight(ctx);
 
-        light.setCastShadow(true);
-        lightObj.attachComponent(light);
+        setupShadow(light, lightObj);
         lightObj.getTransform().rotateByAxis(-90, 1, 0, 0);
         lightObj.getTransform().setPosition(0, 3, -3);
         light.setInnerConeAngle(30.0f);
@@ -181,8 +189,7 @@ public class ShadowTests
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRDirectLight light = new GVRDirectLight(ctx);
 
-        light.setCastShadow(true);
-        lightObj.attachComponent(light);
+        setupShadow(light, lightObj);
         lightObj.getTransform().rotateByAxis(-45, 1, 0, 0);
         lightObj.getTransform().rotateByAxis(35, 0, 1, 0);
         lightObj.getTransform().setPosition(3, 3, 3);
@@ -201,8 +208,7 @@ public class ShadowTests
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRDirectLight light = new GVRDirectLight(ctx);
 
-        light.setCastShadow(true);
-        lightObj.attachComponent(light);
+        setupShadow(light, lightObj);
         lightObj.getTransform().rotateByAxis(-45, 1, 0, 0);
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
@@ -218,8 +224,7 @@ public class ShadowTests
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRDirectLight light = new GVRDirectLight(ctx);
 
-        light.setCastShadow(true);
-        lightObj.attachComponent(light);
+        setupShadow(light, lightObj);
         lightObj.getTransform().rotateByAxis(-90, 0, 1, 0);
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
@@ -235,8 +240,7 @@ public class ShadowTests
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRDirectLight light = new GVRDirectLight(ctx);
 
-        light.setCastShadow(true);
-        lightObj.attachComponent(light);
+        setupShadow(light, lightObj);
         lightObj.getTransform().rotateByAxis(-90, 1, 0, 0);
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
@@ -254,11 +258,9 @@ public class ShadowTests
         GVRDirectLight light1 = new GVRDirectLight(ctx);
         GVRSpotLight light2 = new GVRSpotLight(ctx);
 
-        light1.setCastShadow(true);
-        lightObj1.attachComponent(light1);
+        setupShadow(light1, lightObj1);
         lightObj1.getTransform().rotateByAxis(-90, 1, 0, 0);
-        light2.setCastShadow(true);
-        lightObj2.attachComponent(light2);
+        setupShadow(light2, lightObj2);
         lightObj2.getTransform().rotateByAxis(-90, 0, 1, 0);
         lightObj2.getTransform().setPosition(-3, 0, -3);
         light2.setInnerConeAngle(30.0f);
@@ -283,16 +285,14 @@ public class ShadowTests
         GVRSpotLight light2 = new GVRSpotLight(ctx);
         GVRSpotLight light3 = new GVRSpotLight(ctx);
 
-        light1.setCastShadow(true);
-        lightObj1.attachComponent(light1);
+        setupShadow(light1, lightObj1);
         lightObj1.getTransform().rotateByAxis(-90, 1, 0, 0);
-        light2.setCastShadow(true);
-        lightObj2.attachComponent(light2);
+        setupShadow(light2, lightObj2);
         lightObj2.getTransform().rotateByAxis(-90, 0, 1, 0);
         lightObj2.getTransform().setPosition(-3, 0, -3);
         light2.setInnerConeAngle(30.0f);
         light2.setOuterConeAngle(45.0f);
-        lightObj3.attachComponent(light3);
+        setupShadow(light3, lightObj3);
         lightObj3.getTransform().rotateByAxis(-45, 0, 1, 0);
         lightObj3.getTransform().setPosition(0, 3, 0);
         light3.setInnerConeAngle(30.0f);
