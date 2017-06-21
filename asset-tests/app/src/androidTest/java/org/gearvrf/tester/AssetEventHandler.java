@@ -70,7 +70,7 @@ class AssetEventHandler implements IAssetEvents
         mDoCompare = false;
     }
 
-    public void checkAssetLoaded(Waiter waiter, String name, int numTex)
+    public void checkAssetLoaded(String name, int numTex)
     {
         mWaiter.assertEquals(1, ModelsLoaded);
         mWaiter.assertEquals(0, ModelErrors);
@@ -81,7 +81,7 @@ class AssetEventHandler implements IAssetEvents
         }
     }
 
-    public void checkAssetErrors(Waiter waiter, int numModelErrors, int numTexErrors)
+    public void checkAssetErrors(int numModelErrors, int numTexErrors)
     {
         mWaiter.assertEquals(numModelErrors, ModelErrors);
         mWaiter.assertEquals(numTexErrors, TextureErrors);
@@ -113,7 +113,7 @@ class AssetEventHandler implements IAssetEvents
         }
         mTester.waitForAssetLoad();
         centerModel(model);
-        checkAssetLoaded(mWaiter, FileNameUtils.getFilename(modelfile), numtex);
+        checkAssetLoaded(FileNameUtils.getFilename(modelfile), numtex);
         return model;
     }
 
@@ -132,8 +132,8 @@ class AssetEventHandler implements IAssetEvents
         }
         mTester.waitForAssetLoad();
         centerModel(model);
-        checkAssetLoaded(mWaiter, FileNameUtils.getFilename(modelfile), numTex);
-        checkAssetErrors(mWaiter, 0, texError);
+        checkAssetLoaded(FileNameUtils.getFilename(modelfile), numTex);
+        checkAssetErrors(0, texError);
         if (testname != null)
         {
             mTester.waitForXFrames(2);
@@ -160,8 +160,8 @@ class AssetEventHandler implements IAssetEvents
         }
         mTester.waitForAssetLoad();
         centerModel(model);
-        checkAssetLoaded(mWaiter, res.getResourceFilename(), numTex);
-        checkAssetErrors(mWaiter, 0, texError);
+        checkAssetLoaded(res.getResourceFilename(), numTex);
+        checkAssetErrors(0, texError);
         if (testname != null)
         {
             mTester.waitForXFrames(2);
@@ -186,8 +186,8 @@ class AssetEventHandler implements IAssetEvents
             mWaiter.fail(ex);
         }
         mTester.waitForAssetLoad();
-        checkAssetLoaded(mWaiter, FileNameUtils.getFilename(modelfile), numTex);
-        checkAssetErrors(mWaiter, 0, 0);
+        checkAssetLoaded(FileNameUtils.getFilename(modelfile), numTex);
+        checkAssetErrors(0, 0);
         if (testname != null)
         {
             mTester.waitForXFrames(2);
