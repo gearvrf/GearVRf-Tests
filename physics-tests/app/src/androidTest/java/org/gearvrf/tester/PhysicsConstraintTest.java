@@ -1,7 +1,6 @@
 package org.gearvrf.tester;
 
 import android.support.test.rule.ActivityTestRule;
-import android.util.Log;
 
 import net.jodah.concurrentunit.Waiter;
 
@@ -67,28 +66,6 @@ public class PhysicsConstraintTest {
 
     @Test
     public void fixedConstraintTest() throws Exception {
-
-        GVRSceneObject cube = addCube(gvrTestUtils.getMainScene(), 1.0f, 10.0f, -10.0f, 1.0f);
-        GVRSceneObject sphere = addSphere(gvrTestUtils.getMainScene(), 1.0f, 14.0f, -10.0f, 1.0f);
-        GVRFixedConstraint constraint = new GVRFixedConstraint(gvrTestUtils.getGvrContext(), (GVRRigidBody)sphere.getComponent(GVRRigidBody.getComponentType()));
-        cube.attachComponent(constraint);
-        //gvrTestUtils.waitForXFrames(60);
-        float d = (sphere.getTransform().getPositionY() - cube.getTransform().getPositionY()); //sphere is on top of the cube
-        ((GVRRigidBody)cube.getComponent(GVRRigidBody.getComponentType())).applyCentralForce(1000,0,0);
-        gvrTestUtils.waitForXFrames(60);
-        mWaiter.assertTrue((sphere.getTransform().getPositionX() == cube.getTransform().getPositionX()));
-        mWaiter.assertTrue( d - (sphere.getTransform().getPositionY() - cube.getTransform().getPositionY()) < 1.0f);
-
-        ((GVRRigidBody)sphere.getComponent(GVRRigidBody.getComponentType())).applyCentralForce(-1000,0,0);
-        gvrTestUtils.waitForXFrames(60);
-        mWaiter.assertTrue((sphere.getTransform().getPositionX() == cube.getTransform().getPositionX()));
-        mWaiter.assertTrue( d - (sphere.getTransform().getPositionY() - cube.getTransform().getPositionY()) < 1.0f);
-
-        gvrTestUtils.waitForXFrames(60);
-    }
-
-    @Test
-    public void fixedConstraintTest2() throws Exception {
         GVRSceneObject ground = addGround(gvrTestUtils.getMainScene(), 0f, 0f, -15f);
 
         GVRSceneObject box1 = addCube(gvrTestUtils.getMainScene(), 0f, 0.5f, -30f, 1.0f);
@@ -305,7 +282,7 @@ public class PhysicsConstraintTest {
 
         if (sphereMesh == null) {
             try {
-                sphereMesh = gvrTestUtils.getGvrContext().loadMesh(
+                sphereMesh = gvrTestUtils.getGvrContext().getAssetLoader().loadMesh(
                         new GVRAndroidResource(gvrTestUtils.getGvrContext(), "sphere.obj"));
                 sphereTexture = gvrTestUtils.getGvrContext().getAssetLoader().loadTexture(
                         new GVRAndroidResource(gvrTestUtils.getGvrContext(), "sphere.jpg"));
@@ -340,7 +317,7 @@ public class PhysicsConstraintTest {
 
         if (cubeMesh == null) {
             try {
-                cubeMesh = gvrTestUtils.getGvrContext().loadMesh(
+                cubeMesh = gvrTestUtils.getGvrContext().getAssetLoader().loadMesh(
                         new GVRAndroidResource(gvrTestUtils.getGvrContext(), "cube.obj"));
                 cubeTexture = gvrTestUtils.getGvrContext().getAssetLoader().loadTexture(
                         new GVRAndroidResource(gvrTestUtils.getGvrContext(), "cube.jpg"));

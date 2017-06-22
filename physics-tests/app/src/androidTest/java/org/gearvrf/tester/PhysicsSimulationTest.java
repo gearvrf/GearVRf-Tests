@@ -421,7 +421,7 @@ public class PhysicsSimulationTest {
         try {
             GVRMesh mesh = gvrTestUtils.getGvrContext().createQuad(100.0f, 100.0f);
             GVRTexture texture =
-                    gvrTestUtils.getGvrContext().loadTexture(new GVRAndroidResource(gvrTestUtils.getGvrContext(), "floor.jpg"));
+                    gvrTestUtils.getGvrContext().getAssetLoader().loadTexture(new GVRAndroidResource(gvrTestUtils.getGvrContext(), "floor.jpg"));
             GVRSceneObject meshObject = new GVRSceneObject(gvrTestUtils.getGvrContext(), mesh, texture);
 
             meshObject.getTransform().setPosition(x, y, z);
