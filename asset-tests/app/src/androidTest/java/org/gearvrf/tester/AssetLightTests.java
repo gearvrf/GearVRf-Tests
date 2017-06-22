@@ -5,6 +5,7 @@ import android.support.test.runner.AndroidJUnit4;
 import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRPointLight;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
@@ -55,9 +56,8 @@ public class AssetLightTests
         GVRScene scene = mTestUtils.getMainScene();
 
         mWaiter.assertNotNull(scene);
-        mBackground = new GVRCubeSceneObject(ctx, false);
+        mBackground = new GVRCubeSceneObject(ctx, false, new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID));
         mBackground.getTransform().setScale(10, 10, 10);
-        mBackground.getRenderData().setShaderTemplate(GVRPhongShader.class);
         mBackground.setName("background");
         mRoot = scene.getRoot();
         mWaiter.assertNotNull(mRoot);

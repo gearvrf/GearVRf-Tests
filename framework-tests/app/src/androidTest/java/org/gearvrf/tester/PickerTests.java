@@ -5,7 +5,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import net.jodah.concurrentunit.Waiter;
 
-import org.gearvrf.GVRCameraRig;
+import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRFrustumPicker;
 import org.gearvrf.GVRMaterial;
@@ -13,7 +13,6 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRObjectPicker;
 import org.gearvrf.GVRPicker;
-//import org.gearvrf.GVRObjectPicker;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
@@ -21,7 +20,6 @@ import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.IPickEvents;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
-import org.gearvrf.GVRPhongShader;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.gearvrf.utility.Log;
@@ -256,9 +254,9 @@ public class PickerTests
         gvrTestUtils.waitForOnInit();
         GVRContext context = gvrTestUtils.getGvrContext();
 
-        mBlue = new GVRMaterial(context, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        mBlue = new GVRMaterial(context, GVRMaterial.GVRShaderType.Phong.ID);
         mBlue.setDiffuseColor(0, 0, 1, 1);
-        mRed = new GVRMaterial(context, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        mRed = new GVRMaterial(context, GVRMaterial.GVRShaderType.Phong.ID);
         mRed.setDiffuseColor(1, 0, 0, 1);
         mPickHandler = new PickHandler();
     }
@@ -272,7 +270,6 @@ public class PickerTests
         GVRSphereCollider collider = new GVRSphereCollider(context);
 
         sphere.setName("sphere");
-        sphere.getRenderData().setShaderTemplate(GVRPhongShader.class);
         sphere.getTransform().setPosition(0, 0, -2);
         collider.setRadius(1.0f);
         sphere.attachComponent(collider);
@@ -292,7 +289,6 @@ public class PickerTests
         GVRSceneObject sphere = new GVRSphereSceneObject(context, true, mBlue);
         GVRMeshCollider collider = new GVRMeshCollider(context, true);
 
-        sphere.getRenderData().setShaderTemplate(GVRPhongShader.class);
         sphere.getTransform().setPosition(0, 0, -2);
         sphere.attachComponent(collider);
         sphere.setName("sphere");
@@ -312,7 +308,6 @@ public class PickerTests
         GVRSceneObject sphere = new GVRSphereSceneObject(context, true, mBlue);
         GVRMeshCollider collider = new GVRMeshCollider(context, false);
 
-        sphere.getRenderData().setShaderTemplate(GVRPhongShader.class);
         sphere.getTransform().setPosition(0, 0, -2);
         sphere.attachComponent(collider);
         sphere.setName("sphere");
@@ -333,7 +328,6 @@ public class PickerTests
         GVRSceneObject cube = new GVRCubeSceneObject(context, true, mBlue);
         GVRMeshCollider collider = new GVRMeshCollider(context, false);
 
-        cube.getRenderData().setShaderTemplate(GVRPhongShader.class);
         cube.getTransform().setPosition(0, 0, -2);
         cube.attachComponent(collider);
         cube.setName("cube");
@@ -359,7 +353,6 @@ public class PickerTests
         sceneObj.setName("quad");
         sceneObj.getTransform().setPositionZ(-5.0f);
         rdata.setMaterial(mBlue);
-        rdata.setShaderTemplate(GVRPhongShader.class);
         scene.addSceneObject(sceneObj);
         scene.getEventReceiver().addListener(mPickHandler);
         mPicker = new GVRPicker(context, scene);
@@ -378,7 +371,7 @@ public class PickerTests
         float[] a = {0f, 0f, 0f, 5f, 5f, 5f, 1f, 4f, 1f};
         char indices[] = { 0, 1, 2 };
         triangleMesh.setVertices(a);
-        triangleMesh.setIndices(indices);
+        triangleMesh.setTriangles(indices);
         GVRSceneObject sceneObjTriangle = new GVRSceneObject(context, triangleMesh);
         GVRMeshCollider collider = new GVRMeshCollider(context, false);
         GVRRenderData rdata = sceneObjTriangle.getRenderData();
@@ -386,7 +379,6 @@ public class PickerTests
         sceneObjTriangle.attachCollider(collider);
         sceneObjTriangle.setName("Triangle");
         rdata.setMaterial(mBlue);
-        rdata.setShaderTemplate(GVRPhongShader.class);
         scene.addSceneObject(sceneObjTriangle);
         sceneObjTriangle.getTransform().setPosition(-2.0f, -4.0f, -15.0f);
         sceneObjTriangle.getTransform().setScale(5, 5, 5);
@@ -409,13 +401,11 @@ public class PickerTests
         GVRMeshCollider collider2 = new GVRMeshCollider(context, false);
 
         sphere.setName("sphere");
-        sphere.getRenderData().setShaderTemplate(GVRPhongShader.class);
         sphere.getTransform().setPosition(0, 0, -2);
         collider1.setRadius(1.0f);
         sphere.attachComponent(collider1);
         scene.addSceneObject(sphere);
         box.setName("box");
-        box.getRenderData().setShaderTemplate(GVRPhongShader.class);
         box.getTransform().setPosition(0, 0.25f, -1);
         box.attachComponent(collider2);
         scene.addSceneObject(sphere);
@@ -452,7 +442,6 @@ public class PickerTests
         GVRSphereCollider collider1 = new GVRSphereCollider(context);
 
         sphere1.setName("sphere1");
-        sphere1.getRenderData().setShaderTemplate(GVRPhongShader.class);
         sphere1.getTransform().setPosition(0, 0, -2);
         collider1.setRadius(1.0f);
         sphere1.attachComponent(collider1);
@@ -474,13 +463,11 @@ public class PickerTests
         GVRMeshCollider collider2 = new GVRMeshCollider(context, false);
 
         sphere.setName("sphere");
-        sphere.getRenderData().setShaderTemplate(GVRPhongShader.class);
         sphere.getTransform().setPosition(0, 0, -2);
         collider1.setRadius(1.0f);
         sphere.attachComponent(collider1);
         scene.addSceneObject(sphere);
         box.setName("box");
-        box.getRenderData().setShaderTemplate(GVRPhongShader.class);
         box.getTransform().setPosition(-2, 0, -1);
         box.attachComponent(collider2);
         scene.addSceneObject(sphere);
@@ -506,13 +493,11 @@ public class PickerTests
         GVRSceneObject box = new GVRCubeSceneObject(context, true, mRed);
 
         sphere.setName("sphere");
-        sphere.getRenderData().setShaderTemplate(GVRPhongShader.class);
         sphere.getTransform().setPosition(0, 0, -2);
         collider1.setRadius(1.0f);
         sphere.attachComponent(collider1);
         scene.addSceneObject(sphere);
         box.setName("box");
-        box.getRenderData().setShaderTemplate(GVRPhongShader.class);
         box.getTransform().setPosition(-2, 0, -2);
 
         scene.getEventReceiver().addListener(mPickHandler);
@@ -539,17 +524,14 @@ public class PickerTests
         GVRSceneObject box = new GVRCubeSceneObject(context, true, mRed);
 
         sphere1.setName("sphere1");
-        sphere1.getRenderData().setShaderTemplate(GVRPhongShader.class);
         sphere1.getTransform().setPosition(0, 0, -2);
         collider1.setRadius(1.0f);
         sphere1.attachComponent(collider1);
         sphere2.setName("sphere2");
-        sphere2.getRenderData().setShaderTemplate(GVRPhongShader.class);
         sphere2.getTransform().setPosition(2, 0, 0);
         collider2.setRadius(1.0f);
         sphere2.attachComponent(collider2);
         box.setName("box");
-        box.getRenderData().setShaderTemplate(GVRPhongShader.class);
         box.getTransform().setScale(0.25f, 0.25f, 0.25f);
         box.getTransform().setPosition(0.5f, 0, -1.75f);
 
@@ -569,6 +551,7 @@ public class PickerTests
     }
 
     @Test
+
     public void pickSphereFromLeftAndRight()
     {
         GVRContext context = gvrTestUtils.getGvrContext();
@@ -586,13 +569,11 @@ public class PickerTests
         origin.attachComponent(mPicker);
 
         sphere1.setName("sphere1");
-        sphere1.getRenderData().setShaderTemplate(GVRPhongShader.class);
         sphere1.getTransform().setPosition(-2, 0, -2);
         collider1.setRadius(1.0f);
         sphere1.attachComponent(collider1);
         scene.addSceneObject(sphere1);
         sphere2.setName("sphere2");
-        sphere2.getRenderData().setShaderTemplate(GVRPhongShader.class);
         sphere2.getTransform().setPosition(2, 0, -2);
         collider2.setRadius(1.0f);
         sphere2.attachComponent(collider2);
@@ -635,9 +616,9 @@ public class PickerTests
     {
         GVRContext context = gvrTestUtils.getGvrContext();
         GVRScene scene = gvrTestUtils.getMainScene();
-        GVRSceneObject quad1 = new GVRSceneObject(context, 2.0f, 2.0f, null, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        GVRSceneObject quad1 = new GVRSceneObject(context, 2.0f, 2.0f, null, GVRMaterial.GVRShaderType.Phong.ID);
         GVRMeshCollider collider1 = new GVRMeshCollider(context, false);
-        GVRSceneObject quad2 = new GVRSceneObject(context, 2.0f, 2.0f, null, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        GVRSceneObject quad2 = new GVRSceneObject(context, 2.0f, 2.0f, null, GVRMaterial.GVRShaderType.Phong.ID);
         GVRMeshCollider collider2 = new GVRMeshCollider(context, false);
         GVRSceneObject origin = new GVRSceneObject(context);
 
@@ -649,13 +630,11 @@ public class PickerTests
 
         quad1.setName("quad1");
         quad1.getRenderData().setMaterial(mBlue);
-        quad1.getRenderData().setShaderTemplate(GVRPhongShader.class);
         quad1.getTransform().setPosition(-2, 0, -2);
         quad1.attachComponent(collider1);
         scene.addSceneObject(quad1);
         quad2.setName("quad2");
         quad2.getRenderData().setMaterial(mRed);
-        quad2.getRenderData().setShaderTemplate(GVRPhongShader.class);
         quad2.getTransform().setPosition(2, 0, -2);
         quad2.attachComponent(collider2);
         scene.addSceneObject(quad2);
@@ -673,7 +652,7 @@ public class PickerTests
         mPicker.setPickRay(0, 0, 0, v.x, v.y, v.z);
         gvrTestUtils.waitForXFrames(2);
         mPickHandler.checkResults(1, 0);
-        mPickHandler.checkHits("quad1", new Vector3f[] { new Vector3f(-0.999f, 0, 0) }, null);
+        mPickHandler.checkHits("quad1", new Vector3f[]{new Vector3f(-0.999f, 0, 0)}, null);
         mPickHandler.checkNoHits("quad2");
         mPickHandler.clearResults();
         v.set(2.999f, 0.0f, -2.0f);      // hit quad2 on the left
@@ -681,7 +660,7 @@ public class PickerTests
         mPicker.setPickRay(0, 0, 0, v.x, v.y, v.z);
         gvrTestUtils.waitForXFrames(2);
         mPickHandler.checkResults(1, 0);
-        mPickHandler.checkHits("quad2", new Vector3f[] { new Vector3f(0.999f, 0, 0) }, null);
+        mPickHandler.checkHits("quad2", new Vector3f[]{new Vector3f(0.999f, 0, 0)}, null);
         mPickHandler.checkNoHits("quad1");
         mPickHandler.clearResults();
         v.set(3.05f, 0.0f, -2.0f);      // ho hits
@@ -689,5 +668,84 @@ public class PickerTests
         gvrTestUtils.waitForXFrames(2);
         mPickHandler.checkNoHits("quad1");
         mPickHandler.checkNoHits("quad2");
+    }
+
+    @Test
+    public void canPickMeshWithObject()
+    {
+        GVRContext context = gvrTestUtils.getGvrContext();
+        GVRScene scene = gvrTestUtils.getMainScene();
+        try
+        {
+            GVRMesh mesh = context.loadMesh(new GVRAndroidResource(context,
+                    "PickerTests/bunny.obj"));
+            GVRSceneObject bunny = new GVRSceneObject(context, mesh);
+            bunny.getRenderData().setMaterial(mBlue);
+            bunny.attachComponent(new GVRMeshCollider(context, false));
+
+            bunny.getTransform().setPositionZ(-10.0f);
+
+            //add the bunny to the scene
+            scene.addSceneObject(bunny);
+
+            scene.getEventReceiver().addListener(mPickHandler);
+
+            GVRMesh sphereMesh = context.loadMesh(new GVRAndroidResource(context,
+                    "PickerTests/sphere.obj"));
+            GVRSceneObject sceneObject = new GVRSceneObject(context, sphereMesh);
+            sceneObject.getRenderData().setMaterial(mRed);
+            GVRSceneObject parent = new GVRSceneObject(context);
+            parent.getTransform().setPosition(0.2f, -0.4f, -0.4f);
+            parent.getTransform().setRotation(1.0f, 0.04f, 0.01f, 0.01f);
+
+            sceneObject.getTransform().setPositionZ(-10.0f);
+
+            parent.addChildObject(sceneObject);
+
+            mPicker = new GVRPicker(sceneObject, scene);
+
+            //place the object behind the bunny
+            scene.addSceneObject(parent);
+            gvrTestUtils.waitForXFrames(2);
+
+            mPickHandler.checkResults(1, 0);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+
+
+    public void canPickAfterCameraMove()
+    {
+        GVRContext context = gvrTestUtils.getGvrContext();
+        GVRScene scene = gvrTestUtils.getMainScene();
+        GVRSceneObject sphere = new GVRSphereSceneObject(context, true, mBlue);
+        GVRSceneObject cube = new GVRCubeSceneObject(context,true, mRed);
+        GVRSphereCollider collider = new GVRSphereCollider(context);
+
+        sphere.setName("sphere");
+        sphere.getTransform().setPosition(0, 0, -2);
+        collider.setRadius(1.0f);
+        sphere.attachComponent(collider);
+        scene.addSceneObject(sphere);
+        cube.setName("cube");
+        cube.getTransform().setPosition(-1, 0, -2);
+        cube.attachComponent(new GVRMeshCollider(context, false));
+        scene.addSceneObject(cube);
+
+        scene.getEventReceiver().addListener(mPickHandler);
+        mPicker = new GVRPicker(context, scene);
+        gvrTestUtils.waitForXFrames(2);
+        mPickHandler.checkResults(1, 0);
+        mPickHandler.checkHits("sphere", new Vector3f[] { new Vector3f(0, 0, 1) }, null);
+        mPickHandler.clearResults();
+        scene.getMainCameraRig().getOwnerObject().getTransform().setPosition(-1, 0, 0);
+        gvrTestUtils.waitForXFrames(2);
+        mPickHandler.checkResults(1, 0);
+        mPickHandler.checkHits("cube", new Vector3f[] { new Vector3f(0, 0, 0.5f) }, null);
     }
 }

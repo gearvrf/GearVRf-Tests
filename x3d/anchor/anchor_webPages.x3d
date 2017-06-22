@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.0//EN" "http://www.web3d.org/specifications/x3d-3.0.dtd">
+<X3D xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' profile='Full' version='3.0' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.0.xsd'>
+  <Scene DEF='scene'>
+
+  <PointLight/>
+  <Viewpoint DEF='vp1' position='0 0 0'/>
+  <Viewpoint DEF='vp2' position='0 0 15'/>
+  <Viewpoint DEF='vp3' position='0 0 -2'/>
+
+  <Anchor description='new web site' url="http://s2017.siggraph.org/">
+      <Transform DEF='AnchorSphere' translation='-4 -5 -10'>
+          <Shape>
+            <Appearance>
+              <Material diffuseColor='.8 .8 .8'/>
+			  <ImageTexture url="pinwheel.jpg" repeatS="TRUE" repeatT="TRUE"/>
+            </Appearance>
+            <Sphere/>
+          </Shape>
+      </Transform>
+  </Anchor>
+
+
+  <Anchor description='wall st j' url="http://www.wsj.com">
+    <Transform DEF='WSJ' translation='-2.5 2.5 -6' scale='3 3 3'>
+    	        <Shape>
+    	          <Text DEF='TextMessage' string='"WSJ"'>
+    	            <FontStyle justify='"MIDDLE" "MIDDLE"'/>
+    	          </Text>
+    	          <Appearance>
+    	            <Material diffuseColor=".7 .7 .7"/>
+    	          </Appearance>
+    	        </Shape>
+    </Transform>
+  </Anchor>
+
+  <Anchor description='wall st j' url="http://www.wsj.com/xml/rss/3_7041.xml">
+    <Transform DEF='WSJ RSS' translation='-2.5 -1 -6' scale='3 3 3'>
+    	        <Shape>
+    	          <Text DEF='TextMessage' string='"WSJ" "RSS"'>
+    	            <FontStyle justify='"MIDDLE" "MIDDLE"'/>
+    	          </Text>
+    	          <Appearance>
+    	            <Material diffuseColor=".4 .7 1"/>
+    	          </Appearance>
+    	        </Shape>
+    </Transform>
+  </Anchor>
+
+
+  <Anchor description='People Mag' url="http://www.people.com">
+    <Transform DEF='WSJ' translation='2.5 2.5 -7' scale='3 3 3'>
+    	        <Shape>
+    	          <Text DEF='TextMessage' string='"People"'>
+    	            <FontStyle justify='"MIDDLE" "MIDDLE"'/>
+    	          </Text>
+    	          <Appearance>
+    	            <Material diffuseColor=".4 1 .7"/>
+    	          </Appearance>
+    	        </Shape>
+    </Transform>
+  </Anchor>
+
+
+  </Scene>
+</X3D>

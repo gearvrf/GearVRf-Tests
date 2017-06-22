@@ -1,0 +1,153 @@
+<X3D>
+    <Scene>
+        <Viewpoint position='0 0 0'/>
+        <PointLight/>
+        <Background skyColor='0 0 .2'/>
+
+
+        <Transform DEF='obj0' translation="0 0 -2">
+	        <Shape>
+	          <Text DEF='TextMessage0' string='"CHEAP" "SIGN FONT"'>
+	          	   <FontStyle family='"CheapSign.ttf"' size='1.6' justify='"MIDDLE" "MIDDLE"'/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="1 1 1"/>
+	          </Appearance>
+	        </Shape>
+	    </Transform>
+
+
+        <timeSensor DEF="time" cycleInterval="40" loop="true"></timeSensor>
+
+     	    <PositionInterpolator DEF="move" key="0 .1 .2 .3 .4 .5  .6  .7  .8  .9  1" keyValue="0 0 -2   0 0 -2   0 0 -3   0 0 -3   0 0 -4   0 0 -4   0 0 -5   0 0 -5   0 0 -10   0 0 -10    0 0 -2"></PositionInterpolator>
+	        <Route fromNode="time" fromField ="fraction_changed" toNode="move" toField="set_fraction"></Route>
+	        <Route fromNode="move" fromField ="value_changed" toNode="obj0" toField="translation"></Route>
+
+
+
+        <Transform DEF='obj1' translation="0 -1 -4">
+	        <Shape>
+	          <Text DEF='TextMessage1' string='"Broadcast" "Tiling" "FONT"'>
+	          	   <FontStyle family='"BroadcastTitling.ttf"' size='1.0' justify='"MIDDLE" "MIDDLE" "MIDDLE"'/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="1 1 1"/>
+	          </Appearance>
+	        </Shape>
+	    </Transform>
+
+
+
+        <Transform DEF='obj2' translation="2 0 -2"  rotation="0 1 0 -.785">
+	        <Shape>
+	          <Text DEF='TextMessage2' string='"Vacation" "Postcard"'>
+	          	   <FontStyle family='"VacationPostcardNF.ttf"' size='1.2' justify='"MIDDLE" "MIDDLE"'/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="1 1 1"/>
+	          </Appearance>
+	        </Shape>
+
+        </Transform>
+
+	    <Transform DEF='Cone02' translation='4 1 -4'  rotation=".6 0 .8 -.7">
+            <Shape>
+                <Appearance>
+                   <Material diffuseColor='.2 1 .5'/>
+                </Appearance>
+                <Cone/>
+            </Shape>
+        </Transform>
+      <TimeSensor DEF='Cone-TIMER' cycleInterval='12' loop="true"/>
+      <OrientationInterpolator DEF='ConeRotation-INTERP' key='0 .5 1' keyValue='.8 0 .6 0   .8 0 .6 3.14   .8 0 .6 6.28'/>
+      <ROUTE fromNode='Cone-TIMER' fromField='fraction_changed' toNode='ConeRotation-INTERP' toField='set_fraction'/>
+      <ROUTE fromNode='ConeRotation-INTERP' fromField='value_changed' toNode='Cone02' toField='set_rotation'/>
+
+
+        <Transform  DEF='obj3' translation="-2.5 0 -2.5" rotation="0 1 0 .785">
+	        <Shape>
+	          <Text DEF='TextMessage3' string='"Nanosecond" "Thick"'>
+	          	   <FontStyle family='"nsecthck.ttf"' size='2.2' justify='"MIDDLE" "MIDDLE"'/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="1 1 1"/>
+	          </Appearance>
+	        </Shape>
+        </Transform>
+
+
+
+        <Transform DEF='obj4' translation="0 1.5 -4">
+	        <Shape>
+	          <Text DEF='TextMessage4' string='"CATS" "ALPHABET"'>
+	            <FontStyle family='CatsAlphabet.ttf'/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="1 1 1"/>
+	          </Appearance>
+	        </Shape>
+	    </Transform>
+
+
+
+
+        <Transform DEF='marker1.9' translation="1 .05 -1.9" scale='.5 .5 .5'>
+	        <Shape>
+	          <Text string='"-1.9" "marker"'>
+	          	   <FontStyle size='.7' style="BOLDITALIC" justify='"MIDDLE" "MIDDLE"'/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor=".25 .25 .81"/>
+	          </Appearance>
+	        </Shape>
+	    </Transform>
+        <Transform DEF='marker2.9' translation=".9 .25 -2.9" scale='.5 .5 .5'>
+	        <Shape>
+	          <Text string='"-2.9" "marker"'>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="0 1 0"/>
+	          </Appearance>
+	        </Shape>
+	    </Transform>
+        <Transform DEF='marker3.9' translation=".8 .45 -3.9" scale='.5 .5 .5'>
+	        <Shape>
+	          <Text string='"-3.9" "marker"'>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="1 0 0"/>
+	          </Appearance>
+	        </Shape>
+	    </Transform>
+        <Transform DEF='marker4.9' translation=".7 .7 -4.9" scale='.5 .5 .5'>
+	        <Shape>
+	          <Text string='"-4.9" "marker"'>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="0 .5 .5"/>
+	          </Appearance>
+	        </Shape>
+	    </Transform>
+        <Transform DEF='marker5.9' translation=".6 .95 -5.9" scale='.5 .5 .5'>
+	        <Shape>
+	          <Text string='"-5.9" "marker"'>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor=".5 0 .5"/>
+	          </Appearance>
+	        </Shape>
+	    </Transform>
+        <Transform DEF='marker9.9' translation=".5 1.2 -9.9" scale='.5 .5 .5'>
+	        <Shape>
+	          <Text string='"-9.9" "marker"'>
+	          	   <FontStyle size='4' style="BOLDITALIC" justify='"MIDDLE" "MIDDLE"'/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor=".5 .5 0"/>
+	          </Appearance>
+	        </Shape>
+	    </Transform>
+
+
+    </Scene>
+</X3D>

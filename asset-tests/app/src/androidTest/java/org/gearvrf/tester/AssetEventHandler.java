@@ -22,7 +22,6 @@ class AssetEventHandler implements IAssetEvents
     public int TextureErrors = 0;
     public int ModelErrors = 0;
     public String AssetErrors = null;
-    public int AssetsLoaded = 0;
     protected GVRScene mScene;
     protected Waiter mWaiter;
     protected GVRTestUtils mTester;
@@ -39,7 +38,11 @@ class AssetEventHandler implements IAssetEvents
     public void onAssetLoaded(GVRContext context, GVRSceneObject model, String filePath, String errors)
     {
         AssetErrors = errors;
-        mTester.onAssetLoaded(model);
+        if (model != null)
+        {
+            mScene.addSceneObject(model);
+            mTester.onAssetLoaded(model);
+        }
     }
 
     public void onModelLoaded(GVRContext context, GVRSceneObject model, String filePath)
@@ -51,6 +54,7 @@ class AssetEventHandler implements IAssetEvents
     {
         TexturesLoaded++;
     }
+
     public void onModelError(GVRContext context, String error, String filePath)
     {
         ModelErrors++;
@@ -66,7 +70,7 @@ class AssetEventHandler implements IAssetEvents
         mDoCompare = false;
     }
 
-    public void checkAssetLoaded(Waiter waiter, String name, int numTex)
+    public void checkAssetLoaded(String name, int numTex)
     {
         mWaiter.assertEquals(1, ModelsLoaded);
         mWaiter.assertEquals(0, ModelErrors);
@@ -77,7 +81,7 @@ class AssetEventHandler implements IAssetEvents
         }
     }
 
-    public void checkAssetErrors(Waiter waiter, int numModelErrors, int numTexErrors)
+    public void checkAssetErrors(int numModelErrors, int numTexErrors)
     {
         mWaiter.assertEquals(numModelErrors, ModelErrors);
         mWaiter.assertEquals(numTexErrors, TextureErrors);
@@ -109,20 +113,18 @@ class AssetEventHandler implements IAssetEvents
         }
         mTester.waitForAssetLoad();
         centerModel(model);
-        checkAssetLoaded(mWaiter, FileNameUtils.getFilename(modelfile), numtex);
+        checkAssetLoaded(FileNameUtils.getFilename(modelfile), numtex);
         return model;
     }
 
     public GVRSceneObject loadTestModel(String modelfile, int numTex, int texError, String testname) throws TimeoutException
     {
         GVRContext ctx  = mTester.getGvrContext();
-        GVRScene scene = mTester.getMainScene();
         GVRSceneObject model = null;
 
-        ctx.getEventReceiver().addListener(this);
         try
         {
-            model = ctx.getAssetLoader().loadModel(modelfile, scene);
+            model = ctx.getAssetLoader().loadModel(modelfile, this);
         }
         catch (IOException ex)
         {
@@ -130,8 +132,8 @@ class AssetEventHandler implements IAssetEvents
         }
         mTester.waitForAssetLoad();
         centerModel(model);
-        checkAssetLoaded(mWaiter, FileNameUtils.getFilename(modelfile), numTex);
-        checkAssetErrors(mWaiter, 0, texError);
+        checkAssetLoaded(FileNameUtils.getFilename(modelfile), numTex);
+        checkAssetErrors(0, texError);
         if (testname != null)
         {
             mTester.waitForXFrames(2);
@@ -158,8 +160,8 @@ class AssetEventHandler implements IAssetEvents
         }
         mTester.waitForAssetLoad();
         centerModel(model);
-        checkAssetLoaded(mWaiter, res.getResourceFilename(), numTex);
-        checkAssetErrors(mWaiter, 0, texError);
+        checkAssetLoaded(res.getResourceFilename(), numTex);
+        checkAssetErrors(0, texError);
         if (testname != null)
         {
             mTester.waitForXFrames(2);
@@ -184,8 +186,8 @@ class AssetEventHandler implements IAssetEvents
             mWaiter.fail(ex);
         }
         mTester.waitForAssetLoad();
-        checkAssetLoaded(mWaiter, FileNameUtils.getFilename(modelfile), numTex);
-        checkAssetErrors(mWaiter, 0, 0);
+        checkAssetLoaded(FileNameUtils.getFilename(modelfile), numTex);
+        checkAssetErrors(0, 0);
         if (testname != null)
         {
             mTester.waitForXFrames(2);

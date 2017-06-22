@@ -29,14 +29,7 @@ public class LODTestMain extends GVRMain {
     public void onInit(GVRContext gvrContext) throws IOException {
         animationEngine = gvrContext.getAnimationEngine();
 
-        GVRScene scene = gvrContext.getNextMainScene(new Runnable() {
-            @Override
-            public void run() {
-                for(GVRAnimation animation : animations) {
-                    animation.start(animationEngine);
-                }
-            }
-        });
+        GVRScene scene = gvrContext.getMainScene();
 
         scene.setFrustumCulling(true);
 
@@ -70,6 +63,10 @@ public class LODTestMain extends GVRMain {
         lodGroup.addRange(5, sphereMediumDensity);
 
         scene.addSceneObject(root);
+
+        for(GVRAnimation animation : animations) {
+            animation.start(animationEngine);
+        }
     }
 
     private void setupObject(GVRContext gvrContext, GVRSceneObject object, Future<GVRTexture> futureTexture) {

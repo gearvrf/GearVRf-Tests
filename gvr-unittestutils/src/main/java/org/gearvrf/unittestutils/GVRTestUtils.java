@@ -32,7 +32,6 @@ import org.gearvrf.utility.Log;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeoutException;
@@ -43,7 +42,7 @@ import java.util.concurrent.TimeoutException;
 public class GVRTestUtils implements GVRMainMonitor {
     private static final String TAG = GVRTestUtils.class.getSimpleName();
     public static final int TEST_TIMEOUT = 2000;
-    protected static final int SCREENSHOT_TEST_TIMEOUT = 10000;
+    protected static final int SCREENSHOT_TEST_TIMEOUT = 50000;
 
     private GVRContext gvrContext;
     private final CountDownLatch onInitLatch = new CountDownLatch(1);
@@ -62,19 +61,29 @@ public class GVRTestUtils implements GVRMainMonitor {
      * @param testableGVRActivity The instance of the activity to be tested.
      */
     public GVRTestUtils(GVRTestableActivity testableGVRActivity) {
+        this(testableGVRActivity, null);
+    }
+
+    /**
+     * Constructor, needs an instance of {@link GVRTestableActivity} && GVRTestUtils.OnInitCallback.
+     * @param testableGVRActivity The instance of the activity to be tested.
+     */
+    public GVRTestUtils(GVRTestableActivity testableGVRActivity, OnInitCallback onInitCallback) {
         gvrContext = null;
         xFramesLock = new Object();
         onScreenshotLock = new Object();
         onAssetLock = new Object();
+        this.onInitCallback = onInitCallback;
 
         if (testableGVRActivity == null) {
             throw new IllegalArgumentException();
         }
+
         testableMain = testableGVRActivity.getGVRTestableMain();
         if (testableMain != null) {
             testableMain.setMainMonitor(this);
         }
-        onInitCallback = null;
+
     }
 
     /**
@@ -124,11 +133,15 @@ public class GVRTestUtils implements GVRMainMonitor {
 
     public void waitForAssetLoad() {
         if (mAssetIsLoaded)
+        {
+            mAssetIsLoaded = false;
             return;
+        }
         synchronized (onAssetLock) {
             try {
                 Log.d(TAG, "Waiting for OnAssetLoaded");
                 onAssetLock.wait();
+                mAssetIsLoaded = false;
             } catch (InterruptedException e) {
                 Log.e(TAG, "", e);
                 return;
@@ -295,8 +308,8 @@ public class GVRTestUtils implements GVRMainMonitor {
                         waiter.fail(t);
                     }
 
-                    Log.e(category, category + ": %s %f", testname, diff);
-                    if (diff > 1000.0f)
+                    Log.e(category, "RESULT: %s %s diff = %f", category, testname, diff);
+                    if (diff > 2000.0f)
                     {
                         writeBitmap(category, "diff_" + testname, diffmap);
                     }
@@ -360,6 +373,6 @@ public class GVRTestUtils implements GVRMainMonitor {
         };
         waitForSceneRendering();
         gvrContext.captureScreenCenter(callback);
-        waiter.await();
+        waiter.await(SCREENSHOT_TEST_TIMEOUT);
     }
 }

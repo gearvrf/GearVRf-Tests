@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.0//EN" "http://www.web3d.org/specifications/x3d-3.0.dtd">
+<X3D xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' profile='Full' version='3.0' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.0.xsd'>
+  <Scene DEF='scene'>
+
+  <Background skyColor='0 .4 .1'/>
+  
+  <PointLight/>
+  <PointLight location='0 0 -20' color='1 .25 .25'/>
+
+
+  <Viewpoint DEF='vp1' position='0 0 0' orientation='0 1 0 0'/>
+  <Viewpoint DEF='vp0' position='10 0 -8' orientation='0 1 0 1.57'></Viewpoint>
+  <Viewpoint DEF='vp2' position='0 0 10' orientation='0 1 0 0'/>
+  <Viewpoint DEF='vp3' position='0 0 -2' orientation='0 1 0 0'/>
+  <Viewpoint DEF='vp4' position='0 0 -18' orientation='0 1 0 3.14'/>
+
+  
+    <Anchor description='go to new x3d' url="animationAfterAnchor.x3d">
+      <Transform DEF='AnchorSphere' translation='.5 0 -2'>
+          <Shape>
+            <Appearance>
+              <Material emissiveColor='1 .5 0'/>
+            </Appearance>
+            <Sphere radius='.5'/>
+          </Shape>
+      </Transform>
+    </Anchor>
+    
+    <Anchor description='go to vp2' url="#vp2">
+    <Transform DEF='Cone01' translation='-3.5 -3 -4'>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='0 1 .25'/>
+          </Appearance>
+          <Cone height='1' bottomRadius='.45'/>
+        </Shape>
+    </Transform>
+    </Anchor>
+
+    <Anchor description='go to vp0' url="#vp0">
+	<Transform DEF='Cylinder01' translation='-1 -4 -5'>
+		<Shape>
+		  <Appearance>
+		    <Material emissiveColor='0 .25 1'/>
+		  </Appearance>
+		  <Cylinder height='1.5' radius='.4'/>
+		</Shape>
+	</Transform>
+    </Anchor>
+
+
+    </Scene>
+</X3D>

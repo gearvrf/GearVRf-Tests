@@ -71,34 +71,22 @@ public class SceneObjectTests
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
         mWaiter.assertNotNull(scene);
-        Future<GVRTexture> tex = ctx.loadFutureCubemapTexture(new GVRAndroidResource(ctx, R.raw.beach));
-        mBlueMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
-        mCubeMapMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Cubemap.ID);
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
+        ctx.getEventReceiver().addListener(texHandler);
+        GVRTexture tex = ctx.getAssetLoader().loadCubemapTexture(new GVRAndroidResource(ctx, R.raw.beach));
 
-        mBackground = new GVRCubeSceneObject(ctx, false);
+        mBlueMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
+        mCubeMapMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Cubemap.ID);
+        mBackground = new GVRCubeSceneObject(ctx, false, new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID));
         mBackground.getTransform().setScale(10, 10, 10);
-        mBackground.getRenderData().setShaderTemplate(GVRPhongShader.class);
         mBackground.setName("background");
         mBlueMtl.setDiffuseColor(0, 0, 1, 1);
-        try
-        {
-            waitForTexture(tex);
-        }
-        catch (InterruptedException ex)
-        {
-            mWaiter.fail(ex);
-        }
-        mCubeMapMtl.setMainTexture(tex);
+
+        mCubeMapMtl.setTexture("u_texture", tex);
         mRoot = scene.getRoot();
         mWaiter.assertNotNull(mRoot);
-    }
-
-    private void waitForTexture(Future<GVRTexture> futureTex) throws InterruptedException
-    {
-        while (!futureTex.isDone())
-        {
-            sleep(200);
-        }
+        mTestUtils.waitForAssetLoad();
+        ctx.getEventReceiver().removeListener(texHandler);
     }
 
     @Test
@@ -126,7 +114,6 @@ public class SceneObjectTests
         mRoot.addChildObject(text);
         text.setName("text");
         sphere.setName("sphere");
-        scene.bindShaders();
         mTestUtils.waitForSceneRendering();
         scene.clear();
         mWaiter.assertNull(scene.getSceneObjectByName("background"));
@@ -142,14 +129,12 @@ public class SceneObjectTests
         GVRSceneObject sphere1 = new GVRSphereSceneObject(ctx, true, mBlueMtl);
         GVRSceneObject sphere2 = new GVRSphereSceneObject(ctx, false, mCubeMapMtl);
 
-        sphere1.getRenderData().setShaderTemplate(GVRPhongShader.class);
         sphere1.getTransform().setPosition(0, 0, -4);
         sphere2.getTransform().setScale(20, 20, 20);
         sphere1.setName("sphere1");
         sphere2.setName("sphere2");
         mRoot.addChildObject(sphere1);
         scene.addSceneObject(sphere2);
-        scene.bindShaders();
         mTestUtils.waitForXFrames(2);
         mWaiter.assertNotNull(scene.getSceneObjectByName("sphere2"));
         mWaiter.assertNotNull(scene.getSceneObjectByName("sphere1"));
@@ -164,14 +149,12 @@ public class SceneObjectTests
         GVRSceneObject cube1 = new GVRCubeSceneObject(ctx, true, mBlueMtl);
         GVRSceneObject cube2 = new GVRCubeSceneObject(ctx, false, mCubeMapMtl);
 
-        cube1.getRenderData().setShaderTemplate(GVRPhongShader.class);
         cube1.getTransform().setPosition(0, 0, -4);
         cube1.setName("cube1");
         cube2.getTransform().setScale(20, 20, 20);
         cube2.setName("cube2");
         mRoot.addChildObject(cube1);
         scene.addSceneObject(cube2);
-        scene.bindShaders();
         mTestUtils.waitForXFrames(2);
         mWaiter.assertNotNull(scene.getSceneObjectByName("cube2"));
         mWaiter.assertNotNull(scene.getSceneObjectByName("cube1"));
@@ -184,23 +167,49 @@ public class SceneObjectTests
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
+        ctx.getEventReceiver().addListener(texHandler);
         GVRTexture tex = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.color_sphere));
         GVRSceneObject cylinder1 = new GVRCylinderSceneObject(ctx, true, mBlueMtl);
-        GVRMaterial mtl = new GVRMaterial(ctx);
+        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Texture.ID);
         GVRSceneObject cylinder2 = new GVRCylinderSceneObject(ctx, false, mtl);
 
-        mtl.setMainTexture(tex);
-        cylinder1.getRenderData().setShaderTemplate(GVRPhongShader.class);
+        mtl.setTexture("u_texture", tex);
+        cylinder1.getTransform().setPosition(0, 0, -4);
+        cylinder1.setName("cylinder1");
+        cylinder2.getTransform().setScale(10, 10, 10);
+        cylinder2.setName("cylinder2");
+        mTestUtils.waitForAssetLoad();
+        mRoot.addChildObject(cylinder1);
+        scene.addSceneObject(cylinder2);
+        mTestUtils.waitForXFrames(2);
+        mWaiter.assertNotNull(scene.getSceneObjectByName("cylinder1"));
+        mWaiter.assertNotNull(scene.getSceneObjectByName("cylinder2"));
+        mTestUtils.screenShot(getClass().getSimpleName(), "canDisplayCylinders", mWaiter, mDoCompare);
+    }
+
+
+    @Test
+    public void canDisplayNonTextured() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRMaterial redMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
+        GVRMaterial greenMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
+        GVRSceneObject cylinder1 = new GVRCylinderSceneObject(ctx, true, redMtl);
+        GVRSceneObject cylinder2 = new GVRCylinderSceneObject(ctx, false, greenMtl);
+
+        redMtl.setDiffuseColor(1, 0, 0, 1);
+        greenMtl.setDiffuseColor(0, 1, 0, 1);
         cylinder1.getTransform().setPosition(0, 0, -4);
         cylinder1.setName("cylinder1");
         cylinder2.getTransform().setScale(10, 10, 10);
         cylinder2.setName("cylinder2");
         mRoot.addChildObject(cylinder1);
         scene.addSceneObject(cylinder2);
-        scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(20);
         mWaiter.assertNotNull(scene.getSceneObjectByName("cylinder1"));
         mWaiter.assertNotNull(scene.getSceneObjectByName("cylinder2"));
-        mTestUtils.screenShot(getClass().getSimpleName(), "canDisplayCylinders", mWaiter, mDoCompare);
+        mTestUtils.screenShot(getClass().getSimpleName(), "canDisplayNonTextured", mWaiter, mDoCompare);
     }
 }
