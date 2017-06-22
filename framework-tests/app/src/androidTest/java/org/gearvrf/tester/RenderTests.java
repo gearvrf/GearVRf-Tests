@@ -7,6 +7,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import net.jodah.concurrentunit.Waiter;
 
+import org.gearvrf.GVRPostEffect;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
@@ -87,6 +88,51 @@ public class RenderTests {
         mWaiter.assertEquals(GL_SRC_ALPHA, rdata2.getDestAlphaBlendFunc());
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "testBlendFunc", mWaiter, true);
+    }
+
+
+    @Test
+    public void testOnePostEffect() throws TimeoutException {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        final GVRScene scene = mTestUtils.getMainScene();
+
+        GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.gearvr_logo));
+        GVRMaterial mat1 = new GVRMaterial(ctx);
+        GVRSceneObject cube1 = new GVRCubeSceneObject(ctx, true, mat1);
+        GVRPostEffect flipHorzPostEffect = new GVRPostEffect(ctx, GVRPostEffect.GVRPostEffectShaderType.HorizontalFlip.ID);
+
+        mat1.setMainTexture(tex1);
+        cube1.getTransform().setPositionZ(-2.0f);
+        scene.getMainCameraRig().getRightCamera().addPostEffect(flipHorzPostEffect);
+        scene.getMainCameraRig().getLeftCamera().addPostEffect(flipHorzPostEffect);
+        scene.addSceneObject(cube1);
+        mTestUtils.waitForSceneRendering();
+        mTestUtils.screenShot(getClass().getSimpleName(), "testOnePostEffect", mWaiter, false);
+    }
+
+    @Test
+    public void testTwoPostEffects() throws TimeoutException {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        final GVRScene scene = mTestUtils.getMainScene();
+
+        GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.gearvr_logo));;
+        GVRMaterial mat1 = new GVRMaterial(ctx);
+        GVRSceneObject cube1 = new GVRCubeSceneObject(ctx, true, mat1);
+        GVRPostEffect flipHorzPostEffect = new GVRPostEffect(ctx, GVRPostEffect.GVRPostEffectShaderType.HorizontalFlip.ID);
+        GVRPostEffect colorBlendPostEffect = new GVRPostEffect(ctx, GVRPostEffect.GVRPostEffectShaderType.ColorBlend.ID);
+
+        colorBlendPostEffect.setVec3("u_color", 0.0f, 0.3f, 0.3f);
+        colorBlendPostEffect.setFloat("u_factor", 0.5f);
+
+        mat1.setMainTexture(tex1);
+        cube1.getTransform().setPositionZ(-2.0f);
+        scene.getMainCameraRig().getRightCamera().addPostEffect(colorBlendPostEffect);
+        scene.getMainCameraRig().getLeftCamera().addPostEffect(colorBlendPostEffect);
+        scene.getMainCameraRig().getRightCamera().addPostEffect(flipHorzPostEffect);
+        scene.getMainCameraRig().getLeftCamera().addPostEffect(flipHorzPostEffect);
+        scene.addSceneObject(cube1);
+        mTestUtils.waitForSceneRendering();
+        mTestUtils.screenShot(getClass().getSimpleName(), "testTwoPostEffects", mWaiter, false);
     }
 }
 
