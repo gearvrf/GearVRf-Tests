@@ -1,0 +1,103 @@
+<X3D>
+<Scene>
+
+    <Viewpoint position='0 0 0'/>
+    <Background skyColor='.3 .4 .5'/>
+    <PointLight/>
+
+    <Transform DEF='ButtonTeapot0' translation='-6 3 -20'>
+        <TouchSensor DEF='teapotTouch0'/>
+        <Shape>
+            <Box/>
+            <Appearance>
+                <Material diffuseColor=".75 .75 .75"/>
+            </Appearance>
+        </Shape>
+    </Transform>
+    <Transform DEF='ButtonTeapot1' translation='-6 .5 -20'>
+        <TouchSensor DEF='teapotTouch1'/>
+        <Shape>
+            <Box/>
+            <Appearance>
+                <Material diffuseColor=".75 0 0"/>
+            </Appearance>
+        </Shape>
+    </Transform>
+    <Transform DEF='ButtonTeapot2' translation='-6 -2 -20'>
+        <TouchSensor DEF='teapotTouch2'/>
+        <Shape>
+            <Box/>
+            <Appearance>
+                <Material diffuseColor="0 .75 0"/>
+            </Appearance>
+        </Shape>
+    </Transform>
+    <Transform DEF='ButtonTeapot3' translation='-6 -4.5 -20'>
+        <TouchSensor DEF='teapotTouch3'/>
+        <Shape>
+            <Box/>
+            <Appearance>
+                <Material diffuseColor="0 0 1"/>
+            </Appearance>
+        </Shape>
+    </Transform>
+
+
+    <Transform DEF='ButtonCone0' translation='6 3 -20'>
+        <TouchSensor DEF='coneTouch0'/>
+        <Shape>
+            <Cone/>
+            <Appearance>
+                <Material diffuseColor=".75 .75 .75"/>
+            </Appearance>
+        </Shape>
+    </Transform>
+    <Transform DEF='ButtonCone1' translation='6 .5 -20'>
+        <TouchSensor DEF='coneTouch1'/>
+        <Shape>
+            <Cone/>
+            <Appearance>
+                <Material diffuseColor="1 0 0"/>
+            </Appearance>
+        </Shape>
+    </Transform>
+    <Transform DEF='ButtonCone2' translation='6 -2 -20'>
+        <TouchSensor DEF='coneTouch2'/>
+        <Shape>
+            <Cone/>
+            <Appearance>
+                <Material diffuseColor="0 1 0"/>
+            </Appearance>
+        </Shape>
+    </Transform>
+    <Transform DEF='ButtonCone3' translation='6 -4.5 -20'>
+        <TouchSensor DEF='coneTouch3'/>
+        <Shape>
+            <Cone/>
+            <Appearance>
+                <Material diffuseColor="0 0 1"/>
+            </Appearance>
+        </Shape>
+    </Transform>
+
+
+    <Transform DEF='myTeapotTransform' translation='0 -60 -70' rotation='1 0 0 -1.57'>
+        <Inline DEF='teapotObject' url='teapotrotatetranslate1.fbx'/>
+    </Transform>
+
+    <Transform DEF='myConeTransform' translation='0 -20 -50' rotation='1 0 0 -1.57'>
+        <Inline DEF='coneObject' url='coneScale.FBX'/>
+    </Transform>
+
+    <ROUTE fromField="isOver" fromNode="teapotTouch0" toField="set_enabled"  toNode="teapotObject"/>
+    <ROUTE fromField="isOver" fromNode="teapotTouch1" toField="1, 2"  toNode="teapotObject"/>
+    <ROUTE fromField="isOver" fromNode="teapotTouch2" toField=" 02,  004"  toNode="teapotObject"/>
+    <ROUTE fromField="isOver" fromNode="teapotTouch3" toField="002, 05"  toNode="teapotObject"/>
+
+    <ROUTE fromField="isOver" fromNode="coneTouch0" toField="set_enabled"  toNode="coneObject"/>
+    <ROUTE fromField="isOver" fromNode="coneTouch1" toField="1, 2"  toNode="coneObject"/>
+    <ROUTE fromField="isOver" fromNode="coneTouch2" toField=" 02,  004"  toNode="coneObject"/>
+    <ROUTE fromField="isOver" fromNode="coneTouch3" toField="002, 05"  toNode="coneObject"/>
+
+</Scene>
+</X3D>
