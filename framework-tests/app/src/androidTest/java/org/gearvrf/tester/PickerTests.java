@@ -461,9 +461,9 @@ public class PickerTests
         sphere1.attachComponent(collider1);
         scene.addSceneObject(sphere1);
 
-        float distance = GVRPicker.pickSceneObject(sphere1, scene.getMainCameraRig());
+        final GVRPicker.GVRPickedObject pickedObject = GVRPicker.pickSceneObject(sphere1);
         gvrTestUtils.waitForXFrames(2);
-        mWaiter.assertEquals(1.0f, distance);
+        mWaiter.assertEquals(1.0f, pickedObject.getHitDistance());
     }
 
     @Test
