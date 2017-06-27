@@ -220,4 +220,48 @@ public class SceneObjectTests
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "testBillboards", mWaiter, mDoCompare);
     }
+
+    @Test
+    public void attachBillboardCameraOffset() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRTexture tex = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.colortex));
+
+        scene.getMainCameraRig().getTransform().setPosition(0.5f, 1.0f, -0.4f);
+
+        GVRSceneObject quadObj1 = new GVRSceneObject(ctx, 0.8f, 0.8f, tex);
+        quadObj1.getTransform().setPosition(0.8f, 1.0f, -3);
+        //quadObj1.attachComponent(new GVRBillboard(ctx));
+
+        GVRSceneObject quadObj2 = new GVRSceneObject(ctx, 0.8f, 0.8f, tex);
+        quadObj2.getTransform().setPosition(-0.8f, -1.0f, -3);
+        quadObj2.attachComponent(new GVRBillboard(ctx));
+
+        GVRSceneObject quadObj3 = new GVRSceneObject(ctx, 0.8f, 0.8f, tex);
+        quadObj3.getTransform().setPosition(0.8f, -1.0f, -3);
+        //quadObj3.attachComponent(new GVRBillboard(ctx));
+
+        GVRSceneObject quadObj4 = new GVRSceneObject(ctx, 0.8f, 0.8f, tex);
+        quadObj4.getTransform().setPosition(-0.8f, 1.0f, -3);
+        quadObj4.attachComponent(new GVRBillboard(ctx));
+
+        GVRSceneObject quadObj5 = new GVRSceneObject(ctx, 0.8f, 0.8f, tex);
+        quadObj5.getTransform().setPosition(-1.5f, 0.0f, -3);
+        //quadObj5.attachComponent(new GVRBillboard(ctx));
+
+        GVRSceneObject quadObj6 = new GVRSceneObject(ctx, 0.8f, 0.8f, tex);
+        quadObj6.getTransform().setPosition(1.5f, 0.0f, -3);
+        quadObj6.attachComponent(new GVRBillboard(ctx));
+
+        mRoot.addChildObject(quadObj1);
+        mRoot.addChildObject(quadObj2);
+        mRoot.addChildObject(quadObj3);
+        mRoot.addChildObject(quadObj4);
+        mRoot.addChildObject(quadObj5);
+        mRoot.addChildObject(quadObj6);
+
+        mTestUtils.waitForSceneRendering();
+        mTestUtils.screenShot(getClass().getSimpleName(), "testBillboardsCamOffset", mWaiter, mDoCompare);
+    }
 }
