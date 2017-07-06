@@ -9,6 +9,7 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRBoxCollider;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;
@@ -18,6 +19,7 @@ import org.gearvrf.physics.GVRWorld;
 import org.gearvrf.physics.ICollisionEvents;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
+import org.gearvrf.utility.Log;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -64,6 +66,88 @@ public class PhysicsSimulationTest {
 
         gvrTestUtils = new GVRTestUtils(ActivityRule.getActivity(), initCallback);
         gvrTestUtils.waitForOnInit();
+    }
+
+    @Test
+    public void updatedOwnerTransformTest() throws Exception {
+        addGroundMesh(gvrTestUtils.getMainScene(), 0.0f,0.0f,0.0f, 0.0f);
+
+        GVRSceneObject[] objects = new GVRSceneObject[10];
+        GVRRigidBody[] bodies = new GVRRigidBody[10];
+
+        for(int i = 0; i < 10; i = i + 2) {
+            GVRBoxCollider boxCollider = new GVRBoxCollider(gvrTestUtils.getGvrContext());
+            boxCollider.setHalfExtents(0.5f, 0.5f, 0.5f);
+            objects[i] = meshWithTexture("cube.obj", "cube.jpg");
+            objects[i].getTransform().setPosition(0.0f -i, 6.0f, -10.0f - (2.0f*i));
+            objects[i].attachCollider(boxCollider);
+            bodies[i] = new GVRRigidBody(gvrTestUtils.getGvrContext());
+            switch (i) {
+                case 0 : bodies[i].setMass(0.0f); //object moves, rigid body doesn't
+                         bodies[i].setSimulationType(GVRRigidBody.STATIC);
+                         break;
+                case 2 : bodies[i].setMass(1.0f);  //rigidbody is a "trigger  collider"
+                         bodies[i].setSimulationType(GVRRigidBody.STATIC);
+                         break;
+                case 4 : bodies[i].setMass(0.0f);  //object moves, rigid body doesn't
+                         bodies[i].setSimulationType(GVRRigidBody.KINEMATIC);
+                         break;
+                case 6 : bodies[i].setMass(1.0f); //rigid body is "sleeping", until it is hit by another
+                         bodies[i].setSimulationType(GVRRigidBody.KINEMATIC);
+                         break;
+                case 8 : bodies[i].setMass(1.0f); //rigid body is obbeys all external forces
+                         bodies[i].setSimulationType(GVRRigidBody.DYNAMIC);
+                         break;
+            }
+            objects[i].attachComponent(bodies[i]);
+            gvrTestUtils.getMainScene().addSceneObject(objects[i]);
+
+            GVRSphereCollider sphereCollider = new GVRSphereCollider(gvrTestUtils.getGvrContext());
+            sphereCollider.setRadius(0.5f);
+            objects[i+1] = meshWithTexture("sphere.obj", "sphere.jpg");
+            objects[i+1].getTransform().setScale(0.5f,0.5f,0.5f);
+            objects[i+1].getTransform().setPosition(0.0f -i, 9.0f, -10.0f - (2.0f*i));
+            objects[i+1].attachCollider(sphereCollider);
+            bodies[i+1] = new GVRRigidBody(gvrTestUtils.getGvrContext(), 10.0f);
+            objects[i+1].attachComponent(bodies[i+1]);
+            gvrTestUtils.getMainScene().addSceneObject(objects[i+1]);
+
+        }
+
+        gvrTestUtils.waitForXFrames(47);
+
+        for(int i = 0; i < 5; i++) {
+            objects[i*2].getTransform().setPositionX(2.0f);
+        }
+
+        gvrTestUtils.waitForXFrames(600);
+
+        float d = (bodies[1].getTransform().getPositionY()
+                - bodies[0].getTransform().getPositionY()); //sphere is on top of the cube rigid body
+        mWaiter.assertTrue(d > 0.5f);
+
+        d = (bodies[3].getTransform().getPositionY()
+                - bodies[2].getTransform().getPositionY()); //sphere went thru the cube
+        mWaiter.assertTrue(d <= 0.5f);
+
+        d = (bodies[5].getTransform().getPositionY()
+                - bodies[4].getTransform().getPositionY()); //sphere is on top of the cube rigid body
+        mWaiter.assertTrue(d > 0.5f);
+
+        d = (bodies[7].getTransform().getPositionY()
+                - bodies[6].getTransform().getPositionY()); //sphere fell of the cube
+        mWaiter.assertTrue(d <= 0.5f);
+
+        d = (bodies[9].getTransform().getPositionY()
+                - bodies[8].getTransform().getPositionY()); //sphere fell of the cube
+        mWaiter.assertTrue(d <= 0.5f);
+
+        for(int i = 0; i < 5; i++) {
+            mWaiter.assertTrue(objects[i*2].getTransform().getPositionX() == bodies[i*2].getTransform().getPositionX());
+        }
+
+
+        gvrTestUtils.waitForXFrames(60);
     }
 
     @Test
@@ -331,5 +415,33 @@ public class PhysicsSimulationTest {
 
         scene.addSceneObject(cubeObject);
         return cubeObject;
+    }
+
+    private void addGroundMesh(GVRScene scene, float x, float y, float z, float mass) {
+        try {
+            GVRMesh mesh = gvrTestUtils.getGvrContext().createQuad(100.0f, 100.0f);
+            GVRTexture texture =
+                    gvrTestUtils.getGvrContext().getAssetLoader().loadTexture(new GVRAndroidResource(gvrTestUtils.getGvrContext(), "floor.jpg"));
+            GVRSceneObject meshObject = new GVRSceneObject(gvrTestUtils.getGvrContext(), mesh, texture);
+
+            meshObject.getTransform().setPosition(x, y, z);
+            meshObject.getTransform().setRotationByAxis(-90.0f, 1.0f, 0.0f, 0.0f);
+
+            // Collider
+            GVRMeshCollider meshCollider = new GVRMeshCollider(gvrTestUtils.getGvrContext(), mesh);
+            meshObject.attachCollider(meshCollider);
+
+            // Physics body
+            GVRRigidBody body = new GVRRigidBody(gvrTestUtils.getGvrContext());
+
+            body.setRestitution(0.5f);
+            body.setFriction(1.0f);
+
+            meshObject.attachComponent(body);
+
+            scene.addSceneObject(meshObject);
+        } catch (IOException exception) {
+            Log.d("gvrf", exception.toString());
+        }
     }
 }
