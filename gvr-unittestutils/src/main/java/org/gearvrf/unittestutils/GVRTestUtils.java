@@ -33,6 +33,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeoutException;
 
@@ -42,7 +43,8 @@ import java.util.concurrent.TimeoutException;
 public class GVRTestUtils implements GVRMainMonitor {
     private static final String TAG = GVRTestUtils.class.getSimpleName();
     public static final int TEST_TIMEOUT = 2000;
-    protected static final int SCREENSHOT_TEST_TIMEOUT = 50000;
+    public static final String DEVICE_TYPE = "S7Edge";
+    protected static final int SCREENSHOT_TEST_TIMEOUT = 10000;
 
     private GVRContext gvrContext;
     private final CountDownLatch onInitLatch = new CountDownLatch(1);
@@ -274,10 +276,11 @@ public class GVRTestUtils implements GVRMainMonitor {
             private void compareWithGolden(Bitmap bitmap, String testname, Waiter waiter)
             {
                 Bitmap golden = null;
+
                 try
                 {
-                    InputStream stream = gvrContext.getContext().getAssets().open(category + "/" + testname);
-                    golden = BitmapFactory.decodeStream(stream);
+                    URL url = new URL("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/golden_masters/" + DEVICE_TYPE + "/" + category + "/" + testname);
+                    golden = BitmapFactory.decodeStream(url.openStream());
                 }
                 catch (Throwable ex)
                 {
@@ -333,7 +336,8 @@ public class GVRTestUtils implements GVRMainMonitor {
                     fo.close();
                 }
                 catch (Throwable ex)
-                {ex.printStackTrace();
+                {
+                    ex.printStackTrace();
                     waiter.fail(ex);
                 }
             }

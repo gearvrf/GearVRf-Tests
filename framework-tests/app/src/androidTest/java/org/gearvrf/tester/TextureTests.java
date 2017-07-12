@@ -388,5 +388,364 @@ public class TextureTests
         mTestUtils.waitForXFrames(3);
         mTestUtils.screenShot(getClass().getSimpleName(), "testLoadTextureFromResource", mWaiter, mDoCompare);
     }
+
+    public void checkResults(int actual, int truth)
+    {
+        mWaiter.assertTrue(actual == truth);
+    }
+
+    /*
+     * how to test futureTexture?
+     */
+    @Test
+    public void testTextureTransparencyDetection() throws TimeoutException
+    {
+        android.util.Log.d("gvrf", "beginning texture transparency detection");
+        final GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        final GVRMaterial material = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        final GVRSceneObject groundObject = new GVRCubeSceneObject(ctx, true, material);
+
+        // load jpg, RenderOrder == GEOMETRY
+        GVRAndroidResource.TextureCallback jpgTexLoadCallback = new GVRAndroidResource.TextureCallback()
+        {
+            public boolean stillWanted(GVRAndroidResource r) { return true; }
+            public void loaded(GVRTexture tex, GVRAndroidResource r)
+            {
+                android.util.Log.d("gvrf", "trying JPG now");
+                int order = 0;
+                GVRRenderData renderData = groundObject.getRenderData();
+                renderData.setShaderTemplate(GVRPhongShader.class);
+                material.setTexture("diffuseTexture", tex);
+                renderData.setMaterial(material);
+                order = renderData.getRenderingOrder();
+                android.util.Log.d("gvrf", "done with JPG, order = " + order);
+                checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
+                mWaiter.resume();
+            }
+            public void failed(Throwable t, GVRAndroidResource r) { mWaiter.fail(t); }
+        };
+        ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.jpg_opaque), jpgTexLoadCallback);
+        mWaiter.await();
+
+        // load png, 4 component, transparency, RenderOrder == TRANSPARENT
+        GVRAndroidResource.TextureCallback png4transparentTexLoadCallback = new GVRAndroidResource.TextureCallback()
+        {
+            public boolean stillWanted(GVRAndroidResource r) { return true; }
+            public void loaded(GVRTexture tex, GVRAndroidResource r)
+            {
+                android.util.Log.d("gvrf", "trying png 4 transparent now");
+                int order = 0;
+                GVRRenderData renderData = groundObject.getRenderData();
+                renderData.setShaderTemplate(GVRPhongShader.class);
+                material.setTexture("diffuseTexture", tex);
+                renderData.setMaterial(material);
+                order = renderData.getRenderingOrder();
+                android.util.Log.d("gvrf", "done with png 4 transparent, order = " + order);
+                checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
+                mWaiter.resume();
+            }
+            public void failed(Throwable t, GVRAndroidResource r) { mWaiter.fail(t); }
+        };
+        ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.png_4_transparency), png4transparentTexLoadCallback);
+        mWaiter.await();
+
+        // load png, 3 component, RenderOrder == GEOMETRY
+        GVRAndroidResource.TextureCallback png3opaqueTexLoadCallback = new GVRAndroidResource.TextureCallback()
+        {
+            public boolean stillWanted(GVRAndroidResource r) { return true; }
+            public void loaded(GVRTexture tex, GVRAndroidResource r)
+            {
+                android.util.Log.d("gvrf", "trying png 3 opaque now");
+                int order = 0;
+                GVRRenderData renderData = groundObject.getRenderData();
+                renderData.setShaderTemplate(GVRPhongShader.class);
+                material.setTexture("diffuseTexture", tex);
+                renderData.setMaterial(material);
+                order = renderData.getRenderingOrder();
+                android.util.Log.d("gvrf", "done with png 3 opaque, order = " + order);
+                checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
+                mWaiter.resume();
+            }
+            public void failed(Throwable t, GVRAndroidResource r) { mWaiter.fail(t); }
+        };
+        ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.png_3_opaque), png3opaqueTexLoadCallback);
+        mWaiter.await();
+
+        // load tga, 4 component, transparency, RenderOrder == TRANSPARENT
+        GVRAndroidResource.TextureCallback tga4transparentTexLoadCallback = new GVRAndroidResource.TextureCallback()
+        {
+            public boolean stillWanted(GVRAndroidResource r) { return true; }
+            public void loaded(GVRTexture tex, GVRAndroidResource r)
+            {
+                android.util.Log.d("gvrf", "trying tga 4 transparent now");
+                int order = 0;
+                GVRRenderData renderData = groundObject.getRenderData();
+                renderData.setShaderTemplate(GVRPhongShader.class);
+                material.setTexture("diffuseTexture", tex);
+                renderData.setMaterial(material);
+                android.util.Log.d("gvrf", "tga transparent = " + tex);
+                order = renderData.getRenderingOrder();
+                android.util.Log.d("gvrf", "done with tga 4 transparent, order = " + order);
+                checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
+                mWaiter.resume();
+            }
+            public void failed(Throwable t, GVRAndroidResource r) { mWaiter.fail(t); }
+        };
+        ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.tga_4_transparency), tga4transparentTexLoadCallback);
+        mWaiter.await();
+
+
+        // load png, 4 component, opaque, RenderOrder == GEOMETRY
+        GVRAndroidResource.TextureCallback png4opaqueTexLoadCallback = new GVRAndroidResource.TextureCallback()
+        {
+            public boolean stillWanted(GVRAndroidResource r) { return true; }
+            public void loaded(GVRTexture tex, GVRAndroidResource r)
+            {
+                android.util.Log.d("gvrf", "trying png 4 opaque now");
+                int order = 0;
+                GVRRenderData renderData = groundObject.getRenderData();
+                renderData.setShaderTemplate(GVRPhongShader.class);
+                material.setTexture("diffuseTexture", tex);
+                renderData.setMaterial(material);
+                order = renderData.getRenderingOrder();
+                android.util.Log.d("gvrf", "done with png 4 opaque, order = " + order);
+                checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
+                mWaiter.resume();
+            }
+            public void failed(Throwable t, GVRAndroidResource r) { mWaiter.fail(t); }
+        };
+        ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.png_4_opaque), png4opaqueTexLoadCallback);
+        mWaiter.await();
+
+        // load astc, RenderOrder == TRANSPARENT
+        GVRAndroidResource.TextureCallback astcTexLoadCallback = new GVRAndroidResource.TextureCallback()
+        {
+            public boolean stillWanted(GVRAndroidResource r) { return true; }
+            public void loaded(GVRTexture tex, GVRAndroidResource r)
+            {
+                android.util.Log.d("gvrf", "trying ASTC now");
+                int order = 0;
+                GVRRenderData renderData = groundObject.getRenderData();
+                renderData.setShaderTemplate(GVRPhongShader.class);
+                material.setTexture("diffuseTexture", tex);
+                renderData.setMaterial(material);
+                order = renderData.getRenderingOrder();
+                android.util.Log.d("gvrf", "done with ASTC, order = " + order);
+                checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
+                mWaiter.resume();
+            }
+            public void failed(Throwable t, GVRAndroidResource r) { mWaiter.fail(t); }
+        };
+        ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.astc_transparency), astcTexLoadCallback);
+        mWaiter.await();
+
+        // load tga, 3 component, RenderOrder == GEOMETRY
+        GVRAndroidResource.TextureCallback tga3opaqueTexLoadCallback = new GVRAndroidResource.TextureCallback()
+        {
+            public boolean stillWanted(GVRAndroidResource r) { return true; }
+            public void loaded(GVRTexture tex, GVRAndroidResource r)
+            {
+                android.util.Log.d("gvrf", "trying tga 3 opaque now");
+                int order = 0;
+                GVRRenderData renderData = groundObject.getRenderData();
+                renderData.setShaderTemplate(GVRPhongShader.class);
+                material.setTexture("diffuseTexture", tex);
+                renderData.setMaterial(material);
+                order = renderData.getRenderingOrder();
+                android.util.Log.d("gvrf", "done with tga 3 opaque, order = " + order);
+                checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
+                mWaiter.resume();
+            }
+            public void failed(Throwable t, GVRAndroidResource r) { mWaiter.fail(t); }
+        };
+        ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.tga_3_opaque), tga3opaqueTexLoadCallback);
+        mWaiter.await();
+
+        // load etc2, GL_COMPRESSED_RG11_EAC, RenderOrder == TRANSPARENT 
+        GVRAndroidResource.TextureCallback rg11TexLoadCallback = new GVRAndroidResource.TextureCallback()
+        {
+            public boolean stillWanted(GVRAndroidResource r) { return true; }
+            public void loaded(GVRTexture tex, GVRAndroidResource r)
+            {
+                android.util.Log.d("gvrf", "trying rg11 now");
+                int order = 0;
+                GVRRenderData renderData = groundObject.getRenderData();
+                renderData.setShaderTemplate(GVRPhongShader.class);
+                material.setTexture("diffuseTexture", tex);
+                renderData.setMaterial(material);
+                order = renderData.getRenderingOrder();
+                android.util.Log.d("gvrf", "done with rg11, order = " + order);
+                checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
+                mWaiter.resume();
+            }
+            public void failed(Throwable t, GVRAndroidResource r) { mWaiter.fail(t); }
+        };
+        ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.etc2_rg11_transparency), rg11TexLoadCallback);
+        mWaiter.await();
+
+        // load tga, 4 component, opaque, RenderOrder == GEOMETRY
+        GVRAndroidResource.TextureCallback tga4opaqueTexLoadCallback = new GVRAndroidResource.TextureCallback()
+        {
+            public boolean stillWanted(GVRAndroidResource r) { return true; }
+            public void loaded(GVRTexture tex, GVRAndroidResource r)
+            {
+                android.util.Log.d("gvrf", "trying tga 4 opaque now");
+                int order = 0;
+                GVRRenderData renderData = groundObject.getRenderData();
+                renderData.setShaderTemplate(GVRPhongShader.class);
+                material.setTexture("diffuseTexture", tex);
+                renderData.setMaterial(material);
+                order = renderData.getRenderingOrder();
+                android.util.Log.d("gvrf", "done with tga 4 opaque, order = " + order);
+                checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
+                mWaiter.resume();
+            }
+            public void failed(Throwable t, GVRAndroidResource r) { mWaiter.fail(t); }
+        };
+        ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.tga_4_opaque), tga4opaqueTexLoadCallback);
+        mWaiter.await();
+
+        // load etc2, GL_COMPRESSED_SIGNED_RG11_EAC, RenderOrder == TRANSPARENT
+        GVRAndroidResource.TextureCallback srg11TexLoadCallback = new GVRAndroidResource.TextureCallback()
+        {
+            public boolean stillWanted(GVRAndroidResource r) { return true; }
+            public void loaded(GVRTexture tex, GVRAndroidResource r)
+            {
+                android.util.Log.d("gvrf", "trying signed rg11 now");
+                int order = 0;
+                GVRRenderData renderData = groundObject.getRenderData();
+                renderData.setShaderTemplate(GVRPhongShader.class);
+                material.setTexture("diffuseTexture", tex);
+                renderData.setMaterial(material);
+                order = renderData.getRenderingOrder();
+                android.util.Log.d("gvrf", "done with signed rg11, order = " + order);
+                checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
+                mWaiter.resume();
+            }
+            public void failed(Throwable t, GVRAndroidResource r) { mWaiter.fail(t); }
+        };
+        ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.etc2_signed_rg11_transparency), srg11TexLoadCallback);
+        mWaiter.await();
+
+        // load etc2, GL_COMPRESSED_R11_EAC, RenderOrder == GEOMETRY
+        GVRAndroidResource.TextureCallback r11TexLoadCallback = new GVRAndroidResource.TextureCallback()
+        {
+            public boolean stillWanted(GVRAndroidResource r) { return true; }
+            public void loaded(GVRTexture tex, GVRAndroidResource r)
+            {
+                android.util.Log.d("gvrf", "trying r11 now");
+                int order = 0;
+                GVRRenderData renderData = groundObject.getRenderData();
+                renderData.setShaderTemplate(GVRPhongShader.class);
+                material.setTexture("diffuseTexture", tex);
+                renderData.setMaterial(material);
+                order = renderData.getRenderingOrder();
+                android.util.Log.d("gvrf", "done with r11, order = " + order);
+                checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
+                mWaiter.resume();
+            }
+            public void failed(Throwable t, GVRAndroidResource r) { mWaiter.fail(t); }
+        };
+        ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.etc2_r11_opaque), r11TexLoadCallback);
+        mWaiter.await();
+
+
+        // load etc2, GL_COMPRESSED_RGBA8_ETC2_EAC, RenderOrder == TRANSPARENT
+        GVRAndroidResource.TextureCallback rgba8TexLoadCallback = new GVRAndroidResource.TextureCallback()
+        {
+            public boolean stillWanted(GVRAndroidResource r) { return true; }
+            public void loaded(GVRTexture tex, GVRAndroidResource r)
+            {
+                android.util.Log.d("gvrf", "trying rgba8 now");
+                int order = 0;
+                GVRRenderData renderData = groundObject.getRenderData();
+                renderData.setShaderTemplate(GVRPhongShader.class);
+                material.setTexture("diffuseTexture", tex);
+                renderData.setMaterial(material);
+                order = renderData.getRenderingOrder();
+                android.util.Log.d("gvrf", "done with rgba8, order = " + order);
+                checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
+                mWaiter.resume();
+            }
+            public void failed(Throwable t, GVRAndroidResource r) { mWaiter.fail(t); }
+        };
+        ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.etc2_rgba8_transparency), rgba8TexLoadCallback);
+        mWaiter.await();
+
+        // load etc2, GL_COMPRESSED_SIGNED_R11_EAC, RenderOrder == GEOMETRY
+        GVRAndroidResource.TextureCallback sr11TexLoadCallback = new GVRAndroidResource.TextureCallback()
+        {
+            public boolean stillWanted(GVRAndroidResource r) { return true; }
+            public void loaded(GVRTexture tex, GVRAndroidResource r)
+            {
+                android.util.Log.d("gvrf", "trying sr11 now");
+                int order = 0;
+                GVRRenderData renderData = groundObject.getRenderData();
+                renderData.setShaderTemplate(GVRPhongShader.class);
+                material.setTexture("diffuseTexture", tex);
+                renderData.setMaterial(material);
+                order = renderData.getRenderingOrder();
+                android.util.Log.d("gvrf", "done with sr11, order = " + order);
+                checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
+                mWaiter.resume();
+            }
+            public void failed(Throwable t, GVRAndroidResource r) { mWaiter.fail(t); }
+        };
+        ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.etc2_signed_r11_opaque), sr11TexLoadCallback);
+        mWaiter.await();
+
+        // load etc2, GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2, RenderOrder == TRANSPARENT
+        GVRAndroidResource.TextureCallback rgba1TexLoadCallback = new GVRAndroidResource.TextureCallback()
+        {
+            public boolean stillWanted(GVRAndroidResource r) { return true; }
+            public void loaded(GVRTexture tex, GVRAndroidResource r)
+            {
+                android.util.Log.d("gvrf", "trying rgba1 now");
+                int order = 0;
+                GVRRenderData renderData = groundObject.getRenderData();
+                renderData.setShaderTemplate(GVRPhongShader.class);
+                material.setTexture("diffuseTexture", tex);
+                renderData.setMaterial(material);
+                order = renderData.getRenderingOrder();
+                android.util.Log.d("gvrf", "done with rgba1, order = " + order);
+                checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
+                mWaiter.resume();
+            }
+            public void failed(Throwable t, GVRAndroidResource r) { mWaiter.fail(t); }
+        };
+        ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.etc2_rgb8_punchthrough_alpha1_transparency), rgba1TexLoadCallback);
+        mWaiter.await();
+
+ 
+        // load etc2, GL_COMPRESSED_RGB8_ETC2, RenderOrder == GEOMETRY
+        GVRAndroidResource.TextureCallback rgb8TexLoadCallback = new GVRAndroidResource.TextureCallback()
+        {
+            public boolean stillWanted(GVRAndroidResource r) { return true; }
+            public void loaded(GVRTexture tex, GVRAndroidResource r)
+            {
+                android.util.Log.d("gvrf", "trying rgb8 now");
+                int order = 0;
+                GVRRenderData renderData = groundObject.getRenderData();
+                renderData.setShaderTemplate(GVRPhongShader.class);
+                // TODO need to move setting of this texture after setMaterial once that is supported
+                material.setTexture("diffuseTexture", tex);
+                renderData.setMaterial(material);
+                order = renderData.getRenderingOrder();
+                android.util.Log.d("gvrf", "done with rgb8, order = " + order);
+                checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
+                mWaiter.resume();
+            }
+            public void failed(Throwable t, GVRAndroidResource r) { mWaiter.fail(t); }
+        };
+        ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.etc2_rgb8_opaque), rgb8TexLoadCallback);
+        mWaiter.await();
+
+ 
+
+
+        android.util.Log.d("gvrf", "end texture transparency detection");
+    }
+
 }
 
