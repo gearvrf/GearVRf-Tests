@@ -7,6 +7,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import net.jodah.concurrentunit.Waiter;
 
+import org.gearvrf.GVRBone;
 import org.gearvrf.GVRColorBlendShader;
 import org.gearvrf.GVRIndexBuffer;
 import org.gearvrf.GVRShaderData;
@@ -21,9 +22,11 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRVertexBuffer;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
+import org.gearvrf.scene_objects.GVRCylinderSceneObject;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.gearvrf.utility.Log;
+import org.joml.Matrix4f;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -35,6 +38,9 @@ import java.nio.ByteOrder;
 import java.nio.CharBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -386,5 +392,113 @@ public class RenderTests {
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "testTwoPostEffects", mWaiter, true);
     }
-}
 
+    @Test
+    public void testSkinningTwoBones() throws TimeoutException, InterruptedException
+    {
+        final int BATCH_SIZE = 3;
+        final int NUM_STACKS = 9;
+        final int NUM_SLICE = 4;
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        final GVRScene scene = mTestUtils.getMainScene();
+        GVRCylinderSceneObject.CylinderParams cylparams = new GVRCylinderSceneObject.CylinderParams();
+        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
+        GVRSceneObject root = new GVRSceneObject(ctx);
+
+        mtl.setDiffuseColor(1.0f, 0.5f, 0.8f, 0.5f);
+        cylparams.Material = mtl;
+        cylparams.HasTopCap = false;
+        cylparams.HasBottomCap = false;
+        cylparams.TopRadius = 0.5f;
+        cylparams.BottomRadius = 0.5f;
+        cylparams.Height = 2.0f;
+        cylparams.FacingOut = true;
+        cylparams.StackNumber = NUM_STACKS;
+        cylparams.SliceNumber = NUM_SLICE;
+        cylparams.VertexDescriptor = "float3 a_position float2 a_texcoord int4 a_bone_indices float4 a_bone_weights";
+        GVRCylinderSceneObject cyl = new GVRCylinderSceneObject(ctx, cylparams);
+
+        /*
+         * Add bone indices and bone weights to the cylinder vertex buffer.
+         */
+        GVRVertexBuffer vbuf = cyl.getRenderData().getMesh().getVertexBuffer();
+
+        int nverts = vbuf.getVertexCount();
+        int vertsPerStack = nverts / cylparams.StackNumber;
+        int[] boneIndices = new int[nverts * 4];
+        float[] boneWeights = new float[nverts * 4];
+        int v;
+
+        Arrays.fill(boneIndices, 0, nverts * 4, 0);
+        Arrays.fill(boneWeights, 0, nverts * 4, 0.0f);
+        //
+        // top of cylinder controlled by bone 0
+        //
+        for (int i = 0; i < BATCH_SIZE * vertsPerStack; ++i)
+        {
+            v = i * 4;
+            boneWeights[v] = 1.0f;
+        }
+        //
+        // middle of cylinder controlled by both bones
+        //
+        for (int i = BATCH_SIZE * vertsPerStack; i < (NUM_STACKS - BATCH_SIZE) * vertsPerStack; ++i)
+        {
+            v = i * 4;
+            boneIndices[v + 1] = 1;
+            boneWeights[v] = 0.5f;
+            boneWeights[v + 1] = 0.5f;
+        }
+        //
+        // bottom of cylinder controlled by bone 1
+        //
+        for (int i = (NUM_STACKS - BATCH_SIZE) * vertsPerStack; i < NUM_STACKS * vertsPerStack; ++i)
+        {
+            v = i * 4;
+            boneIndices[v] = 1;
+            boneWeights[v] = 1.0f;
+        }
+
+        /*
+         * Define the two bones which control the mesh.
+         * One bone is at the origin, the other is 1 unit below the first
+         */
+        GVRSceneObject bone0Obj = new GVRSceneObject(ctx);
+        GVRSceneObject bone1Obj = new GVRSceneObject(ctx);
+        GVRBone bone0 = new GVRBone(ctx);
+        GVRBone bone1 = new GVRBone(ctx);
+        Matrix4f bone0Mtx = new Matrix4f();
+        Matrix4f bone1Mtx = new Matrix4f();
+        float[] temp1 = new float[16];
+        float[] temp2 = new float[16];
+        List<GVRBone> bones = new ArrayList<GVRBone>();
+        Matrix4f finalMatrix = new Matrix4f();
+
+        finalMatrix.get(temp2);
+        bone1Mtx.translate(0, -1.0f, 0.0f);
+        bones.add(bone0);
+        bones.add(bone1);
+        bone0.setName("top");
+        bone0.setSceneObject(bone0Obj);
+        bone0Mtx.get(temp1);
+        bone0.setOffsetMatrix(temp1);
+        bone1.setName("bottom");
+        bone1.setSceneObject(bone1Obj);
+        bone1Mtx.get(temp1);
+        bone1.setOffsetMatrix(temp1);
+        cyl.getRenderData().getMesh().setBones(bones);
+        vbuf.setIntArray("a_bone_indices", boneIndices);
+        vbuf.setFloatArray("a_bone_weights", boneWeights);
+        Log.e("gvrf", "Positions");
+        vbuf.dump("a_position");
+        Log.e("gvrf", "bone indices");
+        vbuf.dump("a_bone_indices");
+        Log.e("gvrf", "bone weights");
+        vbuf.dump("a_bone_weights");
+        bone0.setFinalTransformMatrix(temp2);
+        bone1.setFinalTransformMatrix(temp2);
+        root.getTransform().setPositionZ(-3.0f);
+        root.addChildObject(cyl);
+        scene.addSceneObject(root);
+    }
+}
