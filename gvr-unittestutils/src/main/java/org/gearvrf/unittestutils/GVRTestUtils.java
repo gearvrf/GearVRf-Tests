@@ -45,7 +45,7 @@ public class GVRTestUtils implements GVRMainMonitor {
     public static final int TEST_TIMEOUT = 2000;
     public static final String DEVICE_TYPE = "S7Edge";
     protected static final int SCREENSHOT_TEST_TIMEOUT = 80000;
-
+    
     private GVRContext gvrContext;
     private final CountDownLatch onInitLatch = new CountDownLatch(1);
     private final CountDownLatch onStepLatch = new CountDownLatch(1);
