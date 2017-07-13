@@ -44,8 +44,8 @@ public class GVRTestUtils implements GVRMainMonitor {
     private static final String TAG = GVRTestUtils.class.getSimpleName();
     public static final int TEST_TIMEOUT = 2000;
     public static final String DEVICE_TYPE = "S7Edge";
-    protected static final int SCREENSHOT_TEST_TIMEOUT = 10000;
-
+    protected static final int SCREENSHOT_TEST_TIMEOUT = 80000;
+    
     private GVRContext gvrContext;
     private final CountDownLatch onInitLatch = new CountDownLatch(1);
     private final CountDownLatch onStepLatch = new CountDownLatch(1);
@@ -135,11 +135,15 @@ public class GVRTestUtils implements GVRMainMonitor {
 
     public void waitForAssetLoad() {
         if (mAssetIsLoaded)
+        {
+            mAssetIsLoaded = false;
             return;
+        }
         synchronized (onAssetLock) {
             try {
                 Log.d(TAG, "Waiting for OnAssetLoaded");
                 onAssetLock.wait();
+                mAssetIsLoaded = false;
             } catch (InterruptedException e) {
                 Log.e(TAG, "", e);
                 return;
@@ -307,8 +311,8 @@ public class GVRTestUtils implements GVRMainMonitor {
                         waiter.fail(t);
                     }
 
-                    Log.e(category, category + ": %s %f", testname, diff);
-                    if (diff > 1000.0f)
+                    Log.e(category, "RESULT: %s %s diff = %f", category, testname, diff);
+                    if (diff > 2000.0f)
                     {
                         writeBitmap(category, "diff_" + testname, diffmap);
                     }
@@ -373,6 +377,6 @@ public class GVRTestUtils implements GVRMainMonitor {
         };
         waitForSceneRendering();
         gvrContext.captureScreenCenter(callback);
-        waiter.await();
+        waiter.await(SCREENSHOT_TEST_TIMEOUT);
     }
 }

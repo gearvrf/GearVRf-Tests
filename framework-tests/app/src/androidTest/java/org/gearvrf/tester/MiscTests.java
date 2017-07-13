@@ -15,6 +15,7 @@ import org.gearvrf.GVRNotifications;
 import org.gearvrf.GVRRenderPass;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTexture;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.junit.After;
@@ -56,7 +57,7 @@ public class MiscTests {
         GVRScene scene = mTestUtils.getMainScene();
         mWaiter.assertNotNull(scene);
     }
-
+/*
     @Test
     public void testTextureGetFutureIdOnGlThread() throws TimeoutException, InterruptedException {
         final GVRContext ctx = mTestUtils.getGvrContext();
@@ -93,7 +94,7 @@ public class MiscTests {
 
         mWaiter.assertTrue(0 != id);
     }
-
+*/
 
     /**
      * Used to crash; verifies it doesn't anymore.
@@ -114,8 +115,9 @@ public class MiscTests {
 
         try {
             for (int testRun = 0; testRun < 2000; ++testRun) {
-                GVRBitmapTexture t = new GVRBitmapTexture(ctx, gearvr_logo);
-
+                GVRTexture t = new GVRTexture(ctx);
+                GVRBitmapTexture bmap = new GVRBitmapTexture(ctx, gearvr_logo);
+                t.setImage(bmap);
                 final GVRSceneObject so1 = new GVRSceneObject(ctx, 3, 2, t);
                 so1.getTransform().setPosition(0, 0, -3);
                 so1.getRenderData().setMaterial(material);
@@ -130,13 +132,13 @@ public class MiscTests {
                 so2.getRenderData().addPass(pass);
                 scene.addSceneObject(so2);
 
-                //dirty the render data; allocate a big buffer to create some memory pressure
+                //dirty the updateGPU data; allocate a big buffer to create some memory pressure
                 //and have the gc run sooner
                 scene.clear();
                 byte[] b = new byte[1*1024*1024];
                 pass.setCullFace(GVRRenderPass.GVRCullFaceEnum.None);
                 final float[] texCoords = mesh.getTexCoords();
-                mesh.setVec2Vector("a_texcoord", texCoords);
+                mesh.setFloatArray("a_texcoord", texCoords);
                 material.setDiffuseColor(0, 0, 0, 0);
                 GVRNotifications.waitAfterStep();
           }

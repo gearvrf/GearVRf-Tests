@@ -9,6 +9,7 @@ import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
@@ -62,15 +63,31 @@ public class AssetTextureTests
         GVRScene scene = mTestUtils.getMainScene();
 
         mWaiter.assertNotNull(scene);
-        mBackground = new GVRCubeSceneObject(ctx, false);
+        mBackground = new GVRCubeSceneObject(ctx, false, new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID));
         mBackground.getTransform().setScale(10, 10, 10);
-        mBackground.getRenderData().setShaderTemplate(GVRPhongShader.class);
         mBackground.setName("background");
         mRoot = scene.getRoot();
         mWaiter.assertNotNull(mRoot);
         mHandler = new AssetEventHandler(scene, mWaiter, mTestUtils, getClass().getSimpleName());
     }
 
+    @Test
+    public void jassimpNormalDiffuseSpecularLightmap() throws TimeoutException
+    {
+        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/asset-tests/app/src/main/assets/jassimp/normal_diffuse_specular_lightmap.fbx", 25, 0, "jassimpNormalDiffuseSpecularLightmap");
+    }
+
+    @Test
+    public void jassimpNormaLightmap() throws TimeoutException
+    {
+        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/asset-tests/app/src/main/assets/jassimp/normal_lightmap.fbx", 25, 0, "jassimpNormalLightmap");
+    }
+
+    @Test
+    public void jassimpSpecularLightmap() throws TimeoutException
+    {
+        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/asset-tests/app/src/main/assets/jassimp/specular_lightmap.fbx", 25, 0, "jassimpSpecularLightmap");
+    }
 
     @Test
     public void jassimpEmbeddedTextures() throws TimeoutException

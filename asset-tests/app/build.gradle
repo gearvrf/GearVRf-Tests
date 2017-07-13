@@ -20,9 +20,16 @@ android {
         targetSdkVersion 23
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    testBuildType "debug"
 
     buildTypes {
+        debug {
+            debuggable = true
+            jniDebuggable = true
+        }
         release {
+            debuggable = true
+            jniDebuggable = true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
