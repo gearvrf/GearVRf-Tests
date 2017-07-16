@@ -335,6 +335,43 @@ public class RenderTests {
         mWaiter.assertTrue(compareBuffers(indBuf, ibtmp));
     }
 
+    @Test
+    public void testAccessMeshBoneWeights() throws TimeoutException
+    {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        final float[] vertices = {
+                -1, 1, 0,
+                -1, -1, 0,
+                1, 1, 0,
+                1, -1, 0 };
+        final float[] weights = {
+            0, 1, 0, 0,
+            0.75f, 0.25f, 0, 0,
+            0.5f, 0.5f, 0, 0,
+            0.2f, 0.2f, 0.2f, 0.4f };
+        final int[] indices = {
+                0, 0, 0, 0,
+                0, 1, 0, 0,
+                1, 3, 0, 0,
+                0, 1, 3, 2 };
+        final int[] triangles = { 0, 1, 2, 1, 3, 2 };
+        GVRMesh mesh = new GVRMesh(ctx, "float3 a_position float4 a_bone_weights int4 a_bone_indices");
+        float[] ftmp;
+        int[] itmp;
+
+        mesh.setVertices(vertices);
+        mesh.setFloatArray("a_bone_weights", weights);
+        mesh.setIntArray("a_bone_indices", indices);
+        mesh.setIndices(triangles);
+        ftmp = mesh.getFloatArray("a_position");
+        mWaiter.assertTrue(compareArrays(vertices, ftmp));
+        ftmp = mesh.getFloatArray("a_bone_weights");
+        mWaiter.assertTrue(compareArrays(weights, ftmp));
+        itmp = mesh.getIntArray("a_bone_indices");
+        mWaiter.assertTrue(compareArrays(indices, itmp));
+        itmp = mesh.getIndexBuffer().asIntArray();
+        mWaiter.assertTrue(compareArrays(triangles, itmp));
+    }
 
     @Test
     public void testOnePostEffect() throws TimeoutException {
@@ -396,9 +433,12 @@ public class RenderTests {
     @Test
     public void testSkinningTwoBones() throws TimeoutException, InterruptedException
     {
-        final int BATCH_SIZE = 3;
-        final int NUM_STACKS = 9;
-        final int NUM_SLICE = 4;
+        final int NUM_STACKS = 16;
+        final int TOP_SIZE = 5;
+        final int BOTTOM_SIZE = 5;
+        final int MIDDLE_SIZE = (NUM_STACKS - (TOP_SIZE + BOTTOM_SIZE));
+        final int NUM_SLICE = 16;
+
         final GVRContext ctx = mTestUtils.getGvrContext();
         final GVRScene scene = mTestUtils.getMainScene();
         GVRCylinderSceneObject.CylinderParams cylparams = new GVRCylinderSceneObject.CylinderParams();
@@ -415,7 +455,7 @@ public class RenderTests {
         cylparams.FacingOut = true;
         cylparams.StackNumber = NUM_STACKS;
         cylparams.SliceNumber = NUM_SLICE;
-        cylparams.VertexDescriptor = "float3 a_position float2 a_texcoord int4 a_bone_indices float4 a_bone_weights";
+        cylparams.VertexDescriptor = "float3 a_position float4 a_bone_weights int4 a_bone_indices ";
         GVRCylinderSceneObject cyl = new GVRCylinderSceneObject(ctx, cylparams);
 
         /*
@@ -427,36 +467,42 @@ public class RenderTests {
         int vertsPerStack = nverts / cylparams.StackNumber;
         int[] boneIndices = new int[nverts * 4];
         float[] boneWeights = new float[nverts * 4];
-        int v;
 
         Arrays.fill(boneIndices, 0, nverts * 4, 0);
         Arrays.fill(boneWeights, 0, nverts * 4, 0.0f);
-        //
-        // top of cylinder controlled by bone 0
-        //
-        for (int i = 0; i < BATCH_SIZE * vertsPerStack; ++i)
+        for (int s = 0; s < NUM_STACKS; ++s)
         {
-            v = i * 4;
-            boneWeights[v] = 1.0f;
-        }
-        //
-        // middle of cylinder controlled by both bones
-        //
-        for (int i = BATCH_SIZE * vertsPerStack; i < (NUM_STACKS - BATCH_SIZE) * vertsPerStack; ++i)
-        {
-            v = i * 4;
-            boneIndices[v + 1] = 1;
-            boneWeights[v] = 0.5f;
-            boneWeights[v + 1] = 0.5f;
-        }
-        //
-        // bottom of cylinder controlled by bone 1
-        //
-        for (int i = (NUM_STACKS - BATCH_SIZE) * vertsPerStack; i < NUM_STACKS * vertsPerStack; ++i)
-        {
-            v = i * 4;
-            boneIndices[v] = 1;
-            boneWeights[v] = 1.0f;
+            float r = ((float) s - TOP_SIZE) / MIDDLE_SIZE;
+
+            for (int i = 0; i < vertsPerStack; ++i)
+            {
+                int v = (s * vertsPerStack + i) * 4;
+                //
+                // bottom of cylinder controlled by bone 0
+                //
+                if (s <= TOP_SIZE)
+                {
+                    boneIndices[v] = 0;
+                    boneWeights[v] = 1.0f;
+                }
+                //
+                // top of cylinder controlled by bone 1
+                //
+                else if (s > (TOP_SIZE + MIDDLE_SIZE))
+                {
+                    boneIndices[v] = 1;
+                    boneWeights[v] = 1.0f;
+                }
+                //
+                // middle of cylinder controlled by both bones
+                //
+                else
+                {
+                    boneIndices[v + 1] = 1;
+                    boneWeights[v] = 1.0f - r;
+                    boneWeights[v + 1] = r;
+                }
+            }
         }
 
         /*
@@ -469,12 +515,11 @@ public class RenderTests {
         GVRBone bone1 = new GVRBone(ctx);
         Matrix4f bone0Mtx = new Matrix4f();
         Matrix4f bone1Mtx = new Matrix4f();
+        Matrix4f outMtx0 = new Matrix4f();
+        Matrix4f outMtx1 = new Matrix4f();
         float[] temp1 = new float[16];
-        float[] temp2 = new float[16];
         List<GVRBone> bones = new ArrayList<GVRBone>();
-        Matrix4f finalMatrix = new Matrix4f();
 
-        finalMatrix.get(temp2);
         bone1Mtx.translate(0, -1.0f, 0.0f);
         bones.add(bone0);
         bones.add(bone1);
@@ -486,19 +531,17 @@ public class RenderTests {
         bone1.setSceneObject(bone1Obj);
         bone1Mtx.get(temp1);
         bone1.setOffsetMatrix(temp1);
-        cyl.getRenderData().getMesh().setBones(bones);
-        vbuf.setIntArray("a_bone_indices", boneIndices);
         vbuf.setFloatArray("a_bone_weights", boneWeights);
-        Log.e("gvrf", "Positions");
-        vbuf.dump("a_position");
-        Log.e("gvrf", "bone indices");
-        vbuf.dump("a_bone_indices");
-        Log.e("gvrf", "bone weights");
-        vbuf.dump("a_bone_weights");
-        bone0.setFinalTransformMatrix(temp2);
-        bone1.setFinalTransformMatrix(temp2);
+        vbuf.setIntArray("a_bone_indices", boneIndices);
+        cyl.getRenderData().getMesh().setBones(bones);
+        bone0.setFinalTransformMatrix(outMtx0);
+        outMtx1.translate(0, -1.0f, 0.0f);
+        outMtx1.rotation((float) Math.PI / 4.0f, 0, 0, 1);
+        bone1.setFinalTransformMatrix(outMtx1);
         root.getTransform().setPositionZ(-3.0f);
         root.addChildObject(cyl);
         scene.addSceneObject(root);
+        mTestUtils.waitForXFrames(2);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testSkinningTwoBones", mWaiter, false);
     }
 }
