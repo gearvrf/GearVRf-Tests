@@ -1,0 +1,67 @@
+<X3D>
+<Scene>
+
+    <Viewpoint position='0 0 0'/>
+    <Background skyColor='.3 .4 .5'/>
+    <PointLight/>
+
+    <Transform DEF='Button0' translation='-4.5 -3 -20'>
+        <TouchSensor DEF='touch0'/>
+        <Shape>
+            <Sphere/>
+            <Appearance>
+                <Material diffuseColor=".75 .75 .75"/>
+            </Appearance>
+        </Shape>
+    </Transform>
+    <Transform DEF='Button1' translation='-1 -3 -20'>
+        <TouchSensor DEF='touch1'/>
+        <Shape>
+            <Sphere/>
+            <Appearance>
+                <Material diffuseColor=".75 0 0"/>
+            </Appearance>
+        </Shape>
+    </Transform>
+    <Transform DEF='Button2' translation='2 -3 -20'>
+        <TouchSensor DEF='touch2'/>
+        <Shape>
+            <Sphere/>
+            <Appearance>
+                <Material diffuseColor="0 .75 0"/>
+            </Appearance>
+        </Shape>
+    </Transform>
+    <Transform DEF='Button3' translation='5 -3 -20'>
+        <TouchSensor DEF='touch3'/>
+        <Shape>
+            <Sphere/>
+            <Appearance>
+                <Material diffuseColor="0 0 1"/>
+            </Appearance>
+        </Shape>
+    </Transform>
+
+
+
+
+    <Transform DEF='myTeapotTransform' translation='0 -60 -70' rotation='1 0 0 -1.57'>
+        <Inline DEF='teapotObject' url='teapotrotatetranslate1.fbx'/>
+    </Transform>
+
+    <Transform DEF='myConeTransform' translation='0 -20 -50' rotation='1 0 0 -1.57'>
+        <Inline DEF='coneObject' url='coneScale.FBX'/>
+    </Transform>
+
+    <ROUTE fromField="isOver" fromNode="touch0" toField="set_enabled"  toNode="teapotObject"/>
+    <ROUTE fromField="isOver" fromNode="touch1" toField="1, 2"  toNode="teapotObject"/>
+    <ROUTE fromField="isOver" fromNode="touch2" toField=" 02,  004"  toNode="teapotObject"/>
+    <ROUTE fromField="isOver" fromNode="touch3" toField="002, 05"  toNode="teapotObject"/>
+
+    <ROUTE fromField="isOver" fromNode="touch0" toField="set_enabled"  toNode="coneObject"/>
+    <ROUTE fromField="isOver" fromNode="touch1" toField="1, 2"  toNode="coneObject"/>
+    <ROUTE fromField="isOver" fromNode="touch2" toField=" 02,  004"  toNode="coneObject"/>
+    <ROUTE fromField="isOver" fromNode="touch3" toField="002, 05"  toNode="coneObject"/>
+
+</Scene>
+</X3D>
