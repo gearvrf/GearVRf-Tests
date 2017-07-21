@@ -26,6 +26,7 @@ import org.gearvrf.GVRPhongShader;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.gearvrf.utility.Log;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.junit.Before;
 import org.junit.Rule;
@@ -66,6 +67,8 @@ public class PickerTests
             public int  NumPick;
             public ArrayList<Vector3f> EnterHits;
             public ArrayList<Vector3f> InsideHits;
+            public ArrayList<Vector2f> EnterTexCoords;
+            public ArrayList<Vector2f> InsideTexCoords;
             public PickInfo()
             {
                 PickedObj = null;
@@ -75,6 +78,8 @@ public class PickerTests
                 NumPick = 0;
                 EnterHits = new ArrayList<Vector3f>();
                 InsideHits = new ArrayList<Vector3f>();
+                EnterTexCoords = new ArrayList<Vector2f>();
+                InsideTexCoords = new ArrayList<Vector2f>();
             }
         }
 
@@ -101,6 +106,7 @@ public class PickerTests
                     p = new PickInfo();
                     p.PickedObj = sceneObj;
                     p.EnterHits.add(new Vector3f(pickInfo.getHitX(), pickInfo.getHitY(), pickInfo.getHitZ()));
+                    p.EnterTexCoords.add(new Vector2f(pickInfo.getTextureU(), pickInfo.getTextureV()));
                 }
                 p.NumEnter++;
                 mPicked.put(name, p);
@@ -135,6 +141,7 @@ public class PickerTests
                 mWaiter.assertNotNull(p);
                 p.NumInside++;
                 p.InsideHits.add(new Vector3f(pickInfo.getHitX(), pickInfo.getHitY(), pickInfo.getHitZ()));
+                p.InsideTexCoords.add(new Vector2f(pickInfo.getTextureU(), pickInfo.getTextureV()));
                 Log.d("Picker", "onInside %s %f, %f, %f", name, pickInfo.getHitX(), pickInfo.getHitY(), pickInfo.getHitZ());
             }
         }
@@ -207,7 +214,7 @@ public class PickerTests
                 mWaiter.assertFalse(p.EnterHits.size() == 0);
                 for (Vector3f enterHit : enterHits)
                 {
-                    Vector3f pickHit = p.EnterHits.get(j);
+                    Vector3f pickHit = p.EnterHits.get(j++);
                     mWaiter.assertTrue(pickHit.distance(enterHit) < 0.0001f);
                 }
             }
@@ -217,11 +224,39 @@ public class PickerTests
                 mWaiter.assertFalse(p.InsideHits.size() == 0);
                 for (Vector3f insideHit : insideHits)
                 {
-                    Vector3f pickHit = p.InsideHits.get(j);
+                    Vector3f pickHit = p.InsideHits.get(j++);
                     mWaiter.assertTrue(pickHit.distance(insideHit) < 0.0001f);
                 }
             }
         }
+
+        public void checkTexCoords(String name, Vector2f[] enterTexCoords, Vector2f[] insideTexCoords)
+        {
+            PickInfo p = mPicked.get(name);
+            mWaiter.assertNotNull(p);
+            if (enterTexCoords != null)
+            {
+                int j = 0;
+                mWaiter.assertFalse(p.EnterTexCoords.size() == 0);
+                for (Vector2f enterTexCoord : enterTexCoords)
+                {
+                    Vector2f pickTexCoord = p.EnterTexCoords.get(j++);
+                    android.util.Log.d(TAG, "checkTexCoords: " + pickTexCoord);
+                    mWaiter.assertTrue(pickTexCoord.distance(enterTexCoord) < 0.0001f);
+                }
+            }
+            if (insideTexCoords != null)
+            {
+                int j = 0;
+                mWaiter.assertFalse(p.InsideTexCoords.size() == 0);
+                for (Vector2f insideTexCoord : insideTexCoords)
+                {
+                    Vector2f pickTexCoord = p.InsideTexCoords.get(j++);
+                    mWaiter.assertTrue(pickTexCoord.distance(insideTexCoord) < 0.0001f);
+                }
+            }
+        }
+
 
         public void checkNoHits(String name)
         {
@@ -285,6 +320,7 @@ public class PickerTests
         gvrTestUtils.waitForXFrames(2);
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkHits("sphere", new Vector3f[] { new Vector3f(0, 0, 1) }, null);
+        mPickHandler.checkTexCoords("sphere", new Vector2f[] { new Vector2f(-1f, -1f) }, null);
     }
 
     @Test
@@ -305,6 +341,7 @@ public class PickerTests
         gvrTestUtils.waitForXFrames(2);
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkHits("sphere", new Vector3f[] { new Vector3f(0, 0, 1) }, null);
+        mPickHandler.checkTexCoords("sphere", new Vector2f[] { new Vector2f(-1f, -1f) }, null);
     }
 
     @Test
@@ -313,7 +350,7 @@ public class PickerTests
         GVRContext context = gvrTestUtils.getGvrContext();
         GVRScene scene = gvrTestUtils.getMainScene();
         GVRSceneObject sphere = new GVRSphereSceneObject(context, true, mBlue);
-        GVRMeshCollider collider = new GVRMeshCollider(context, false);
+        GVRMeshCollider collider = new GVRMeshCollider(context, sphere.getRenderData().getMesh(), true);
 
         sphere.getRenderData().setShaderTemplate(GVRPhongShader.class);
         sphere.getTransform().setPosition(0, 0, -2);
@@ -326,6 +363,7 @@ public class PickerTests
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkObject("sphere", sphere, 1, 0, 1, 1);
         mPickHandler.checkHits("sphere", new Vector3f[] { new Vector3f(0, 0, 1) }, null);
+        mPickHandler.checkTexCoords("sphere", new Vector2f[] { new Vector2f(0.75f, 0.5f) }, null);
     }
 
     @Test
@@ -334,7 +372,7 @@ public class PickerTests
         GVRContext context = gvrTestUtils.getGvrContext();
         GVRScene scene = gvrTestUtils.getMainScene();
         GVRSceneObject cube = new GVRCubeSceneObject(context, true, mBlue);
-        GVRMeshCollider collider = new GVRMeshCollider(context, false);
+        GVRMeshCollider collider = new GVRMeshCollider(context, cube.getRenderData().getMesh(), true);
 
         cube.getRenderData().setShaderTemplate(GVRPhongShader.class);
         cube.getTransform().setPosition(0, 0, -2);
@@ -347,6 +385,7 @@ public class PickerTests
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkObject("cube", cube, 1, 0, 1, 1);
         mPickHandler.checkHits("cube", new Vector3f[] { new Vector3f(0, 0, 0.5f) }, null);
+        mPickHandler.checkTexCoords("cube", new Vector2f[] { new Vector2f(0.5f, 0.5f) }, null);
     }
 
     @Test
@@ -355,7 +394,7 @@ public class PickerTests
         GVRContext context = gvrTestUtils.getGvrContext();
         GVRScene scene = gvrTestUtils.getMainScene();
         GVRSceneObject sceneObj = new GVRSceneObject(context, 2.0f, 2.0f);
-        GVRMeshCollider collider = new GVRMeshCollider(context, false);
+        GVRMeshCollider collider = new GVRMeshCollider(context, sceneObj.getRenderData().getMesh(), true);
         GVRRenderData rdata = sceneObj.getRenderData();
 
         sceneObj.attachCollider(collider);
@@ -370,6 +409,7 @@ public class PickerTests
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkObject("quad", sceneObj, 1, 0, 1, 1);
         mPickHandler.checkHits("quad", new Vector3f[] { new Vector3f(0, 0, 0) }, null);
+        mPickHandler.checkTexCoords("quad", new Vector2f[] { new Vector2f(0.5f, 0.5f) }, null);
     }
 
     @Test
@@ -383,7 +423,7 @@ public class PickerTests
         triangleMesh.setVertices(a);
         triangleMesh.setIndices(indices);
         GVRSceneObject sceneObjTriangle = new GVRSceneObject(context, triangleMesh);
-        GVRMeshCollider collider = new GVRMeshCollider(context, false);
+        GVRMeshCollider collider = new GVRMeshCollider(context, sceneObjTriangle.getRenderData().getMesh(), true);
         GVRRenderData rdata = sceneObjTriangle.getRenderData();
 
         sceneObjTriangle.attachCollider(collider);
@@ -399,6 +439,7 @@ public class PickerTests
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkObject("Triangle", sceneObjTriangle, 1, 0, 1, 1);
         mPickHandler.checkHits("Triangle", new Vector3f[] { new Vector3f(0.4f, 0.8f, 0.4f) }, null);
+        mPickHandler.checkTexCoords("Triangle", new Vector2f[] { new Vector2f(-1f, -1f) }, null);
     }
 
     @Test
@@ -495,6 +536,7 @@ public class PickerTests
         gvrTestUtils.waitForXFrames(2);
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkHits("sphere", new Vector3f[] { new Vector3f(0, 0, -2) }, null);
+        mPickHandler.checkTexCoords("sphere", new Vector2f[] { new Vector2f(-1f, -1f) }, null);
         mPickHandler.checkNoHits("box");
     }
 
@@ -528,6 +570,7 @@ public class PickerTests
         gvrTestUtils.waitForXFrames(2);
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkHits("sphere", new Vector3f[] { new Vector3f(-1, 0, 0) }, null);
+        mPickHandler.checkTexCoords("sphere", new Vector2f[] { new Vector2f(-1f, -1f) }, null);
     }
 
     @Test
@@ -568,6 +611,7 @@ public class PickerTests
         gvrTestUtils.waitForXFrames(2);
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkHits("sphere1", new Vector3f[] { new Vector3f(0, 0, -2) }, null);
+        mPickHandler.checkTexCoords("sphere1", new Vector2f[] { new Vector2f(-1f, -1f) }, null);
         mPickHandler.checkNoHits("sphere2");
     }
 
@@ -640,9 +684,9 @@ public class PickerTests
         GVRContext context = gvrTestUtils.getGvrContext();
         GVRScene scene = gvrTestUtils.getMainScene();
         GVRSceneObject quad1 = new GVRSceneObject(context, 2.0f, 2.0f, null, GVRMaterial.GVRShaderType.BeingGenerated.ID);
-        GVRMeshCollider collider1 = new GVRMeshCollider(context, false);
+        GVRMeshCollider collider1 = new GVRMeshCollider(context, quad1.getRenderData().getMesh(), true);
         GVRSceneObject quad2 = new GVRSceneObject(context, 2.0f, 2.0f, null, GVRMaterial.GVRShaderType.BeingGenerated.ID);
-        GVRMeshCollider collider2 = new GVRMeshCollider(context, false);
+        GVRMeshCollider collider2 = new GVRMeshCollider(context, quad2.getRenderData().getMesh(), true);
         GVRSceneObject origin = new GVRSceneObject(context);
 
         scene.addSceneObject(origin);
@@ -678,6 +722,7 @@ public class PickerTests
         gvrTestUtils.waitForXFrames(2);
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkHits("quad1", new Vector3f[]{new Vector3f(-0.999f, 0, 0)}, null);
+        mPickHandler.checkTexCoords("quad1", new Vector2f[]{new Vector2f(0.0005f, 0.5f)}, null);
         mPickHandler.checkNoHits("quad2");
         mPickHandler.clearResults();
         v.set(2.999f, 0.0f, -2.0f);      // hit quad2 on the left
@@ -686,6 +731,7 @@ public class PickerTests
         gvrTestUtils.waitForXFrames(2);
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkHits("quad2", new Vector3f[]{new Vector3f(0.999f, 0, 0)}, null);
+        mPickHandler.checkTexCoords("quad2", new Vector2f[]{new Vector2f(0.9995f, 0.5f)}, null);
         mPickHandler.checkNoHits("quad1");
         mPickHandler.clearResults();
         v.set(3.05f, 0.0f, -2.0f);      // ho hits
@@ -763,7 +809,7 @@ public class PickerTests
         cube.setName("cube");
         cube.getRenderData().setShaderTemplate(GVRPhongShader.class);
         cube.getTransform().setPosition(-1, 0, -2);
-        cube.attachComponent(new GVRMeshCollider(context, false));
+        cube.attachComponent(new GVRMeshCollider(context, cube.getRenderData().getMesh(), true));
         scene.addSceneObject(cube);
 
         scene.getEventReceiver().addListener(mPickHandler);
@@ -776,5 +822,6 @@ public class PickerTests
         gvrTestUtils.waitForXFrames(2);
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkHits("cube", new Vector3f[] { new Vector3f(0, 0, 0.5f) }, null);
+        mPickHandler.checkTexCoords("cube", new Vector2f[] { new Vector2f(0.5f, 0.5f) }, null);
     }
 }
