@@ -363,8 +363,8 @@ public class TextureTests
         mtl.setSpecularExponent(4.0f);
         mtl.setTexture("diffuseTexture", tex1);
         mtl.setTexture("normalTexture", tex2);
-        mtl.setTexCoord("diffuseTexture", "a_texcoord1", "diffuse_coord");
-        mtl.setTexCoord("normalTexture", "a_texcoord", "normal_coord");
+        tex1.setTexCoord("a_texcoord1", "diffuse_coord");
+        tex2.setTexCoord("a_texcoord", "normal_coord");
         scene.getMainCameraRig().getOwnerObject().attachComponent(light);
         model.getTransform().setPositionZ(-2.0f);
         mTestUtils.waitForAssetLoad();
