@@ -315,7 +315,7 @@ public class TextureTests
 
         GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.colortex), texparams);
         GVRTexture tex2 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.specularring));
-        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
+        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.PhongLayered.ID);
         GVRMesh mesh = GVRCubeSceneObject.createCube(ctx, "float3 a_position, float2 a_texcoord, float3 a_normal, float2 a_texcoord1", true, new Vector3f(1, 1, 1));
         GVRSceneObject model = new GVRSceneObject(ctx, mesh, mtl);
         GVRDirectLight light = new GVRDirectLight(ctx);
@@ -351,7 +351,7 @@ public class TextureTests
 
         GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.colortex), texparams);
         GVRTexture tex2 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.rock_normal));
-        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
+        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.PhongLayered.ID);
         GVRMesh mesh = GVRCubeSceneObject.createCube(ctx, "float3 a_position, float2 a_texcoord, float3 a_normal, float2 a_texcoord1", true, new Vector3f(1, 1, 1));
         GVRDirectLight light = new GVRDirectLight(ctx);
         GVRSceneObject model = new GVRSceneObject(ctx, mesh, mtl);
