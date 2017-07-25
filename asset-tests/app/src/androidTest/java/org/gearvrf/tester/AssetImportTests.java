@@ -88,6 +88,7 @@ public class AssetImportTests
         GVRSceneObject model = null;
 
         ctx.getEventReceiver().addListener(mHandler);
+        mHandler.dontAddToScene();
         try
         {
             model = ctx.getAssetLoader().loadModel("jassimp/astro_boy.dae", (GVRScene) null);
@@ -167,8 +168,10 @@ public class AssetImportTests
         GVRScene scene = mTestUtils.getMainScene();
         GVRModelSceneObject model = new GVRModelSceneObject(ctx);
         ResourceLoader volume = new ResourceLoader(ctx, "jassimp/astro_boy.dae");
+        EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(GVRImportSettings.NO_ANIMATION));
 
-        ctx.getAssetLoader().loadModel(volume, model, GVRImportSettings.getRecommendedSettings(), false, mHandler);
+        mHandler.dontAddToScene();
+        ctx.getAssetLoader().loadModel(volume, model, settings, false, mHandler);
         mTestUtils.waitForAssetLoad();
         mWaiter.assertEquals(8, volume.ResourcesLoaded);
         mHandler.checkAssetLoaded(null, 4);
@@ -179,7 +182,7 @@ public class AssetImportTests
         scene.addSceneObject(model);
         mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
         mTestUtils.waitForXFrames(2);
-        mTestUtils.screenShot("AssetTests", "canLoadModelWithCustomIO", mWaiter, false);
+        mTestUtils.screenShot("AssetImportTests", "canLoadModelWithCustomIO", mWaiter, false);
     }
 
 
@@ -329,14 +332,14 @@ public class AssetImportTests
         try
         {
             EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(GVRImportSettings.NO_LIGHTING));
-            model = ctx.getAssetLoader().loadModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/x3d/lighting/pointlightmultilights.x3d", settings, true, (GVRScene) null);
+            model = ctx.getAssetLoader().loadModel(mTestUtils.GITHUB_URL + "x3d/lighting/pointlightmultilights.x3d", settings, true, (GVRScene) null);
         }
         catch (IOException ex)
         {
             mWaiter.fail(ex);
         }
         mTestUtils.waitForAssetLoad();
-        mHandler.checkAssetLoaded(null, 0);
+        mHandler.checkAssetLoaded(null, 4);
         mHandler.checkAssetErrors(0, 0);
         mWaiter.assertNull(model.getComponent(GVRAnimator.getComponentType()));
         model.forAllComponents(new MeshVisitorNoLights());
@@ -378,7 +381,7 @@ public class AssetImportTests
     @Test
     public void jassimpTrees3DS() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/trees/trees9.3ds", 9, 0, "jassimpTrees3DS");
+        mHandler.loadTestModel(mTestUtils.GITHUB_URL + "jassimp/trees/trees9.3ds", 9, 0, "jassimpTrees3DS");
     }
 
     @Test
@@ -390,7 +393,7 @@ public class AssetImportTests
     @Test
     public void jassimpHippoOBJ() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/hippo/hippo.obj", 1, 0, "jassimpHippoOBJ");
+        mHandler.loadTestModel(mTestUtils.GITHUB_URL + "jassimp/hippo/hippo.obj", 1, 0, "jassimpHippoOBJ");
     }
 
     @Test
@@ -403,19 +406,19 @@ public class AssetImportTests
     @Test
     public void jassimpBearOBJ() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/animals/bear-obj.obj", 5, 0, "jassimpBearOBJ");
+        mHandler.loadTestModel(mTestUtils.GITHUB_URL + "jassimp/animals/bear-obj.obj", 5, 0, "jassimpBearOBJ");
     }
 
     @Test
     public void jassimpWolfOBJ() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/animals/wolf-obj.obj", 5, 0, "jassimpWolfOBJ");
+        mHandler.loadTestModel(mTestUtils.GITHUB_URL + "jassimp/animals/wolf-obj.obj", 5, 0, "jassimpWolfOBJ");
     }
 
     @Test
     public void jassimpSkinningTREX() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/trex/TRex_NoGround.fbx", 1, 0, "jassimpSkinningTREX");
+        mHandler.loadTestModel(mTestUtils.GITHUB_URL + "jassimp/trex/TRex_NoGround.fbx", 1, 0, "jassimpSkinningTREX");
     }
 
     @Test
@@ -427,24 +430,24 @@ public class AssetImportTests
     @Test
     public void x3dGenerateNormals() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/x3d/generate_normals/teapotandtorusnonormals.x3d", 2, 0, "x3dGenerateNormals");
+        mHandler.loadTestModel(mTestUtils.GITHUB_URL + "x3d/generate_normals/teapotandtorusnonormals.x3d", 2, 0, "x3dGenerateNormals");
     }
 
     @Test
     public void x3dOpacity() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/x3d/general/opacitytest01.x3d", 2, 0, "x3dOpacity");
+        mHandler.loadTestModel(mTestUtils.GITHUB_URL + "x3d/general/opacitytest01.x3d", 2, 0, "x3dOpacity");
     }
 
     @Test
     public void x3dEmissive() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/x3d/general/emissivecolor.x3d", 0, 0, "x3dEmissive");
+        mHandler.loadTestModel(mTestUtils.GITHUB_URL + "x3d/general/emissivecolor.x3d", 0, 0, "x3dEmissive");
     }
 
     @Test
     public void x3dHierarchy() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/x3d/general/twoplaneswithchildren.x3d", 5, 0, "x3dHierarchy");
+        mHandler.loadTestModel(mTestUtils.GITHUB_URL + "x3d/general/twoplaneswithchildren.x3d", 5, 0, "x3dHierarchy");
     }
 }

@@ -5,6 +5,7 @@ import net.jodah.concurrentunit.Waiter;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRShader;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.IAssetEvents;
 import org.gearvrf.GVRAndroidResource;
@@ -13,6 +14,7 @@ import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.utility.FileNameUtils;
 
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.concurrent.TimeoutException;
 
 class AssetEventHandler implements IAssetEvents
@@ -27,6 +29,7 @@ class AssetEventHandler implements IAssetEvents
     protected GVRTestUtils mTester;
     protected String mCategory;
     protected boolean mDoCompare = true;
+    protected boolean mAddToScene = true;
 
     AssetEventHandler(GVRScene scene, Waiter waiter, GVRTestUtils tester, String category)
     {
@@ -34,13 +37,23 @@ class AssetEventHandler implements IAssetEvents
         mWaiter = waiter;
         mTester = tester;
         mCategory = category;
+        mAddToScene = true;
     }
+
+    public void dontAddToScene()
+    {
+        mAddToScene = false;
+    }
+
     public void onAssetLoaded(GVRContext context, GVRSceneObject model, String filePath, String errors)
     {
         AssetErrors = errors;
         if (model != null)
         {
-            mScene.addSceneObject(model);
+            if (mAddToScene)
+            {
+                mScene.addSceneObject(model);
+            }
             mTester.onAssetLoaded(model);
         }
     }
@@ -105,7 +118,10 @@ class AssetEventHandler implements IAssetEvents
         ctx.getEventReceiver().addListener(this);
         try
         {
-            model = ctx.getAssetLoader().loadModel(modelfile, scene);
+            EnumSet<GVRImportSettings> settings = GVRShader.isVulkanInstance() ?
+                    GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(GVRImportSettings.NO_LIGHTING)) :
+                    GVRImportSettings.getRecommendedSettings();
+            model = ctx.getAssetLoader().loadModel(modelfile, settings, true, scene);
         }
         catch (IOException ex)
         {
