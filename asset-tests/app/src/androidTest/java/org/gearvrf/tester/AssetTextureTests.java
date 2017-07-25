@@ -8,10 +8,14 @@ import junit.framework.Assert;
 import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRAssetLoader;
+import org.gearvrf.GVRCompressedTexture;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRImage;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTextureParameters;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.GVRPhongShader;
 
@@ -93,10 +97,10 @@ public class AssetTextureTests
     public void jassimpEmbeddedTextures() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRCubeSceneObject backgnd = new GVRCubeSceneObject(ctx, false);
+        GVRMaterial mtl =  new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
+        GVRCubeSceneObject backgnd = new GVRCubeSceneObject(ctx, false, mtl);
 
-        backgnd.getRenderData().setShaderTemplate(GVRPhongShader.class);
-        backgnd.getRenderData().getMaterial().setDiffuseColor(1.0f, 1.0f, 0.7f, 1.0f);
+        mtl.setDiffuseColor(1.0f, 1.0f, 0.7f, 1.0f);
         backgnd.getTransform().setScale(10, 10, 10);
         mTestUtils.getMainScene().addSceneObject(backgnd);
         mHandler.loadTestModel("jassimp/bmw.FBX", 4, 1, "jassimpEmbeddedTextures");
@@ -118,7 +122,7 @@ public class AssetTextureTests
     @Test
     public void x3dTexcoordTest1() throws TimeoutException
     {
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "x3d/texture_coordinates/texturecoordinatetest.x3d", 4, 0, "x3dTexcoordTest1");
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "x3d/texture_coordinates/texturecoordinatetest.x3d", 5, 0, "x3dTexcoordTest1");
     }
 
     @Test
@@ -136,13 +140,12 @@ public class AssetTextureTests
     @Test
     public void x3dTexcoordTest4() throws TimeoutException
     {
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "x3d/texture_coordinates/texturecoordinatetestsubset3.x3d", 2, 0, "x3dTexcoordTest4");
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "x3d/texture_coordinates/texturecoordinatetestsubset3.x3d", 5, 0, "x3dTexcoordTest4");
     }
 
     @Test
     public void testDownloadTextureCache() throws MalformedURLException {
         final GVRContext gvr = mTestUtils.getGvrContext();
-        //final String urlString = "https://github.com/gearvrf/GearVRf-Tests/raw/master/asset-tests/app/src/main/res/drawable-xxxhdpi/gearvr_logo.jpg";
         final String urlString = GVRTestUtils.GITHUB_URL + "asset-tests/app/src/main/res/drawable-xxxhdpi/gearvr_logo.jpg";
 
         final String directoryPath = gvr.getContext().getCacheDir().getAbsolutePath();
@@ -151,10 +154,27 @@ public class AssetTextureTests
         Assert.assertFalse(file.exists());
 
         final URL url = new URL(urlString);
-        gvr.getAssetLoader().loadTexture(new GVRAndroidResource(gvr, url, true));
-
-        Assert.assertTrue(file.exists());
-        file.delete();
-        Assert.assertFalse(file.exists());
+        GVRAndroidResource resource = new GVRAndroidResource(gvr, url, true);
+        GVRAndroidResource.TextureCallback callback = new GVRAndroidResource.TextureCallback()
+        {
+            public void failed(Throwable t, GVRAndroidResource androidResource)
+            {
+                mWaiter.fail(t);
+            }
+            public boolean stillWanted(GVRAndroidResource r)
+            {
+                return true;
+            }
+            public void loaded(GVRImage image, GVRAndroidResource resource)
+            {
+                Assert.assertTrue(file.exists());
+                file.delete();
+                Assert.assertFalse(file.exists());
+                mTestUtils.onAssetLoaded(null);
+            }
+        };
+        gvr.getAssetLoader().loadTexture(resource, callback, gvr.getAssetLoader().getDefaultTextureParameters(),
+                                         GVRAssetLoader.DEFAULT_PRIORITY, GVRCompressedTexture.BALANCED);
+        mTestUtils.waitForAssetLoad();
     }
 }
