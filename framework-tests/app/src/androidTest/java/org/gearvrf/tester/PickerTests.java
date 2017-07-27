@@ -6,6 +6,7 @@ import android.support.test.runner.AndroidJUnit4;
 import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRBoxCollider;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRFrustumPicker;
@@ -241,7 +242,6 @@ public class PickerTests
                 for (Vector2f enterTexCoord : enterTexCoords)
                 {
                     Vector2f pickTexCoord = p.EnterTexCoords.get(j++);
-                    android.util.Log.d(TAG, "checkTexCoords: " + pickTexCoord);
                     mWaiter.assertTrue(pickTexCoord.distance(enterTexCoord) < 0.0001f);
                 }
             }
@@ -299,6 +299,27 @@ public class PickerTests
         mRed = new GVRMaterial(context, GVRMaterial.GVRShaderType.BeingGenerated.ID);
         mRed.setDiffuseColor(1, 0, 0, 1);
         mPickHandler = new PickHandler();
+    }
+
+    @Test
+    public void canPickBoxCollider(){
+        GVRContext context = gvrTestUtils.getGvrContext();
+        GVRScene scene = gvrTestUtils.getMainScene();
+        GVRSceneObject box = new GVRCubeSceneObject(context, true, mBlue);
+        GVRBoxCollider collider = new GVRBoxCollider(context);
+
+        box.setName("box");
+        box.getRenderData().setShaderTemplate(GVRPhongShader.class);
+        box.getTransform().setPosition(0, 0, -2);
+        collider.setHalfExtents(0.5f, 0.5f, 0.5f);
+        box.attachComponent(collider);
+        scene.addSceneObject(box);
+        scene.getEventReceiver().addListener(mPickHandler);
+        mPicker = new GVRPicker(context, scene);
+        gvrTestUtils.waitForXFrames(2);
+        mPickHandler.checkResults(1, 0);
+        mPickHandler.checkHits("box", new Vector3f[] { new Vector3f(0, 0, 0.5f) }, null);
+        mPickHandler.checkTexCoords("box", new Vector2f[] { new Vector2f(-1f, -1f) }, null);
     }
 
     @Test
