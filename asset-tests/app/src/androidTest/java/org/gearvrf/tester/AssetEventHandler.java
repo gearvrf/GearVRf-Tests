@@ -6,6 +6,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.GVRTransform;
 import org.gearvrf.IAssetEvents;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRImportSettings;
@@ -83,13 +84,16 @@ class AssetEventHandler implements IAssetEvents
         mWaiter.assertEquals(numTexErrors, TextureErrors);
     }
 
-    public void centerModel(GVRSceneObject model)
+    public void centerModel(GVRSceneObject model, GVRTransform camTrans)
     {
         GVRSceneObject.BoundingVolume bv = model.getBoundingVolume();
+        float x = camTrans.getPositionX();
+        float y = camTrans.getPositionY();
+        float z = camTrans.getPositionZ();
         float sf = 1 / bv.radius;
         model.getTransform().setScale(sf, sf, sf);
         bv = model.getBoundingVolume();
-        model.getTransform().setPosition(-bv.center.x, -bv.center.y, -bv.center.z - 1.5f * bv.radius);
+        model.getTransform().setPosition(x - bv.center.x, y - bv.center.y, z - bv.center.z - 1.5f * bv.radius);
     }
 
     public GVRSceneObject loadTestModel(String modelfile, int numtex)
@@ -108,7 +112,7 @@ class AssetEventHandler implements IAssetEvents
             mWaiter.fail(ex);
         }
         mTester.waitForAssetLoad();
-        centerModel(model);
+        centerModel(model, scene.getMainCameraRig().getTransform());
         checkAssetLoaded(mWaiter, FileNameUtils.getFilename(modelfile), numtex);
         return model;
     }
@@ -129,7 +133,7 @@ class AssetEventHandler implements IAssetEvents
             mWaiter.fail(ex);
         }
         mTester.waitForAssetLoad();
-        centerModel(model);
+        centerModel(model, scene.getMainCameraRig().getTransform());
         checkAssetLoaded(mWaiter, FileNameUtils.getFilename(modelfile), numTex);
         checkAssetErrors(mWaiter, 0, texError);
         if (testname != null)
@@ -145,6 +149,7 @@ class AssetEventHandler implements IAssetEvents
         GVRContext ctx  = mTester.getGvrContext();
         GVRScene scene = mTester.getMainScene();
         GVRSceneObject model = null;
+        GVRTransform t = scene.getMainCameraRig().getTransform();
 
         ctx.getEventReceiver().addListener(this);
         try
@@ -157,7 +162,7 @@ class AssetEventHandler implements IAssetEvents
             mWaiter.fail(ex);
         }
         mTester.waitForAssetLoad();
-        centerModel(model);
+        centerModel(model, t);
         checkAssetLoaded(mWaiter, res.getResourceFilename(), numTex);
         checkAssetErrors(mWaiter, 0, texError);
         if (testname != null)

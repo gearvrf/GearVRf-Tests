@@ -118,7 +118,7 @@ public class AssetImportTests
             mWaiter.fail(ex);
         }
         mTestUtils.waitForAssetLoad();
-        mHandler.centerModel(model);
+        mHandler.centerModel(model, scene.getMainCameraRig().getTransform());
         mHandler.checkAssetLoaded(mWaiter, null, 4);
         mHandler.checkAssetErrors(mWaiter, 0, 0);
         mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
@@ -146,7 +146,7 @@ public class AssetImportTests
         mWaiter.assertNull(scene.getSceneObjectByName("astro_boy.dae"));
         mWaiter.assertTrue(model.getChildrenCount() > 0);
         mHandler.checkAssetErrors(mWaiter, 0, 0);
-        mHandler.centerModel(model);
+        mHandler.centerModel(model, scene.getMainCameraRig().getTransform());
         scene.addSceneObject(model);
         mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
         mTestUtils.waitForXFrames(2);
@@ -197,7 +197,7 @@ public class AssetImportTests
         mWaiter.assertNull(scene.getSceneObjectByName("astro_boy.dae"));
         mWaiter.assertTrue(model.getChildrenCount() > 0);
         mHandler.checkAssetErrors(mWaiter, 0, 0);
-        mHandler.centerModel(model);
+        mHandler.centerModel(model, scene.getMainCameraRig().getTransform());
         scene.addSceneObject(model);
         mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
         mTestUtils.waitForXFrames(2);
@@ -257,7 +257,7 @@ public class AssetImportTests
         }
         mTestUtils.waitForAssetLoad();
         mHandler.checkAssetLoaded(mWaiter, null, 0);
-        mHandler.centerModel(model);
+        mHandler.centerModel(model, scene.getMainCameraRig().getTransform());
         mWaiter.assertNull(scene.getSceneObjectByName(modelName));
         mHandler.checkAssetErrors(mWaiter, 0, 0);
         List<GVRRenderData> rdatas = model.getAllComponents(GVRRenderData.getComponentType());
