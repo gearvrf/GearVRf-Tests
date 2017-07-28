@@ -237,7 +237,7 @@ public class CubemapScript extends GVRScript {
             // create reflective sphere using OBJ model //
             // ////////////////////////////////////////////
             Future<GVRMesh> futureSphereMesh = gvrContext
-                    .loadFutureMesh(new GVRAndroidResource(mGVRContext,
+                    .getAssetLoader().loadFutureMesh(new GVRAndroidResource(mGVRContext,
                             R.raw.sphere));
             sphere = new GVRSceneObject(gvrContext, futureSphereMesh,
                     futureCubemapTexture);

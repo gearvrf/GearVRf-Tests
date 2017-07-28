@@ -60,7 +60,7 @@ public class OutlineScript extends GVRScript {
           EnumSet<GVRImportSettings> additionalSettings = EnumSet.of(GVRImportSettings.CALCULATE_SMOOTH_NORMALS);
           EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(additionalSettings);
           EnumSet<GVRImportSettings> GRBMS = GVRImportSettings.getRecommendedBumpmapSettings();
-          GVRMesh characterMesh = mGVRContext.loadMesh(new GVRAndroidResource(mGVRContext,
+          GVRMesh characterMesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(mGVRContext,
               mModelPath), settings);
           
           // Setup Scene - Alternatively to set character transform, one could

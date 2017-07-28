@@ -127,7 +127,7 @@ public class PickandmoveScript extends GVRScript {
         // Future<GVRMesh> futureSphereMesh = gvrContext
         // .loadFutureMesh(new GVRAndroidResource(mGVRContext,
         // R.raw.sphere));
-        GVRMesh sphereMesh = gvrContext.loadMesh(new GVRAndroidResource(
+        GVRMesh sphereMesh = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                 mGVRContext, R.raw.sphere));
         GVRMaterial cubemapReflectionMaterial = new GVRMaterial(gvrContext,
                 GVRMaterial.GVRShaderType.CubemapReflection.ID);

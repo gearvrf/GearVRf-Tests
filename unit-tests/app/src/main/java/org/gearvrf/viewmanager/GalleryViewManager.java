@@ -77,7 +77,7 @@ public class GalleryViewManager extends GVRScript {
         mainScene.getMainCameraRig().getTransform()
                 .setPosition(0.0f, 0.0f, 0.0f);
 
-        GVRMesh sphereMesh = mGVRContext.loadMesh(new GVRAndroidResource(
+        GVRMesh sphereMesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                 mGVRContext, R.raw.sphere_mesh));
 
         GVRSceneObject leftScreen = new GVRSceneObject(mGVRContext, sphereMesh,

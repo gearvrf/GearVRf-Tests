@@ -144,7 +144,7 @@ public class exposeScript extends GVRScript {
         mFrontFace3.attachEyePointeeHolder(eyePointeeHolder3);
         // reflective object
         Future<GVRMesh> futureSphereMesh = gvrContext
-                .loadFutureMesh(new GVRAndroidResource(mGVRContext,
+                .getAssetLoader().loadFutureMesh(new GVRAndroidResource(mGVRContext,
                         R.raw.sphere));
         GVRMaterial cubemapReflectionMaterial = new GVRMaterial(gvrContext,
                 GVRMaterial.GVRShaderType.CubemapReflection.ID);

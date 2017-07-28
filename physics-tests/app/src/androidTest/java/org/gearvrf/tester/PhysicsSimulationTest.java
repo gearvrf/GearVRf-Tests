@@ -267,7 +267,7 @@ public class PhysicsSimulationTest {
 
         if (sphereMesh == null) {
             try {
-                sphereMesh = gvrTestUtils.getGvrContext().loadMesh(
+                sphereMesh = gvrTestUtils.getGvrContext().getAssetLoader().loadMesh(
                         new GVRAndroidResource(gvrTestUtils.getGvrContext(), "sphere.obj"));
                 sphereTexture = gvrTestUtils.getGvrContext().getAssetLoader().loadTexture(
                         new GVRAndroidResource(gvrTestUtils.getGvrContext(), "sphere.jpg"));
@@ -304,7 +304,7 @@ public class PhysicsSimulationTest {
 
         if (cubeMesh == null) {
             try {
-                cubeMesh = gvrTestUtils.getGvrContext().loadMesh(
+                cubeMesh = gvrTestUtils.getGvrContext().getAssetLoader().loadMesh(
                         new GVRAndroidResource(gvrTestUtils.getGvrContext(), "cube.obj"));
                 cubeTexture = gvrTestUtils.getGvrContext().getAssetLoader().loadTexture(
                         new GVRAndroidResource(gvrTestUtils.getGvrContext(), "cube.jpg"));
