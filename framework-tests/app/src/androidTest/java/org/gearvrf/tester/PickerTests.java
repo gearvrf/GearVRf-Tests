@@ -106,12 +106,13 @@ public class PickerTests
                 {
                     p = new PickInfo();
                     p.PickedObj = sceneObj;
-                    p.EnterHits.add(new Vector3f(pickInfo.getHitX(), pickInfo.getHitY(), pickInfo.getHitZ()));
-                    p.EnterTexCoords.add(new Vector2f(pickInfo.getTextureU(), pickInfo.getTextureV()));
+                    p.EnterHits.add(new Vector3f(pickInfo.hitLocation[0], pickInfo.hitLocation[1], pickInfo.hitLocation[2]));
+                    if(pickInfo.textureCoords != null)
+                        p.EnterTexCoords.add(new Vector2f(pickInfo.textureCoords[0], pickInfo.textureCoords[1]));
                 }
                 p.NumEnter++;
                 mPicked.put(name, p);
-                Log.d("Picker", "onEnter %s %f, %f, %f", name, pickInfo.getHitX(), pickInfo.getHitY(), pickInfo.getHitZ());
+                Log.d("Picker", "onEnter %s %f, %f, %f", name, pickInfo.hitLocation[0], pickInfo.hitLocation[1], pickInfo.hitLocation[2]);
             }
         }
 
@@ -141,9 +142,10 @@ public class PickerTests
                 // It puts the PickInfo in the map
                 mWaiter.assertNotNull(p);
                 p.NumInside++;
-                p.InsideHits.add(new Vector3f(pickInfo.getHitX(), pickInfo.getHitY(), pickInfo.getHitZ()));
-                p.InsideTexCoords.add(new Vector2f(pickInfo.getTextureU(), pickInfo.getTextureV()));
-                Log.d("Picker", "onInside %s %f, %f, %f", name, pickInfo.getHitX(), pickInfo.getHitY(), pickInfo.getHitZ());
+                p.InsideHits.add(new Vector3f(pickInfo.hitLocation[0], pickInfo.hitLocation[1], pickInfo.hitLocation[2]));
+                if(pickInfo.textureCoords != null)
+                    p.InsideTexCoords.add(new Vector2f(pickInfo.textureCoords[0], pickInfo.textureCoords[1]));
+                Log.d("Picker", "onInside %s %f, %f, %f", name, pickInfo.hitLocation[0], pickInfo.hitLocation[1], pickInfo.hitLocation[2]);
             }
         }
 
@@ -319,7 +321,6 @@ public class PickerTests
         gvrTestUtils.waitForXFrames(2);
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkHits("box", new Vector3f[] { new Vector3f(0, 0, 0.5f) }, null);
-        mPickHandler.checkTexCoords("box", new Vector2f[] { new Vector2f(-1f, -1f) }, null);
     }
 
     @Test
@@ -341,7 +342,6 @@ public class PickerTests
         gvrTestUtils.waitForXFrames(2);
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkHits("sphere", new Vector3f[] { new Vector3f(0, 0, 1) }, null);
-        mPickHandler.checkTexCoords("sphere", new Vector2f[] { new Vector2f(-1f, -1f) }, null);
     }
 
     @Test
@@ -362,7 +362,6 @@ public class PickerTests
         gvrTestUtils.waitForXFrames(2);
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkHits("sphere", new Vector3f[] { new Vector3f(0, 0, 1) }, null);
-        mPickHandler.checkTexCoords("sphere", new Vector2f[] { new Vector2f(-1f, -1f) }, null);
     }
 
     @Test
@@ -460,7 +459,6 @@ public class PickerTests
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkObject("Triangle", sceneObjTriangle, 1, 0, 1, 1);
         mPickHandler.checkHits("Triangle", new Vector3f[] { new Vector3f(0.4f, 0.8f, 0.4f) }, null);
-        mPickHandler.checkTexCoords("Triangle", new Vector2f[] { new Vector2f(-1f, -1f) }, null);
     }
 
     @Test
@@ -557,7 +555,6 @@ public class PickerTests
         gvrTestUtils.waitForXFrames(2);
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkHits("sphere", new Vector3f[] { new Vector3f(0, 0, -2) }, null);
-        mPickHandler.checkTexCoords("sphere", new Vector2f[] { new Vector2f(-1f, -1f) }, null);
         mPickHandler.checkNoHits("box");
     }
 
@@ -591,7 +588,6 @@ public class PickerTests
         gvrTestUtils.waitForXFrames(2);
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkHits("sphere", new Vector3f[] { new Vector3f(-1, 0, 0) }, null);
-        mPickHandler.checkTexCoords("sphere", new Vector2f[] { new Vector2f(-1f, -1f) }, null);
     }
 
     @Test
@@ -632,7 +628,6 @@ public class PickerTests
         gvrTestUtils.waitForXFrames(2);
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkHits("sphere1", new Vector3f[] { new Vector3f(0, 0, -2) }, null);
-        mPickHandler.checkTexCoords("sphere1", new Vector2f[] { new Vector2f(-1f, -1f) }, null);
         mPickHandler.checkNoHits("sphere2");
     }
 
