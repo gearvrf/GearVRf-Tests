@@ -42,8 +42,7 @@ import java.util.concurrent.TimeoutException;
  */
 public class GVRTestUtils implements GVRMainMonitor {
     private static final String TAG = GVRTestUtils.class.getSimpleName();
-//    public static final String DEVICE_TYPE = "S7Edge";
-    public static final String DEVICE_TYPE = "S7Euro";
+    public static final String DEVICE_TYPE = "S7Edge";
     public static final String GITHUB_URL = "https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/vulkan/";
     public static final String GOLDEN_MASTERS_URL = GITHUB_URL + "golden_masters/" + DEVICE_TYPE + "/";
 
@@ -279,6 +278,7 @@ public class GVRTestUtils implements GVRMainMonitor {
             private void compareWithGolden(Bitmap bitmap, String testname, Waiter waiter)
             {
                 Bitmap golden = null;
+
                 try
                 {
                     URL url = new URL(GOLDEN_MASTERS_URL + "/" + category + "/" + testname);
@@ -338,7 +338,8 @@ public class GVRTestUtils implements GVRMainMonitor {
                     fo.close();
                 }
                 catch (Throwable ex)
-                {ex.printStackTrace();
+                {
+                    ex.printStackTrace();
                     waiter.fail(ex);
                 }
             }

@@ -1,0 +1,145 @@
+<X3D>
+    <Scene>
+        <Viewpoint position='0 0 0'/>
+        <PointLight/>
+        <Background skyColor='.1 .2 .4'/>
+
+
+	<Transform DEF='box1' translation='-4 0 -10' rotation='.5 .707 .5 1'>
+		<Shape>
+		  <Appearance>
+		    <Material diffuseColor='1 0 0'/>
+		  </Appearance>
+		  <Box/>
+		</Shape>
+	</Transform>
+
+        <Transform DEF='obj0a' translation="0 1.5 -5">
+		<Shape>
+			<Text DEF='TextMessage0' string='"Font DEF 0" "Air America font" "spacing=8, middle justify"'>
+				<FontStyle DEF='fontStyle0' family='Air Americana.ttf' justify='MIDDLE' spacing='8.0'/>
+			</Text>
+			<Appearance>
+				<Material diffuseColor="1 1 1"/>
+			</Appearance>
+	        </Shape>
+	</Transform>
+        <Transform DEF='obj0b' translation="0 -.75 -5">
+	        <Shape>
+			<Text DEF='TextMessage0' string='"Font USE 0" "cyan text"'>
+				<FontStyle USE='fontStyle0'/>
+			</Text>
+			<Appearance>
+				<Material diffuseColor="0 1 1"/>
+			</Appearance>
+	        </Shape>
+	</Transform>
+        <Transform DEF='obj0c' translation="0 -2.75 -5">
+	        <Shape>
+			<Text DEF='TextMessage0' string='"Font USE 0" "yellow text"'>
+				<FontStyle USE='fontStyle0'/>
+			</Text>
+			<Appearance>
+				<Material diffuseColor="1 1 0"/>
+			</Appearance>
+	        </Shape>
+	</Transform>
+
+
+
+	<Transform DEF='cone1' translation='-1.5 0 -10' rotation='.6 0 .8 .5'>
+		<Shape>
+		  <Appearance>
+		    <Material diffuseColor='0 1 0'/>
+		  </Appearance>
+		  <Cone/>
+		</Shape>
+	</Transform>
+
+
+        <Transform DEF='obj1a' translation="4 1.25 -4" rotation='0 1 0 -1.5'>
+		<Shape>
+			<Text DEF='TextMessage1' string='"FONT DEF 0" "DEF CHEAP SIGN" "SIZE=1.5, END JUSTIFY"'>
+				<FontStyle DEF='fontStyle1' family='CheapSign.ttf' justify='END' size='1.5'/>
+			</Text>
+			<Appearance>
+				<Material diffuseColor="1 1 1"/>
+			</Appearance>
+	        </Shape>
+	</Transform>
+        <Transform DEF='obj1b' translation="4 0 -4" rotation='0 1 0 -1.5'>
+		<Shape>
+			<Text DEF='TextMessage1' string='"FONT USE 1" "RED TEXT"'>
+				<FontStyle USE='fontStyle1'/>
+			</Text>
+			<Appearance>
+				<Material diffuseColor="1 0 0"/>
+			</Appearance>
+	        </Shape>
+	</Transform>
+        <Transform DEF='obj1c' translation="4 -1.25 -4" rotation='0 1 0 -1.5'>
+		<Shape>
+			<Text DEF='TextMessage1' string='"FONT USE 1" "GREEN TEXT"'>
+				<FontStyle USE='fontStyle1'/>
+			</Text>
+			<Appearance>
+				<Material diffuseColor="0 1 0"/>
+			</Appearance>
+	        </Shape>
+	</Transform>
+
+
+	<Transform DEF='cyl1' translation='1.5 0 -10' rotation='.8 0 .6 .5'>
+		<Shape>
+		  <Appearance>
+		    <Material diffuseColor='0 0 1'/>
+		  </Appearance>
+		  <Cylinder/>
+		</Shape>
+	</Transform>
+
+
+
+    <Transform DEF='obj2a' translation="-4 1.25 -4" rotation='0 1 0 1'>
+		<Shape>
+			<Text string='"Font DEF 0" "Broadcast Titling font" "spacing = negative 4" "begin justify, italic"'>
+				<FontStyle DEF='fontStyle2' family='BroadcastTitling.ttf' justify='BEGIN' spacing='-4' style='ITALIC'/>
+			</Text>
+			<Appearance>
+				<Material diffuseColor="1 1 1"/>
+			</Appearance>
+	    </Shape>
+	</Transform>
+    <Transform DEF='obj2b' translation="-4 0 -4" rotation='0 1 0 1'>
+		<Shape>
+			<Text string='"Font USE 2" "orange text"'>
+				<FontStyle USE='fontStyle2'/>
+			</Text>
+			<Appearance>
+				<Material diffuseColor="1 .6 .2"/>
+			</Appearance>
+	    </Shape>
+	</Transform>
+    <Transform DEF='obj2c' translation="-4 -1.25 -4" rotation='0 1 0 1'>
+		<Shape>
+			<Text string='"Font USE 2" "light gray text"'>
+				<FontStyle USE='fontStyle2'/>
+			</Text>
+			<Appearance>
+				<Material diffuseColor=".7 .7 .7"/>
+			</Appearance>
+	    </Shape>
+	</Transform>
+
+
+	<Transform DEF='sphere1' translation='4 0 -10'>
+		<Shape>
+		  <Appearance>
+		    <Material diffuseColor='.5 .5 .5'/>
+		  </Appearance>
+		  <Sphere/>
+		</Shape>
+	</Transform>
+
+    </Scene>
+</X3D>

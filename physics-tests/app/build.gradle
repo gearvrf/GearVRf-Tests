@@ -12,11 +12,11 @@ allprojects {
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '25.0.3'
+    buildToolsVersion '25.0.0'
 
     defaultConfig {
         applicationId "org.gearvrf.tester"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 23
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
@@ -67,11 +67,11 @@ dependencies {
         compile(name: 'gvrf-physics-debug', ext: 'aar')
     }
 
-    androidTestCompile 'com.android.support:support-annotations:23.0.1'
+    androidTestCompile 'com.android.support:support-annotations:23.+'
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
-    compile 'com.android.support:appcompat-v7:23.0.1'
+    compile 'com.android.support:appcompat-v7:23.+'
     testCompile 'junit:junit:4.12'
     compile 'net.jodah:concurrentunit:0.4.2'
     compile project(path: ':gvr-unittestutils')

@@ -7,7 +7,11 @@ import android.support.test.runner.AndroidJUnit4;
 
 import net.jodah.concurrentunit.Waiter;
 
+import org.gearvrf.GVRBone;
+import org.gearvrf.GVRColorBlendShader;
 import org.gearvrf.GVRIndexBuffer;
+import org.gearvrf.GVRShaderData;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
@@ -18,9 +22,11 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRVertexBuffer;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
+import org.gearvrf.scene_objects.GVRCylinderSceneObject;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.gearvrf.utility.Log;
+import org.joml.Matrix4f;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -32,6 +38,9 @@ import java.nio.ByteOrder;
 import java.nio.CharBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -325,5 +334,214 @@ public class RenderTests {
         CharBuffer ibtmp = ibuf.asCharBuffer();
         mWaiter.assertTrue(compareBuffers(indBuf, ibtmp));
     }
-}
 
+    @Test
+    public void testAccessMeshBoneWeights() throws TimeoutException
+    {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        final float[] vertices = {
+                -1, 1, 0,
+                -1, -1, 0,
+                1, 1, 0,
+                1, -1, 0 };
+        final float[] weights = {
+            0, 1, 0, 0,
+            0.75f, 0.25f, 0, 0,
+            0.5f, 0.5f, 0, 0,
+            0.2f, 0.2f, 0.2f, 0.4f };
+        final int[] indices = {
+                0, 0, 0, 0,
+                0, 1, 0, 0,
+                1, 3, 0, 0,
+                0, 1, 3, 2 };
+        final int[] triangles = { 0, 1, 2, 1, 3, 2 };
+        GVRMesh mesh = new GVRMesh(ctx, "float3 a_position float4 a_bone_weights int4 a_bone_indices");
+        float[] ftmp;
+        int[] itmp;
+
+        mesh.setVertices(vertices);
+        mesh.setFloatArray("a_bone_weights", weights);
+        mesh.setIntArray("a_bone_indices", indices);
+        mesh.setIndices(triangles);
+        ftmp = mesh.getFloatArray("a_position");
+        mWaiter.assertTrue(compareArrays(vertices, ftmp));
+        ftmp = mesh.getFloatArray("a_bone_weights");
+        mWaiter.assertTrue(compareArrays(weights, ftmp));
+        itmp = mesh.getIntArray("a_bone_indices");
+        mWaiter.assertTrue(compareArrays(indices, itmp));
+        itmp = mesh.getIndexBuffer().asIntArray();
+        mWaiter.assertTrue(compareArrays(triangles, itmp));
+    }
+
+    @Test
+    public void testOnePostEffect() throws TimeoutException {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        final GVRScene scene = mTestUtils.getMainScene();
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
+
+        ctx.getEventReceiver().addListener(texHandler);
+        GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.gearvr_logo));;
+        GVRMaterial mat1 = new GVRMaterial(ctx);
+        GVRSceneObject cube1 = new GVRCubeSceneObject(ctx, true, mat1);
+        GVRShaderData flipHorzPostEffect = new GVRShaderData(ctx, GVRMaterial.GVRShaderType.VerticalFlip.ID);
+
+        mat1.setMainTexture(tex1);
+        cube1.getTransform().setPositionZ(-2.0f);
+        scene.getMainCameraRig().getRightCamera().addPostEffect(flipHorzPostEffect);
+        scene.getMainCameraRig().getLeftCamera().addPostEffect(flipHorzPostEffect);
+        scene.addSceneObject(cube1);
+        mTestUtils.waitForAssetLoad();
+        ctx.getEventReceiver().removeListener(texHandler);
+        mTestUtils.waitForSceneRendering();
+        mTestUtils.screenShot(getClass().getSimpleName(), "testOnePostEffect", mWaiter, true);
+    }
+
+    @Test
+    public void testTwoPostEffects() throws TimeoutException {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        final GVRScene scene = mTestUtils.getMainScene();
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
+
+        ctx.getEventReceiver().addListener(texHandler);
+        GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.gearvr_logo));;
+        GVRMaterial mat1 = new GVRMaterial(ctx);
+        GVRSceneObject cube1 = new GVRCubeSceneObject(ctx, true, mat1);
+        GVRShaderData flipHorzPostEffect = new GVRShaderData(ctx, GVRMaterial.GVRShaderType.VerticalFlip.ID);
+        GVRShaderId colorBlendID = new GVRShaderId(GVRColorBlendShader.class);
+        GVRShaderData colorBlendPostEffect = new GVRShaderData(ctx, colorBlendID);
+
+        colorBlendPostEffect.setVec3("u_color", 0.0f, 0.3f, 0.3f);
+        colorBlendPostEffect.setFloat("u_factor", 0.5f);
+        flipHorzPostEffect.setVec3("u_color", 0, 0, 0);
+        flipHorzPostEffect.setFloat("u_factor", 0);
+
+        mat1.setMainTexture(tex1);
+        cube1.getTransform().setPositionZ(-2.0f);
+        scene.getMainCameraRig().getRightCamera().addPostEffect(colorBlendPostEffect);
+        scene.getMainCameraRig().getLeftCamera().addPostEffect(colorBlendPostEffect);
+        scene.getMainCameraRig().getCenterCamera().addPostEffect(colorBlendPostEffect);
+        scene.getMainCameraRig().getRightCamera().addPostEffect(flipHorzPostEffect);
+        scene.getMainCameraRig().getLeftCamera().addPostEffect(flipHorzPostEffect);
+        scene.getMainCameraRig().getCenterCamera().addPostEffect(flipHorzPostEffect);
+        scene.addSceneObject(cube1);
+        mTestUtils.waitForAssetLoad();
+        ctx.getEventReceiver().removeListener(texHandler);
+        mTestUtils.waitForSceneRendering();
+        mTestUtils.screenShot(getClass().getSimpleName(), "testTwoPostEffects", mWaiter, true);
+    }
+
+    @Test
+    public void testSkinningTwoBones() throws TimeoutException, InterruptedException
+    {
+        final int NUM_STACKS = 16;
+        final int TOP_SIZE = 5;
+        final int BOTTOM_SIZE = 5;
+        final int MIDDLE_SIZE = (NUM_STACKS - (TOP_SIZE + BOTTOM_SIZE));
+        final int NUM_SLICE = 16;
+
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        final GVRScene scene = mTestUtils.getMainScene();
+        GVRCylinderSceneObject.CylinderParams cylparams = new GVRCylinderSceneObject.CylinderParams();
+        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
+        GVRSceneObject root = new GVRSceneObject(ctx);
+
+        mtl.setDiffuseColor(1.0f, 0.5f, 0.8f, 0.5f);
+        cylparams.Material = mtl;
+        cylparams.HasTopCap = false;
+        cylparams.HasBottomCap = false;
+        cylparams.TopRadius = 0.5f;
+        cylparams.BottomRadius = 0.5f;
+        cylparams.Height = 2.0f;
+        cylparams.FacingOut = true;
+        cylparams.StackNumber = NUM_STACKS;
+        cylparams.SliceNumber = NUM_SLICE;
+        cylparams.VertexDescriptor = "float3 a_position float4 a_bone_weights int4 a_bone_indices ";
+        GVRCylinderSceneObject cyl = new GVRCylinderSceneObject(ctx, cylparams);
+
+        /*
+         * Add bone indices and bone weights to the cylinder vertex buffer.
+         */
+        GVRVertexBuffer vbuf = cyl.getRenderData().getMesh().getVertexBuffer();
+
+        int nverts = vbuf.getVertexCount();
+        int vertsPerStack = nverts / cylparams.StackNumber;
+        int[] boneIndices = new int[nverts * 4];
+        float[] boneWeights = new float[nverts * 4];
+
+        Arrays.fill(boneIndices, 0, nverts * 4, 0);
+        Arrays.fill(boneWeights, 0, nverts * 4, 0.0f);
+        for (int s = 0; s < NUM_STACKS; ++s)
+        {
+            float r = ((float) s - TOP_SIZE) / MIDDLE_SIZE;
+
+            for (int i = 0; i < vertsPerStack; ++i)
+            {
+                int v = (s * vertsPerStack + i) * 4;
+                //
+                // bottom of cylinder controlled by bone 0
+                //
+                if (s <= TOP_SIZE)
+                {
+                    boneIndices[v] = 0;
+                    boneWeights[v] = 1.0f;
+                }
+                //
+                // top of cylinder controlled by bone 1
+                //
+                else if (s > (TOP_SIZE + MIDDLE_SIZE))
+                {
+                    boneIndices[v] = 1;
+                    boneWeights[v] = 1.0f;
+                }
+                //
+                // middle of cylinder controlled by both bones
+                //
+                else
+                {
+                    boneIndices[v + 1] = 1;
+                    boneWeights[v] = 1.0f - r;
+                    boneWeights[v + 1] = r;
+                }
+            }
+        }
+
+        /*
+         * Define the two bones which control the mesh.
+         * One bone is at the origin, the other is 1 unit below the first
+         */
+        GVRSceneObject bone0Obj = new GVRSceneObject(ctx);
+        GVRSceneObject bone1Obj = new GVRSceneObject(ctx);
+        GVRBone bone0 = new GVRBone(ctx);
+        GVRBone bone1 = new GVRBone(ctx);
+        Matrix4f bone0Mtx = new Matrix4f();
+        Matrix4f bone1Mtx = new Matrix4f();
+        Matrix4f outMtx0 = new Matrix4f();
+        Matrix4f outMtx1 = new Matrix4f();
+        float[] temp1 = new float[16];
+        List<GVRBone> bones = new ArrayList<GVRBone>();
+
+        bone1Mtx.translate(0, -1.0f, 0.0f);
+        bones.add(bone0);
+        bones.add(bone1);
+        bone0.setName("top");
+        bone0.setSceneObject(bone0Obj);
+        bone0Mtx.get(temp1);
+        bone0.setOffsetMatrix(temp1);
+        bone1.setName("bottom");
+        bone1.setSceneObject(bone1Obj);
+        bone1Mtx.get(temp1);
+        bone1.setOffsetMatrix(temp1);
+        vbuf.setFloatArray("a_bone_weights", boneWeights);
+        vbuf.setIntArray("a_bone_indices", boneIndices);
+        cyl.getRenderData().getMesh().setBones(bones);
+        bone0.setFinalTransformMatrix(outMtx0);
+        outMtx1.translate(0, -1.0f, 0.0f);
+        outMtx1.rotation((float) Math.PI / 4.0f, 0, 0, 1);
+        bone1.setFinalTransformMatrix(outMtx1);
+        root.getTransform().setPositionZ(-3.0f);
+        root.addChildObject(cyl);
+        scene.addSceneObject(root);
+        mTestUtils.waitForXFrames(2);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testSkinningTwoBones", mWaiter, false);
+    }
+}
