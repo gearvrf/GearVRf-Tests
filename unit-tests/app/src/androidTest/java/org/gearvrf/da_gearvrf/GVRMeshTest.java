@@ -95,7 +95,7 @@ public class GVRMeshTest extends ActivityInstrumentationGVRf {
 
 
     public void testGetNormalGVRMesh() {
-        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext, R.raw.cylinder3));
+        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.getAssetLoader().loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext, R.raw.cylinder3));
         assertNotNull(gvrMesh.getNormals());
     }
 
@@ -104,7 +104,7 @@ public class GVRMeshTest extends ActivityInstrumentationGVRf {
      * Try set object empty in @gvrMesh.setNormals
      */
     public void testRetrievePositionEmptyArrayInNormalsMesh() {
-        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
+        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.getAssetLoader().loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
 
         try {
             gvrMesh.setNormals(BoundsValues.getArrayFloatEmpty());
@@ -121,7 +121,7 @@ public class GVRMeshTest extends ActivityInstrumentationGVRf {
      */
     public void testRetrievePositionEmptyArrayInVector() {
 
-        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
+        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.getAssetLoader().loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
 
         try {
             gvrMesh.setFloatVector("ratio_r", BoundsValues.getArrayFloatEmpty());
@@ -136,7 +136,7 @@ public class GVRMeshTest extends ActivityInstrumentationGVRf {
      */
     public void testRetrievePositionEmptyArrayInTextCoords() {
 
-        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
+        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.getAssetLoader().loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
 
         try {
             gvrMesh.setTexCoords(BoundsValues.getArrayFloatEmpty());
@@ -153,7 +153,7 @@ public class GVRMeshTest extends ActivityInstrumentationGVRf {
 
     public void ignoreRetrievePositionEmptyArrayInVec2() {
 
-        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
+        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.getAssetLoader().loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
 
         try {
             gvrMesh.setVec2Vector("ratio_", BoundsValues.getArrayFloatEmpty());
@@ -170,7 +170,7 @@ public class GVRMeshTest extends ActivityInstrumentationGVRf {
      */
     public void ignoreRetrievePositionEmptyArrayInVec3() {
 
-        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
+        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.getAssetLoader().loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
 
         try {
             gvrMesh.setVec3Vector("ratio_", BoundsValues.getArrayFloatEmpty());
@@ -186,7 +186,7 @@ public class GVRMeshTest extends ActivityInstrumentationGVRf {
      */
     public void ignoreRetrievePositionEmptyArrayInVec4() {
 
-        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
+        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.getAssetLoader().loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
 
         try {
             gvrMesh.setVec4Vector("ratio_", BoundsValues.getArrayFloatEmpty());
@@ -202,7 +202,7 @@ public class GVRMeshTest extends ActivityInstrumentationGVRf {
      */
     public void ignoreRetrievePositionEmptyArrayInVertices() {
 
-        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
+        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.getAssetLoader().loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
 
         try {
             gvrMesh.setVertices(BoundsValues.getArrayFloatEmpty());
@@ -221,7 +221,7 @@ public class GVRMeshTest extends ActivityInstrumentationGVRf {
      */
     public void testCreateArrayForVec4With6Position() {
 
-        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
+        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.getAssetLoader().loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
         float[] vec4 = {-0.5f, 0.5f, 0.0f, -0.5f, 0.5f, 0.0f};
 
         try {
@@ -243,7 +243,7 @@ public class GVRMeshTest extends ActivityInstrumentationGVRf {
      */
     public void ignoreCreateArrayForVec3With6Position() {
 
-        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
+        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.getAssetLoader().loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
         float[] vec3 = {-0.5f, 0.5f, 0.0f, -0.5f, 0.5f, 0.0f};
 
         try {
@@ -263,7 +263,7 @@ public class GVRMeshTest extends ActivityInstrumentationGVRf {
      */
     public void ignoreCreateArrayForVec2With6Position() {
 
-        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
+        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.getAssetLoader().loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
         float[] vec2 = {-0.5f, 0.5f, 0.0f, -0.5f, 0.5f, 0.0f};
 
         try {
@@ -280,7 +280,7 @@ public class GVRMeshTest extends ActivityInstrumentationGVRf {
      */
     public void testGetSetTexCoords() {
 
-        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
+        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.getAssetLoader().loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
         float[] coords = {0.5f, 0.5f, 0.0f, 0.5f};
         gvrMesh.setTexCoords(coords);
         assertEquals(4,gvrMesh.getTexCoords().length);
@@ -293,7 +293,7 @@ public class GVRMeshTest extends ActivityInstrumentationGVRf {
 
     public void testGetSetFloatVector() {
 
-        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext, R.raw.cylinder3));
+        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.getAssetLoader().loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext, R.raw.cylinder3));
         float[] coords = new float[80];
         for (int i = 0; i < 80; i++) coords[i] = 0.1f;
         gvrMesh.setFloatVector("test", coords);
@@ -310,7 +310,7 @@ public class GVRMeshTest extends ActivityInstrumentationGVRf {
 
     public void testGetSetVec2Vector() {
 
-        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext, R.raw.cylinder3));
+        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.getAssetLoader().loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext, R.raw.cylinder3));
         float[] coords = new float[160];
         for (int i = 0; i < 160; i++) coords[i] = 0.1f;
         gvrMesh.setVec2Vector("test", coords);
@@ -328,7 +328,7 @@ public class GVRMeshTest extends ActivityInstrumentationGVRf {
 
     public void testGetSetVec3Vector() {
 
-        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext, R.raw.cylinder3));
+        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.getAssetLoader().loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext, R.raw.cylinder3));
         float[] coords = new float[240];
         for (int i = 0; i < 240; i++) coords[i] = 0.1f;
         gvrMesh.setVec3Vector("test", coords);
@@ -345,7 +345,7 @@ public class GVRMeshTest extends ActivityInstrumentationGVRf {
 
     public void testGetSetVec4Vector() {
 
-        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext, R.raw.cylinder3));
+        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.getAssetLoader().loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext, R.raw.cylinder3));
         float[] coords = new float[320];
         for (int i = 0; i < 320; i++) coords[i] = 0.1f;
         gvrMesh.setVec4Vector("test", coords);
@@ -361,13 +361,13 @@ public class GVRMeshTest extends ActivityInstrumentationGVRf {
     }
 
     public void testGetBoundingBox(){
-        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext, R.raw.cylinder3));
+        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.getAssetLoader().loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext, R.raw.cylinder3));
         GVRMesh gvrMesh2 = gvrMesh.getBoundingBox();
         assertNotNull(gvrMesh2);
     }
 
     public void testEyePointeeSetMesh(){
-        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext, R.raw.cylinder3));
+        GVRMesh gvrMesh = TestDefaultGVRViewManager.mGVRContext.getAssetLoader().loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext, R.raw.cylinder3));
         GVRMeshEyePointee gvrMeshEyePointee = new GVRMeshEyePointee(gvrMesh,true);
         GVRMeshEyePointee gvrMeshEyePointee2 = new GVRMeshEyePointee(gvrMesh,false);
         assertNotNull(gvrMeshEyePointee);

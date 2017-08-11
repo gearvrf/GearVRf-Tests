@@ -77,7 +77,7 @@ public class perfScript extends GVRScript {
             try {
                 // we assume that the mesh and the textures are valid
                 bunny = new GVRSceneObject(gvrContext,
-                        gvrContext.loadMesh(new GVRAndroidResource(gvrContext,
+                        gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext,
                                 "bunny.obj")),
                         gvrContext.loadTexture(new GVRAndroidResource(
                                 gvrContext, textureNames[i
