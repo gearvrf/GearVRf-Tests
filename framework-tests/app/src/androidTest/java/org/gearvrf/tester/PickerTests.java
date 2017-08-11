@@ -447,9 +447,9 @@ public class PickerTests
         sphere1.attachComponent(collider1);
         scene.addSceneObject(sphere1);
 
-        float distance = GVRPicker.pickSceneObject(sphere1, scene.getMainCameraRig());
+        final GVRPicker.GVRPickedObject pickedObject = GVRPicker.pickSceneObject(sphere1);
         gvrTestUtils.waitForXFrames(2);
-        mWaiter.assertEquals(1.0f, distance);
+        mWaiter.assertEquals(1.0f, pickedObject.getHitDistance());
     }
 
     @Test
@@ -677,7 +677,7 @@ public class PickerTests
         GVRScene scene = gvrTestUtils.getMainScene();
         try
         {
-            GVRMesh mesh = context.loadMesh(new GVRAndroidResource(context,
+            GVRMesh mesh = context.getAssetLoader().loadMesh(new GVRAndroidResource(context,
                     "PickerTests/bunny.obj"));
             GVRSceneObject bunny = new GVRSceneObject(context, mesh);
             bunny.getRenderData().setMaterial(mBlue);
@@ -690,7 +690,7 @@ public class PickerTests
 
             scene.getEventReceiver().addListener(mPickHandler);
 
-            GVRMesh sphereMesh = context.loadMesh(new GVRAndroidResource(context,
+            GVRMesh sphereMesh = context.getAssetLoader().loadMesh(new GVRAndroidResource(context,
                     "PickerTests/sphere.obj"));
             GVRSceneObject sceneObject = new GVRSceneObject(context, sphereMesh);
             sceneObject.getRenderData().setMaterial(mRed);

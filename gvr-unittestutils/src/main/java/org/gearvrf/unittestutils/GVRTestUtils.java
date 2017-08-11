@@ -42,10 +42,12 @@ import java.util.concurrent.TimeoutException;
  */
 public class GVRTestUtils implements GVRMainMonitor {
     private static final String TAG = GVRTestUtils.class.getSimpleName();
-    public static final int TEST_TIMEOUT = 2000;
     public static final String DEVICE_TYPE = "S7Edge";
+    public static final String GITHUB_URL = "https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/vulkan/";
+    public static final String GOLDEN_MASTERS_URL = GITHUB_URL + "golden_masters/" + DEVICE_TYPE + "/";
+
     protected static final int SCREENSHOT_TEST_TIMEOUT = 80000;
-    
+
     private GVRContext gvrContext;
     private final CountDownLatch onInitLatch = new CountDownLatch(1);
     private final CountDownLatch onStepLatch = new CountDownLatch(1);
@@ -279,7 +281,7 @@ public class GVRTestUtils implements GVRMainMonitor {
 
                 try
                 {
-                    URL url = new URL("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/golden_masters/" + DEVICE_TYPE + "/" + category + "/" + testname);
+                    URL url = new URL(GOLDEN_MASTERS_URL + "/" + category + "/" + testname);
                     golden = BitmapFactory.decodeStream(url.openStream());
                 }
                 catch (Throwable ex)
