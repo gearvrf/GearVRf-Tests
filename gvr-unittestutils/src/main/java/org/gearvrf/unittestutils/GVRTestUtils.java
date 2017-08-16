@@ -19,6 +19,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Environment;
+import android.os.Build;
 
 import net.jodah.concurrentunit.Waiter;
 
@@ -29,22 +30,27 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScreenshotCallback;
 import org.gearvrf.utility.Log;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeoutException;
+
 
 /**
  * This class defines utility function to be used for writing unit tests for GearVR framework
  */
 public class GVRTestUtils implements GVRMainMonitor {
     private static final String TAG = GVRTestUtils.class.getSimpleName();
-    public static final String DEVICE_TYPE = "S7Edge";
+    private static final String DEFAULT_DEVICE_TYPE = "S7Edge";
+    public static final String DEVICE_TYPE = GetDeviceType();
     public static final String GITHUB_URL = "https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/vulkan/";
-    public static final String GOLDEN_MASTERS_URL = GITHUB_URL + "golden_masters/" + DEVICE_TYPE + "/";
+    private static final String GOLDEN_MASTERS_BASE_URL = GITHUB_URL + "golden_masters/";
+    public static final String GOLDEN_MASTERS_URL = GOLDEN_MASTERS_BASE_URL + DEVICE_TYPE;
 
     protected static final int SCREENSHOT_TEST_TIMEOUT = 80000;
 
@@ -88,6 +94,16 @@ public class GVRTestUtils implements GVRMainMonitor {
             testableMain.setMainMonitor(this);
         }
 
+    }
+
+    private static String GetDeviceType() {
+        String TryUrl = GOLDEN_MASTERS_BASE_URL + Build.MODEL;
+        try {
+            return new BufferedReader(new InputStreamReader(new URL(TryUrl).openStream())).readLine().trim();
+        } catch (Exception ex) {
+            Log.e(TAG,"Golden master redirect not found: " + TryUrl);
+            return DEFAULT_DEVICE_TYPE;
+        }
     }
 
     /**
@@ -282,6 +298,7 @@ public class GVRTestUtils implements GVRMainMonitor {
                 try
                 {
                     URL url = new URL(GOLDEN_MASTERS_URL + "/" + category + "/" + testname);
+                    Log.v(TAG, "Fetching golden master "+url.toString());
                     golden = BitmapFactory.decodeStream(url.openStream());
                 }
                 catch (Throwable ex)
