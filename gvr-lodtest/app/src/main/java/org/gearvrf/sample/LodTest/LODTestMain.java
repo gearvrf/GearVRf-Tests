@@ -1,6 +1,7 @@
 package org.gearvrf.sample.LodTest;
 
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRAssetLoader;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRLODGroup;
 import org.gearvrf.GVRMain;
@@ -33,9 +34,10 @@ public class LODTestMain extends GVRMain {
 
         scene.setFrustumCulling(true);
 
-        Future<GVRTexture> redFutureTexture = gvrContext.loadFutureTexture(new GVRAndroidResource(gvrContext, R.drawable.red));
-        Future<GVRTexture> greenFutureTexture = gvrContext.loadFutureTexture(new GVRAndroidResource(gvrContext, R.drawable.green));
-        Future<GVRTexture> blueFutureTexture = gvrContext.loadFutureTexture(new GVRAndroidResource(gvrContext, R.drawable.blue));
+        final GVRAssetLoader assetLoader = gvrContext.getAssetLoader();
+        Future<GVRTexture> redFutureTexture = assetLoader.loadFutureTexture(new GVRAndroidResource(gvrContext, R.drawable.red));
+        Future<GVRTexture> greenFutureTexture = assetLoader.loadFutureTexture(new GVRAndroidResource(gvrContext, R.drawable.green));
+        Future<GVRTexture> blueFutureTexture = assetLoader.loadFutureTexture(new GVRAndroidResource(gvrContext, R.drawable.blue));
 
         GVRSphereSceneObject root = new GVRSphereSceneObject(gvrContext);
 
