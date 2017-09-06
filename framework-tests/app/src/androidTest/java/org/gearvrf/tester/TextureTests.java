@@ -37,27 +37,16 @@ import org.gearvrf.unittestutils.GVRTestableActivity;
 @RunWith(AndroidJUnit4.class)
 public class TextureTests
 {
-    private static final String TAG = TextureTests.class.getSimpleName();
     private GVRTestUtils mTestUtils;
     private Waiter mWaiter;
     private GVRSceneObject mRoot;
-    private GVRSceneObject mBackground;
-    private GVRMaterial mBlueMtl;
-    private GVRMaterial mCubeMapMtl;
     private boolean mDoCompare = true;
 
     @Rule
     public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
     {
-        /*
-        protected void afterActivityFinished() {
-            GVRScene scene = mTestUtils.getMainScene();
-            if (scene != null) {
-                scene.clear();
-            }
-        }
-        */
     };
+
     @Before
     public void setUp() throws TimeoutException
     {
@@ -66,20 +55,9 @@ public class TextureTests
         mTestUtils.waitForOnInit();
         mWaiter = new Waiter();
 
-        GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
-        Future<GVRTexture> tex = ctx.getAssetLoader().loadFutureCubemapTexture(new GVRAndroidResource(ctx, R.raw.beach));
-
         mWaiter.assertNotNull(scene);
-        mBlueMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
-        mCubeMapMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Cubemap.ID);
 
-        mBackground = new GVRCubeSceneObject(ctx, false);
-        mBackground.getTransform().setScale(10, 10, 10);
-        mBackground.getRenderData().setMaterial(mCubeMapMtl);
-        mBackground.setName("background");
-        mBlueMtl.setDiffuseColor(0, 0, 1, 1);
-        mCubeMapMtl.setMainTexture(tex);
         mRoot = scene.getRoot();
         mWaiter.assertNotNull(mRoot);
     }
@@ -350,7 +328,6 @@ public class TextureTests
         GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
         GVRSceneObject model = new GVRCubeSceneObject(ctx, true, mtl);
         GVRDirectLight light = new GVRDirectLight(ctx);
-        GVRMesh mesh = model.getRenderData().getMesh();
         GVRTexture tex2 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.specularring));
 
         mtl.setDiffuseColor(0.7f, 0, 0.7f, 1);
@@ -375,7 +352,6 @@ public class TextureTests
         GVRScene scene = mTestUtils.getMainScene();
         GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
         GVRSceneObject model = new GVRCubeSceneObject(ctx, true, mtl);
-        GVRMesh mesh = model.getRenderData().getMesh();
         GVRTexture tex2 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.specularring));
 
         mtl.setDiffuseColor(0.7f, 0, 0.7f, 1);
@@ -1110,9 +1086,6 @@ public class TextureTests
         };
         ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.etc2_rgb8_opaque), rgb8TexLoadCallback);
         mWaiter.await();
-
-
-
 
         android.util.Log.d("gvrf", "end texture transparency detection");
     }
