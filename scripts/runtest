@@ -1,0 +1,146 @@
+#!/bin/bash
+
+# runs framework-tests and asset-tests.
+# Prepared for GearVRf release 3.3
+# Assumes that framework tests and asset tests are directly runnable 
+# from GearVRf/GVRf/Framework
+# Please prepare your ../extra_settings.gradle accordingly
+# Device must be in GearVR Debug mode
+# Usage:
+#   source runtest
+#   phone-select <hex from adb devices>
+#   root-select /path/to/<dir containing GearVRf and GearVRf-Tests>
+#   run-tests
+#   // output in <root-select dir>/TestResults
+
+# Allows simultaneous testing of multiple devices on a single system
+phone-select() {
+        export ANDROID_SERIAL=$1
+}
+
+# Allows simultaneous testing of multiple software builds
+root-select() {
+        GVRFROOT=$1
+}
+
+# connectedAndroidTest sometimes will fail on incompatible app version
+# uninstall explicitly
+uninstall-tests() {
+        adb wait-for-device uninstall org.gearvrf.tester
+        adb wait-for-device uninstall org.gearvrf.tester.test
+}
+
+# We want to collect as much data as possible. 
+# Clean up before collection
+pre-test() {
+	PHONE_MODEL=`adb wait-for-device shell getprop ro.product.model|dos2unix`
+	RESULT_DIR=$GVRFROOT/TestResults/$PHONE_MODEL/$TEST_GROUP/$TEST_NAME/$SUBTEST_NAME
+	mkdir -p $RESULT_DIR
+	uninstall-tests
+	cd $RESULT_DIR
+	( cd $GVRFROOT/GearVRf; git status; git show --no-patch) > GearVRf.branch
+	( cd $GVRFROOT/GearVRf-Tests; git status; git show --no-patch) > GearVRf-Tests.branch
+	adb wait-for-device shell getprop ro.build.fingerprint > fingerprint
+	adb wait-for-device shell rm -rf sdcard/GearVRFTests/*
+	adb wait-for-device logcat -c
+}
+
+post-test() {
+	adb logcat -d > logcat.txt
+	mv $GVRFROOT/GearVRf-Tests/$TEST_GROUP/app/build/reports/androidTests .
+	mv $GVRFROOT/GearVRf-Tests/$TEST_GROUP/app/build/outputs/androidTest-results .
+	adb wait-for-device pull sdcard/GearVRFTests
+}
+
+run-single-test() {
+	pre-test
+	( cd $GVRFROOT/GearVRf/GVRf/Framework; run-connected-android-tests )
+	post-test
+}
+
+# run more and more specific tests, depending on TEST_GROUP TEST_NAME SUBTEST_NAME
+run-connected-android-tests() {
+	if [ -z "$SUBTEST_NAME" -o "$SUBTEST_NAME" = all ]
+	then
+		if [ -z "$TEST_NAME" -o "$TEST_NAME" = all ]
+		then
+			if [ -z "$TEST_GROUP" -o "$TEST_GROUP" = all ]
+			then
+				./gradlew connectedAndroidTest
+			else
+				./gradlew :$TEST_GROUP:connectedAndroidTest
+			fi
+		else
+			./gradlew :$TEST_GROUP:connectedAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=org.gearvrf.tester.${TEST_NAME}
+		fi
+	else
+		./gradlew :$TEST_GROUP:connectedAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=org.gearvrf.tester.${TEST_NAME}#${SUBTEST_NAME}
+	fi
+}
+
+# The runner. Runs list of tests. Each line in the list contains: TEST_GROUP TEST_NAME SUBTEST_NAME
+# 'all' is a wildcard. Omitting a parameter is a wildcard.
+
+run-tests() {
+	(
+		while read TEST_GROUP TEST_NAME SUBTEST_NAME
+		do
+			run-single-test < /dev/null # adb sometimes consumes all input breaking the loop
+		done <<end-of-list
+			framework-tests BoundingVolumeTests
+			framework-tests CullTests
+			framework-tests LightTests
+			framework-tests MiscTests
+			framework-tests PickerTests
+			framework-tests RenderTests
+			framework-tests SceneObjectTests
+			framework-tests ShadowTests
+			framework-tests StateSortTests
+			framework-tests StencilTests
+			framework-tests TextureTests testAlphaToCoverage
+			framework-tests TextureTests testCompressedTextureASTC
+			framework-tests TextureTests testCompressedTextureASTCUnlit
+			framework-tests TextureTests testLayeredDiffuseTexture
+			framework-tests TextureTests testLayeredDiffuseTextureUnlit
+			framework-tests TextureTests testMissingTexture
+			framework-tests TextureTests testRepeatTexture
+			framework-tests TextureTests testRepeatTextureUnlit
+			framework-tests TextureTests testSpecularTexture
+			framework-tests TextureTests testSpecularTextureUnlit
+			framework-tests TextureTests testLayeredSpecularTexture
+			framework-tests TextureTests testLayeredSpecularTextureUnlit
+			framework-tests TextureTests testDiffuseSpecularTexture
+			framework-tests TextureTests testDiffuseSpecularTextureUnlit
+			framework-tests TextureTests testDiffuseNormalTexture
+			framework-tests TextureTests testDiffuseNormalTextureUnlit
+			framework-tests TextureTests testNormalDiffuseSpecularLightmap
+			framework-tests TextureTests testNormalDiffuseSpecularLightmapUnlit
+			framework-tests TextureTests testNormaLightmap
+			framework-tests TextureTests testNormaLightmapUnlit
+			framework-tests TextureTests testSpecularLightmap
+			framework-tests TextureTests testSpecularLightmapUnlit
+			framework-tests TextureTests testLoadTextureFromResource
+			asset-tests AssetImportTests PLYVertexColors
+			asset-tests AssetImportTests canLoadExternalScene
+			asset-tests AssetImportTests canLoadModel
+			asset-tests AssetImportTests canLoadModelInScene
+			asset-tests AssetImportTests canLoadModelWithCustomIO
+			asset-tests AssetImportTests canLoadModelWithHandler
+			asset-tests AssetImportTests canStartAnimations
+			asset-tests AssetImportTests jassimpBearOBJ
+			asset-tests AssetImportTests jassimpBenchCollada
+			asset-tests AssetImportTests jassimpDeerOBJ
+			asset-tests AssetImportTests jassimpHippoOBJ
+			asset-tests AssetImportTests jassimpSkinningTREX
+			asset-tests AssetImportTests jassimpTrees3DS
+			asset-tests AssetImportTests jassimpWolfOBJ
+			asset-tests AssetImportTests x3dEmissive
+			asset-tests AssetImportTests x3dGenerateNormals
+			asset-tests AssetImportTests x3dHierarchy
+			asset-tests AssetImportTests x3dOpacity
+			asset-tests AssetImportTests x3dTeapotTorus
+			asset-tests AssetLightTests
+			asset-tests AssetTextureTests
+end-of-list
+	)
+}
