@@ -1,11 +1,14 @@
 package org.gearvrf.tester;
 
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRBitmapTexture;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRRenderData;
@@ -190,55 +193,65 @@ public class StateSortTests {
         GVRContext context = gvrTestUtils.getGvrContext();
         GVRScene scene = gvrTestUtils.getMainScene();
 
-        final GVRTexture texture = context.getAssetLoader().loadTexture(new GVRAndroidResource(context, R.drawable.gearvr_logo));
-        final GVRMaterial material = new GVRMaterial(context);
-        material.setMainTexture(texture);
+        final GVRTexture textureWithAlpha = context.getAssetLoader().loadTexture(new GVRAndroidResource(context, R.drawable.grid_with_alpha));
+        final GVRMaterial materialWithAlpha = new GVRMaterial(context);
+        materialWithAlpha.setMainTexture(textureWithAlpha);
 
-        final GVRSceneObject backgroundNear = new GVRSceneObject(context, 5.0f, 5.0f, texture);
+        final Bitmap cyan = Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565);
+        cyan.eraseColor(Color.CYAN);
+        GVRTexture textureNoAlpha = new GVRBitmapTexture(context, cyan);
+        final GVRMaterial materialNoAlpha = new GVRMaterial(context);
+        materialNoAlpha.setMainTexture(textureNoAlpha);
+
+        final GVRSceneObject backgroundNear = new GVRSceneObject(context, 5.0f, 5.0f, textureNoAlpha);
         backgroundNear.setName("backgroundNear");
         backgroundNear.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
-        backgroundNear.getRenderData().setMaterial(material);
+        backgroundNear.getRenderData().setMaterial(materialNoAlpha);
         backgroundNear.getTransform().setPosition(1.0f, 0.0f, -2.0f);
         scene.addSceneObject(backgroundNear);
-        final GVRSceneObject backgroundFar = new GVRSceneObject(context, 5.0f, 5.0f, texture);
+
+        final GVRSceneObject backgroundFar = new GVRSceneObject(context, 5.0f, 5.0f, textureNoAlpha);
         backgroundFar.setName("backgroundFar");
         backgroundFar.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
-        backgroundFar.getRenderData().setMaterial(material);
+        backgroundFar.getRenderData().setMaterial(materialNoAlpha);
         backgroundFar.getTransform().setPosition(1.0f, 0.0f, -6.0f);
         scene.addSceneObject(backgroundFar);
 
-        final GVRSceneObject geometryNear = new GVRSceneObject(context, 5.0f, 5.0f, texture);
+        final GVRSceneObject geometryNear = new GVRSceneObject(context, 5.0f, 5.0f, textureNoAlpha);
         geometryNear.setName("geometryNear");
         geometryNear.getTransform().setPosition(-1.0f, 0.0f, -5.0f);
-        geometryNear.getRenderData().setMaterial(material);
+        geometryNear.getRenderData().setMaterial(materialNoAlpha);
         scene.addSceneObject(geometryNear);
-        final GVRSceneObject geometryFar = new GVRSceneObject(context, 5.0f, 5.0f, texture);
+
+        final GVRSceneObject geometryFar = new GVRSceneObject(context, 5.0f, 5.0f, textureNoAlpha);
         geometryFar.setName("geometryFar");
         geometryFar.getTransform().setPosition(-1.0f, 0.0f, -15.0f);
-        geometryFar.getRenderData().setMaterial(material);
+        geometryFar.getRenderData().setMaterial(materialNoAlpha);
         scene.addSceneObject(geometryFar);
 
-        final GVRSceneObject transparentNear = new GVRSceneObject(context, 5.0f, 5.0f, texture);
+        final GVRSceneObject transparentNear = new GVRSceneObject(context, 5.0f, 5.0f, textureWithAlpha);
         transparentNear.setName("transparentNear");
         transparentNear.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
         transparentNear.getTransform().setPosition(-1.0f, 0.0f, -5.5f);
         scene.addSceneObject(transparentNear);
-        final GVRSceneObject transparentFar = new GVRSceneObject(context, 5.0f, 5.0f, texture);
+
+        final GVRSceneObject transparentFar = new GVRSceneObject(context, 5.0f, 5.0f, textureWithAlpha);
         transparentFar.setName("transparentFar");
         transparentFar.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
         transparentFar.getTransform().setPosition(-1.0f, 0.0f, -7.5f);
         scene.addSceneObject(transparentFar);
 
-        final GVRSceneObject overlayNear = new GVRSceneObject(context, 1.0f, 1.0f, texture);
+        final GVRSceneObject overlayNear = new GVRSceneObject(context, 1.0f, 1.0f, textureWithAlpha);
         overlayNear.setName("overlayNear");
         overlayNear.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
-        overlayNear.getRenderData().setMaterial(material);
+        overlayNear.getRenderData().setMaterial(materialWithAlpha);
         overlayNear.getTransform().setPosition(-1.5f, 0.0f, -1.0f);
         scene.addSceneObject(overlayNear);
-        final GVRSceneObject overlayFar = new GVRSceneObject(context, 1.0f, 1.0f, texture);
+
+        final GVRSceneObject overlayFar = new GVRSceneObject(context, 1.0f, 1.0f, textureWithAlpha);
         overlayFar.setName("overlayFar");
         overlayFar.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
-        overlayFar.getRenderData().setMaterial(material);
+        overlayFar.getRenderData().setMaterial(materialWithAlpha);
         overlayFar.getTransform().setPosition(-1.5f, 0.0f, -3.0f);
         scene.addSceneObject(overlayFar);
 
