@@ -66,14 +66,18 @@ run-connected-android-tests() {
 		then
 			if [ -z "$TEST_GROUP" -o "$TEST_GROUP" = all ]
 			then
+				echo `date` run all tests >> $GVRFROOT/TestResults/$PHONE_MODEL/runlog
 				./gradlew connectedAndroidTest
 			else
+				echo `date` run $TEST_GROUP >> $GVRFROOT/TestResults/$PHONE_MODEL/runlog
 				./gradlew :$TEST_GROUP:connectedAndroidTest
 			fi
 		else
+			echo `date` run $TEST_GROUP $TEST_NAME >> $GVRFROOT/TestResults/$PHONE_MODEL/runlog
 			./gradlew :$TEST_GROUP:connectedAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=org.gearvrf.tester.${TEST_NAME}
 		fi
 	else
+		echo `date` run $TEST_GROUP $TEST_NAME $SUBTEST_NAME >> $GVRFROOT/TestResults/$PHONE_MODEL/runlog
 		./gradlew :$TEST_GROUP:connectedAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=org.gearvrf.tester.${TEST_NAME}#${SUBTEST_NAME}
 	fi
 }
