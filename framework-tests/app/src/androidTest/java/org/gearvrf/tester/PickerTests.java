@@ -307,7 +307,6 @@ public class PickerTests
         GVRBoxCollider collider = new GVRBoxCollider(context);
 
         box.setName("box");
-        box.getRenderData().setShaderTemplate(GVRPhongShader.class);
         box.getTransform().setPosition(0, 0, -2);
         collider.setHalfExtents(0.5f, 0.5f, 0.5f);
         box.attachComponent(collider);
