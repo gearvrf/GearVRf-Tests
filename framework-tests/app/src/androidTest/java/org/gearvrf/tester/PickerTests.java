@@ -95,11 +95,11 @@ public class PickerTests
                 {
                     p = new PickInfo();
                     p.PickedObj = sceneObj;
-                    p.EnterHits.add(new Vector3f(pickInfo.getHitX(), pickInfo.getHitY(), pickInfo.getHitZ()));
+                    p.EnterHits.add(new Vector3f(pickInfo.hitLocation[0], pickInfo.hitLocation[1], pickInfo.hitLocation[2]));
                 }
                 p.NumEnter++;
                 mPicked.put(name, p);
-                Log.d("Picker", "onEnter %s %f, %f, %f", name, pickInfo.getHitX(), pickInfo.getHitY(), pickInfo.getHitZ());
+                Log.d("Picker", "onEnter %s %f, %f, %f", name, pickInfo.hitLocation[0], pickInfo.hitLocation[1], pickInfo.hitLocation[2]);
             }
         }
 
@@ -129,8 +129,8 @@ public class PickerTests
                 // It puts the PickInfo in the map
                 mWaiter.assertNotNull(p);
                 p.NumInside++;
-                p.InsideHits.add(new Vector3f(pickInfo.getHitX(), pickInfo.getHitY(), pickInfo.getHitZ()));
-                Log.d("Picker", "onInside %s %f, %f, %f", name, pickInfo.getHitX(), pickInfo.getHitY(), pickInfo.getHitZ());
+                p.InsideHits.add(new Vector3f(pickInfo.hitLocation[0], pickInfo.hitLocation[1], pickInfo.hitLocation[2]));
+                Log.d("Picker", "onInside %s %f, %f, %f", name, pickInfo.hitLocation[0], pickInfo.hitLocation[1], pickInfo.hitLocation[2]);
             }
         }
 
