@@ -383,7 +383,7 @@ public class RenderTests {
         GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.gearvr_logo));;
         GVRMaterial mat1 = new GVRMaterial(ctx);
         GVRSceneObject cube1 = new GVRCubeSceneObject(ctx, true, mat1);
-        GVRShaderData flipHorzPostEffect = new GVRShaderData(ctx, GVRMaterial.GVRShaderType.VerticalFlip.ID);
+        GVRMaterial flipHorzPostEffect = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.VerticalFlip.ID);
 
         mat1.setMainTexture(tex1);
         cube1.getTransform().setPositionZ(-2.0f);
@@ -406,9 +406,9 @@ public class RenderTests {
         GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.gearvr_logo));;
         GVRMaterial mat1 = new GVRMaterial(ctx);
         GVRSceneObject cube1 = new GVRCubeSceneObject(ctx, true, mat1);
-        GVRShaderData flipHorzPostEffect = new GVRShaderData(ctx, GVRMaterial.GVRShaderType.VerticalFlip.ID);
+        GVRMaterial flipHorzPostEffect = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.VerticalFlip.ID);
         GVRShaderId colorBlendID = new GVRShaderId(GVRColorBlendShader.class);
-        GVRShaderData colorBlendPostEffect = new GVRShaderData(ctx, colorBlendID);
+        GVRMaterial colorBlendPostEffect = new GVRMaterial(ctx, colorBlendID);
 
         colorBlendPostEffect.setVec3("u_color", 0.0f, 0.3f, 0.3f);
         colorBlendPostEffect.setFloat("u_factor", 0.5f);
