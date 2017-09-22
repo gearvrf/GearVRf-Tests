@@ -73,7 +73,7 @@
               <Appearance>
                 <Material DEF="RedControllerMaterial" diffuseColor='.4 0 0' emissiveColor='1 0 0' specularColor='.1 0 0'/>
               </Appearance>
-              <Box/>
+              <Box size='.7 .7 .7'/>
             </Shape>
           </Transform>
         </Transform>
@@ -86,7 +86,7 @@
               <Appearance>
                 <Material DEF="GreenControllerMaterial" diffuseColor='0 .4 0' emissiveColor='0 .6 0'/>
               </Appearance>
-              <Box/>
+              <Box size='.7 .7 .7'/>
             </Shape>
           </Transform>
       </Transform>
@@ -98,7 +98,7 @@
               <Appearance>
                 <Material DEF="BlueControllerMaterial" diffuseColor='0 0 .4' emissiveColor='0 0 .6'/>
               </Appearance>
-              <Box/>
+              <Box size='.7 .7 .7'/>
             </Shape>
           </Transform>
       </Transform>
