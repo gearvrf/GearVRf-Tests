@@ -19,7 +19,7 @@ import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRCylinderSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.GVRPhongShader;
-//import org.gearvrf.GVRBillboard;
+import org.gearvrf.GVRBillboard;
 
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
@@ -214,7 +214,7 @@ public class SceneObjectTests
         mWaiter.assertNotNull(scene.getSceneObjectByName("cylinder2"));
         mTestUtils.screenShot(getClass().getSimpleName(), "canDisplayNonTextured", mWaiter, mDoCompare);
     }
-/*
+
     @Test
     public void attachBillboard() throws TimeoutException
     {
@@ -242,7 +242,7 @@ public class SceneObjectTests
 
         GVRSceneObject quadObj1 = new GVRSceneObject(ctx, 0.8f, 0.8f, tex);
         quadObj1.getTransform().setPosition(0.8f, 1.0f, -3);
-        //quadObj1.attachComponent(new GVRBillboard(ctx));
+        quadObj1.attachComponent(new GVRBillboard(ctx));
 
         GVRSceneObject quadObj2 = new GVRSceneObject(ctx, 0.8f, 0.8f, tex);
         quadObj2.getTransform().setPosition(-0.8f, -1.0f, -3);
@@ -250,7 +250,7 @@ public class SceneObjectTests
 
         GVRSceneObject quadObj3 = new GVRSceneObject(ctx, 0.8f, 0.8f, tex);
         quadObj3.getTransform().setPosition(0.8f, -1.0f, -3);
-        //quadObj3.attachComponent(new GVRBillboard(ctx));
+        quadObj3.attachComponent(new GVRBillboard(ctx));
 
         GVRSceneObject quadObj4 = new GVRSceneObject(ctx, 0.8f, 0.8f, tex);
         quadObj4.getTransform().setPosition(-0.8f, 1.0f, -3);
@@ -258,7 +258,7 @@ public class SceneObjectTests
 
         GVRSceneObject quadObj5 = new GVRSceneObject(ctx, 0.8f, 0.8f, tex);
         quadObj5.getTransform().setPosition(-1.5f, 0.0f, -3);
-        //quadObj5.attachComponent(new GVRBillboard(ctx));
+        quadObj5.attachComponent(new GVRBillboard(ctx));
 
         GVRSceneObject quadObj6 = new GVRSceneObject(ctx, 0.8f, 0.8f, tex);
         quadObj6.getTransform().setPosition(1.5f, 0.0f, -3);
@@ -274,5 +274,4 @@ public class SceneObjectTests
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot(getClass().getSimpleName(), "testBillboardsCamOffset", mWaiter, mDoCompare);
     }
-    */
 }
