@@ -4,7 +4,10 @@
   <!-- head>
   </head -->
   <Scene>
-  
+
+    <Viewpoint position='0 0 0'/>
+    <Background skyColor='.1 .2 .3'/>
+
     <NavigationInfo headlight="false"/>
     <PointLight DEF="redLight" color="1 0 0" location="-5 0 0" on="false"/>
     <PointLight DEF="greenLight" color="0 1 0" location="0 0 0" on="false"/>
