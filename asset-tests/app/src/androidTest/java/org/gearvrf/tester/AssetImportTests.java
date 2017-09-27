@@ -274,7 +274,7 @@ public class AssetImportTests
     @Test
     public void jassimpTrees3DS() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/trees/trees9.3ds", 9, 0, "jassimpTrees3DS");
+        mHandler.loadTestModel(GVRTestUtils.ASSETS_BASE_URL + "jassimp/trees/trees9.3ds", 9, 0, "jassimpTrees3DS");
     }
 
     @Test
@@ -286,7 +286,7 @@ public class AssetImportTests
     @Test
     public void jassimpHippoOBJ() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/hippo/hippo.obj", 1, 0, "jassimpHippoOBJ");
+        mHandler.loadTestModel(GVRTestUtils.ASSETS_BASE_URL + "jassimp/hippo/hippo.obj", 1, 0, "jassimpHippoOBJ");
     }
 
     @Test
@@ -299,19 +299,19 @@ public class AssetImportTests
     @Test
     public void jassimpBearOBJ() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/animals/bear-obj.obj", 5, 0, "jassimpBearOBJ");
+        mHandler.loadTestModel(GVRTestUtils.ASSETS_BASE_URL + "jassimp/animals/bear-obj.obj", 5, 0, "jassimpBearOBJ");
     }
 
     @Test
     public void jassimpWolfOBJ() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/animals/wolf-obj.obj", 5, 0, "jassimpWolfOBJ");
+        mHandler.loadTestModel(GVRTestUtils.ASSETS_BASE_URL + "jassimp/animals/wolf-obj.obj", 5, 0, "jassimpWolfOBJ");
     }
 
     @Test
     public void jassimpSkinningTREX() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/trex/TRex_NoGround.fbx", 1, 0, "jassimpSkinningTREX");
+        mHandler.loadTestModel(GVRTestUtils.ASSETS_BASE_URL + "jassimp/trex/TRex_NoGround.fbx", 1, 0, "jassimpSkinningTREX");
     }
 
     @Test
@@ -323,24 +323,24 @@ public class AssetImportTests
     @Test
     public void x3dGenerateNormals() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/x3d/generate_normals/teapotandtorusnonormals.x3d", 2, 0, "x3dGenerateNormals");
+        mHandler.loadTestModel(GVRTestUtils.ASSETS_BASE_URL + "x3d/generate_normals/teapotandtorusnonormals.x3d", 2, 0, "x3dGenerateNormals");
     }
 
     @Test
     public void x3dOpacity() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/x3d/general/opacitytest01.x3d", 2, 0, "x3dOpacity");
+        mHandler.loadTestModel(GVRTestUtils.ASSETS_BASE_URL + "x3d/general/opacitytest01.x3d", 2, 0, "x3dOpacity");
     }
 
     @Test
     public void x3dEmissive() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/x3d/general/emissivecolor.x3d", 0, 0, "x3dEmissive");
+        mHandler.loadTestModel(GVRTestUtils.ASSETS_BASE_URL + "x3d/general/emissivecolor.x3d", 0, 0, "x3dEmissive");
     }
 
     @Test
     public void x3dHierarchy() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/x3d/general/twoplaneswithchildren.x3d", 5, 0, "x3dHierarchy");
+        mHandler.loadTestModel(GVRTestUtils.ASSETS_BASE_URL + "x3d/general/twoplaneswithchildren.x3d", 5, 0, "x3dHierarchy");
     }
 }
