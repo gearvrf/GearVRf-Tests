@@ -596,7 +596,7 @@ public class TextureTests
             mWaiter.fail(ex);
         }
         mTestUtils.waitForXFrames(3);
-        mTestUtils.screenShot(getClass().getSimpleName(), "testNormalDiffuseSpecularLightmap", mWaiter, false);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testNormalDiffuseSpecularLightmap", mWaiter, mDoCompare);
     }
 
     // TODO: wait for asset to load so the screen shot captures the render
@@ -620,7 +620,7 @@ public class TextureTests
             mWaiter.fail(ex);
         }
         mTestUtils.waitForXFrames(3);
-        mTestUtils.screenShot(getClass().getSimpleName(), "testNormalDiffuseSpecularLightmapUnlit", mWaiter, false);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testNormalDiffuseSpecularLightmapUnlit", mWaiter, mDoCompare);
     }
 
     @Test
@@ -646,7 +646,7 @@ public class TextureTests
             mWaiter.fail(ex);
         }
         mTestUtils.waitForXFrames(3);
-        mTestUtils.screenShot(getClass().getSimpleName(), "testNormaLightmap", mWaiter, false);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testNormaLightmap", mWaiter, mDoCompare);
     }
 
     @Test
@@ -670,7 +670,7 @@ public class TextureTests
             mWaiter.fail(ex);
         }
         mTestUtils.waitForXFrames(3);
-        mTestUtils.screenShot(getClass().getSimpleName(), "testNormaLightmapUnlit", mWaiter, false);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testNormaLightmapUnlit", mWaiter, mDoCompare);
     }
 
     @Test
@@ -694,7 +694,7 @@ public class TextureTests
             mWaiter.fail(ex);
         }
         mTestUtils.waitForXFrames(3);
-        mTestUtils.screenShot(getClass().getSimpleName(), "testSpecularLightmap", mWaiter, false);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testSpecularLightmap", mWaiter, mDoCompare);
     }
 
     @Test
@@ -715,7 +715,7 @@ public class TextureTests
             mWaiter.fail(ex);
         }
         mTestUtils.waitForXFrames(3);
-        mTestUtils.screenShot(getClass().getSimpleName(), "testSpecularLightmapUnlit", mWaiter, false);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testSpecularLightmapUnlit", mWaiter, mDoCompare);
     }
 
     @Test
