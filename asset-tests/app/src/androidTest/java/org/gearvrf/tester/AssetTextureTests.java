@@ -125,7 +125,7 @@ public class AssetTextureTests
     @Test
     public void testDownloadTextureCache() throws MalformedURLException {
         final GVRContext gvr = mTestUtils.getGvrContext();
-        final String urlString = "https://github.com/gearvrf/GearVRf-Tests/raw/master/asset-tests/app/src/main/res/drawable-xxxhdpi/gearvr_logo.jpg";
+        final String urlString = GVRTestUtils.ASSETS_BASE_URL + "asset-tests/app/src/main/res/drawable-xxxhdpi/gearvr_logo.jpg";
 
         final String directoryPath = gvr.getContext().getCacheDir().getAbsolutePath();
         final String outputFilename = directoryPath + File.separator + UUID.nameUUIDFromBytes(urlString.getBytes()).toString() + "gearvr_logo.jpg";
