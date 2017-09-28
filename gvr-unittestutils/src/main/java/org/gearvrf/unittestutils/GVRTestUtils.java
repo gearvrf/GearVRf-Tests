@@ -46,6 +46,7 @@ public class GVRTestUtils implements GVRMainMonitor {
     private static final String TAG = GVRTestUtils.class.getSimpleName();
     public static final int TEST_TIMEOUT = 2000;
     public static final String DEVICE_TYPE = "S7Edge";
+    public static final String ASSETS_BASE_URL = "https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/maint_v3.x/";
     protected static final int SCREENSHOT_TEST_TIMEOUT = 10000;
 
     private GVRContext gvrContext;
@@ -55,6 +56,7 @@ public class GVRTestUtils implements GVRMainMonitor {
     private final Object xFramesLock;
     private final Object onAssetLock;
     private GVRTestableMain testableMain;
+
     private GVRScene mainScene;
     private OnInitCallback onInitCallback;
     private OnRenderCallback onRenderCallback;
@@ -277,7 +279,7 @@ public class GVRTestUtils implements GVRMainMonitor {
 
                 try
                 {
-                    URL url = new URL("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/golden_masters/" + DEVICE_TYPE + "/" + category + "/" + testname);
+                    URL url = new URL(ASSETS_BASE_URL + "golden_masters/" + DEVICE_TYPE + "/" + category + "/" + testname);
                     golden = BitmapFactory.decodeStream(url.openStream());
                 }
                 catch (Throwable ex)
