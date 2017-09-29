@@ -7,7 +7,7 @@
 
     <Viewpoint position='0 0 0'/>
     <Background skyColor='.1 .2 .3'/>
-
+  
     <NavigationInfo headlight="false"/>
     <PointLight DEF="redLight" color="1 0 0" location="-5 0 0" on="false"/>
     <PointLight DEF="greenLight" color="0 1 0" location="0 0 0" on="false"/>
@@ -43,17 +43,6 @@
           <Cylinder radius='.75'/>
         </Shape>
       </Transform>
-
-    
-      <Transform translation='0 -4 -5' scale="3 1 1">
-        <TouchSensor DEF='GrayBoxTouch'/>
-        <Shape>
-          <Appearance>
-            <Material diffuseColor='.5 .5 .5'/>
-          </Appearance>
-          <Box size='1 1 1'/>
-        </Shape>
-      </Transform>
     
     
       <Transform DEF="whiteSphere" translation='0 0 -5'>
@@ -66,22 +55,16 @@
       </Transform>
       
     <BooleanToggle DEF='RedCylToggler'/>
-    <ROUTE fromField='isActive' fromNode='RedCylTouch' toField='set_boolean' toNode='RedCylToggler'/>
+    <ROUTE fromField='isOver' fromNode='RedCylTouch' toField='set_boolean' toNode='RedCylToggler'/>
     <ROUTE fromField='toggle_changed' fromNode='RedCylToggler' toField='on' toNode='redLight'/>
       
     <BooleanToggle DEF='GreenCylToggler'/>
-    <ROUTE fromField='isActive' fromNode='GreenCylTouch' toField='set_boolean' toNode='GreenCylToggler'/>
+    <ROUTE fromField='isOver' fromNode='GreenCylTouch' toField='set_boolean' toNode='GreenCylToggler'/>
     <ROUTE fromField='toggle_changed' fromNode='GreenCylToggler' toField='on' toNode='greenLight'/>
       
     <BooleanToggle DEF='BlueCylToggler'/>
-    <ROUTE fromField='isActive' fromNode='BlueCylTouch' toField='set_boolean' toNode='BlueCylToggler'/>
+    <ROUTE fromField='isOver' fromNode='BlueCylTouch' toField='set_boolean' toNode='BlueCylToggler'/>
     <ROUTE fromField='toggle_changed' fromNode='BlueCylToggler' toField='on' toNode='blueLight'/>
-      
-    <BooleanToggle DEF='GrayBoxToggler'/>
-    <ROUTE fromField='isActive' fromNode='GrayBoxTouch' toField='set_boolean' toNode='GrayBoxToggler'/>
-    <ROUTE fromField='toggle_changed' fromNode='GrayBoxToggler' toField='on' toNode='redLight'/>
-    <ROUTE fromField='toggle_changed' fromNode='GrayBoxToggler' toField='on' toNode='greenLight'/>
-    <ROUTE fromField='toggle_changed' fromNode='GrayBoxToggler' toField='on' toNode='blueLight'/>
 
   </Scene>
 </X3D>
