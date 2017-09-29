@@ -160,9 +160,9 @@ public class GVRTestUtils implements GVRMainMonitor {
      * @param frames number of frames to wait for
      */
     public void waitForXFrames(int frames) {
-        mFramesLockDone = false;
-        testableMain.notifyAfterXFrames(frames);
         synchronized (xFramesLock) {
+            mFramesLockDone = false;
+            testableMain.notifyAfterXFrames(frames);
             while(!mFramesLockDone) {
                 try {
                     xFramesLock.wait();
