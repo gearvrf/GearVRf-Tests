@@ -54,6 +54,7 @@ public class GVRTestUtils implements GVRMainMonitor {
     private final CountDownLatch onStepLatch = new CountDownLatch(1);
     private final Object onScreenshotLock;
     private final Object xFramesLock;
+    private boolean mFramesLockDone = true;
     private final Object onAssetLock;
     private GVRTestableMain testableMain;
 
@@ -110,6 +111,7 @@ public class GVRTestUtils implements GVRMainMonitor {
                 onInitLatch.await();
             } catch (InterruptedException e) {
                 Log.e(TAG, "", e);
+                Thread.currentThread().interrupt();
                 return null;
             }
             return gvrContext;
@@ -133,6 +135,7 @@ public class GVRTestUtils implements GVRMainMonitor {
             onStepLatch.await();
         } catch (InterruptedException e) {
             Log.e(TAG, "", e);
+            Thread.currentThread().interrupt();
             return;
         }
     }
@@ -141,12 +144,15 @@ public class GVRTestUtils implements GVRMainMonitor {
         if (mAssetIsLoaded)
             return;
         synchronized (onAssetLock) {
-            try {
-                Log.d(TAG, "Waiting for OnAssetLoaded");
-                onAssetLock.wait();
-            } catch (InterruptedException e) {
-                Log.e(TAG, "", e);
-                return;
+            while(!mAssetIsLoaded) {
+                try {
+                    Log.d(TAG, "Waiting for OnAssetLoaded");
+                    onAssetLock.wait();
+                } catch (InterruptedException e) {
+                    Log.e(TAG, "", e);
+                    Thread.currentThread().interrupt();
+                    return;
+                }
             }
         }
     }
@@ -156,14 +162,17 @@ public class GVRTestUtils implements GVRMainMonitor {
      * @param frames number of frames to wait for
      */
     public void waitForXFrames(int frames) {
-        testableMain.notifyAfterXFrames(frames);
         synchronized (xFramesLock) {
-            try {
-                xFramesLock.wait();
-            } catch (InterruptedException e) {
-                Log.e(TAG,"",e);
-                return;
-
+            mFramesLockDone = false;
+            testableMain.notifyAfterXFrames(frames);
+            while(!mFramesLockDone) {
+                try {
+                    xFramesLock.wait();
+                } catch (InterruptedException e) {
+                    Log.e(TAG,"",e);
+                    Thread.currentThread().interrupt();
+                    return;
+                }
             }
         }
     }
@@ -189,13 +198,14 @@ public class GVRTestUtils implements GVRMainMonitor {
 
     public void xFramesRendered() {
         synchronized (xFramesLock) {
+            mFramesLockDone = true;
             xFramesLock.notifyAll();
         }
     }
 
     public void onAssetLoaded(GVRSceneObject asset) {
-        mAssetIsLoaded = true;
         synchronized (onAssetLock) {
+            mAssetIsLoaded = true;
             onAssetLock.notifyAll();
         }
         Log.d(TAG, "OnAssetLoaded Called");
