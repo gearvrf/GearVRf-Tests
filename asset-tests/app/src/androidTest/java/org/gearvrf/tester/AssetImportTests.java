@@ -108,6 +108,32 @@ public class AssetImportTests
     }
 
     @Test
+    public void canStartAnimations() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(GVRImportSettings.START_ANIMATIONS));
+        GVRSceneObject model = null;
+
+        ctx.getEventReceiver().addListener(mHandler);
+        try
+        {
+            model = ctx.getAssetLoader().loadModel("jassimp/astro_boy.dae", settings, false, scene);
+        }
+        catch (IOException ex)
+        {
+            mWaiter.fail(ex);
+        }
+        mTestUtils.waitForAssetLoad();
+        mHandler.centerModel(model, scene.getMainCameraRig().getTransform());
+        mHandler.checkAssetLoaded(null, 4);
+        mHandler.checkAssetErrors(0, 0);
+        mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
+        mTestUtils.waitForXFrames(2);
+        mTestUtils.screenShot("AssetImportTests", "canStartAnimations", mWaiter, mDoCompare);
+    }
+
+    @Test
     public void canLoadModelWithHandler() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
@@ -126,7 +152,8 @@ public class AssetImportTests
         mHandler.checkAssetLoaded(null, 4);
         mWaiter.assertTrue(model.getChildrenCount() > 0);
         mHandler.checkAssetErrors(0, 0);
-        mHandler.centerModel(model);
+        mHandler.centerModel(model, scene.getMainCameraRig().getTransform());
+        scene.addSceneObject(model);
         mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
         mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot("AssetImportTests", "canLoadModelWithHandler", mWaiter, mDoCompare);
@@ -178,7 +205,7 @@ public class AssetImportTests
         mWaiter.assertNull(scene.getSceneObjectByName("astro_boy.dae"));
         mWaiter.assertTrue(model.getChildrenCount() > 0);
         mHandler.checkAssetErrors(0, 0);
-        mHandler.centerModel(model);
+        mHandler.centerModel(model, scene.getMainCameraRig().getTransform());
         scene.addSceneObject(model);
         mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
         mTestUtils.waitForXFrames(2);
@@ -364,7 +391,7 @@ public class AssetImportTests
         }
         mTestUtils.waitForAssetLoad();
         mHandler.checkAssetLoaded(null, 0);
-        mHandler.centerModel(model);
+        mHandler.centerModel(model, scene.getMainCameraRig().getTransform());
         mHandler.checkAssetErrors(0, 0);
         List<GVRRenderData> rdatas = model.getAllComponents(GVRRenderData.getComponentType());
         GVRMaterial vertexColorMtl = new GVRMaterial(ctx, new GVRShaderId(VertexColorShader.class));
