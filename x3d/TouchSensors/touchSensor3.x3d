@@ -16,7 +16,7 @@
           <Appearance>
             <Material diffuseColor='0.898 0.604 0.843'/>
           </Appearance>
-          <Box size='10 20 30'/>
+          <Box size='1 2 3'/>
         </Shape>
     </Transform>
 
@@ -80,7 +80,7 @@
     <ROUTE fromNode='ConeRotation-INTERP' fromField='value_changed' toNode='Cone02' toField='set_rotation'/>
     <ROUTE fromNode='TouchSensor01-SENSOR' fromField='isOver' toNode='Cone02-TIMER' toField='set_enabled'/>
 
-        <transform DEF="scaleObj" translation="0 -4 -7" rotation="0 1 0 0">
+        <transform DEF="scaleObj" translation="-4 -4 -21" rotation="0 1 0 0">
 	        <shape>
 				<Appearance>
 					<Material diffuseColor="1 1 1"/>
