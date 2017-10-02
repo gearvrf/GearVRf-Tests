@@ -29,6 +29,7 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScreenshotCallback;
 import org.gearvrf.utility.Log;
+import org.gearvrf.utility.Threads;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -39,6 +40,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -291,7 +293,7 @@ public class GVRTestUtils implements GVRMainMonitor {
     {
         GVRScreenshotCallback callback = new GVRScreenshotCallback()
         {
-            private void compareWithGolden(Bitmap bitmap, String testname, Waiter waiter)
+            private void compareWithGolden(final Bitmap bitmap, String testname, Waiter waiter)
             {
                 Bitmap golden = null;
 
@@ -310,32 +312,57 @@ public class GVRTestUtils implements GVRMainMonitor {
                     waiter.assertEquals(golden.getWidth(), bitmap.getWidth());
                     waiter.assertEquals(golden.getHeight(), bitmap.getHeight());
 
-                    Bitmap diffmap = golden.copy(golden.getConfig(), true);
-                    float diff = 0;
+                    final Bitmap diffmap = golden.copy(golden.getConfig(), true);
+
+                    final ReentrantLock lockDiff = new ReentrantLock();
+                    final float[] diff = {0.0f};
+
                     try {
+                        final CountDownLatch cdl = new CountDownLatch(golden.getHeight());
+
                         for (int y = 0; y < golden.getHeight(); y++) {
-                            for (int x = 0; x < golden.getWidth(); x++) {
-                                int p1 = golden.getPixel(x, y);
-                                int p2 = bitmap.getPixel(x, y);
-                                int r = Math.abs(Color.red(p1) - Color.red(p2));
-                                int g = Math.abs(Color.green(p1) - Color.green(p2));
-                                int b = Math.abs(Color.blue(p1) - Color.blue(p2));
-                                diffmap.setPixel(x, y, Color.argb(255, r, g, b));
-                                diff += (float) r / 255.0f + g / 255.0f + b / 255.0f;
-                            }
+                            final int finalY = y;
+                            final Bitmap finalGolden = golden;
+
+                            Threads.spawn(new Runnable() {
+                                @Override
+                                public void run() {
+                                    for (int x = 0; x < finalGolden.getWidth(); x++) {
+                                        try {
+                                            int p1 = finalGolden.getPixel(x, finalY);
+                                            int p2 = bitmap.getPixel(x, finalY);
+                                            int r = Math.abs(Color.red(p1) - Color.red(p2));
+                                            int g = Math.abs(Color.green(p1) - Color.green(p2));
+                                            int b = Math.abs(Color.blue(p1) - Color.blue(p2));
+                                            diffmap.setPixel(x, finalY, Color.argb(255, r, g, b));
+
+                                            lockDiff.lock();
+                                            try {
+                                                diff[0] += (float) r / 255.0f + g / 255.0f + b / 255.0f;
+                                            } finally {
+                                                lockDiff.unlock();
+                                            }
+                                        } finally {
+                                            cdl.countDown();
+                                        }
+                                    }
+                                }
+                            });
                         }
+
+                        cdl.await();
                     }
                     catch (Throwable t)
                     {
                         waiter.fail(t);
                     }
 
-                    Log.e(category, "RESULT: %s %s diff = %f", category, testname, diff);
-                    if (diff > 2000.0f)
+                    Log.e(category, "RESULT: %s %s diff = %f", category, testname, diff[0]);
+                    if (diff[0] > 2000.0f)
                     {
                         writeBitmap(category, "diff_" + testname, diffmap);
                     }
-                    waiter.assertTrue(diff <= 30000.0f);
+                    waiter.assertTrue(diff[0] <= 30000.0f);
                 }
             }
 
