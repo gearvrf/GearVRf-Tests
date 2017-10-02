@@ -327,8 +327,8 @@ public class GVRTestUtils implements GVRMainMonitor {
                             Threads.spawn(new Runnable() {
                                 @Override
                                 public void run() {
-                                    for (int x = 0; x < finalGolden.getWidth(); x++) {
-                                        try {
+                                    try {
+                                        for (int x = 0; x < finalGolden.getWidth(); x++) {
                                             int p1 = finalGolden.getPixel(x, finalY);
                                             int p2 = bitmap.getPixel(x, finalY);
                                             int r = Math.abs(Color.red(p1) - Color.red(p2));
@@ -342,15 +342,16 @@ public class GVRTestUtils implements GVRMainMonitor {
                                             } finally {
                                                 lockDiff.unlock();
                                             }
-                                        } finally {
-                                            cdl.countDown();
                                         }
+                                    } finally {
+                                        cdl.countDown();
                                     }
                                 }
                             });
                         }
 
                         cdl.await();
+                        golden.recycle();
                     }
                     catch (Throwable t)
                     {
@@ -362,6 +363,9 @@ public class GVRTestUtils implements GVRMainMonitor {
                     {
                         writeBitmap(category, "diff_" + testname, diffmap);
                     }
+
+                    bitmap.recycle();
+                    diffmap.recycle();
                     waiter.assertTrue(diff[0] <= 30000.0f);
                 }
             }
