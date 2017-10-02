@@ -313,7 +313,7 @@ public class PickerTests
         scene.addSceneObject(box);
         scene.getEventReceiver().addListener(mPickHandler);
         mPicker = new GVRPicker(context, scene);
-        gvrTestUtils.waitForXFrames(2);
+        gvrTestUtils.waitForXFrames(NUM_WAIT_FRAMES);
         mPickHandler.checkResults(1, 0);
         mPickHandler.checkHits("box", new Vector3f[] { new Vector3f(0, 0, 0.5f) }, null);
     }
