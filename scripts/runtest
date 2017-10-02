@@ -139,8 +139,31 @@ run-tests() {
 			asset-tests AssetImportTests x3dHierarchy
 			asset-tests AssetImportTests x3dOpacity
 			asset-tests AssetImportTests x3dTeapotTorus
-			asset-tests AssetLightTests
 			asset-tests AssetTextureTests
+			asset-tests AssetLightTests jassimpCubeAmbientSpecularTexture
+			asset-tests AssetLightTests jassimpCubeAmbientTexture
+			asset-tests AssetLightTests jassimpCubeDiffuseDirectional
+			asset-tests AssetLightTests jassimpCubeDiffusePoint
+			asset-tests AssetLightTests jassimpCubeDiffuseSpot
+			asset-tests AssetLightTests jassimpCubeDiffuseSpotLinearDecay
+			asset-tests AssetLightTests jassimpCubeDiffuseSpotLinearDecay9
+			asset-tests AssetLightTests jassimpCubeNormalDiffuseAmbient
+			asset-tests AssetLightTests jassimpCubeNormalDiffuseDirect
+			asset-tests AssetLightTests jassimpCubeNormalDiffusePoint
+			asset-tests AssetLightTests jassimpCubeNormalDiffuseSpot
+			asset-tests AssetLightTests jassimpCubeNormalDiffuseSpotLinearDecay
+			asset-tests AssetLightTests jassimpCubeNormalDiffuseSpotQuadraticDecay
+			asset-tests AssetLightTests x3dDirectLight
+			asset-tests AssetLightTests x3dGenerateNormalsPoint
+			asset-tests AssetLightTests x3dMultiplePoints
+			asset-tests AssetLightTests x3dPointLight1
+			asset-tests AssetLightTests x3dPointLight2
+			asset-tests AssetLightTests x3dPointLightAttenuation
+			asset-tests AssetLightTests x3dShininess
+			asset-tests AssetLightTests x3dSpotLight1
+			asset-tests AssetLightTests x3dSpotLight2
+			asset-tests AssetLightTests x3dSpotLight3
+			asset-tests AssetLightTests x3dSpotLight4
 end-of-list
 	)
 }
