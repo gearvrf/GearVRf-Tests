@@ -404,6 +404,7 @@ public class TextureTests
             scene.getMainCameraRig().getOwnerObject().attachComponent(light);
         }
         model.getTransform().setPositionZ(-2.0f);
+        mTestUtils.waitForAssetLoad();
         scene.addSceneObject(model);
         mTestUtils.waitForXFrames(3);
         mTestUtils.screenShot(getClass().getSimpleName(), "testLayeredSpecularTexture", mWaiter, mDoCompare);
