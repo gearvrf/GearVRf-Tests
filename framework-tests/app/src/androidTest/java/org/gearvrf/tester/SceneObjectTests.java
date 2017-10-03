@@ -66,16 +66,12 @@ public class SceneObjectTests
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
         mWaiter.assertNotNull(scene);
-        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
-        ctx.getEventReceiver().addListener(texHandler);
 
         mBlueMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
         mBlueMtl.setDiffuseColor(0, 0, 1, 1);
         mRoot = scene.getRoot();
 
         mWaiter.assertNotNull(mRoot);
-        mTestUtils.waitForAssetLoad();
-        ctx.getEventReceiver().removeListener(texHandler);
     }
 
     @Test
