@@ -22,6 +22,7 @@ import org.gearvrf.GVRTextureParameters;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
+import org.gearvrf.utility.Log;
 import org.joml.Vector3f;
 import org.junit.Before;
 import org.junit.Rule;
@@ -805,7 +806,7 @@ public class TextureTests
     @Test
     public void testTextureTransparencyDetection() throws TimeoutException
     {
-        android.util.Log.d("gvrf", "beginning texture transparency detection");
+        android.util.Log.d("Texture:", "beginning texture transparency detection");
         final GVRContext ctx  = mTestUtils.getGvrContext();
         final GVRMaterial material = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
         final GVRSceneObject groundObject = new GVRCubeSceneObject(ctx, true, material);
@@ -821,9 +822,8 @@ public class TextureTests
         mTestUtils.waitForAssetLoad();
         texHandler.checkTextureLoaded(mWaiter);
         mTestUtils.waitForXFrames(2);
-        android.util.Log.d("gvrf", "trying JPG now");
         int order = groundObject.getRenderData().getRenderingOrder();
-        android.util.Log.d("gvrf", "done with JPG, order = " + order);
+        android.util.Log.d("Texture:", "JPG order = " + order);
         checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
 
         // load png, 4 component, transparency, RenderOrder == TRANSPARENT
@@ -833,9 +833,8 @@ public class TextureTests
         mTestUtils.waitForAssetLoad();
         texHandler.checkTextureLoaded(mWaiter);
         mTestUtils.waitForXFrames(2);
-        android.util.Log.d("gvrf", "trying png 4 transparent now");
         order = groundObject.getRenderData().getRenderingOrder();
-        android.util.Log.d("gvrf", "done with png 4 transparent, order = " + order);
+        android.util.Log.d("Texture:", "PNG 4 transparent order = " + order);
         checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
         groundObject.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.GEOMETRY);
 
@@ -846,9 +845,8 @@ public class TextureTests
         mTestUtils.waitForAssetLoad();
         texHandler.checkTextureLoaded(mWaiter);
         mTestUtils.waitForXFrames(2);
-        android.util.Log.d("gvrf", "trying png 3 opaque now");
         order = groundObject.getRenderData().getRenderingOrder();
-        android.util.Log.d("gvrf", "done with png 3 opaque, order = " + order);
+        android.util.Log.d("Texture:", "PNG 3 opaque order = " + order);
         checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
 
         // load tga, 4 component, transparency, RenderOrder == TRANSPARENT
@@ -858,9 +856,8 @@ public class TextureTests
         mTestUtils.waitForAssetLoad();
         texHandler.checkTextureLoaded(mWaiter);
         mTestUtils.waitForXFrames(2);
-        android.util.Log.d("gvrf", "trying tga 4 transparent now");
         order = groundObject.getRenderData().getRenderingOrder();
-        android.util.Log.d("gvrf", "done with tga 4 transparent, order = " + order);
+        android.util.Log.d("Texture:", "TGA 4 transparent order = " + order);
         checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
         groundObject.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.GEOMETRY);
 
@@ -871,9 +868,8 @@ public class TextureTests
         mTestUtils.waitForAssetLoad();
         texHandler.checkTextureLoaded(mWaiter);
         mTestUtils.waitForXFrames(2);
-        android.util.Log.d("gvrf", "trying png 4 opaque now");
         order = groundObject.getRenderData().getRenderingOrder();
-        android.util.Log.d("gvrf", "done with png 4 opaque, order = " + order);
+        android.util.Log.d("Texture:", "PNG 4 opaque order = " + order);
         checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
 
         // load astc, RenderOrder == TRANSPARENT
@@ -883,9 +879,8 @@ public class TextureTests
         mTestUtils.waitForAssetLoad();
         texHandler.checkTextureLoaded(mWaiter);
         mTestUtils.waitForXFrames(2);
-        android.util.Log.d("gvrf", "trying ASTC now");
         order = groundObject.getRenderData().getRenderingOrder();
-        android.util.Log.d("gvrf", "done with ASTC, order = " + order);
+        android.util.Log.d("Texture:", "ASTC order = " + order);
         checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
         groundObject.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.GEOMETRY);
 
@@ -896,6 +891,9 @@ public class TextureTests
         mTestUtils.waitForAssetLoad();
         texHandler.checkTextureLoaded(mWaiter);
         mTestUtils.waitForXFrames(2);
+        order = groundObject.getRenderData().getRenderingOrder();
+        android.util.Log.d("Texture:", "TGA 3 opaque order = " + order);
+        checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
 
         // load etc2, GL_COMPRESSED_RG11_EAC, RenderOrder == TRANSPARENT
         texHandler.reset();
@@ -904,9 +902,8 @@ public class TextureTests
         mTestUtils.waitForAssetLoad();
         texHandler.checkTextureLoaded(mWaiter);
         mTestUtils.waitForXFrames(2);
-        android.util.Log.d("gvrf", "trying rg11 now");
         order = groundObject.getRenderData().getRenderingOrder();
-        android.util.Log.d("gvrf", "done with rg11, order = " + order);
+        android.util.Log.d("Texture:", "rg11 order = " + order);
         checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
         groundObject.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.GEOMETRY);
 
@@ -917,9 +914,8 @@ public class TextureTests
         mTestUtils.waitForAssetLoad();
         texHandler.checkTextureLoaded(mWaiter);
         mTestUtils.waitForXFrames(2);
-        android.util.Log.d("gvrf", "trying tga 4 opaque now");
         order = groundObject.getRenderData().getRenderingOrder();
-        android.util.Log.d("gvrf", "done with tga 4 opaque, order = " + order);
+        android.util.Log.d("Texture:", "TGA 4 opaque order = " + order);
         checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
 
         // load etc2, GL_COMPRESSED_SIGNED_RG11_EAC, RenderOrder == TRANSPARENT
@@ -929,9 +925,8 @@ public class TextureTests
         mTestUtils.waitForAssetLoad();
         texHandler.checkTextureLoaded(mWaiter);
         mTestUtils.waitForXFrames(2);
-        android.util.Log.d("gvrf", "trying signed rg11 now");
         order = groundObject.getRenderData().getRenderingOrder();
-        android.util.Log.d("gvrf", "done with signed rg11, order = " + order);
+        android.util.Log.d("Texture:", "signed rg11 order = " + order);
         checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
         groundObject.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.GEOMETRY);
 
@@ -942,9 +937,8 @@ public class TextureTests
         mTestUtils.waitForAssetLoad();
         texHandler.checkTextureLoaded(mWaiter);
         mTestUtils.waitForXFrames(2);
-        android.util.Log.d("gvrf", "trying r11 now");
         order = groundObject.getRenderData().getRenderingOrder();
-        android.util.Log.d("gvrf", "done with r11, order = " + order);
+        android.util.Log.d("Texture:", "r11 order = " + order);
         checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
 
         // load etc2, GL_COMPRESSED_RGBA8_ETC2_EAC, RenderOrder == TRANSPARENT
@@ -954,10 +948,10 @@ public class TextureTests
         mTestUtils.waitForAssetLoad();
         texHandler.checkTextureLoaded(mWaiter);
         mTestUtils.waitForXFrames(2);
-        android.util.Log.d("gvrf", "trying rgba8 now");
         order = groundObject.getRenderData().getRenderingOrder();
-        android.util.Log.d("gvrf", "done with rgba8, order = " + order);
+        android.util.Log.d("Texture:", "rgba8 order = " + order);
         checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
+        groundObject.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.GEOMETRY);
 
         // load etc2, GL_COMPRESSED_SIGNED_R11_EAC, RenderOrder == GEOMETRY
         texHandler.reset();
@@ -966,9 +960,8 @@ public class TextureTests
         mTestUtils.waitForAssetLoad();
         texHandler.checkTextureLoaded(mWaiter);
         mTestUtils.waitForXFrames(2);
-        android.util.Log.d("gvrf", "trying sr11 now");
         order = groundObject.getRenderData().getRenderingOrder();
-        android.util.Log.d("gvrf", "done with sr11, order = " + order);
+        android.util.Log.d("Texture:", "sr11 order = " + order);
         checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
 
         // load etc2, GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2, RenderOrder == TRANSPARENT
@@ -978,9 +971,8 @@ public class TextureTests
         mTestUtils.waitForAssetLoad();
         texHandler.checkTextureLoaded(mWaiter);
         mTestUtils.waitForXFrames(2);
-        android.util.Log.d("gvrf", "trying rgba1 now");
         order = groundObject.getRenderData().getRenderingOrder();
-        android.util.Log.d("gvrf", "done with rgba1, order = " + order);
+        android.util.Log.d("gvrf", "rgba1 order = " + order);
         checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
         groundObject.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.GEOMETRY);
  
@@ -991,9 +983,8 @@ public class TextureTests
         mTestUtils.waitForAssetLoad();
         texHandler.checkTextureLoaded(mWaiter);
         mTestUtils.waitForXFrames(2);
-        android.util.Log.d("gvrf", "trying rgb8 now");
         order = groundObject.getRenderData().getRenderingOrder();
-        android.util.Log.d("gvrf", "done with rgb8, order = " + order);
+        android.util.Log.d("Texture:", "rgb8 order = " + order);
         checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
 
         android.util.Log.d("gvrf", "end texture transparency detection");
