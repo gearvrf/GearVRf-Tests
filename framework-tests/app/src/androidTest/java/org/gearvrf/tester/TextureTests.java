@@ -595,7 +595,7 @@ public class TextureTests
 
         try
         {
-            model = ctx.getAssetLoader().loadModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/asset-tests/app/src/main/assets/jassimp/normal_diffuse_specular_lightmap.fbx", scene);
+            model = ctx.getAssetLoader().loadModel(GVRTestUtils.GITHUB_URL + "asset-tests/app/src/main/assets/jassimp/normal_diffuse_specular_lightmap.fbx", scene);
             GVRTransform trans = model.getTransform();
             trans.setScale(0.006f, 0.006f, 0.006f);
             trans.rotateByAxis(90.0f, 1, 0, 0);
@@ -627,7 +627,7 @@ public class TextureTests
 
         try
         {
-            model = ctx.getAssetLoader().loadModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/asset-tests/app/src/main/assets/jassimp/normal_diffuse_specular_lightmap.fbx", scene);
+            model = ctx.getAssetLoader().loadModel(GVRTestUtils.GITHUB_URL + "asset-tests/app/src/main/assets/jassimp/normal_diffuse_specular_lightmap.fbx", scene);
             GVRTransform trans = model.getTransform();
             trans.setScale(0.006f, 0.006f, 0.006f);
             trans.rotateByAxis(90.0f, 1, 0, 0);
@@ -655,7 +655,7 @@ public class TextureTests
 
         try
         {
-            model = ctx.getAssetLoader().loadModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/asset-tests/app/src/main/assets/jassimp/normal_lightmap.fbx", scene);
+            model = ctx.getAssetLoader().loadModel(GVRTestUtils.GITHUB_URL + "asset-tests/app/src/main/assets/jassimp/normal_lightmap.fbx", scene);
             GVRTransform trans = model.getTransform();
             trans.setScale(0.006f, 0.006f, 0.006f);
             trans.rotateByAxis(90.0f, 1, 0, 0);
@@ -687,7 +687,7 @@ public class TextureTests
 
         try
         {
-            model = ctx.getAssetLoader().loadModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/asset-tests/app/src/main/assets/jassimp/normal_lightmap.fbx", scene);
+            model = ctx.getAssetLoader().loadModel(GVRTestUtils.GITHUB_URL + "asset-tests/app/src/main/assets/jassimp/normal_lightmap.fbx", scene);
             GVRTransform trans = model.getTransform();
             trans.setScale(0.006f, 0.006f, 0.006f);
             trans.rotateByAxis(90.0f, 1, 0, 0);
@@ -715,7 +715,7 @@ public class TextureTests
 
         try
         {
-            model = ctx.getAssetLoader().loadModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/asset-tests/app/src/main/assets/jassimp/specular_lightmap.fbx", scene);
+            model = ctx.getAssetLoader().loadModel(GVRTestUtils.GITHUB_URL + "asset-tests/app/src/main/assets/jassimp/specular_lightmap.fbx", scene);
             GVRTransform trans = model.getTransform();
             trans.rotateByAxis(90.0f, 1, 0, 0);
             centerModel(model);
@@ -745,7 +745,7 @@ public class TextureTests
 
         try
         {
-            model = ctx.getAssetLoader().loadModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/asset-tests/app/src/main/assets/jassimp/specular_lightmap.fbx", scene);
+            model = ctx.getAssetLoader().loadModel(GVRTestUtils.GITHUB_URL + "asset-tests/app/src/main/assets/jassimp/specular_lightmap.fbx", scene);
             GVRTransform trans = model.getTransform();
             trans.rotateByAxis(90.0f, 1, 0, 0);
             centerModel(model);
