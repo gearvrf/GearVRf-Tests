@@ -13,6 +13,7 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRImportSettings;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.utility.FileNameUtils;
+import org.joml.Vector3f;
 
 import java.io.IOException;
 import java.util.EnumSet;
@@ -82,6 +83,16 @@ class AssetEventHandler implements IAssetEvents
     public void DisableImageCompare()
     {
         mDoCompare = false;
+    }
+
+    public void checkModelLoaded(String name)
+    {
+        mWaiter.assertEquals(1, ModelsLoaded);
+        mWaiter.assertEquals(0, ModelErrors);
+        if (name != null)
+        {
+            mWaiter.assertNotNull(mScene.getSceneObjectByName(name));
+        }
     }
 
     public void checkAssetLoaded(String name, int numTex)
@@ -183,6 +194,47 @@ class AssetEventHandler implements IAssetEvents
         centerModel(model, t);
         checkAssetLoaded(res.getResourceFilename(), numTex);
         checkAssetErrors(0, texError);
+        if (testname != null)
+        {
+            mTester.waitForXFrames(2);
+            mTester.screenShot(mCategory, testname, mWaiter, mDoCompare);
+        }
+        return model;
+    }
+
+    public GVRSceneObject loadTestModel(String modelfile, String testname,
+                                        float scale, boolean rotX90, Vector3f pos) throws TimeoutException
+    {
+        GVRContext ctx  = mTester.getGvrContext();
+        GVRScene scene = mTester.getMainScene();
+        GVRSceneObject model = null;
+
+        try
+        {
+            model = ctx.getAssetLoader().loadModel(modelfile, this);
+        }
+        catch (IOException ex)
+        {
+            mWaiter.fail(ex);
+        }
+        mTester.waitForAssetLoad();
+        GVRTransform modelTrans = model.getTransform();
+        modelTrans.setScale(scale, scale, scale);
+        if (rotX90)
+        {
+            modelTrans.rotateByAxis(90.0f, 1, 0, 0);
+        }
+        if (pos != null)
+        {
+            GVRSceneObject.BoundingVolume bv = model.getBoundingVolume();
+            modelTrans.setPosition(pos.x - bv.center.x, pos.y - bv.center.y, pos.z - bv.center.z);
+        }
+        else
+        {
+            centerModel(model, scene.getMainCameraRig().getTransform());
+        }
+        checkModelLoaded(FileNameUtils.getFilename(modelfile));
+
         if (testname != null)
         {
             mTester.waitForXFrames(2);
