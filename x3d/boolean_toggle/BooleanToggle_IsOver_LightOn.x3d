@@ -8,6 +8,8 @@
     <NavigationInfo headlight="false"/>
     <PointLight DEF="myPtLight" location="0 0 10" on="false"/>
     <DirectionalLight intensity=".3"/>
+    <Viewpoint position='0 0 0'/>
+    <Background skyColor='.1 .2 .3'/>
 
       <Transform translation='-1.5 -1.75 -5'>
         <TouchSensor DEF='ButtonTouch'/>

@@ -614,7 +614,7 @@ public class TextureTests
         }
 
         mTestUtils.waitForXFrames(3);
-        mTestUtils.screenShot(getClass().getSimpleName(), "testNormalDiffuseSpecularLightmap", mWaiter, false);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testNormalDiffuseSpecularLightmap", mWaiter, mDoCompare);
     }
 
     // TODO: wait for asset to load so the screen shot captures the render
@@ -641,7 +641,7 @@ public class TextureTests
         }
 
         mTestUtils.waitForXFrames(3);
-        mTestUtils.screenShot(getClass().getSimpleName(), "testNormalDiffuseSpecularLightmapUnlit", mWaiter, false);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testNormalDiffuseSpecularLightmapUnlit", mWaiter, mDoCompare);
     }
 
     // TODO: wait for asset to load so the screen shot captures the render
