@@ -47,11 +47,13 @@ class GVRTestableMain extends GVRMain{
         //Freeze the camera rig for the tests
         mainScene.getMainCameraRig().setCameraRigType(GVRCameraRig.GVRCameraRigType.Freeze.ID);
         synchronized (waitForMonitor) {
-            if(mainMonitor == null) {
+            while(mainMonitor == null) {
                 try {
                     waitForMonitor.wait();
                 } catch (InterruptedException e) {
                     Log.e(TAG,"Interrupted wait for main monitor");
+                    Thread.currentThread().interrupt();
+                    return;
                 }
             }
         }
@@ -64,7 +66,7 @@ class GVRTestableMain extends GVRMain{
         synchronized (waitXFramesLock) {
             if (waitForXFrames != WAIT_DISABLED) {
                 framesRendered++;
-                if (framesRendered == waitForXFrames) {
+                if (framesRendered >= waitForXFrames) {
                     mainMonitor.xFramesRendered();
                     waitForXFrames = WAIT_DISABLED;
                     framesRendered = 0;
