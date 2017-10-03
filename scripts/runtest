@@ -117,14 +117,7 @@ run-tests() {
 			framework-tests TextureTests testDiffuseSpecularTextureUnlit
 			framework-tests TextureTests testDiffuseNormalTexture
 			framework-tests TextureTests testDiffuseNormalTextureUnlit
-			framework-tests TextureTests testNormalDiffuseSpecularLightmap
-			framework-tests TextureTests testNormalDiffuseSpecularLightmapUnlit
-			framework-tests TextureTests testNormaLightmap
-			framework-tests TextureTests testNormaLightmapUnlit
-			framework-tests TextureTests testSpecularLightmap
-			framework-tests TextureTests testSpecularLightmapUnlit
 			framework-tests TextureTests testLoadTextureFromResource
-			framework-tests TextureTests testTextureTransparencyDetection
 			asset-tests AssetImportTests PLYVertexColors
 			asset-tests AssetImportTests canLoadExternalScene
 			asset-tests AssetImportTests canLoadModel
