@@ -11,23 +11,27 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRAssetLoader;
 import org.gearvrf.GVRCompressedTexture;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRImage;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTextureParameters;
+import org.gearvrf.GVRTransform;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.GVRPhongShader;
 
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 
+import org.joml.Vector3f;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
@@ -141,6 +145,67 @@ public class AssetTextureTests
     public void x3dTexcoordTest4() throws TimeoutException
     {
         mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "x3d/texture_coordinates/texturecoordinatetestsubset3.x3d", 5, 0, "x3dTexcoordTest4");
+    }
+
+    @Test
+    public void NormalDiffuseSpecularLightmap() throws TimeoutException
+    {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+
+        GVRDirectLight light = new GVRDirectLight(ctx);
+        GVRSceneObject lightObj = new GVRSceneObject(ctx);
+
+        lightObj.attachComponent(light);
+        mTestUtils.getMainScene().addSceneObject(lightObj);
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/lightmap/normal_diffuse_specular_lightmap.fbx", "testNormalDiffuseSpecularLightmap",
+                0.006f, true, new Vector3f( 0.05f, -0.05f, -4.5f));
+    }
+
+    @Test
+    public void testNormalDiffuseSpecularLightmapUnlit() throws TimeoutException
+    {
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/lightmap/normal_diffuse_specular_lightmap.fbx", "testNormalDiffuseSpecularLightmapUnlit",
+                0.006f, true, new Vector3f( 0.05f, -0.05f, -4.5f));
+    }
+
+    @Test
+    public void testNormalLightmap() throws TimeoutException
+    {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+
+        GVRDirectLight light = new GVRDirectLight(ctx);
+        GVRSceneObject lightObj = new GVRSceneObject(ctx);
+
+        lightObj.attachComponent(light);
+        mTestUtils.getMainScene().addSceneObject(lightObj);
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/lightmap/normal_lightmap.fbx", "testNormalLightmap",
+                0.006f, true, new Vector3f( 0.05f, -0.05f, -4.5f));
+    }
+
+    @Test
+    public void testNormalLightmapUnlit() throws TimeoutException
+    {
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/lightmap/normal_lightmap.fbx", "testNormalLightmapUnlit",
+                0.006f, true, new Vector3f( 0.05f, -0.05f, -4.5f));
+    }
+
+    @Test
+    public void testSpecularLightmap() throws TimeoutException
+    {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+
+        GVRDirectLight light = new GVRDirectLight(ctx);
+        GVRSceneObject lightObj = new GVRSceneObject(ctx);
+
+        lightObj.attachComponent(light);
+        mTestUtils.getMainScene().addSceneObject(lightObj);
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/lightmap/specular_lightmap.fbx", "testSpecularLightmap", 1, true, null);
+    }
+
+    @Test
+    public void testSpecularLightmapUnlit() throws TimeoutException
+    {
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/lightmap/specular_lightmap.fbx", "testSpecularLightmapUnlit", 1, true, null);
     }
 
     @Test
