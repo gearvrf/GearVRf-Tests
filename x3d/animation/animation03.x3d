@@ -31,7 +31,7 @@
 	        <shape>
 				<Appearance>
 					<Material diffuseColor="1 1 1"/>
-					<ImageTexture url="dog1.jpg" repeatS="TRUE" repeatT="TRUE"/>
+					<ImageTexture url="markertwo.png" repeatS="TRUE" repeatT="TRUE"/>
 					<TextureTransform center='.5 .5' rotation='0' scale='1 1' translation='0 0'/>
 				</Appearance>
 				<IndexedFaceSet
@@ -44,11 +44,11 @@
 					<Normal vector='0 0 1'/>
 				</IndexedFaceSet>
 	        </shape>
-	        <transform DEF="ballChildObject1" translation="-2 -2 -2" rotation="0 0 1 .2">
+	        <transform DEF="ballChildObject1" translation="-3 -3 -2" rotation="0 0 1 .2">
 		        <shape>
 					<Appearance>
 						<Material diffuseColor="1 1 1"/>
-						<ImageTexture url="dog2.jpg" repeatS="TRUE" repeatT="TRUE"/>
+						<ImageTexture url="markerthree.png" repeatS="TRUE" repeatT="TRUE"/>
 						<TextureTransform center='.5 .5' rotation='0' scale='1 1' translation='0 0'/>
 					</Appearance>
 					<IndexedFaceSet
@@ -68,7 +68,7 @@
         <DirectionalLight intensity=".4" on="TRUE"/>
 
         <timeSensor DEF="timeb" cycleInterval="7" loop="true"></timeSensor>
-        <PositionInterpolator DEF="move" key="0 .25 0.5 .75 1" keyValue="5 -6 -8   0 0 0  -5 2 -6  0 0 0   5 -6 -8"></PositionInterpolator>
+        <PositionInterpolator DEF="move" key="0 .25 0.5 .75 1" keyValue="5 -6 -8   0 -3 0  -5 2 -6  0 3 0   5 -6 -8"></PositionInterpolator>
         <Route fromNode="timeb" fromField ="fraction_changed" toNode="move" toField="set_fraction"></Route>
         <Route fromNode="move" fromField ="value_changed" toNode="ball" toField="translation"></Route>
         

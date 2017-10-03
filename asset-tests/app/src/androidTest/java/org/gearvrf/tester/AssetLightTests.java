@@ -9,6 +9,7 @@ import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRPointLight;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTransform;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.GVRPhongShader;
 
@@ -207,14 +208,7 @@ public class AssetLightTests
     @Test
     public void x3dShininess() throws TimeoutException
     {
-        GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
-        GVRPointLight pointLight = new GVRPointLight(ctx);
-        GVRSceneObject lightNode = new GVRSceneObject(ctx);
-
-        mHandler.loadTestModel("x3d/teapotandtorus.x3d", 1);
-        lightNode.attachLight(pointLight);
-        scene.addSceneObject(lightNode);
+        mHandler.loadTestModel("x3d/teapotandtorus_AddPtLt.x3d", 2);
         mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "x3dShininess", mWaiter, mDoCompare);
     }

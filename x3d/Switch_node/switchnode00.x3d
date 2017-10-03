@@ -1,0 +1,65 @@
+<X3D profile='Interactive' version='3.3'  xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation =' http://www.web3d.org/specifications/x3d-3.3.xsd '>
+	<Scene>
+		<Viewpoint position='0 0 0'/>
+		<Background skyColor='.2 .4 .6'/>
+		<PointLight/>
+
+		<Transform translation='-1.25 0 -10'>
+			<Switch DEF='Switcher' whichChoice='1'>
+				<Shape DEF='BoxShape'>
+					<Appearance>
+						<Material diffuseColor='1 0 0'/>
+					</Appearance> 
+					<Box size='2.5 2.5 .25'/>
+				</Shape>
+				<Shape DEF='ConeShape'>
+					<Appearance>
+						<Material diffuseColor='1 1 0'/>
+					</Appearance> 
+					<Cone height='4'/>
+				</Shape>
+				<Shape DEF='CylinderShape'>
+					<Appearance>
+						<Material diffuseColor='0 1 0'/>
+					</Appearance> 
+					<Cylinder height='.25' radius='3'/>
+				</Shape>
+				<Shape DEF='SphereShape'>
+					<Appearance>
+						<Material diffuseColor='0 0 1'/>
+					</Appearance> 
+					<Sphere radius='1'/>
+				</Shape>
+			</Switch>
+		</Transform>
+
+		<Transform translation='1.5 -.25 -6'>
+			<TouchSensor DEF='ButtonTouch' description='touch to toggle'/>
+			<Shape>
+				<Appearance>
+					<Material diffuseColor='.3 .7 1'/>
+				</Appearance>
+				<Cylinder radius='.5'/>
+			</Shape>
+		</Transform>
+
+		<Script DEF='Script1'>
+            <field accessType='inputOnly' name='buttonOver' type='SFBool'/>
+			<field accessType='outputOnly' name='choice' type='SFInt32'/>
+
+			<![CDATA[
+
+				ecmascript:
+				function buttonOver (value)
+				{
+					if (value) choice = 2;
+					else choice = 3;
+				}
+			]]>
+		</Script>
+
+		<ROUTE fromField='isOver' fromNode='ButtonTouch' toField='buttonOver' toNode='Script1'/>
+		<ROUTE fromField='choice' fromNode='Script1' toField='whichChoice' toNode='Switcher'/>
+		
+	</Scene>
+</X3D>
