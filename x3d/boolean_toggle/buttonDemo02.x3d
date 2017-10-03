@@ -5,6 +5,9 @@
         <PointLight DEF="greenPL" color='0 1 0' on="FALSE"/>
         <PointLight DEF="bluePL" color='0 0 1' on="FALSE"/>
         <SpotLight direction='0 -1 0'/>
+        <DirectionalLight color='.2 .2 .2'/>
+        <Viewpoint position='0 0 2'/>
+        <Background skyColor='.1 .2 .3'/>
 
         <transform DEF="sphere1" translation="1.5 1 -6" rotation="0 1 0 0">
 	        <shape>
@@ -21,7 +24,7 @@
         <OrientationInterpolator DEF="rotateSphere1" key="0 0.25 0.5 0.75 1" keyValue="0 1 0 0   0 1 0 1.57   0 1 0 3.14    0 1 0 4.71    0 1 0 6.28"></OrientationInterpolator>
         
 
-        <Transform DEF="buttonAssembley" translation="-2.25 0 -7" rotation="0 1 0 0">
+        <Transform DEF="buttonAssembley" translation="-2.25 .3 -7" rotation="0 1 0 0">
             <Transform DEF="button1" translation="0 0 0" rotation="0 1 0 0" scale='3.2 1.6 1'>
                 <TouchSensor DEF='TouchSensor01-SENSOR'/>
                 <shape>
@@ -65,7 +68,7 @@
 
 
 	<!--  LIGHTS  -->
-	<Transform DEF="redButtonAssembley" translation="-2.3 -2.75 -7" rotation="0 1 0 0" scale='.5 .5 .5'>
+	<Transform DEF="redButtonAssembley" translation="-3.3 -2.75 -7" rotation="0 1 0 0" scale='.5 .5 .5'>
 		<Transform DEF="redButton" translation="0 0 0" rotation="0 1 0 0" scale='3.2 1.6 1'>
 			<TouchSensor DEF='redLightSensor'/>
 	                <shape>
@@ -121,7 +124,7 @@
 	                </shape>
 		</Transform>
 	</Transform>
-	<Transform DEF="blueButtonAssembley" translation="2.3 -2.75 -7" rotation="0 1 0 0" scale='.5 .5 .5'>
+	<Transform DEF="blueButtonAssembley" translation="3.3 -2.75 -7" rotation="0 1 0 0" scale='.5 .5 .5'>
 		<Transform DEF="blueButton" translation="0 0 0" rotation="0 1 0 0" scale='3.2 1.6 1'>
 			<TouchSensor DEF='blueLightSensor'/>
 	                <shape>
