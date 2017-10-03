@@ -157,11 +157,6 @@ public class GVRTestUtils implements GVRMainMonitor {
     }
 
     public void waitForAssetLoad() {
-        if (mAssetIsLoaded)
-        {
-            mAssetIsLoaded = false;
-            return;
-        }
         synchronized (onAssetLock) {
             while(!mAssetIsLoaded) {
                 try {
@@ -173,6 +168,7 @@ public class GVRTestUtils implements GVRMainMonitor {
                     return;
                 }
             }
+            mAssetIsLoaded = false;
         }
     }
 
