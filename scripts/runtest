@@ -84,6 +84,7 @@ run-connected-android-tests() {
 
 # The runner. Runs list of tests. Each line in the list contains: TEST_GROUP TEST_NAME SUBTEST_NAME
 # 'all' is a wildcard. Omitting a parameter is a wildcard.
+# This test list is for all low-memory devices, starting with Note4
 
 run-tests() {
 	(
@@ -165,6 +166,31 @@ run-tests() {
 			asset-tests AssetLightTests x3dSpotLight2
 			asset-tests AssetLightTests x3dSpotLight3
 			asset-tests AssetLightTests x3dSpotLight4
+end-of-list
+	)
+}
+
+# S8, S8+, Note8 don't like repeated install cycles. The following list is optimized for high-memory devices.
+run-tests8() {
+	(
+		while read TEST_GROUP TEST_NAME SUBTEST_NAME
+		do
+			run-single-test < /dev/null # adb sometimes consumes all input breaking the loop
+		done <<end-of-list
+			framework-tests BoundingVolumeTests
+			framework-tests CullTests
+			framework-tests LightTests
+			framework-tests MiscTests
+			framework-tests PickerTests
+			framework-tests RenderTests
+			framework-tests SceneObjectTests
+			framework-tests ShadowTests
+			framework-tests StateSortTests
+			framework-tests StencilTests
+			framework-tests TextureTests
+			asset-tests AssetImportTests
+			asset-tests AssetTextureTests
+			asset-tests AssetLightTests
 end-of-list
 	)
 }
