@@ -68,7 +68,7 @@ public class sixaxisViewManager extends GVRScript {
         mainScene.getMainCameraRig().setCameraRigType(
                 GVRCameraRig.GVRCameraRigType.YawOnly.ID);
 
-        GVRMesh cylinderMesh = mGVRContext.loadMesh(new GVRAndroidResource(
+        GVRMesh cylinderMesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                 mGVRContext, R.raw.cylinder_obj));
         Bitmap cylinderBitmap = BitmapFactory.decodeResource(mGVRContext
                 .getContext().getResources(), R.drawable.cylinder2);

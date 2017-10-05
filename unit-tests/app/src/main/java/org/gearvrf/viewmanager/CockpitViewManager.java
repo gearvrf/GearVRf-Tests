@@ -44,9 +44,9 @@ public class CockpitViewManager extends GVRScript {
         mainScene.getMainCameraRig().getTransform()
                 .setPosition(0.0f, 6.0f, 1.0f);
 
-        GVRMesh shipMesh = mGVRContext.loadMesh(new GVRAndroidResource(
+        GVRMesh shipMesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                 mGVRContext, R.raw.gvrf_ship_mesh));
-        GVRMesh spaceMesh = mGVRContext.loadMesh(new GVRAndroidResource(
+        GVRMesh spaceMesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                 mGVRContext, R.raw.gvrf_space_mesh));
 
         GVRTexture shipTexture = gvrContext.loadTexture(new GVRAndroidResource(

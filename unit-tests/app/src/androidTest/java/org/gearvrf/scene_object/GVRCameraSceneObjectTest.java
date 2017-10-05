@@ -23,7 +23,7 @@ public class GVRCameraSceneObjectTest extends ActivityInstrumentationGVRf {
     public void testCreateCameraSceneObject() {
         Camera c = Camera.open();
         try {
-            GVRMesh mesh = TestDefaultGVRViewManager.mGVRContext.loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext, R.raw.cylinder3));
+            GVRMesh mesh = TestDefaultGVRViewManager.mGVRContext.getAssetLoader().loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext, R.raw.cylinder3));
             GVRCameraSceneObject object = new GVRCameraSceneObject(TestDefaultGVRViewManager.mGVRContext, mesh, c);
             TestDefaultGVRViewManager.mGVRContext.getMainScene().addSceneObject(object);
             assertNotNull(object);

@@ -6,13 +6,20 @@ import android.support.test.runner.AndroidJUnit4;
 import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRComponent;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRExternalScene;
+import org.gearvrf.GVRLightBase;
+import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRResourceVolume;
 import org.gearvrf.GVRImportSettings;
+import org.gearvrf.GVRShaderId;
+import org.gearvrf.GVRVertexBuffer;
+import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.GVRPhongShader;
@@ -65,9 +72,8 @@ public class AssetImportTests
         GVRScene scene = mTestUtils.getMainScene();
 
         mWaiter.assertNotNull(scene);
-        mBackground = new GVRCubeSceneObject(ctx, false);
+        mBackground = new GVRCubeSceneObject(ctx, false, new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID));
         mBackground.getTransform().setScale(10, 10, 10);
-        mBackground.getRenderData().setShaderTemplate(GVRPhongShader.class);
         mBackground.setName("background");
         mRoot = scene.getRoot();
         mWaiter.assertNotNull(mRoot);
@@ -82,6 +88,7 @@ public class AssetImportTests
         GVRSceneObject model = null;
 
         ctx.getEventReceiver().addListener(mHandler);
+        mHandler.dontAddToScene();
         try
         {
             model = ctx.getAssetLoader().loadModel("jassimp/astro_boy.dae", (GVRScene) null);
@@ -91,9 +98,9 @@ public class AssetImportTests
             mWaiter.fail(ex);
         }
         mTestUtils.waitForAssetLoad();
-        mHandler.checkAssetLoaded(mWaiter, null, 4);
+        mHandler.checkAssetLoaded(null, 4);
         mWaiter.assertNull(scene.getSceneObjectByName("astro_boy.dae"));
-        mHandler.checkAssetErrors(mWaiter, 0, 0);
+        mHandler.checkAssetErrors(0, 0);
         scene.addSceneObject(model);
         mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
         mTestUtils.waitForXFrames(2);
@@ -119,8 +126,8 @@ public class AssetImportTests
         }
         mTestUtils.waitForAssetLoad();
         mHandler.centerModel(model, scene.getMainCameraRig().getTransform());
-        mHandler.checkAssetLoaded(mWaiter, null, 4);
-        mHandler.checkAssetErrors(mWaiter, 0, 0);
+        mHandler.checkAssetLoaded(null, 4);
+        mHandler.checkAssetErrors(0, 0);
         mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
         mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot("AssetImportTests", "canStartAnimations", mWaiter, mDoCompare);
@@ -142,10 +149,9 @@ public class AssetImportTests
             mWaiter.fail(ex);
         }
         mTestUtils.waitForAssetLoad();
-        mHandler.checkAssetLoaded(mWaiter, null, 4);
-        mWaiter.assertNull(scene.getSceneObjectByName("astro_boy.dae"));
+        mHandler.checkAssetLoaded(null, 4);
         mWaiter.assertTrue(model.getChildrenCount() > 0);
-        mHandler.checkAssetErrors(mWaiter, 0, 0);
+        mHandler.checkAssetErrors(0, 0);
         mHandler.centerModel(model, scene.getMainCameraRig().getTransform());
         scene.addSceneObject(model);
         mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
@@ -189,19 +195,21 @@ public class AssetImportTests
         GVRScene scene = mTestUtils.getMainScene();
         GVRModelSceneObject model = new GVRModelSceneObject(ctx);
         ResourceLoader volume = new ResourceLoader(ctx, "jassimp/astro_boy.dae");
+        EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(GVRImportSettings.NO_ANIMATION));
 
-        ctx.getAssetLoader().loadModel(volume, model, GVRImportSettings.getRecommendedSettings(), false, mHandler);
+        mHandler.dontAddToScene();
+        ctx.getAssetLoader().loadModel(volume, model, settings, false, mHandler);
         mTestUtils.waitForAssetLoad();
         mWaiter.assertEquals(8, volume.ResourcesLoaded);
-        mHandler.checkAssetLoaded(mWaiter, null, 4);
+        mHandler.checkAssetLoaded(null, 4);
         mWaiter.assertNull(scene.getSceneObjectByName("astro_boy.dae"));
         mWaiter.assertTrue(model.getChildrenCount() > 0);
-        mHandler.checkAssetErrors(mWaiter, 0, 0);
+        mHandler.checkAssetErrors(0, 0);
         mHandler.centerModel(model, scene.getMainCameraRig().getTransform());
         scene.addSceneObject(model);
         mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
         mTestUtils.waitForXFrames(2);
-        mTestUtils.screenShot("AssetTests", "canLoadModelWithCustomIO", mWaiter, false);
+        mTestUtils.screenShot("AssetImportTests", "canLoadModelWithCustomIO", mWaiter, false);
     }
 
 
@@ -211,17 +219,11 @@ public class AssetImportTests
         mHandler.loadTestModel("jassimp/astro_boy.dae", 4, 0, "canLoadModelInScene");
     }
 
-
     @Test
     public void canLoadExternalScene() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
-        GVRCubeSceneObject cube = new GVRCubeSceneObject(ctx);
-
-        cube.setName("cube");
-        scene.addSceneObject(cube);
-
         GVRExternalScene sceneLoader = new GVRExternalScene(ctx, "jassimp/astro_boy.dae", true);
         GVRSceneObject model = new GVRSceneObject(ctx);
 
@@ -231,11 +233,143 @@ public class AssetImportTests
         sceneLoader.load(scene);
         mWaiter.assertNotNull(model);
         mTestUtils.waitForAssetLoad();
-        mHandler.checkAssetLoaded(mWaiter, "astro_boy.dae", 4);
-        mHandler.checkAssetErrors(mWaiter, 0, 0);
-        mWaiter.assertNull(scene.getSceneObjectByName("cube"));
+        mHandler.checkAssetLoaded("astro_boy.dae", 4);
+        mHandler.checkAssetErrors(0, 0);
         mTestUtils.waitForSceneRendering();
         mTestUtils.screenShot("AssetImportTests", "canLoadExternalScene", mWaiter, mDoCompare);
+    }
+
+    class MeshVisitorNoAnim implements GVRSceneObject.ComponentVisitor
+    {
+        public boolean visit(GVRComponent comp)
+        {
+            GVRRenderData rdata = (GVRRenderData) comp;
+            GVRMesh mesh = rdata.getMesh();
+            if (mesh != null)
+            {
+                GVRVertexBuffer vbuf = mesh.getVertexBuffer();
+                mWaiter.assertNotNull(vbuf);
+                mWaiter.assertTrue(vbuf.hasAttribute("a_position"));
+                mWaiter.assertTrue(vbuf.hasAttribute("a_normal"));
+                mWaiter.assertFalse(vbuf.hasAttribute("a_bone_weights"));
+                mWaiter.assertFalse(vbuf.hasAttribute("a_bone_indices"));
+            }
+            return true;
+        }
+    }
+
+    class MeshVisitorNoLights implements GVRSceneObject.ComponentVisitor
+    {
+        public boolean visit(GVRComponent comp)
+        {
+            if (comp.getClass().isAssignableFrom(GVRRenderData.class))
+            {
+                GVRRenderData rdata = (GVRRenderData) comp;
+                GVRMesh mesh = rdata.getMesh();
+                if (mesh != null)
+                {
+                    GVRVertexBuffer vbuf = mesh.getVertexBuffer();
+                    mWaiter.assertNotNull(vbuf);
+                    mWaiter.assertTrue(vbuf.hasAttribute("a_position"));
+                    mWaiter.assertFalse(vbuf.hasAttribute("a_normal"));
+                    mWaiter.assertTrue(vbuf.hasAttribute("a_texcoord"));
+                }
+            }
+            else if (comp.getClass().isAssignableFrom(GVRLightBase.class))
+            {
+                mWaiter.fail("Light sources are present and should not be");
+            }
+            return true;
+        }
+    }
+
+    class MeshVisitorNoTexture implements GVRSceneObject.ComponentVisitor
+    {
+        public boolean visit(GVRComponent comp)
+        {
+            GVRRenderData rdata = (GVRRenderData) comp;
+            GVRMesh mesh = rdata.getMesh();
+            if (mesh != null)
+            {
+                GVRVertexBuffer vbuf = mesh.getVertexBuffer();
+                mWaiter.assertNotNull(vbuf);
+                mWaiter.assertTrue(vbuf.hasAttribute("a_position"));
+                mWaiter.assertTrue(vbuf.hasAttribute("a_normal"));
+                mWaiter.assertFalse(vbuf.hasAttribute("a_texcoord"));
+            }
+            return true;
+        }
+    }
+
+    @Test
+    public void canLoadModelWithoutAnimation() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRSceneObject model = null;
+
+        ctx.getEventReceiver().addListener(mHandler);
+        try
+        {
+            EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(GVRImportSettings.NO_ANIMATION));
+            model = ctx.getAssetLoader().loadModel("jassimp/astro_boy.dae", settings, true, (GVRScene) null);
+        }
+        catch (IOException ex)
+        {
+            mWaiter.fail(ex);
+        }
+        mTestUtils.waitForAssetLoad();
+        mHandler.checkAssetLoaded(null, 4);
+        mHandler.checkAssetErrors(0, 0);
+        mWaiter.assertNull(model.getComponent(GVRAnimator.getComponentType()));
+        model.forAllComponents(new MeshVisitorNoAnim(), GVRRenderData.getComponentType());
+    }
+
+    @Test
+    public void canLoadModelWithoutTextures() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRSceneObject model = null;
+
+        ctx.getEventReceiver().addListener(mHandler);
+        try
+        {
+            EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(GVRImportSettings.NO_TEXTURING));
+            model = ctx.getAssetLoader().loadModel("jassimp/astro_boy.dae", settings, true, (GVRScene) null);
+        }
+        catch (IOException ex)
+        {
+            mWaiter.fail(ex);
+        }
+        mTestUtils.waitForAssetLoad();
+        mHandler.checkAssetLoaded(null, 0);
+        mHandler.checkAssetErrors(0, 0);
+        model.forAllComponents(new MeshVisitorNoTexture(), GVRRenderData.getComponentType());
+    }
+
+    @Test
+    public void canLoadModelWithoutLights() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRSceneObject model = null;
+
+        ctx.getEventReceiver().addListener(mHandler);
+        try
+        {
+            EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(GVRImportSettings.NO_LIGHTING));
+            model = ctx.getAssetLoader().loadModel(GVRTestUtils.GITHUB_URL + "x3d/lighting/pointlightmultilights.x3d", settings, true, (GVRScene) null);
+        }
+        catch (IOException ex)
+        {
+            mWaiter.fail(ex);
+        }
+        mTestUtils.waitForAssetLoad();
+        mHandler.checkAssetLoaded(null, 4);
+        mHandler.checkAssetErrors(0, 0);
+        mWaiter.assertNull(model.getComponent(GVRAnimator.getComponentType()));
+        model.forAllComponents(new MeshVisitorNoLights());
     }
 
     @Test
@@ -256,14 +390,14 @@ public class AssetImportTests
             mWaiter.fail(ex);
         }
         mTestUtils.waitForAssetLoad();
-        mHandler.checkAssetLoaded(mWaiter, null, 0);
+        mHandler.checkAssetLoaded(null, 0);
         mHandler.centerModel(model, scene.getMainCameraRig().getTransform());
-        mWaiter.assertNull(scene.getSceneObjectByName(modelName));
-        mHandler.checkAssetErrors(mWaiter, 0, 0);
+        mHandler.checkAssetErrors(0, 0);
         List<GVRRenderData> rdatas = model.getAllComponents(GVRRenderData.getComponentType());
+        GVRMaterial vertexColorMtl = new GVRMaterial(ctx, new GVRShaderId(VertexColorShader.class));
         for (GVRRenderData rdata : rdatas)
         {
-            rdata.setShaderTemplate(VertexColorShader.class);
+            rdata.setMaterial(vertexColorMtl);
         }
         scene.addSceneObject(model);
         mWaiter.assertNotNull(scene.getSceneObjectByName(modelName));
@@ -274,7 +408,7 @@ public class AssetImportTests
     @Test
     public void jassimpTrees3DS() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/trees/trees9.3ds", 9, 0, "jassimpTrees3DS");
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/trees/trees9.3ds", 9, 0, "jassimpTrees3DS");
     }
 
     @Test
@@ -286,7 +420,7 @@ public class AssetImportTests
     @Test
     public void jassimpHippoOBJ() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/hippo/hippo.obj", 1, 0, "jassimpHippoOBJ");
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/hippo/hippo.obj", 1, 0, "jassimpHippoOBJ");
     }
 
     @Test
@@ -299,19 +433,19 @@ public class AssetImportTests
     @Test
     public void jassimpBearOBJ() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/animals/bear-obj.obj", 5, 0, "jassimpBearOBJ");
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/animals/bear-obj.obj", 5, 0, "jassimpBearOBJ");
     }
 
     @Test
     public void jassimpWolfOBJ() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/animals/wolf-obj.obj", 5, 0, "jassimpWolfOBJ");
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/animals/wolf-obj.obj", 5, 0, "jassimpWolfOBJ");
     }
 
     @Test
     public void jassimpSkinningTREX() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/jassimp/trex/TRex_NoGround.fbx", 1, 0, "jassimpSkinningTREX");
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/trex/TRex_NoGround.fbx", 1, 0, "jassimpSkinningTREX");
     }
 
     @Test
@@ -323,24 +457,24 @@ public class AssetImportTests
     @Test
     public void x3dGenerateNormals() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/x3d/generate_normals/teapotandtorusnonormals.x3d", 2, 0, "x3dGenerateNormals");
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "x3d/generate_normals/teapotandtorusnonormals.x3d", 2, 0, "x3dGenerateNormals");
     }
 
     @Test
     public void x3dOpacity() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/x3d/general/opacitytest01.x3d", 2, 0, "x3dOpacity");
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "x3d/general/opacitytest01.x3d", 2, 0, "x3dOpacity");
     }
 
     @Test
     public void x3dEmissive() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/x3d/general/emissivecolor.x3d", 0, 0, "x3dEmissive");
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "x3d/general/emissivecolor.x3d", 0, 0, "x3dEmissive");
     }
 
     @Test
     public void x3dHierarchy() throws TimeoutException
     {
-        mHandler.loadTestModel("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/x3d/general/twoplaneswithchildren.x3d", 5, 0, "x3dHierarchy");
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "x3d/general/twoplaneswithchildren.x3d", 5, 0, "x3dHierarchy");
     }
 }

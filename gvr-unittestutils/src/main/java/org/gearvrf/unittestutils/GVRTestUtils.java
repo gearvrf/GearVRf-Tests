@@ -19,6 +19,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Environment;
+import android.os.Build;
 
 import net.jodah.concurrentunit.Waiter;
 
@@ -30,29 +31,37 @@ import org.gearvrf.GVRScreenshotCallback;
 import org.gearvrf.utility.Log;
 import org.gearvrf.utility.Threads;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.ReentrantLock;
+
 
 /**
  * This class defines utility function to be used for writing unit tests for GearVR framework
  */
 public class GVRTestUtils implements GVRMainMonitor {
     private static final String TAG = GVRTestUtils.class.getSimpleName();
-    public static final int TEST_TIMEOUT = 2000;
-    public static final String DEVICE_TYPE = "S7Edge";
-    protected static final int SCREENSHOT_TEST_TIMEOUT = 10000;
+    private static final String DEFAULT_DEVICE_TYPE = "S7Edge";
+    public static final String DEVICE_TYPE = GetDeviceType();
+    public static final String GITHUB_URL = "https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/vulkan/";
+    private static final String GOLDEN_MASTERS_BASE_URL = GITHUB_URL + "golden_masters/";
+    public static final String GOLDEN_MASTERS_URL = GOLDEN_MASTERS_BASE_URL + DEVICE_TYPE;
+
+    protected static final int SCREENSHOT_TEST_TIMEOUT = 80000;
 
     private GVRContext gvrContext;
     private final CountDownLatch onInitLatch = new CountDownLatch(1);
     private final CountDownLatch onStepLatch = new CountDownLatch(1);
     private final Object onScreenshotLock;
     private final Object xFramesLock;
+    private boolean mFramesLockDone = true;
     private final Object onAssetLock;
     private GVRTestableMain testableMain;
     private GVRScene mainScene;
@@ -90,6 +99,16 @@ public class GVRTestUtils implements GVRMainMonitor {
 
     }
 
+    private static String GetDeviceType() {
+        String TryUrl = GOLDEN_MASTERS_BASE_URL + Build.MODEL;
+        try {
+            return new BufferedReader(new InputStreamReader(new URL(TryUrl).openStream())).readLine().trim();
+        } catch (Exception ex) {
+            Log.e(TAG,"Golden master redirect not found: " + TryUrl);
+            return DEFAULT_DEVICE_TYPE;
+        }
+    }
+
     /**
      * Waits for the {@link GVRMain#onInit(GVRContext)} to be called on the corresponding
      * {@link GVRMain}. This function is useful to obtain an instance to the {@link GVRContext}
@@ -108,6 +127,7 @@ public class GVRTestUtils implements GVRMainMonitor {
                 onInitLatch.await();
             } catch (InterruptedException e) {
                 Log.e(TAG, "", e);
+                Thread.currentThread().interrupt();
                 return null;
             }
             return gvrContext;
@@ -131,21 +151,24 @@ public class GVRTestUtils implements GVRMainMonitor {
             onStepLatch.await();
         } catch (InterruptedException e) {
             Log.e(TAG, "", e);
+            Thread.currentThread().interrupt();
             return;
         }
     }
 
     public void waitForAssetLoad() {
-        if (mAssetIsLoaded)
-            return;
         synchronized (onAssetLock) {
-            try {
-                Log.d(TAG, "Waiting for OnAssetLoaded");
-                onAssetLock.wait();
-            } catch (InterruptedException e) {
-                Log.e(TAG, "", e);
-                return;
+            while(!mAssetIsLoaded) {
+                try {
+                    Log.d(TAG, "Waiting for OnAssetLoaded");
+                    onAssetLock.wait();
+                } catch (InterruptedException e) {
+                    Log.e(TAG, "", e);
+                    Thread.currentThread().interrupt();
+                    return;
+                }
             }
+            mAssetIsLoaded = false;
         }
     }
 
@@ -154,14 +177,17 @@ public class GVRTestUtils implements GVRMainMonitor {
      * @param frames number of frames to wait for
      */
     public void waitForXFrames(int frames) {
-        testableMain.notifyAfterXFrames(frames);
         synchronized (xFramesLock) {
-            try {
-                xFramesLock.wait();
-            } catch (InterruptedException e) {
-                Log.e(TAG,"",e);
-                return;
-
+            mFramesLockDone = false;
+            testableMain.notifyAfterXFrames(frames);
+            while(!mFramesLockDone) {
+                try {
+                    xFramesLock.wait();
+                } catch (InterruptedException e) {
+                    Log.e(TAG,"",e);
+                    Thread.currentThread().interrupt();
+                    return;
+                }
             }
         }
     }
@@ -187,13 +213,14 @@ public class GVRTestUtils implements GVRMainMonitor {
 
     public void xFramesRendered() {
         synchronized (xFramesLock) {
+            mFramesLockDone = true;
             xFramesLock.notifyAll();
         }
     }
 
     public void onAssetLoaded(GVRSceneObject asset) {
-        mAssetIsLoaded = true;
         synchronized (onAssetLock) {
+            mAssetIsLoaded = true;
             onAssetLock.notifyAll();
         }
         Log.d(TAG, "OnAssetLoaded Called");
@@ -277,7 +304,8 @@ public class GVRTestUtils implements GVRMainMonitor {
 
                 try
                 {
-                    URL url = new URL("https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/golden_masters/" + DEVICE_TYPE + "/" + category + "/" + testname);
+                    URL url = new URL(GOLDEN_MASTERS_URL + "/" + category + "/" + testname);
+                    Log.v(TAG, "Fetching golden master "+url.toString());
                     golden = BitmapFactory.decodeStream(url.openStream());
                 }
                 catch (Throwable ex)
@@ -335,8 +363,8 @@ public class GVRTestUtils implements GVRMainMonitor {
                         waiter.fail(t);
                     }
 
-                    Log.e(category, category + ": %s %f", testname, diff[0]);
-                    if (diff[0] > 1000.0f)
+                    Log.e(category, "RESULT: %s %s diff = %f", category, testname, diff[0]);
+                    if (diff[0] > 2000.0f)
                     {
                         writeBitmap(category, "diff_" + testname, diffmap);
                     }
@@ -404,6 +432,6 @@ public class GVRTestUtils implements GVRMainMonitor {
         };
         waitForSceneRendering();
         gvrContext.captureScreenCenter(callback);
-        waiter.await();
+        waiter.await(SCREENSHOT_TEST_TIMEOUT);
     }
 }

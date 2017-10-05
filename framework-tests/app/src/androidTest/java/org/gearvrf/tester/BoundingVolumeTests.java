@@ -86,7 +86,7 @@ public class BoundingVolumeTests {
     public void testBoxBV() {
         GVRContext context = gvrTestUtils.getGvrContext();
         GVRScene scene = gvrTestUtils.getMainScene();
-        Future<GVRTexture> texture = context.getAssetLoader().loadFutureTexture(new GVRAndroidResource(
+        GVRTexture texture = context.getAssetLoader().loadTexture(new GVRAndroidResource(
                 context, R.drawable.gearvr_logo));
 
         GVRCubeSceneObject cubeSceneObject = new GVRCubeSceneObject(context, true, texture);

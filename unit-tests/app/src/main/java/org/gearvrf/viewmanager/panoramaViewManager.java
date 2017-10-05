@@ -55,7 +55,7 @@ public class panoramaViewManager extends GVRScript {
         try {
             // If "cylinder.obj" exists - but is not a valid ASSIMP mesh file -
             // loadMesh() will return null.
-            mesh = mGVRContext.loadMesh(new GVRAndroidResource(mGVRContext,
+            mesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(mGVRContext,
                     "cylinder.obj"));
 
             leftScreen = new GVRSceneObject(gvrContext, mesh,

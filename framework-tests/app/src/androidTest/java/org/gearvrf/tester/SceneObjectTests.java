@@ -6,7 +6,6 @@ import android.support.test.runner.AndroidJUnit4;
 import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRBillboard;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRPhongShader;
@@ -17,6 +16,7 @@ import org.gearvrf.GVRTransform;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRCylinderSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
+import org.gearvrf.GVRBillboard;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
@@ -67,20 +67,11 @@ public class SceneObjectTests
         GVRScene scene = mTestUtils.getMainScene();
         mWaiter.assertNotNull(scene);
 
-        mBlueMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
-
+        mBlueMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
         mBlueMtl.setDiffuseColor(0, 0, 1, 1);
         mRoot = scene.getRoot();
 
         mWaiter.assertNotNull(mRoot);
-    }
-
-    private void waitForTexture(Future<GVRTexture> futureTex) throws InterruptedException
-    {
-        while (!futureTex.isDone())
-        {
-            sleep(200);
-        }
     }
 
     @Test
@@ -114,7 +105,6 @@ public class SceneObjectTests
         mRoot.addChildObject(text);
         text.setName("text");
         sphere.setName("sphere");
-        scene.bindShaders();
         mTestUtils.waitForSceneRendering();
         scene.clear();
         mWaiter.assertNull(scene.getSceneObjectByName("background"));
@@ -129,21 +119,18 @@ public class SceneObjectTests
         GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject sphere1 = new GVRSphereSceneObject(ctx, true, mBlueMtl);
 
-        final Future<GVRTexture> tex = ctx.getAssetLoader().loadFutureCubemapTexture(new GVRAndroidResource(ctx, R.raw.beach));
+        final GVRTexture tex = ctx.getAssetLoader().loadCubemapTexture(new GVRAndroidResource(ctx, R.raw.beach));
         final GVRMaterial cubeMapMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Cubemap.ID);
-        tex.get();
         cubeMapMtl.setMainTexture(tex);
 
         GVRSceneObject sphere2 = new GVRSphereSceneObject(ctx, false, cubeMapMtl);
 
-        sphere1.getRenderData().setShaderTemplate(GVRPhongShader.class);
         sphere1.getTransform().setPosition(0, 0, -4);
         sphere2.getTransform().setScale(20, 20, 20);
         sphere1.setName("sphere1");
         sphere2.setName("sphere2");
         mRoot.addChildObject(sphere1);
         scene.addSceneObject(sphere2);
-        scene.bindShaders();
         mTestUtils.waitForXFrames(2);
         mWaiter.assertNotNull(scene.getSceneObjectByName("sphere2"));
         mWaiter.assertNotNull(scene.getSceneObjectByName("sphere1"));
@@ -157,20 +144,17 @@ public class SceneObjectTests
         GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject cube1 = new GVRCubeSceneObject(ctx, true, mBlueMtl);
 
-        final Future<GVRTexture> tex = ctx.getAssetLoader().loadFutureCubemapTexture(new GVRAndroidResource(ctx, R.raw.beach));
+        final GVRTexture tex = ctx.getAssetLoader().loadCubemapTexture(new GVRAndroidResource(ctx, R.raw.beach));
         final GVRMaterial cubeMapMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Cubemap.ID);
-        tex.get();
         cubeMapMtl.setMainTexture(tex);
         GVRSceneObject cube2 = new GVRCubeSceneObject(ctx, false, cubeMapMtl);
 
-        cube1.getRenderData().setShaderTemplate(GVRPhongShader.class);
         cube1.getTransform().setPosition(0, 0, -4);
         cube1.setName("cube1");
         cube2.getTransform().setScale(20, 20, 20);
         cube2.setName("cube2");
         mRoot.addChildObject(cube1);
         scene.addSceneObject(cube2);
-        scene.bindShaders();
         mTestUtils.waitForXFrames(2);
         mWaiter.assertNotNull(scene.getSceneObjectByName("cube2"));
         mWaiter.assertNotNull(scene.getSceneObjectByName("cube1"));
@@ -183,24 +167,50 @@ public class SceneObjectTests
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
+        ctx.getEventReceiver().addListener(texHandler);
         GVRTexture tex = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.color_sphere));
         GVRSceneObject cylinder1 = new GVRCylinderSceneObject(ctx, true, mBlueMtl);
-        GVRMaterial mtl = new GVRMaterial(ctx);
+        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Texture.ID);
         GVRSceneObject cylinder2 = new GVRCylinderSceneObject(ctx, false, mtl);
 
-        mtl.setMainTexture(tex);
-        cylinder1.getRenderData().setShaderTemplate(GVRPhongShader.class);
+        mtl.setTexture("u_texture", tex);
+        cylinder1.getTransform().setPosition(0, 0, -4);
+        cylinder1.setName("cylinder1");
+        cylinder2.getTransform().setScale(10, 10, 10);
+        cylinder2.setName("cylinder2");
+        mTestUtils.waitForAssetLoad();
+        mRoot.addChildObject(cylinder1);
+        scene.addSceneObject(cylinder2);
+        mTestUtils.waitForXFrames(2);
+        mWaiter.assertNotNull(scene.getSceneObjectByName("cylinder1"));
+        mWaiter.assertNotNull(scene.getSceneObjectByName("cylinder2"));
+        mTestUtils.screenShot(getClass().getSimpleName(), "canDisplayCylinders", mWaiter, mDoCompare);
+    }
+
+
+    @Test
+    public void canDisplayNonTextured() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRMaterial redMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
+        GVRMaterial greenMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
+        GVRSceneObject cylinder1 = new GVRCylinderSceneObject(ctx, true, redMtl);
+        GVRSceneObject cylinder2 = new GVRCylinderSceneObject(ctx, false, greenMtl);
+
+        redMtl.setDiffuseColor(1, 0, 0, 1);
+        greenMtl.setDiffuseColor(0, 1, 0, 1);
         cylinder1.getTransform().setPosition(0, 0, -4);
         cylinder1.setName("cylinder1");
         cylinder2.getTransform().setScale(10, 10, 10);
         cylinder2.setName("cylinder2");
         mRoot.addChildObject(cylinder1);
         scene.addSceneObject(cylinder2);
-        scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(20);
         mWaiter.assertNotNull(scene.getSceneObjectByName("cylinder1"));
         mWaiter.assertNotNull(scene.getSceneObjectByName("cylinder2"));
-        mTestUtils.screenShot(getClass().getSimpleName(), "canDisplayCylinders", mWaiter, mDoCompare);
+        mTestUtils.screenShot(getClass().getSimpleName(), "canDisplayNonTextured", mWaiter, mDoCompare);
     }
 
     @Test
@@ -244,7 +254,7 @@ public class SceneObjectTests
 
         GVRSceneObject quadObj1 = new GVRSceneObject(ctx, 0.8f, 0.8f, tex);
         quadObj1.getTransform().setPosition(0.8f, 1.0f, -3);
-        //quadObj1.attachComponent(new GVRBillboard(ctx));
+        quadObj1.attachComponent(new GVRBillboard(ctx));
 
         GVRSceneObject quadObj2 = new GVRSceneObject(ctx, 0.8f, 0.8f, tex);
         quadObj2.getTransform().setPosition(-0.8f, -1.0f, -3);
@@ -252,7 +262,7 @@ public class SceneObjectTests
 
         GVRSceneObject quadObj3 = new GVRSceneObject(ctx, 0.8f, 0.8f, tex);
         quadObj3.getTransform().setPosition(0.8f, -1.0f, -3);
-        //quadObj3.attachComponent(new GVRBillboard(ctx));
+        quadObj3.attachComponent(new GVRBillboard(ctx));
 
         GVRSceneObject quadObj4 = new GVRSceneObject(ctx, 0.8f, 0.8f, tex);
         quadObj4.getTransform().setPosition(-0.8f, 1.0f, -3);
@@ -260,7 +270,7 @@ public class SceneObjectTests
 
         GVRSceneObject quadObj5 = new GVRSceneObject(ctx, 0.8f, 0.8f, tex);
         quadObj5.getTransform().setPosition(-1.5f, 0.0f, -3);
-        //quadObj5.attachComponent(new GVRBillboard(ctx));
+        quadObj5.attachComponent(new GVRBillboard(ctx));
 
         GVRSceneObject quadObj6 = new GVRSceneObject(ctx, 0.8f, 0.8f, tex);
         quadObj6.getTransform().setPosition(1.5f, 0.0f, -3);

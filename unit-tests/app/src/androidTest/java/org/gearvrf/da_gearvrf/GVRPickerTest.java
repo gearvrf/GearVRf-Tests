@@ -96,7 +96,7 @@ public class GVRPickerTest extends ActivityInstrumentationGVRf {
         GVRMain main = activity.getMain();
 
         Future<GVRTexture> futureCubemapTexture = mGVRContext.loadFutureCubemapTexture(new GVRAndroidResource(mGVRContext, R.raw.beach));
-        GVRMesh sphereMesh = mGVRContext.loadMesh(new GVRAndroidResource(mGVRContext, R.raw.sphere));
+        GVRMesh sphereMesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(mGVRContext, R.raw.sphere));
         GVRMaterial cubemapReflectionMaterial = new GVRMaterial(mGVRContext,GVRMaterial.GVRShaderType.CubemapReflection.ID);
         cubemapReflectionMaterial.setMainTexture(futureCubemapTexture);
 

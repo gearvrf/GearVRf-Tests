@@ -108,12 +108,12 @@ public class GVRContextTest extends ActivityInstrumentationGVRf {
 
 //    public void testLoadMeshWhitRaw(){
 //        GVRContext gVRContext = TestDefaultGVRViewManager.mGVRContext;
-//        gVRContext.loadMesh(R.raw.cinema);
+//        gVRContext.getAssetLoader().loadMesh(R.raw.cinema);
 //    }
 
 //    public void testLoadMeshRelativyFileName(){
 //        GVRContext gVRContext = TestDefaultGVRViewManager.mGVRContext;
-//        gVRContext.loadMesh("cinema.obj");
+//        gVRContext.getAssetLoader().loadMesh("cinema.obj");
 //    }
 
     public void testLoadPngFile(){
@@ -162,8 +162,8 @@ public class GVRContextTest extends ActivityInstrumentationGVRf {
 
             }
         };
-        TestDefaultGVRViewManager.mGVRContext.loadMesh(meshCallback,gvrAndroidResource);
-        TestDefaultGVRViewManager.mGVRContext.loadMesh(meshCallback,gvrAndroidResource2,0);
+        TestDefaultGVRViewManager.mGVRContext.getAssetLoader().loadMesh(meshCallback,gvrAndroidResource);
+        TestDefaultGVRViewManager.mGVRContext.getAssetLoader().loadMesh(meshCallback,gvrAndroidResource2,0);
     }
 
 

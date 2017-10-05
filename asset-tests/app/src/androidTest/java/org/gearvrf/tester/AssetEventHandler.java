@@ -5,6 +5,7 @@ import net.jodah.concurrentunit.Waiter;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRShader;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.IAssetEvents;
@@ -12,8 +13,10 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRImportSettings;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.utility.FileNameUtils;
+import org.joml.Vector3f;
 
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.concurrent.TimeoutException;
 
 class AssetEventHandler implements IAssetEvents
@@ -23,12 +26,12 @@ class AssetEventHandler implements IAssetEvents
     public int TextureErrors = 0;
     public int ModelErrors = 0;
     public String AssetErrors = null;
-    public int AssetsLoaded = 0;
     protected GVRScene mScene;
     protected Waiter mWaiter;
     protected GVRTestUtils mTester;
     protected String mCategory;
     protected boolean mDoCompare = true;
+    protected boolean mAddToScene = true;
 
     AssetEventHandler(GVRScene scene, Waiter waiter, GVRTestUtils tester, String category)
     {
@@ -36,11 +39,25 @@ class AssetEventHandler implements IAssetEvents
         mWaiter = waiter;
         mTester = tester;
         mCategory = category;
+        mAddToScene = true;
     }
+
+    public void dontAddToScene()
+    {
+        mAddToScene = false;
+    }
+
     public void onAssetLoaded(GVRContext context, GVRSceneObject model, String filePath, String errors)
     {
         AssetErrors = errors;
-        mTester.onAssetLoaded(model);
+        if (model != null)
+        {
+            if (mAddToScene)
+            {
+                mScene.addSceneObject(model);
+            }
+            mTester.onAssetLoaded(model);
+        }
     }
 
     public void onModelLoaded(GVRContext context, GVRSceneObject model, String filePath)
@@ -52,6 +69,7 @@ class AssetEventHandler implements IAssetEvents
     {
         TexturesLoaded++;
     }
+
     public void onModelError(GVRContext context, String error, String filePath)
     {
         ModelErrors++;
@@ -67,7 +85,17 @@ class AssetEventHandler implements IAssetEvents
         mDoCompare = false;
     }
 
-    public void checkAssetLoaded(Waiter waiter, String name, int numTex)
+    public void checkModelLoaded(String name)
+    {
+        mWaiter.assertEquals(1, ModelsLoaded);
+        mWaiter.assertEquals(0, ModelErrors);
+        if (name != null)
+        {
+            mWaiter.assertNotNull(mScene.getSceneObjectByName(name));
+        }
+    }
+
+    public void checkAssetLoaded(String name, int numTex)
     {
         mWaiter.assertEquals(1, ModelsLoaded);
         mWaiter.assertEquals(0, ModelErrors);
@@ -78,7 +106,7 @@ class AssetEventHandler implements IAssetEvents
         }
     }
 
-    public void checkAssetErrors(Waiter waiter, int numModelErrors, int numTexErrors)
+    public void checkAssetErrors(int numModelErrors, int numTexErrors)
     {
         mWaiter.assertEquals(numModelErrors, ModelErrors);
         mWaiter.assertEquals(numTexErrors, TextureErrors);
@@ -105,7 +133,10 @@ class AssetEventHandler implements IAssetEvents
         ctx.getEventReceiver().addListener(this);
         try
         {
-            model = ctx.getAssetLoader().loadModel(modelfile, scene);
+            EnumSet<GVRImportSettings> settings = GVRShader.isVulkanInstance() ?
+                    GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(GVRImportSettings.NO_LIGHTING)) :
+                    GVRImportSettings.getRecommendedSettings();
+            model = ctx.getAssetLoader().loadModel(modelfile, settings, true, scene);
         }
         catch (IOException ex)
         {
@@ -113,7 +144,6 @@ class AssetEventHandler implements IAssetEvents
         }
         mTester.waitForAssetLoad();
         centerModel(model, scene.getMainCameraRig().getTransform());
-        checkAssetLoaded(mWaiter, FileNameUtils.getFilename(modelfile), numtex);
         return model;
     }
 
@@ -123,10 +153,9 @@ class AssetEventHandler implements IAssetEvents
         GVRScene scene = mTester.getMainScene();
         GVRSceneObject model = null;
 
-        ctx.getEventReceiver().addListener(this);
         try
         {
-            model = ctx.getAssetLoader().loadModel(modelfile, scene);
+            model = ctx.getAssetLoader().loadModel(modelfile, this);
         }
         catch (IOException ex)
         {
@@ -134,8 +163,8 @@ class AssetEventHandler implements IAssetEvents
         }
         mTester.waitForAssetLoad();
         centerModel(model, scene.getMainCameraRig().getTransform());
-        checkAssetLoaded(mWaiter, FileNameUtils.getFilename(modelfile), numTex);
-        checkAssetErrors(mWaiter, 0, texError);
+        checkAssetLoaded(FileNameUtils.getFilename(modelfile), numTex);
+        checkAssetErrors(0, texError);
         if (testname != null)
         {
             mTester.waitForXFrames(2);
@@ -163,8 +192,49 @@ class AssetEventHandler implements IAssetEvents
         }
         mTester.waitForAssetLoad();
         centerModel(model, t);
-        checkAssetLoaded(mWaiter, res.getResourceFilename(), numTex);
-        checkAssetErrors(mWaiter, 0, texError);
+        checkAssetLoaded(res.getResourceFilename(), numTex);
+        checkAssetErrors(0, texError);
+        if (testname != null)
+        {
+            mTester.waitForXFrames(2);
+            mTester.screenShot(mCategory, testname, mWaiter, mDoCompare);
+        }
+        return model;
+    }
+
+    public GVRSceneObject loadTestModel(String modelfile, String testname,
+                                        float scale, boolean rotX90, Vector3f pos) throws TimeoutException
+    {
+        GVRContext ctx  = mTester.getGvrContext();
+        GVRScene scene = mTester.getMainScene();
+        GVRSceneObject model = null;
+
+        try
+        {
+            model = ctx.getAssetLoader().loadModel(modelfile, this);
+        }
+        catch (IOException ex)
+        {
+            mWaiter.fail(ex);
+        }
+        mTester.waitForAssetLoad();
+        GVRTransform modelTrans = model.getTransform();
+        modelTrans.setScale(scale, scale, scale);
+        if (rotX90)
+        {
+            modelTrans.rotateByAxis(90.0f, 1, 0, 0);
+        }
+        if (pos != null)
+        {
+            GVRSceneObject.BoundingVolume bv = model.getBoundingVolume();
+            modelTrans.setPosition(pos.x - bv.center.x, pos.y - bv.center.y, pos.z - bv.center.z);
+        }
+        else
+        {
+            centerModel(model, scene.getMainCameraRig().getTransform());
+        }
+        checkModelLoaded(FileNameUtils.getFilename(modelfile));
+
         if (testname != null)
         {
             mTester.waitForXFrames(2);
@@ -189,8 +259,8 @@ class AssetEventHandler implements IAssetEvents
             mWaiter.fail(ex);
         }
         mTester.waitForAssetLoad();
-        checkAssetLoaded(mWaiter, FileNameUtils.getFilename(modelfile), numTex);
-        checkAssetErrors(mWaiter, 0, 0);
+        checkAssetLoaded(FileNameUtils.getFilename(modelfile), numTex);
+        checkAssetErrors(0, 0);
         if (testname != null)
         {
             mTester.waitForXFrames(2);
