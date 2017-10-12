@@ -256,14 +256,14 @@ public class GVRColorAnimationTest extends ActivityInstrumentationGVRf {
     }
 
     public void ignoreCreateObjectColorAnimationWithSceneObject() {
-        GVRMesh mesh = TestDefaultGVRViewManager.mGVRContext.loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
+        GVRMesh mesh = TestDefaultGVRViewManager.mGVRContext.getAssetLoader().loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
         GVRSceneObject sceneObject = new GVRSceneObject(TestDefaultGVRViewManager.mGVRContext, mesh);
         float[] rgb = {DEFAULT_R, DEFAULT_G, DEFAULT_B};
         new GVRColorAnimation(sceneObject, 1.0f, rgb);
     }
 
     public void ignoreCreateObjectColorAnimationWithColor() {
-        GVRMesh mesh = TestDefaultGVRViewManager.mGVRContext.loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
+        GVRMesh mesh = TestDefaultGVRViewManager.mGVRContext.getAssetLoader().loadMesh(UtilResource.androidResource(TestDefaultGVRViewManager.mGVRContext,R.raw.cylinder3));
         GVRSceneObject sceneObject = new GVRSceneObject(TestDefaultGVRViewManager.mGVRContext, mesh);
         float[] rgb = {DEFAULT_R, DEFAULT_G, DEFAULT_B};
         new GVRColorAnimation(sceneObject, 1.0f, 83);

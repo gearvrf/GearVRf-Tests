@@ -4,7 +4,9 @@
   <Scene>
   
     <NavigationInfo headlight="false"/>
-    
+    <Viewpoint position='0 0 0'/>
+    <Background skyColor='.1 .2 .3'/>
+
     <SpotLight DEF="redLightLeft" color="1 0 0" location="-2.5 0 -2.5" on="false" direction=".707 0 -.707" beamWidth=".125" cutOffAngle=".125"/>
     <SpotLight DEF="greenLightLeft" color="0 1 0" location="-2.5 -2 -2.5" on="false" direction=".707 0 -.707" beamWidth=".25" cutOffAngle=".25"/>
     <SpotLight DEF="blueLightLeft" color="0 0 1" location="-2.5 -4 -2.5" on="false" direction=".707 0 -.707" beamWidth=".5" cutOffAngle=".5"/>
@@ -22,7 +24,7 @@
           <Appearance>
             <Material diffuseColor='.5 .5 .5' emissiveColor='.5 .5 .5'/>
           </Appearance>
-          <Box/>
+          <Box size='1 1 1'/>
         </Shape>
       </Transform>
 
@@ -32,7 +34,7 @@
           <Appearance>
             <Material diffuseColor='.5 .5 .5' emissiveColor='.5 .5 .5'/>
           </Appearance>
-          <Box/>
+          <Box size='1 1 1'/>
         </Shape>
       </Transform>
 

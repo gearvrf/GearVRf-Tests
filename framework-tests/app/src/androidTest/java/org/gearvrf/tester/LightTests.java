@@ -54,6 +54,7 @@ public class LightTests
             scene.clear();
         }
     }
+
     @Before
     public void setUp() throws TimeoutException
     {
@@ -64,25 +65,27 @@ public class LightTests
 
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
-        GVRSceneObject background = new GVRCubeSceneObject(ctx, false);
-        GVRMaterial blue = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
-        GVRMaterial check = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        GVRMaterial white = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
+        GVRMaterial blue = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
+        GVRMaterial check = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
         GVRTexture checker = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.checker));
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
+        GVRSceneObject background = new GVRCubeSceneObject(ctx, false, white);
 
+        ctx.getEventReceiver().addListener(texHandler);
         mWaiter.assertNotNull(scene);
         mWaiter.assertNotNull(checker);
         check.setTexture("diffuseTexture", checker);
         background.getTransform().setScale(10, 10, 10);
-        background.getRenderData().setShaderTemplate(GVRPhongShader.class);
         blue.setDiffuseColor(0, 0, 1, 1);
         mSphere = new GVRSphereSceneObject(ctx, true, blue);
-        mSphere.getRenderData().setShaderTemplate(GVRPhongShader.class);
         mSphere.getTransform().setPosition(0, 0, -2);
         mCube = new GVRCubeSceneObject(ctx, true, check, new Vector3f(6, 3, 1));
-        mCube.getRenderData().setShaderTemplate(GVRPhongShader.class);
         mCube.getTransform().setPosition(-1, 0, -4);
         mRoot = scene.getRoot();
         mWaiter.assertNotNull(mRoot);
+        mTestUtils.waitForAssetLoad();
+        ctx.getEventReceiver().removeListener(texHandler);
         mRoot.addChildObject(background);
     }
 
@@ -90,7 +93,6 @@ public class LightTests
     public void pointLightAtFrontIlluminates() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRPointLight light = new GVRPointLight(ctx);
 
@@ -98,8 +100,7 @@ public class LightTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "pointLightAtFrontIlluminates", mWaiter, mDoCompare);
     }
 
@@ -107,15 +108,13 @@ public class LightTests
     public void pointLightIlluminatesInColor() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRPointLight light = new GVRPointLight(ctx);
 
         light.setDiffuseIntensity(0, 0, 1, 1);
         lightObj.attachComponent(light);
         mRoot.addChildObject(lightObj);
-        scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(),"pointLightIlluminatesInColor", mWaiter, mDoCompare);
     }
 
@@ -123,7 +122,6 @@ public class LightTests
     public void pointLightAtFrontAttenuates() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRPointLight light = new GVRPointLight(ctx);
 
@@ -132,8 +130,7 @@ public class LightTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "pointLightAtFrontAttenuates", mWaiter, mDoCompare);
     }
 
@@ -141,7 +138,6 @@ public class LightTests
     public void pointLightAtCornerIlluminates() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRPointLight light = new GVRPointLight(ctx);
 
@@ -150,8 +146,7 @@ public class LightTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "pointLightAtCornerIlluminates", mWaiter, mDoCompare);
     }
 
@@ -160,7 +155,6 @@ public class LightTests
     public void pointLightHasSpecularReflection() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRPointLight light = new GVRPointLight(ctx);
 
@@ -171,8 +165,7 @@ public class LightTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "pointLightHasSpecularReflection", mWaiter, mDoCompare);
     }
 
@@ -180,7 +173,6 @@ public class LightTests
     public void spotLightAtFrontIlluminates() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRSpotLight light = new GVRSpotLight(ctx);
 
@@ -190,8 +182,7 @@ public class LightTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "spotLightAtFrontIlluminates", mWaiter, mDoCompare);
    }
 
@@ -199,7 +190,6 @@ public class LightTests
     public void spotLightIlluminatesInColor() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRSpotLight light = new GVRSpotLight(ctx);
 
@@ -208,8 +198,7 @@ public class LightTests
         light.setInnerConeAngle(30.0f);
         light.setOuterConeAngle(45.0f);
         mRoot.addChildObject(lightObj);
-        scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "spotLightIlluminatesInColor", mWaiter, mDoCompare);
     }
 
@@ -217,7 +206,6 @@ public class LightTests
     public void spotLightAtCornerIlluminates() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRSpotLight light = new GVRSpotLight(ctx);
 
@@ -229,8 +217,7 @@ public class LightTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "spotLightAtCornerIlluminates", mWaiter, mDoCompare);
     }
 
@@ -238,7 +225,6 @@ public class LightTests
     public void spotLightHasSpecularReflection() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRSpotLight light = new GVRSpotLight(ctx);
 
@@ -251,8 +237,7 @@ public class LightTests
         mSphere.getRenderData().getMaterial().setSpecularColor(0.8f, 0.8f, 0.8f, 1.0f);
         mSphere.getRenderData().getMaterial().setSpecularExponent(8.0f);
         mRoot.addChildObject(mSphere);
-        scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "spotLightHasSpecularReflection", mWaiter, mDoCompare);
     }
 
@@ -260,7 +245,6 @@ public class LightTests
     public void spotLightAtFrontAttenuates() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRSpotLight light = new GVRSpotLight(ctx);
 
@@ -271,8 +255,7 @@ public class LightTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "spotLightAtFrontAttenuates", mWaiter, mDoCompare);
     }
 
@@ -280,7 +263,6 @@ public class LightTests
     public void directLightRotatedIlluminates() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRDirectLight light = new GVRDirectLight(ctx);
 
@@ -289,8 +271,7 @@ public class LightTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "directLightRotatedIlluminates", mWaiter, mDoCompare);
     }
 
@@ -299,7 +280,6 @@ public class LightTests
     public void directLightIlluminatesInColor() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRDirectLight light = new GVRDirectLight(ctx);
 
@@ -308,8 +288,7 @@ public class LightTests
         lightObj.getTransform().rotateByAxis(-45, 0, 1, 0);
         lightObj.attachComponent(light);
         mRoot.addChildObject(lightObj);
-        scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "directLightIlluminatesInColor", mWaiter, mDoCompare);
     }
 
@@ -317,7 +296,6 @@ public class LightTests
     public void directLightHasSpecularReflection() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRDirectLight light = new GVRDirectLight(ctx);
 
@@ -328,8 +306,7 @@ public class LightTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "directLightHasSpecularReflection", mWaiter, mDoCompare);
     }
 
@@ -338,7 +315,6 @@ public class LightTests
     public void directAndPointLightsIlluminate() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj1 = new GVRSceneObject(ctx);
         GVRDirectLight light1 = new GVRDirectLight(ctx);
         GVRSceneObject lightObj2 = new GVRSceneObject(ctx);
@@ -354,8 +330,7 @@ public class LightTests
         mRoot.addChildObject(lightObj1);
         mRoot.addChildObject(lightObj2);
         mRoot.addChildObject(mSphere);
-        scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "directAndPointLightsIlluminate", mWaiter, mDoCompare);
     }
 
@@ -364,7 +339,6 @@ public class LightTests
     public void twoSpotLightsIlluminate() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj1 = new GVRSceneObject(ctx);
         GVRSpotLight light1 = new GVRSpotLight(ctx);
         GVRSceneObject lightObj2 = new GVRSceneObject(ctx);
@@ -389,8 +363,7 @@ public class LightTests
         mRoot.addChildObject(lightObj2);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        scene.bindShaders();
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "twoSpotLightsIlluminate", mWaiter, mDoCompare);
     }
 }

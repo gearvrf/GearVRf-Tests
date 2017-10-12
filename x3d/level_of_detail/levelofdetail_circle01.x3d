@@ -1,0 +1,113 @@
+<x3d width='500px' height='400px'>
+    <scene>
+		<Background skyColor='0 .2 .4'/>
+		<PointLight/>
+		
+		<Viewpoint DEF="vp1" position='0 0 0'/>
+
+ 		<Transform DEF="initPos" translation='0 0 -10'>
+			<Transform DEF="rotateCircle">
+				<Transform DEF="translateCircle" translation='0 0 -4'>
+					<LOD range='8 12'>
+						<Transform DEF='layer_1'>
+							<shape>
+									<Appearance>
+										<Material diffuseColor="1 .5 0"/>
+									</Appearance>
+									<Cone/>
+							</shape>
+							<Transform DEF='layer_1a' translation='0 0 -3'>
+								<shape>
+										<Appearance>
+											<Material diffuseColor=".8 .4 0"/>
+										</Appearance>
+										<Cone/>
+								</shape>
+							</Transform>
+						</Transform>
+						<Transform DEF='layer_2'>
+							<shape>
+									<Appearance>
+										<Material diffuseColor=".5 0 1"/>
+									</Appearance>
+									<Cylinder/>
+							</shape>
+							<Transform DEF='layer_2a' translation='0 0 -3'>
+								<shape>
+										<Appearance>
+											<Material diffuseColor=".4 0 .8"/>
+										</Appearance>
+										<Cylinder/>
+								</shape>
+							</Transform>
+						</Transform>
+						<Transform DEF='layer_3'>
+							<shape>
+									<Appearance>
+										<Material diffuseColor="0 1 .5"/>
+									</Appearance>
+									<Sphere/>
+							</shape>
+							<Transform DEF='layer_2a' translation='0 0 -3'>
+								<shape>
+										<Appearance>
+											<Material diffuseColor="0 .8 .4"/>
+										</Appearance>
+										<Sphere/>
+								</shape>
+							</Transform>
+						</Transform>
+					</LOD>
+				</Transform>
+			</Transform>
+		</Transform>
+
+
+
+         <Transform translation="-1.5 -1.5 -8">
+	        <Shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="markerone.png" repeatS="TRUE" repeatT="TRUE"/>
+					<TextureTransform center='.5 .5' rotation='0' scale='1 1' translation='0 0'/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-1 -1 -0.0    1 1 -0.0    -1 1 0    1 -1 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </Shape>
+        </Transform>
+
+         <Transform translation="1.5 -1.5 -12">
+	        <Shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="markertwo.png" repeatS="TRUE" repeatT="TRUE"/>
+					<TextureTransform center='.5 .5' rotation='0' scale='1 1' translation='0 0'/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-1 -1 -0.0    1 1 -0.0    -1 1 0    1 -1 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </Shape>
+        </Transform>
+    	
+        <TimeSensor DEF="timer" cycleInterval="30" loop="true"/>
+ 
+     	<OrientationInterpolator DEF="rotate" key="0 .5  1" keyValue="0 1 0 0   0 1 0 3.14   0 1 0 6.28"/>
+	<ROUTE fromNode="timer" fromField ="fraction_changed" toNode="rotate" toField="set_fraction"/>
+	<ROUTE fromNode="rotate" fromField ="value_changed" toNode="rotateCircle" toField="rotation"/>
+        
+    
+    </scene>
+</x3d>

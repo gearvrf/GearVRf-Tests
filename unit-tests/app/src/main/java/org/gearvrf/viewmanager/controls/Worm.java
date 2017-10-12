@@ -60,7 +60,7 @@ public class Worm extends GVRSceneObject {
 
         super(gvrContext);
 
-        GVRMesh mesh = gvrContext.loadMesh(
+        GVRMesh mesh = gvrContext.getAssetLoader().loadMesh(
                 new GVRAndroidResource(gvrContext, R.raw.worm_mesh_head));
         GVRTexture texture = gvrContext.loadTexture(
                 new GVRAndroidResource(gvrContext, R.drawable.worm_head_texture));
@@ -73,13 +73,13 @@ public class Worm extends GVRSceneObject {
         head.getRenderData().setRenderingOrder(RenderingOrder.WORM);
         wormParent.getTransform().setPosition(0, WORM_INITIAL_Y, WORM_INITIAL_Z);
 
-        mesh = gvrContext.loadMesh(
+        mesh = gvrContext.getAssetLoader().loadMesh(
                 new GVRAndroidResource(gvrContext, R.raw.worm_mesh_middle));
         middle = new GVRSceneObject(gvrContext, mesh, texture);
         middle.getTransform().setPosition(0, WORM_INITIAL_Y, WORM_INITIAL_Z);
         middle.getTransform().setScale(0.4f, 0.4f, 0.4f);
         middle.getRenderData().setRenderingOrder(RenderingOrder.WORM);
-        mesh = gvrContext.loadMesh(
+        mesh = gvrContext.getAssetLoader().loadMesh(
                 new GVRAndroidResource(gvrContext, R.raw.worm_mesh_end));
         end = new GVRSceneObject(gvrContext, mesh, texture);
         end.getTransform().setPosition(0, WORM_INITIAL_Y, WORM_INITIAL_Z);

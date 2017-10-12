@@ -26,6 +26,7 @@ class TextureEventHandler implements IAssetEvents
         mNumTextures = numTex;
     }
 
+    public void reset() { TexturesLoaded = 0; TextureErrors = 0; }
     public void onAssetLoaded(GVRContext context, GVRSceneObject model, String filePath, String errors) { }
     public void onModelLoaded(GVRContext context, GVRSceneObject model, String filePath) { }
     public void onModelError(GVRContext context, String error, String filePath) { }

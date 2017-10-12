@@ -4,7 +4,10 @@
   <!-- head>
   </head -->
   <Scene>
-  
+
+    <Viewpoint position='0 0 0'/>
+    <Background skyColor='.1 .2 .3'/>
+
     <NavigationInfo headlight="false"/>
     <PointLight DEF="redLight" color="1 0 0" location="-5 0 0" on="false"/>
     <PointLight DEF="greenLight" color="0 1 0" location="0 0 0" on="false"/>
@@ -42,13 +45,13 @@
       </Transform>
 
     
-      <Transform translation='0 -5 -5' scale="7 1 1">
+      <Transform translation='0 -4 -5' scale="3 1 1">
         <TouchSensor DEF='GrayBoxTouch'/>
         <Shape>
           <Appearance>
             <Material diffuseColor='.5 .5 .5'/>
           </Appearance>
-          <Box/>
+          <Box size='1 1 1'/>
         </Shape>
       </Transform>
     
@@ -75,8 +78,8 @@
     <ROUTE fromField='toggle_changed' fromNode='BlueCylToggler' toField='on' toNode='blueLight'/>
       
     <BooleanToggle DEF='GrayBoxToggler'/>
-    <ROUTE fromField='toggle_changed' fromNode='GrayBoxToggler' toField='on' toNode='redLight'/>
     <ROUTE fromField='isActive' fromNode='GrayBoxTouch' toField='set_boolean' toNode='GrayBoxToggler'/>
+    <ROUTE fromField='toggle_changed' fromNode='GrayBoxToggler' toField='on' toNode='redLight'/>
     <ROUTE fromField='toggle_changed' fromNode='GrayBoxToggler' toField='on' toNode='greenLight'/>
     <ROUTE fromField='toggle_changed' fromNode='GrayBoxToggler' toField='on' toNode='blueLight'/>
 

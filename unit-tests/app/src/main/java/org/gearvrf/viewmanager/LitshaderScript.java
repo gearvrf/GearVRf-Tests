@@ -105,7 +105,7 @@ public class LitshaderScript extends GVRScript {
 
         // lit object
         Future<GVRMesh> futureSphereMesh = gvrContext
-                .loadFutureMesh(new GVRAndroidResource(mGVRContext,
+                .getAssetLoader().loadFutureMesh(new GVRAndroidResource(mGVRContext,
                         R.raw.sphere));
         GVRMaterial litMaterial = new GVRMaterial(gvrContext,
                 GVRMaterial.GVRShaderType.Texture.ID);

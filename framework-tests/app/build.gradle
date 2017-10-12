@@ -16,7 +16,7 @@ android {
 
     defaultConfig {
         applicationId "org.gearvrf.tester"
-        minSdkVersion 23
+        minSdkVersion 21
         targetSdkVersion 23
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
@@ -83,6 +83,11 @@ dependencies {
         compile project (':framework')
     } else {
         compile(name:'framework-debug', ext:'aar')
+    }
+    if (findProject(':backend_daydream')) {
+        compile project (':backend_daydream')
+    } else {
+        compile(name:'backend_daydream-debug', ext:'aar')
     }
     if (findProject(':backend_oculus')) {
         compile project (':backend_oculus')
