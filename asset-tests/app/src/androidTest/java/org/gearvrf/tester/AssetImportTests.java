@@ -368,7 +368,6 @@ public class AssetImportTests
         mTestUtils.waitForAssetLoad();
         mHandler.checkAssetLoaded(null, 4);
         mHandler.checkAssetErrors(0, 0);
-        mWaiter.assertNull(model.getComponent(GVRAnimator.getComponentType()));
         model.forAllComponents(new MeshVisitorNoLights());
     }
 
