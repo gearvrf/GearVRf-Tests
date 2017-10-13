@@ -1,0 +1,160 @@
+<x3d width='500px' height='400px'>
+    <scene>
+		<Background skyColor='0 .2 .4'/>
+		<PointLight/>
+		<Viewpoint DEF="vp1" position='0 0 0'/>
+
+ 		<Transform DEF="lodTest01">
+     	<LOD range='4 9'>
+     	<!-- LOD range='6' -->
+            <Transform DEF='lod A'>
+                <TouchSensor DEF='TouchSensor01-SENSOR'/>
+                <Shape  DEF='Shape lod A'>
+                    <Appearance>
+                        <Material diffuseColor="1 1 1"/>
+                        <ImageTexture url="lod1.png" repeatS="TRUE" repeatT="TRUE"/>
+                    </Appearance>
+                    <IndexedFaceSet DEF='IFS lod A'
+                        coordIndex='0 1 2 -1    0 3 1 -1'
+                        texCoordIndex='0 1 2 -1   0 3 1 -1'
+                        normalIndex='0 0 0 -1   0 0 0 -1'
+                    >
+                        <Coordinate point='-1 -1 0    1 1 0    -1 1 0    1 -1 0' />
+                        <TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+                        <Normal vector='0 0 1'/>
+                    </IndexedFaceSet>
+                </Shape>
+            </Transform>
+            <Transform DEF='lod B'>
+                <TouchSensor DEF='TSlodB'/>
+                <Shape DEF='Shape lod B'>
+                    <Appearance>
+                        <Material diffuseColor="1 1 1"/>
+                        <ImageTexture url="lod2.png" repeatS="TRUE" repeatT="TRUE"/>
+                    </Appearance>
+                    <IndexedFaceSet DEF='IFS lod B'
+                        coordIndex='0 1 2 -1    0 3 1 -1'
+                        texCoordIndex='0 1 2 -1   0 3 1 -1'
+                        normalIndex='0 0 0 -1   0 0 0 -1'
+                    >
+                        <Coordinate point='-1 -1 -0.0    1 1 -0.0    -1 1 0    1 -1 0' />
+                        <TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+                        <Normal vector='0 0 1'/>
+                    </IndexedFaceSet>
+                </Shape>
+            </Transform>
+            <Transform DEF='lod C'>
+                <Shape DEF='Shape lod C'>
+                    <Appearance>
+                        <Material diffuseColor="1 1 1"/>
+                        <ImageTexture url="lod3.png" repeatS="TRUE" repeatT="TRUE"/>
+                    </Appearance>
+                    <IndexedFaceSet
+                        coordIndex='0 1 2 -1    0 3 1 -1'
+                        texCoordIndex='0 1 2 -1   0 3 1 -1'
+                        normalIndex='0 0 0 -1   0 0 0 -1'
+                    >
+                        <Coordinate point='-1 -1 -0.0    1 1 -0.0    -1 1 0    1 -1 0' />
+                        <TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+                        <Normal vector='0 0 1'/>
+                    </IndexedFaceSet>
+                </Shape>
+            </Transform>
+    	</LOD>
+    	</Transform>
+
+         <!-- Transform DEF="Marker THREE" translation="2 -3 -3" rotation="0 0 1 0">
+	        <Shape DEF='Shape Marker THREE'>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="markerthree.png" repeatS="TRUE" repeatT="TRUE"/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-1 -1 -0.0    1 1 -0.0    -1 1 0    1 -1 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </Shape>
+        </Transform -->
+
+
+         <Transform DEF="Marker ONE" translation="1.5 1.5 -4" rotation="0 0 1 0">
+	        <Shape DEF='Shape Marker ONE'>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="markerone.png" repeatS="TRUE" repeatT="TRUE"/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-1 -1 -0.0    1 1 -0.0    -1 1 0    1 -1 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </Shape>
+        </Transform>
+
+         <Transform DEF="Marker TWO" translation="-1.5 -1.5 -9" rotation="0 0 1 0">
+	        <Shape DEF='Shape Marker TWO'>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="markertwo.png" repeatS="TRUE" repeatT="TRUE"/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-1 -1 -0.0    1 1 -0.0    -1 1 0    1 -1 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </Shape>
+        </Transform>
+    	
+        <TimeSensor DEF="time" cycleInterval="30" loop="true"/>
+
+     	<PositionInterpolator DEF="move" key="0 .09 .18 .27 .36 .45  .54  .63  .72  .81  1" keyValue="0 0 -.5   0 0 -3.5   0 0 -3.5   0 0 -4.5   0 0 -4.5   0 0 -8.5   0 0 -8.5   0 0 -9.5   0 0 -9.5   0 0 -20    0 0 -.5"/>
+	    <Route fromNode="time" fromField ="fraction_changed" toNode="move" toField="set_fraction"></Route>
+	    <Route fromNode="move" fromField ="value_changed" toNode="lodTest01" toField="translation"></Route>
+
+        <Transform DEF='tsCyl' translation='-3 2 -8'>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='0.6 0.894 0.39'/>
+          </Appearance>
+          <Cylinder radius='1' height='2.5'/>
+        </Shape>
+       </Transform>
+
+        <Transform DEF='tsCone' translation='3 -2 -8'>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='1 .25 .25'/>
+          </Appearance>
+          <Cone bottomRadius='1' height='2.5'/>
+        </Shape>
+       </Transform>
+
+      <TimeSensor DEF='Box01-TIMER' cycleInterval='12' loop="false"/>
+      <PositionInterpolator DEF='Box01-POS-INTERP' key='0 .25 .5 .75 1' keyValue='-3 2 -8   -3 -2 -5   3 -2 -5   3 2 -8    -3 2 -8'/>
+
+    <ROUTE fromNode='Box01-TIMER' fromField='fraction_changed' toNode='Box01-POS-INTERP' toField='set_fraction'/>
+    <ROUTE fromNode='Box01-POS-INTERP' fromField='value_changed' toNode='tsCyl' toField='set_translation'/>
+    <ROUTE fromNode='TouchSensor01-SENSOR' fromField='isOver' toNode='Box01-TIMER' toField='set_enabled'/>
+
+      <OrientationInterpolator DEF='RedCone-Animated-Rotation-INTERP' key='0 .5 1' keyValue='0 0 1 0   0 0 1 -3.14   0 0 1 -6.28'/>
+      <TimeSensor DEF='RedCone-Timer' cycleInterval='10' loop="false"/>
+      <ROUTE fromNode='RedCone-Timer' fromField='fraction_changed' toNode='RedCone-Animated-Rotation-INTERP' toField='set_fraction'/>
+      <ROUTE fromNode='RedCone-Animated-Rotation-INTERP' fromField='value_changed' toNode='tsCone' toField='rotation'/>
+    <ROUTE fromNode='TSlodB' fromField='isOver' toNode='RedCone-Timer' toField='set_enabled'/>
+
+
+    </scene>
+</x3d>

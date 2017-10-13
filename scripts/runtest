@@ -100,7 +100,6 @@ run-tests() {
 			framework-tests RenderTests
 			framework-tests SceneObjectTests
 			framework-tests ShadowTests
-			framework-tests StateSortTests
 			framework-tests StencilTests
 			framework-tests TextureTests testAlphaToCoverage
 			framework-tests TextureTests testCompressedTextureASTC
@@ -185,7 +184,6 @@ run-tests8() {
 			framework-tests RenderTests
 			framework-tests SceneObjectTests
 			framework-tests ShadowTests
-			framework-tests StateSortTests
 			framework-tests StencilTests
 			framework-tests TextureTests
 			asset-tests AssetImportTests
