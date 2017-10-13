@@ -131,7 +131,7 @@ public class SceneObjectTests
         sphere2.setName("sphere2");
         mRoot.addChildObject(sphere1);
         scene.addSceneObject(sphere2);
-        mTestUtils.waitForXFrames(2);
+        mTestUtils.waitForXFrames(200);
         mWaiter.assertNotNull(scene.getSceneObjectByName("sphere2"));
         mWaiter.assertNotNull(scene.getSceneObjectByName("sphere1"));
         mTestUtils.screenShot(getClass().getSimpleName(), "canDisplaySpheres", mWaiter, mDoCompare);
@@ -155,7 +155,7 @@ public class SceneObjectTests
         cube2.setName("cube2");
         mRoot.addChildObject(cube1);
         scene.addSceneObject(cube2);
-        mTestUtils.waitForXFrames(2);
+        mTestUtils.waitForXFrames(200);
         mWaiter.assertNotNull(scene.getSceneObjectByName("cube2"));
         mWaiter.assertNotNull(scene.getSceneObjectByName("cube1"));
         mTestUtils.screenShot(getClass().getSimpleName(), "canDisplayCubes", mWaiter, mDoCompare);
