@@ -315,27 +315,31 @@ public class SceneObjectTests
         quadObj1.setName("quadObj1");
         quadTrans1.setPosition(0.8f, 0, -2);
         quadTrans1.setRotationByAxis(30, 1,1,1);
+        quadTrans1.setScale(5,6,7);
         quadObj1.attachComponent(new GVRBillboard(ctx));
 
         GVRSceneObject quadObj2 = new GVRSceneObject(ctx, 1.0f, 1.0f, tex);
+        GVRTransform quadTrans2 = quadObj2.getTransform();
+
         quadObj2.setName("quadObj2");
-        quadObj2.getTransform().setPosition(-1.0f, 0.8f, -2);
-        quadObj2.getTransform().setRotationByAxis(-45, 0,1,0);
+        quadTrans2.setPosition(-1.0f, 0.8f, -2);
+        quadTrans2.setRotationByAxis(-45, 0,1,0);
+        quadTrans2.setScale(0.5f,0.6f,0.7f);
         quadObj2.attachComponent(new GVRBillboard(ctx, new Vector3f(0, 1, 0)));
 
         GVRSceneObject quadObj3 = new GVRSceneObject(ctx, 1.1f, 1.1f, tex);
-        quadObj3.setName("quadObj3");
-        quadObj3.getTransform().setPosition(-0.5f, -0.8f, -1.4f);
-        quadObj3.getTransform().setRotationByAxis(-45, 1,0,0);
-        quadObj3.attachComponent(new GVRBillboard(ctx, new Vector3f(0, 1, -1)));
+        GVRTransform quadTrans3 = quadObj3.getTransform();
 
-        quadObj1.getTransform().setScale(5,6,7);
-        quadObj2.getTransform().setScale(0.5f,0.6f,0.7f);
-        quadObj3.getTransform().setScale(1,1,1);
+        quadObj3.setName("quadObj3");
+        quadTrans3.setPosition(-0.5f, -0.8f, -1.4f);
+        quadTrans3.setRotationByAxis(-45, 1,0,0);
+        quadTrans3.setScale(1,1,1);
+        quadObj3.attachComponent(new GVRBillboard(ctx, new Vector3f(0, 1, -1)));
 
         scene.addSceneObject(quadObj1);
         scene.addSceneObject(quadObj2);
         scene.addSceneObject(quadObj3);
+        mTestUtils.waitForAssetLoad();
 
         mTestUtils.waitForXFrames(2);
 
