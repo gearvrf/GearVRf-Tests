@@ -102,14 +102,14 @@ public class CullTests
     @Test
     public void frontFaceCullTest() throws TimeoutException {
         testCull(0);
-        gvrTestUtils.waitForXFrames(3);
+        gvrTestUtils.waitForXFrames(10);
         gvrTestUtils.screenShot(getClass().getSimpleName(), "testFrontFaceCull", mWaiter, mDoCompare);
     }
 
     @Test
     public void backFaceCullTest() throws TimeoutException {
         testCull(1);
-        gvrTestUtils.waitForXFrames(3);
+        gvrTestUtils.waitForXFrames(10);
         gvrTestUtils.screenShot(getClass().getSimpleName(), "testBackFaceCull", mWaiter, mDoCompare);
 
     }
@@ -117,7 +117,7 @@ public class CullTests
     @Test
     public void noneFaceCullTest() throws TimeoutException {
         testCull(2);
-        gvrTestUtils.waitForXFrames(3);
+        gvrTestUtils.waitForXFrames(10);
         gvrTestUtils.screenShot(getClass().getSimpleName(), "testNoneFaceCull", mWaiter, mDoCompare);
     }
 }

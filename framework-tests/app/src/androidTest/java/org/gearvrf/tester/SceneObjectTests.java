@@ -330,19 +330,29 @@ public class SceneObjectTests
 
         final float epsilon = 0.00001f;
         GVRTransform t = quadObj1.getTransform();
-        mWaiter.assertTrue(Math.abs(5 - t.getScaleX()) < epsilon);
-        mWaiter.assertTrue(Math.abs(6 - t.getScaleY()) < epsilon);
-        mWaiter.assertTrue(Math.abs(7 - t.getScaleZ()) < epsilon);
+        float xs = t.getScaleX();
+        float ys = t.getScaleY();
+        float zs = t.getScaleZ();
+
+        mWaiter.assertTrue(Math.abs(5 - xs) < epsilon);
+        mWaiter.assertTrue(Math.abs(6 - ys) < epsilon);
+        mWaiter.assertTrue(Math.abs(7 - zs) < epsilon);
 
         t = quadObj2.getTransform();
-        mWaiter.assertTrue(Math.abs(0.5f - t.getScaleX()) < epsilon);
-        mWaiter.assertTrue(Math.abs(0.6f - t.getScaleY()) < epsilon);
-        mWaiter.assertTrue(Math.abs(0.7f - t.getScaleZ()) < epsilon);
+        xs = t.getScaleX();
+        ys = t.getScaleY();
+        zs = t.getScaleZ();
+        mWaiter.assertTrue(Math.abs(0.5f - xs) < epsilon);
+        mWaiter.assertTrue(Math.abs(0.6f - ys) < epsilon);
+        mWaiter.assertTrue(Math.abs(0.7f - zs) < epsilon);
 
         t = quadObj3.getTransform();
-        mWaiter.assertTrue(Math.abs(1 - t.getScaleX()) < epsilon);
-        mWaiter.assertTrue(Math.abs(1 - t.getScaleY()) < epsilon);
-        mWaiter.assertTrue(Math.abs(1 - t.getScaleZ()) < epsilon);
+        xs = t.getScaleX();
+        ys = t.getScaleY();
+        zs = t.getScaleZ();
+        mWaiter.assertTrue(Math.abs(1 - xs) < epsilon);
+        mWaiter.assertTrue(Math.abs(1 - ys) < epsilon);
+        mWaiter.assertTrue(Math.abs(1 - zs) < epsilon);
    }
 
 }
