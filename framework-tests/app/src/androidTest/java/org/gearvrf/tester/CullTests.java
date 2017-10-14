@@ -56,6 +56,9 @@ public class CullTests
         GVRContext ctx  = gvrTestUtils.getGvrContext();
         GVRScene mainScene = gvrTestUtils.getMainScene();
         GVRSceneObject cube = new GVRSceneObject(ctx);
+        TextureEventHandler texHandler = new TextureEventHandler(gvrTestUtils, 4);
+
+        ctx.getEventReceiver().addListener(texHandler);
 
         GVRTexture tempTex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.redtex));
         GVRSceneObject quad1 = new GVRSceneObject(ctx, 4, 4, tempTex1);
@@ -81,7 +84,7 @@ public class CullTests
 
         cube.getTransform().setRotationByAxis(45, 1, 0, 0);
         cube.getTransform().setPosition(0, -0.8f, -8.0f);
-
+        gvrTestUtils.waitForAssetLoad();
         mainScene.getMainCameraRig().addChildObject(cube);
         mRoot = cube;
     }
