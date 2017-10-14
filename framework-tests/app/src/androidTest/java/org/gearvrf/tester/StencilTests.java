@@ -86,6 +86,9 @@ public class StencilTests
     GVRSceneObject makeTestObject() throws IOException {
         final GVRContext gvrContext = mTestUtils.getGvrContext();
         GVRSceneObject parent = new GVRSceneObject(gvrContext);
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 2);
+
+        gvrContext.getEventReceiver().addListener(texHandler);
 
         GVRTexture texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.white_texture));
         GVRSceneObject sphere = new GVRSphereSceneObject(gvrContext, true);
@@ -110,7 +113,7 @@ public class StencilTests
                 .setStencilFunc(GLES30.GL_EQUAL, 1, 0xFF)
                 .setStencilMask(0x00);
         parent.addChildObject(background);
-
+        mTestUtils.waitForAssetLoad();
         return parent;
     }
 
