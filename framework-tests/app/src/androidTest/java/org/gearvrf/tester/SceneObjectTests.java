@@ -97,7 +97,6 @@ public class SceneObjectTests
 
         final GVRSceneObject background = new GVRCubeSceneObject(ctx, false);
         background.getTransform().setScale(10, 10, 10);
-        background.getRenderData().setShaderTemplate(GVRPhongShader.class);
         background.setName("background");
         scene.addSceneObject(background);
 
@@ -118,6 +117,8 @@ public class SceneObjectTests
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject sphere1 = new GVRSphereSceneObject(ctx, true, mBlueMtl);
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
+        ctx.getEventReceiver().addListener(texHandler);
 
         final GVRTexture tex = ctx.getAssetLoader().loadCubemapTexture(new GVRAndroidResource(ctx, R.raw.beach));
         final GVRMaterial cubeMapMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Cubemap.ID);
@@ -129,6 +130,7 @@ public class SceneObjectTests
         sphere2.getTransform().setScale(20, 20, 20);
         sphere1.setName("sphere1");
         sphere2.setName("sphere2");
+        mTestUtils.waitForAssetLoad();
         mRoot.addChildObject(sphere1);
         scene.addSceneObject(sphere2);
         mTestUtils.waitForXFrames(2);
@@ -143,6 +145,8 @@ public class SceneObjectTests
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject cube1 = new GVRCubeSceneObject(ctx, true, mBlueMtl);
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
+        ctx.getEventReceiver().addListener(texHandler);
 
         final GVRTexture tex = ctx.getAssetLoader().loadCubemapTexture(new GVRAndroidResource(ctx, R.raw.beach));
         final GVRMaterial cubeMapMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Cubemap.ID);
@@ -153,6 +157,7 @@ public class SceneObjectTests
         cube1.setName("cube1");
         cube2.getTransform().setScale(20, 20, 20);
         cube2.setName("cube2");
+        mTestUtils.waitForAssetLoad();
         mRoot.addChildObject(cube1);
         scene.addSceneObject(cube2);
         mTestUtils.waitForXFrames(2);
