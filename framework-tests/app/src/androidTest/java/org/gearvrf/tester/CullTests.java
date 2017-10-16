@@ -56,6 +56,9 @@ public class CullTests
         GVRContext ctx  = gvrTestUtils.getGvrContext();
         GVRScene mainScene = gvrTestUtils.getMainScene();
         GVRSceneObject cube = new GVRSceneObject(ctx);
+        TextureEventHandler texHandler = new TextureEventHandler(gvrTestUtils, 4);
+
+        ctx.getEventReceiver().addListener(texHandler);
 
         GVRTexture tempTex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.redtex));
         GVRSceneObject quad1 = new GVRSceneObject(ctx, 4, 4, tempTex1);
@@ -81,7 +84,7 @@ public class CullTests
 
         cube.getTransform().setRotationByAxis(45, 1, 0, 0);
         cube.getTransform().setPosition(0, -0.8f, -8.0f);
-
+        gvrTestUtils.waitForAssetLoad();
         mainScene.getMainCameraRig().addChildObject(cube);
         mRoot = cube;
     }
@@ -102,14 +105,14 @@ public class CullTests
     @Test
     public void frontFaceCullTest() throws TimeoutException {
         testCull(0);
-        gvrTestUtils.waitForXFrames(3);
+        gvrTestUtils.waitForXFrames(10);
         gvrTestUtils.screenShot(getClass().getSimpleName(), "testFrontFaceCull", mWaiter, mDoCompare);
     }
 
     @Test
     public void backFaceCullTest() throws TimeoutException {
         testCull(1);
-        gvrTestUtils.waitForXFrames(3);
+        gvrTestUtils.waitForXFrames(10);
         gvrTestUtils.screenShot(getClass().getSimpleName(), "testBackFaceCull", mWaiter, mDoCompare);
 
     }
@@ -117,7 +120,7 @@ public class CullTests
     @Test
     public void noneFaceCullTest() throws TimeoutException {
         testCull(2);
-        gvrTestUtils.waitForXFrames(3);
+        gvrTestUtils.waitForXFrames(10);
         gvrTestUtils.screenShot(getClass().getSimpleName(), "testNoneFaceCull", mWaiter, mDoCompare);
     }
 }

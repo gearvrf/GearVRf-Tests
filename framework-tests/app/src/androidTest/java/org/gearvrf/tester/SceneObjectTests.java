@@ -97,7 +97,6 @@ public class SceneObjectTests
 
         final GVRSceneObject background = new GVRCubeSceneObject(ctx, false);
         background.getTransform().setScale(10, 10, 10);
-        background.getRenderData().setShaderTemplate(GVRPhongShader.class);
         background.setName("background");
         scene.addSceneObject(background);
 
@@ -118,6 +117,8 @@ public class SceneObjectTests
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject sphere1 = new GVRSphereSceneObject(ctx, true, mBlueMtl);
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
+        ctx.getEventReceiver().addListener(texHandler);
 
         final GVRTexture tex = ctx.getAssetLoader().loadCubemapTexture(new GVRAndroidResource(ctx, R.raw.beach));
         final GVRMaterial cubeMapMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Cubemap.ID);
@@ -129,6 +130,7 @@ public class SceneObjectTests
         sphere2.getTransform().setScale(20, 20, 20);
         sphere1.setName("sphere1");
         sphere2.setName("sphere2");
+        mTestUtils.waitForAssetLoad();
         mRoot.addChildObject(sphere1);
         scene.addSceneObject(sphere2);
         mTestUtils.waitForXFrames(2);
@@ -143,6 +145,8 @@ public class SceneObjectTests
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject cube1 = new GVRCubeSceneObject(ctx, true, mBlueMtl);
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
+        ctx.getEventReceiver().addListener(texHandler);
 
         final GVRTexture tex = ctx.getAssetLoader().loadCubemapTexture(new GVRAndroidResource(ctx, R.raw.beach));
         final GVRMaterial cubeMapMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Cubemap.ID);
@@ -153,6 +157,7 @@ public class SceneObjectTests
         cube1.setName("cube1");
         cube2.getTransform().setScale(20, 20, 20);
         cube2.setName("cube2");
+        mTestUtils.waitForAssetLoad();
         mRoot.addChildObject(cube1);
         scene.addSceneObject(cube2);
         mTestUtils.waitForXFrames(2);
@@ -218,6 +223,9 @@ public class SceneObjectTests
 
         GVRContext ctx = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
+
+        ctx.getEventReceiver().addListener(texHandler);
         GVRTexture tex = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.colortex));
 
         GVRSceneObject quadObj1 = new GVRSceneObject(ctx, 1.0f, 1.0f, tex);
@@ -237,8 +245,8 @@ public class SceneObjectTests
         quadObj3.getTransform().setRotationByAxis(-45, 1,0,0);
         quadObj3.attachComponent(new GVRBillboard(ctx, new Vector3f(0, 1, -1)));
         scene.getMainCameraRig().addChildObject(quadObj3);
-
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForAssetLoad();
+        mTestUtils.waitForXFrames(10);
         mTestUtils.screenShot(getClass().getSimpleName(), "testBillboards", mWaiter, mDoCompare);
     }
 
@@ -248,6 +256,9 @@ public class SceneObjectTests
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
+
+        ctx.getEventReceiver().addListener(texHandler);
         GVRTexture tex = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.colortex));
 
         scene.getMainCameraRig().getTransform().setPosition(0.5f, 1.0f, -0.4f);
@@ -275,6 +286,7 @@ public class SceneObjectTests
         GVRSceneObject quadObj6 = new GVRSceneObject(ctx, 0.8f, 0.8f, tex);
         quadObj6.getTransform().setPosition(1.5f, 0.0f, -3);
         quadObj6.attachComponent(new GVRBillboard(ctx));
+        mTestUtils.waitForAssetLoad();
 
         mRoot.addChildObject(quadObj1);
         mRoot.addChildObject(quadObj2);
@@ -283,7 +295,7 @@ public class SceneObjectTests
         mRoot.addChildObject(quadObj5);
         mRoot.addChildObject(quadObj6);
 
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "testBillboardsCamOffset", mWaiter, mDoCompare);
     }
 
@@ -292,52 +304,66 @@ public class SceneObjectTests
 
         GVRContext ctx = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
+        final float epsilon = 0.00001f;
 
+        ctx.getEventReceiver().addListener(texHandler);
         GVRTexture tex = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.colortex));
-
         GVRSceneObject quadObj1 = new GVRSceneObject(ctx, 1.0f, 1.0f, tex);
+        GVRTransform quadTrans1 = quadObj1.getTransform();
+
         quadObj1.setName("quadObj1");
-        quadObj1.getTransform().setPosition(0.8f, 0, -2);
-        quadObj1.getTransform().setRotationByAxis(30, 1,1,1);
+        quadTrans1.setPosition(0.8f, 0, -2);
+        quadTrans1.setRotationByAxis(30, 1,1,1);
+        quadTrans1.setScale(5,6,7);
         quadObj1.attachComponent(new GVRBillboard(ctx));
 
         GVRSceneObject quadObj2 = new GVRSceneObject(ctx, 1.0f, 1.0f, tex);
+        GVRTransform quadTrans2 = quadObj2.getTransform();
+
         quadObj2.setName("quadObj2");
-        quadObj2.getTransform().setPosition(-1.0f, 0.8f, -2);
-        quadObj2.getTransform().setRotationByAxis(-45, 0,1,0);
+        quadTrans2.setPosition(-1.0f, 0.8f, -2);
+        quadTrans2.setRotationByAxis(-45, 0,1,0);
+        quadTrans2.setScale(0.5f,0.6f,0.7f);
         quadObj2.attachComponent(new GVRBillboard(ctx, new Vector3f(0, 1, 0)));
 
         GVRSceneObject quadObj3 = new GVRSceneObject(ctx, 1.1f, 1.1f, tex);
-        quadObj3.setName("quadObj3");
-        quadObj3.getTransform().setPosition(-0.5f, -0.8f, -1.4f);
-        quadObj3.getTransform().setRotationByAxis(-45, 1,0,0);
-        quadObj3.attachComponent(new GVRBillboard(ctx, new Vector3f(0, 1, -1)));
+        GVRTransform quadTrans3 = quadObj3.getTransform();
 
-        quadObj1.getTransform().setScale(5,6,7);
-        quadObj2.getTransform().setScale(0.5f,0.6f,0.7f);
-        quadObj3.getTransform().setScale(1,1,1);
+        quadObj3.setName("quadObj3");
+        quadTrans3.setPosition(-0.5f, -0.8f, -1.4f);
+        quadTrans3.setRotationByAxis(-45, 1,0,0);
+        quadTrans3.setScale(1,1,1);
+        quadObj3.attachComponent(new GVRBillboard(ctx, new Vector3f(0, 1, -1)));
 
         scene.addSceneObject(quadObj1);
         scene.addSceneObject(quadObj2);
         scene.addSceneObject(quadObj3);
+        mTestUtils.waitForAssetLoad();
 
-        mTestUtils.waitForXFrames(10);
+        mTestUtils.waitForXFrames(2);
 
-        final float epsilon = 0.00001f;
-        GVRTransform t = quadObj1.getTransform();
-        mWaiter.assertTrue(Math.abs(5 - t.getScaleX()) < epsilon);
-        mWaiter.assertTrue(Math.abs(6 - t.getScaleY()) < epsilon);
-        mWaiter.assertTrue(Math.abs(7 - t.getScaleZ()) < epsilon);
+        float xs = quadTrans1.getScaleX();
+        float ys = quadTrans1.getScaleY();
+        float zs = quadTrans1.getScaleZ();
 
-        t = quadObj2.getTransform();
-        mWaiter.assertTrue(Math.abs(0.5f - t.getScaleX()) < epsilon);
-        mWaiter.assertTrue(Math.abs(0.6f - t.getScaleY()) < epsilon);
-        mWaiter.assertTrue(Math.abs(0.7f - t.getScaleZ()) < epsilon);
+        mWaiter.assertTrue(Math.abs(5 - xs) < epsilon);
+        mWaiter.assertTrue(Math.abs(6 - ys) < epsilon);
+        mWaiter.assertTrue(Math.abs(7 - zs) < epsilon);
 
-        t = quadObj3.getTransform();
-        mWaiter.assertTrue(Math.abs(1 - t.getScaleX()) < epsilon);
-        mWaiter.assertTrue(Math.abs(1 - t.getScaleY()) < epsilon);
-        mWaiter.assertTrue(Math.abs(1 - t.getScaleZ()) < epsilon);
+        xs = quadTrans2.getScaleX();
+        ys = quadTrans2.getScaleY();
+        zs = quadTrans2.getScaleZ();
+        mWaiter.assertTrue(Math.abs(0.5f - xs) < epsilon);
+        mWaiter.assertTrue(Math.abs(0.6f - ys) < epsilon);
+        mWaiter.assertTrue(Math.abs(0.7f - zs) < epsilon);
+
+        xs = quadTrans3.getScaleX();
+        ys = quadTrans3.getScaleY();
+        zs = quadTrans3.getScaleZ();
+        mWaiter.assertTrue(Math.abs(1 - xs) < epsilon);
+        mWaiter.assertTrue(Math.abs(1 - ys) < epsilon);
+        mWaiter.assertTrue(Math.abs(1 - zs) < epsilon);
    }
 
 }
