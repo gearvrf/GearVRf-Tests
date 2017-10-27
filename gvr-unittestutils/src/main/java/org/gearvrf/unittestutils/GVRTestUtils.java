@@ -345,14 +345,9 @@ public class GVRTestUtils implements GVRMainMonitor {
                         } finally {
                             golden.recycle();
                         }
-
-                        cdl.await();
-                        golden.recycle();
                     }
                 } finally {
                     bitmap.recycle();
-                    diffmap.recycle();
-                    waiter.assertTrue(diff[0] <= 30000.0f);
                 }
             }
 
@@ -367,7 +362,6 @@ public class GVRTestUtils implements GVRMainMonitor {
 
                 try
                 {
-                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes);
                     FileOutputStream fo = new FileOutputStream(new File(d, filename));
                     try {
