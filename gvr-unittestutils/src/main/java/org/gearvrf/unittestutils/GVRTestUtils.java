@@ -18,8 +18,8 @@ package org.gearvrf.unittestutils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.Environment;
 import android.os.Build;
+import android.os.Environment;
 
 import net.jodah.concurrentunit.Waiter;
 
@@ -35,6 +35,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
