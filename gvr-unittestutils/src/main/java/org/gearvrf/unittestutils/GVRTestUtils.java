@@ -284,7 +284,7 @@ public class GVRTestUtils implements GVRMainMonitor {
     {
         GVRScreenshotCallback callback = new GVRScreenshotCallback()
         {
-            private void compareWithGolden(final Bitmap bitmap, String testname, Waiter waiter)
+            private void compareWithGolden(final Bitmap screenshot, String testname, Waiter waiter)
             {
                 try {
                     Bitmap golden = null;
@@ -305,19 +305,33 @@ public class GVRTestUtils implements GVRMainMonitor {
                     if (golden != null) {
                         try {
                             final float[] diff = {0.0f};
-                            waiter.assertEquals(golden.getWidth(), bitmap.getWidth());
-                            waiter.assertEquals(golden.getHeight(), bitmap.getHeight());
+
+                            final int goldenHeight = golden.getHeight();
+                            final int goldenWidth = golden.getWidth();
+
+                            waiter.assertEquals(goldenWidth, screenshot.getWidth());
+                            waiter.assertEquals(goldenHeight, screenshot.getHeight());
 
                             final ReentrantLock lockDiff = new ReentrantLock();
 
                             try {
-                                final CountDownLatch cdl = new CountDownLatch(golden.getHeight());
+                                final CountDownLatch cdl = new CountDownLatch(goldenHeight);
 
-                                for (int y = 0; y < golden.getHeight(); y++) {
-                                    Threads.spawn(new CompareRunnable(y, golden, lockDiff, diff, bitmap, cdl));
+                                final int[] goldenPixels = new int[goldenHeight*goldenWidth];
+                                golden.getPixels(goldenPixels, 0, goldenWidth, 0, 0, goldenWidth, goldenHeight);
+
+                                final int[] screenshotPixels = new int[goldenHeight*goldenWidth];
+                                screenshot.getPixels(screenshotPixels, 0, goldenWidth, 0, 0, goldenWidth, goldenHeight);
+
+                                for (int y = 0; y < goldenHeight; y++) {
+                                    Threads.spawn(new CompareRunnable(goldenWidth, y, goldenPixels, lockDiff, diff, screenshotPixels, cdl));
                                 }
 
                                 cdl.await();
+                                golden.setPixels(goldenPixels, 0, goldenWidth, 0, 0, goldenWidth, goldenHeight);
+                                //hints
+                                System.gc();
+                                System.runFinalization();
                             } catch (Throwable t) {
                                 waiter.fail(t);
                             }
@@ -333,7 +347,7 @@ public class GVRTestUtils implements GVRMainMonitor {
                         }
                     }
                 } finally {
-                    bitmap.recycle();
+                    screenshot.recycle();
                 }
             }
 
@@ -408,32 +422,34 @@ public class GVRTestUtils implements GVRMainMonitor {
 
     final static class CompareRunnable implements Runnable {
         private final int y;
-        private Bitmap golden;
+        private int[] goldenPixels;
         private ReentrantLock lockDiff;
         private float[] diff;
-        private Bitmap bitmap;
+        private int[] screenshotPixels;
         private CountDownLatch cdl;
+        private final int goldenWidth;
 
-        CompareRunnable(final int y, final Bitmap golden, final ReentrantLock lockDiff, final float[] diff,
-                        final Bitmap bitmap, final CountDownLatch cdl) {
+        CompareRunnable(final int goldenWidth, final int y, final int[] goldenPixels, final ReentrantLock lockDiff, final float[] diff,
+                        final int[] screenshotPixels, final CountDownLatch cdl) {
             this.y = y;
-            this.golden = golden;
+            this.goldenPixels = goldenPixels;
             this.lockDiff = lockDiff;
             this.diff = diff;
-            this.bitmap = bitmap;
+            this.screenshotPixels = screenshotPixels;
             this.cdl = cdl;
+            this.goldenWidth = goldenWidth;
         }
 
         @Override
         public void run() {
             try {
-                for (int x = 0; x < golden.getWidth(); x++) {
-                    int p1 = golden.getPixel(x, y);
-                    int p2 = bitmap.getPixel(x, y);
+                for (int x = 0; x < goldenWidth; x++) {
+                    int p1 = goldenPixels[x*goldenWidth + y];
+                    int p2 = screenshotPixels[x*goldenWidth + y];
                     int r = Math.abs(Color.red(p1) - Color.red(p2));
                     int g = Math.abs(Color.green(p1) - Color.green(p2));
                     int b = Math.abs(Color.blue(p1) - Color.blue(p2));
-                    golden.setPixel(x, y, Color.argb(255, r, g, b));
+                    goldenPixels[x*goldenWidth + y] = Color.argb(255, r, g, b);
 
                     lockDiff.lock();
                     try {
@@ -445,8 +461,8 @@ public class GVRTestUtils implements GVRMainMonitor {
             } finally {
                 cdl.countDown();
 
-                golden = null;
-                bitmap = null;
+                goldenPixels = null;
+                screenshotPixels = null;
                 lockDiff = null;
                 cdl = null;
                 diff = null;
