@@ -33,6 +33,7 @@ import org.gearvrf.utility.Threads;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.concurrent.CountDownLatch;
@@ -283,101 +284,101 @@ public class GVRTestUtils implements GVRMainMonitor {
     {
         GVRScreenshotCallback callback = new GVRScreenshotCallback()
         {
-            private void compareWithGolden(final Bitmap bitmap, String testname, Waiter waiter)
+            private void compareWithGolden(final Bitmap screenshot, String testname, Waiter waiter)
             {
-                Bitmap golden = null;
-
-                try
-                {
-                    URL url = new URL(ASSETS_BASE_URL + "golden_masters/" + DEVICE_TYPE + "/" + category + "/" + testname);
-                    golden = BitmapFactory.decodeStream(url.openStream());
-                }
-                catch (Throwable ex)
-                {
-                    waiter.fail(ex);
-                }
-                if (golden != null)
-                {
-                    waiter.assertEquals(golden.getWidth(), bitmap.getWidth());
-                    waiter.assertEquals(golden.getHeight(), bitmap.getHeight());
-
-                    final Bitmap diffmap = golden.copy(golden.getConfig(), true);
-
-                    final ReentrantLock lockDiff = new ReentrantLock();
-                    final float[] diff = {0.0f};
+                try {
+                    Bitmap golden = null;
 
                     try {
-                        final CountDownLatch cdl = new CountDownLatch(golden.getHeight());
-
-                        for (int y = 0; y < golden.getHeight(); y++) {
-                            final int finalY = y;
-                            final Bitmap finalGolden = golden;
-
-                            Threads.spawn(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        for (int x = 0; x < finalGolden.getWidth(); x++) {
-                                            int p1 = finalGolden.getPixel(x, finalY);
-                                            int p2 = bitmap.getPixel(x, finalY);
-                                            int r = Math.abs(Color.red(p1) - Color.red(p2));
-                                            int g = Math.abs(Color.green(p1) - Color.green(p2));
-                                            int b = Math.abs(Color.blue(p1) - Color.blue(p2));
-                                            diffmap.setPixel(x, finalY, Color.argb(255, r, g, b));
-
-                                            lockDiff.lock();
-                                            try {
-                                                diff[0] += (float) r / 255.0f + g / 255.0f + b / 255.0f;
-                                            } finally {
-                                                lockDiff.unlock();
-                                            }
-                                        }
-                                    } finally {
-                                        cdl.countDown();
-                                    }
-                                }
-                            });
+                        URL url = new URL(ASSETS_BASE_URL + "golden_masters/" + DEVICE_TYPE + "/" + category + "/" + testname);
+                        final InputStream inputStream = url.openStream();
+                        try {
+                            final BitmapFactory.Options options = new BitmapFactory.Options();
+                            options.inMutable = true;
+                            golden = BitmapFactory.decodeStream(inputStream, null, options);
+                        } finally {
+                            inputStream.close();
                         }
-
-                        cdl.await();
-                        golden.recycle();
+                    } catch (Throwable ex) {
+                        waiter.fail(ex);
                     }
-                    catch (Throwable t)
-                    {
-                        waiter.fail(t);
-                    }
+                    if (golden != null) {
+                        try {
+                            final float[] diff = {0.0f};
 
-                    Log.e(category, category + ": %s %f", testname, diff[0]);
-                    if (diff[0] > 1000.0f)
-                    {
-                        writeBitmap(category, "diff_" + testname, diffmap);
-                    }
+                            final int goldenHeight = golden.getHeight();
+                            final int goldenWidth = golden.getWidth();
 
-                    bitmap.recycle();
-                    diffmap.recycle();
-                    waiter.assertTrue(diff[0] <= 30000.0f);
+                            waiter.assertEquals(goldenWidth, screenshot.getWidth());
+                            waiter.assertEquals(goldenHeight, screenshot.getHeight());
+
+                            final ReentrantLock lockDiff = new ReentrantLock();
+
+                            try {
+                                final CountDownLatch cdl = new CountDownLatch(goldenHeight);
+
+                                final int[] goldenPixels = new int[goldenHeight*goldenWidth];
+                                golden.getPixels(goldenPixels, 0, goldenWidth, 0, 0, goldenWidth, goldenHeight);
+
+                                final int[] screenshotPixels = new int[goldenHeight*goldenWidth];
+                                screenshot.getPixels(screenshotPixels, 0, goldenWidth, 0, 0, goldenWidth, goldenHeight);
+
+                                for (int y = 0; y < goldenHeight; y++) {
+                                    Threads.spawn(new CompareRunnable(goldenWidth, y, goldenPixels, lockDiff, diff, screenshotPixels, cdl));
+                                }
+
+                                cdl.await();
+                                golden.setPixels(goldenPixels, 0, goldenWidth, 0, 0, goldenWidth, goldenHeight);
+                                //hints
+                                System.gc();
+                                System.runFinalization();
+                            } catch (Throwable t) {
+                                waiter.fail(t);
+                            }
+
+                            Log.e(category, category + ": %s %f", testname, diff[0]);
+                            if (diff[0] > 1000.0f) {
+                                writeBitmap(category, "diff_" + testname, golden);
+                            }
+
+                            waiter.assertTrue(diff[0] <= 30000.0f);
+                        } finally {
+                            golden.recycle();
+                        }
+                    }
+                } finally {
+                    screenshot.recycle();
                 }
             }
 
             protected void writeBitmap(String dir, String filename, Bitmap bitmap)
             {
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+
+                File sdcard = Environment.getExternalStorageDirectory();
+                dir = sdcard.getAbsolutePath() + "/GearVRFTests/" + dir + "/";
+                File d = new File(dir);
+                d.mkdirs();
+
                 try
                 {
-                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes);
-                    File sdcard = Environment.getExternalStorageDirectory();
-                    dir = sdcard.getAbsolutePath() + "/GearVRFTests/" + dir + "/";
-                    File d = new File(dir);
-                    d.mkdirs();
-                    File f = new File(d, filename);
-                    FileOutputStream fo = new FileOutputStream(f);
-                    fo.write(bytes.toByteArray());
-                    fo.close();
+                    FileOutputStream fo = new FileOutputStream(new File(d, filename));
+                    try {
+                        bytes.writeTo(fo);
+                    } finally {
+                        fo.close();
+                    }
                 }
                 catch (Throwable ex)
                 {
                     ex.printStackTrace();
                     waiter.fail(ex);
+                } finally {
+                    try {
+                        bytes.close();
+                    } catch (IOException e) {
+                    }
                 }
             }
 
@@ -417,5 +418,55 @@ public class GVRTestUtils implements GVRMainMonitor {
         waitForSceneRendering();
         gvrContext.captureScreenCenter(callback);
         waiter.await();
+    }
+
+    final static class CompareRunnable implements Runnable {
+        private final int y;
+        private int[] goldenPixels;
+        private ReentrantLock lockDiff;
+        private float[] diff;
+        private int[] screenshotPixels;
+        private CountDownLatch cdl;
+        private final int goldenWidth;
+
+        CompareRunnable(final int goldenWidth, final int y, final int[] goldenPixels, final ReentrantLock lockDiff, final float[] diff,
+                        final int[] screenshotPixels, final CountDownLatch cdl) {
+            this.y = y;
+            this.goldenPixels = goldenPixels;
+            this.lockDiff = lockDiff;
+            this.diff = diff;
+            this.screenshotPixels = screenshotPixels;
+            this.cdl = cdl;
+            this.goldenWidth = goldenWidth;
+        }
+
+        @Override
+        public void run() {
+            try {
+                for (int x = 0; x < goldenWidth; x++) {
+                    int p1 = goldenPixels[x*goldenWidth + y];
+                    int p2 = screenshotPixels[x*goldenWidth + y];
+                    int r = Math.abs(Color.red(p1) - Color.red(p2));
+                    int g = Math.abs(Color.green(p1) - Color.green(p2));
+                    int b = Math.abs(Color.blue(p1) - Color.blue(p2));
+                    goldenPixels[x*goldenWidth + y] = Color.argb(255, r, g, b);
+
+                    lockDiff.lock();
+                    try {
+                        diff[0] += (float) r / 255.0f + g / 255.0f + b / 255.0f;
+                    } finally {
+                        lockDiff.unlock();
+                    }
+                }
+            } finally {
+                cdl.countDown();
+
+                goldenPixels = null;
+                screenshotPixels = null;
+                lockDiff = null;
+                cdl = null;
+                diff = null;
+            }
+        }
     }
 }
