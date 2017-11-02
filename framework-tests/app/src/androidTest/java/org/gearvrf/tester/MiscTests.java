@@ -2,16 +2,22 @@ package org.gearvrf.tester;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Debug;
+import android.os.Environment;
+import android.support.test.annotation.UiThreadTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 
 import net.jodah.concurrentunit.Waiter;
 
+import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRBitmapTexture;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRNotifications;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderPass;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
@@ -24,11 +30,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.concurrent.CountDownLatch;
+import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import static junit.framework.Assert.fail;
 
 @RunWith(AndroidJUnit4.class)
 
@@ -147,4 +154,62 @@ public class MiscTests {
             mWaiter.assertTrue(false);
         }
     }
+
+    @Test
+    @UiThreadTest
+    public void gcOomTest1() throws Exception {
+        oomTest(false);
+    }
+
+    @Test
+    @UiThreadTest
+    public void gcOomTest2() throws Exception {
+        oomTest(true);
+    }
+
+    //  Change this between true & false to either trigger an OutOfMemoryError exception or a
+    // "global reference table overflow" crash.
+    private void oomTest(boolean createBitmap) throws IOException {
+        try {
+            final int MaxInstances = 100000;
+            GVRContext gvrContext = ActivityRule.getActivity() .getGVRContext();
+            for (int count = 0; count < MaxInstances; count++) {
+                Log.d(TAG, "Count: " + count);
+                GVRSceneObject sceneObject = new GVRSceneObject(gvrContext, gvrContext.createQuad(10f, 10f));
+                GVRRenderData renderData = sceneObject.getRenderData();
+                GVRTexture texture;
+                if (createBitmap) {
+                    Bitmap bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
+                    texture = new GVRTexture(gvrContext);
+                    texture.setImage(new GVRBitmapTexture(gvrContext, bitmap));
+                } else {
+                    texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, "StencilTests/GearVR.jpg"));
+                }
+                renderData.getMaterial().setMainTexture(texture);
+                renderData.setAlphaBlend(true);
+                if ((count % 100) == 99) {
+                    System.gc();
+                    System.runFinalization();
+                }
+            }
+        } catch (OutOfMemoryError oom) {
+            HeapDump();
+            fail(oom.getMessage());
+        }
+    }
+
+    private void HeapDump() {
+        Log.d(TAG, "Dumping heap");
+        try {
+            File external = Environment.getExternalStorageDirectory();
+            File folder = new File(external, "Documents");
+            File heapDumpFile1 = new File(folder, "oom.hprof");
+            Debug.dumpHprofData(heapDumpFile1.getPath());
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        Log.d(TAG, "Finished heap dump");
+    }
+
+    private final static String TAG = "MiscTests";
 }
