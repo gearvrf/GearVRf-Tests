@@ -22,7 +22,6 @@ import org.gearvrf.GVRRenderPass;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRCylinderSceneObject;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
@@ -202,6 +201,33 @@ public class MiscTests {
         mWaiter.assertTrue(0 < asArray.length);
         asBuffer = mesh.getTexCoordsAsFloatBuffer();
         mWaiter.assertTrue(0 < asBuffer.remaining());
+    }
+
+    @Test
+    public void testVertexBufferSimpleApi1() {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        final GVRScene scene = mTestUtils.getMainScene();
+
+        mTestUtils.waitForOnInit();
+        final GVRCylinderSceneObject so = new GVRCylinderSceneObject(ctx);
+        so.getTransform().setPosition(0,0,-2);
+        scene.addSceneObject(so);
+        mTestUtils.waitForSceneRendering();
+        GVRNotifications.waitAfterStep();
+
+        {
+            final float[] bound = new float[6];
+            final boolean result = so.getRenderData().getMesh().getVertexBuffer().getBoxBound(bound);
+            mWaiter.assertTrue(result);
+            mWaiter.assertTrue(0 != bound[0] && 0 != bound[1] && 0 != bound[2] && 0 != bound[3]
+                    && 0 != bound[4] && 0 != bound[5]);
+        }
+
+        {
+            final float[] bound = new float[4];
+            final float radius = so.getRenderData().getMesh().getVertexBuffer().getSphereBound(bound);
+            mWaiter.assertTrue(0 != radius);
+        }
     }
 
     private final static String TAG = "MiscTests";
