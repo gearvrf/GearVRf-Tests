@@ -22,23 +22,27 @@ import org.gearvrf.GVRRenderPass;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.scene_objects.GVRCylinderSceneObject;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import static junit.framework.Assert.fail;
 
 @RunWith(AndroidJUnit4.class)
-
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MiscTests {
     private GVRTestUtils mTestUtils;
     private Waiter mWaiter;
@@ -64,44 +68,6 @@ public class MiscTests {
         GVRScene scene = mTestUtils.getMainScene();
         mWaiter.assertNotNull(scene);
     }
-/*
-    @Test
-    public void testTextureGetFutureIdOnGlThread() throws TimeoutException, InterruptedException {
-        final GVRContext ctx = mTestUtils.getGvrContext();
-        final Bitmap b = BitmapFactory.decodeResource(ctx.getActivity().getResources(), R.drawable.gearvr_logo);
-
-        final CountDownLatch cdl = new CountDownLatch(1);
-        final int[] tid = { 0 };
-        ctx.runOnGlThread(new Runnable() {
-            @Override
-            public void run() {
-                final GVRBitmapTexture t = new GVRBitmapTexture(ctx, b);
-                final Future<Integer> f = t.getFutureId();
-                try {
-                    tid[0] = f.get();
-                } catch (final Exception e) {
-                    e.printStackTrace();
-                }
-                cdl.countDown();
-            }
-        });
-
-        cdl.await(5, TimeUnit.SECONDS);
-        mWaiter.assertTrue(0 != tid[0]);
-    }
-
-    @Test
-    public void testTextureGetFutureIdOnUserThread() throws TimeoutException, InterruptedException, ExecutionException {
-        final GVRContext ctx = mTestUtils.getGvrContext();
-        final Bitmap b = BitmapFactory.decodeResource(ctx.getActivity().getResources(), R.drawable.gearvr_logo);
-
-        final GVRBitmapTexture t = new GVRBitmapTexture(ctx, b);
-        final Future<Integer> f = t.getFutureId();
-        final Integer id = f.get(5, TimeUnit.SECONDS);
-
-        mWaiter.assertTrue(0 != id);
-    }
-*/
 
     /**
      * Used to crash; verifies it doesn't anymore.
@@ -209,6 +175,59 @@ public class MiscTests {
             e1.printStackTrace();
         }
         Log.d(TAG, "Finished heap dump");
+    }
+
+    @Test
+    public void testMeshSimpleApi1() {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        final GVRScene scene = mTestUtils.getMainScene();
+
+        final GVRCylinderSceneObject so = new GVRCylinderSceneObject(ctx);
+        final GVRMesh mesh = so.getRenderData().getMesh();
+
+        mWaiter.assertTrue(0 < mesh.getIndices().length);
+
+        float[] asArray = mesh.getVertices();
+        mWaiter.assertTrue(0 < asArray.length);
+        FloatBuffer asBuffer = mesh.getVerticesAsFloatBuffer();
+        mWaiter.assertTrue(0 < asBuffer.remaining());
+
+        asArray = mesh.getNormals();
+        mWaiter.assertTrue(0 < asArray.length);
+        asBuffer = mesh.getNormalsAsFloatBuffer();
+        mWaiter.assertTrue(0 < asBuffer.remaining());
+
+        asArray = mesh.getTexCoords();
+        mWaiter.assertTrue(0 < asArray.length);
+        asBuffer = mesh.getTexCoordsAsFloatBuffer();
+        mWaiter.assertTrue(0 < asBuffer.remaining());
+    }
+
+    @Test
+    public void testVertexBufferSimpleApi1() {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        final GVRScene scene = mTestUtils.getMainScene();
+
+        mTestUtils.waitForOnInit();
+        final GVRCylinderSceneObject so = new GVRCylinderSceneObject(ctx);
+        so.getTransform().setPosition(0,0,-2);
+        scene.addSceneObject(so);
+        mTestUtils.waitForSceneRendering();
+        GVRNotifications.waitAfterStep();
+
+        {
+            final float[] bound = new float[6];
+            final boolean result = so.getRenderData().getMesh().getVertexBuffer().getBoxBound(bound);
+            mWaiter.assertTrue(result);
+            mWaiter.assertTrue(0 != bound[0] && 0 != bound[1] && 0 != bound[2] && 0 != bound[3]
+                    && 0 != bound[4] && 0 != bound[5]);
+        }
+
+        {
+            final float[] bound = new float[4];
+            final float radius = so.getRenderData().getMesh().getVertexBuffer().getSphereBound(bound);
+            mWaiter.assertTrue(0 != radius);
+        }
     }
 
     private final static String TAG = "MiscTests";
