@@ -91,6 +91,18 @@ run-tests() {
 		do
 			run-single-test < /dev/null # adb sometimes consumes all input breaking the loop
 		done <<end-of-list
+			framework-tests all
+			asset-tests all
+end-of-list
+	)
+}
+
+run-tests4() {
+	(
+		while read TEST_GROUP TEST_NAME SUBTEST_NAME
+		do
+			run-single-test < /dev/null # adb sometimes consumes all input breaking the loop
+		done <<end-of-list
 			framework-tests BoundingVolumeTests
 			framework-tests CullTests
 			framework-tests LightTests
