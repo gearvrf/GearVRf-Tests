@@ -2,36 +2,47 @@ package org.gearvrf.tester;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Debug;
+import android.os.Environment;
+import android.support.test.annotation.UiThreadTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 
 import net.jodah.concurrentunit.Waiter;
 
+import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRBitmapTexture;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRNotifications;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderPass;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.scene_objects.GVRCylinderSceneObject;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 
-import java.util.concurrent.CountDownLatch;
+import java.io.File;
+import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-@RunWith(AndroidJUnit4.class)
+import static junit.framework.Assert.fail;
 
+@RunWith(AndroidJUnit4.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MiscTests {
     private GVRTestUtils mTestUtils;
     private Waiter mWaiter;
@@ -57,44 +68,6 @@ public class MiscTests {
         GVRScene scene = mTestUtils.getMainScene();
         mWaiter.assertNotNull(scene);
     }
-/*
-    @Test
-    public void testTextureGetFutureIdOnGlThread() throws TimeoutException, InterruptedException {
-        final GVRContext ctx = mTestUtils.getGvrContext();
-        final Bitmap b = BitmapFactory.decodeResource(ctx.getActivity().getResources(), R.drawable.gearvr_logo);
-
-        final CountDownLatch cdl = new CountDownLatch(1);
-        final int[] tid = { 0 };
-        ctx.runOnGlThread(new Runnable() {
-            @Override
-            public void run() {
-                final GVRBitmapTexture t = new GVRBitmapTexture(ctx, b);
-                final Future<Integer> f = t.getFutureId();
-                try {
-                    tid[0] = f.get();
-                } catch (final Exception e) {
-                    e.printStackTrace();
-                }
-                cdl.countDown();
-            }
-        });
-
-        cdl.await(5, TimeUnit.SECONDS);
-        mWaiter.assertTrue(0 != tid[0]);
-    }
-
-    @Test
-    public void testTextureGetFutureIdOnUserThread() throws TimeoutException, InterruptedException, ExecutionException {
-        final GVRContext ctx = mTestUtils.getGvrContext();
-        final Bitmap b = BitmapFactory.decodeResource(ctx.getActivity().getResources(), R.drawable.gearvr_logo);
-
-        final GVRBitmapTexture t = new GVRBitmapTexture(ctx, b);
-        final Future<Integer> f = t.getFutureId();
-        final Integer id = f.get(5, TimeUnit.SECONDS);
-
-        mWaiter.assertTrue(0 != id);
-    }
-*/
 
     /**
      * Used to crash; verifies it doesn't anymore.
@@ -147,4 +120,115 @@ public class MiscTests {
             mWaiter.assertTrue(false);
         }
     }
+
+    @Test
+    @UiThreadTest
+    public void gcOomTest1() throws Exception {
+        oomTest(false);
+    }
+
+    @Test
+    @UiThreadTest
+    public void gcOomTest2() throws Exception {
+        oomTest(true);
+    }
+
+    //  Change this between true & false to either trigger an OutOfMemoryError exception or a
+    // "global reference table overflow" crash.
+    private void oomTest(boolean createBitmap) throws IOException {
+        try {
+            final int MaxInstances = 100000;
+            GVRContext gvrContext = ActivityRule.getActivity() .getGVRContext();
+            for (int count = 0; count < MaxInstances; count++) {
+                Log.d(TAG, "Count: " + count);
+                GVRSceneObject sceneObject = new GVRSceneObject(gvrContext, gvrContext.createQuad(10f, 10f));
+                GVRRenderData renderData = sceneObject.getRenderData();
+                GVRTexture texture;
+                if (createBitmap) {
+                    Bitmap bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
+                    texture = new GVRTexture(gvrContext);
+                    texture.setImage(new GVRBitmapTexture(gvrContext, bitmap));
+                } else {
+                    texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, "StencilTests/GearVR.jpg"));
+                }
+                renderData.getMaterial().setMainTexture(texture);
+                renderData.setAlphaBlend(true);
+                if ((count % 100) == 99) {
+                    System.gc();
+                    System.runFinalization();
+                }
+            }
+        } catch (OutOfMemoryError oom) {
+            HeapDump();
+            fail(oom.getMessage());
+        }
+    }
+
+    private void HeapDump() {
+        Log.d(TAG, "Dumping heap");
+        try {
+            File external = Environment.getExternalStorageDirectory();
+            File folder = new File(external, "Documents");
+            File heapDumpFile1 = new File(folder, "oom.hprof");
+            Debug.dumpHprofData(heapDumpFile1.getPath());
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        Log.d(TAG, "Finished heap dump");
+    }
+
+    @Test
+    public void testMeshSimpleApi1() {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        final GVRScene scene = mTestUtils.getMainScene();
+
+        final GVRCylinderSceneObject so = new GVRCylinderSceneObject(ctx);
+        final GVRMesh mesh = so.getRenderData().getMesh();
+
+        mWaiter.assertTrue(0 < mesh.getIndices().length);
+
+        float[] asArray = mesh.getVertices();
+        mWaiter.assertTrue(0 < asArray.length);
+        FloatBuffer asBuffer = mesh.getVerticesAsFloatBuffer();
+        mWaiter.assertTrue(0 < asBuffer.remaining());
+
+        asArray = mesh.getNormals();
+        mWaiter.assertTrue(0 < asArray.length);
+        asBuffer = mesh.getNormalsAsFloatBuffer();
+        mWaiter.assertTrue(0 < asBuffer.remaining());
+
+        asArray = mesh.getTexCoords();
+        mWaiter.assertTrue(0 < asArray.length);
+        asBuffer = mesh.getTexCoordsAsFloatBuffer();
+        mWaiter.assertTrue(0 < asBuffer.remaining());
+    }
+
+    @Test
+    public void testVertexBufferSimpleApi1() {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        final GVRScene scene = mTestUtils.getMainScene();
+
+        mTestUtils.waitForOnInit();
+        final GVRCylinderSceneObject so = new GVRCylinderSceneObject(ctx);
+        so.getTransform().setPosition(0,0,-2);
+        scene.addSceneObject(so);
+        mTestUtils.waitForSceneRendering();
+        GVRNotifications.waitAfterStep();
+
+        {
+            final float[] bound = new float[6];
+            final boolean result = so.getRenderData().getMesh().getVertexBuffer().getBoxBound(bound);
+            mWaiter.assertTrue(result);
+            mWaiter.assertTrue(0 != bound[0] && 0 != bound[1] && 0 != bound[2] && 0 != bound[3]
+                    && 0 != bound[4] && 0 != bound[5]);
+        }
+
+        {
+            final float[] bound = new float[4];
+            final float radius = so.getRenderData().getMesh().getVertexBuffer().getSphereBound(bound);
+            mWaiter.assertTrue(0 != radius);
+        }
+    }
+
+    private final static String TAG = "MiscTests";
 }
