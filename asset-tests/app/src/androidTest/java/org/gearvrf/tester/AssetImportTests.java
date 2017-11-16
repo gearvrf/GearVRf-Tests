@@ -6,12 +6,14 @@ import android.support.test.runner.AndroidJUnit4;
 import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRComponent;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRExternalScene;
 import org.gearvrf.GVRLightBase;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRPointLight;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
@@ -350,6 +352,37 @@ public class AssetImportTests
 
     @Test
     public void canLoadModelWithoutLights() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRSceneObject model = null;
+        GVRPointLight light = new GVRPointLight(ctx);
+        GVRSceneObject lightObj = new GVRSceneObject(ctx);
+        GVRCameraRig rig = scene.getMainCameraRig();
+
+        rig.getLeftCamera().setBackgroundColor(1, 1, 0.5f, 1.0f);
+        rig.getRightCamera().setBackgroundColor(1, 1, 0.5f, 1.0f);
+        rig.getCenterCamera().setBackgroundColor(1, 1, 0.5f, 1.0f);
+        ctx.getEventReceiver().addListener(mHandler);
+        lightObj.attachComponent(light);
+        try
+        {
+            EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(GVRImportSettings.NO_LIGHTING));
+            model = ctx.getAssetLoader().loadModel( "gear_vr_controller.obj", settings, true, (GVRScene) scene);
+        }
+        catch (IOException ex)
+        {
+            mWaiter.fail(ex);
+        }
+        mTestUtils.waitForAssetLoad();
+        mHandler.checkAssetLoaded(null, 1);
+        mHandler.checkAssetErrors(0, 0);
+        model.getTransform().setPosition(0, 0, -0.2f);
+        model.forAllComponents(new MeshVisitorNoLights());
+    }
+
+    @Test
+    public void canLoadX3DModelWithoutLights() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
