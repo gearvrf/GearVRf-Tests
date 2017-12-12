@@ -28,6 +28,7 @@ import org.gearvrf.GVRSpotLight;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTextureParameters;
 import org.gearvrf.GVRVertexBuffer;
+import org.gearvrf.IAssetEvents;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRCylinderSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
@@ -105,7 +106,7 @@ public class RenderPerfTests
     }
 
     /*
-     * They cylinder is 4240 vertices and 2240 triangles
+     * They cylinder is 26080 vertices
      */
     private GVRSceneObject createCylinder(GVRContext ctx, String meshDesc, GVRMaterial mtl, float scale)
     {
@@ -115,10 +116,10 @@ public class RenderPerfTests
         params.Height = scale;
         params.TopRadius = scale / 2.0f;
         params.BottomRadius = scale / 2.0f;
-        params.StackNumber = 25;
-        params.SliceNumber = 40;
-        params.HasBottomCap = true;
-        params.HasTopCap = true;
+        params.StackNumber = 80;
+        params.SliceNumber = 80;
+        params.HasBottomCap = false;
+        params.HasTopCap = false;
         params.FacingOut = true;
         GVRSceneObject cyl = new GVRCylinderSceneObject(ctx, params);
         return cyl;
@@ -187,7 +188,11 @@ public class RenderPerfTests
     private GVRTexture createBitmap(GVRContext ctx, int resourceId, GVRTextureParameters params)
     {
         GVRAndroidResource res = new GVRAndroidResource(ctx, resourceId);
-        return ctx.getAssetLoader().loadTexture(res, params);
+        if (params != null)
+        {
+            return ctx.getAssetLoader().loadTexture(res, params);
+        }
+        return ctx.getAssetLoader().loadTexture(res);
     }
 
     private GVRTexture createCubemap(GVRContext ctx, int resourceID, GVRTextureParameters params)
@@ -428,6 +433,7 @@ public class RenderPerfTests
         GVRMaterial sourceMtl = createMaterial(ctx, params);
         GVRSceneObject sourceObj = createGeometry(ctx, sourceMtl, params);
         GVRMesh sourceMesh = sourceObj.getRenderData().getMesh();
+        GVRSceneObject root = new GVRSceneObject(ctx);
 
         mScene.setBackgroundColor(0.8f, 1.0f, 0.8f, 1.0f);
         //createLights(ctx, params);
@@ -455,9 +461,10 @@ public class RenderPerfTests
                 }
                 setRenderState(testObj.getRenderData(), params);
                 testObj.getTransform().setPosition(xpos, ypos, -zpos);
-                mScene.addSceneObject(testObj);
+                root.addChildObject(testObj);
             }
         }
+        mScene.addSceneObject(root);
     }
 
     private void runPerfTest(GVRContext ctx, String testName, Map<String, Object> params)
@@ -475,64 +482,64 @@ public class RenderPerfTests
     }
 
     @Test
-    public void quad10x10ShareAll() throws TimeoutException {
+    public void quad15x15ShareAll() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
         Map<String, Object> params = new HashMap<String, Object>();
 
         params.put("quadgeometry", 1);
         params.put("share_material", 1);
         params.put("share_geometry", 1);
-        params.put("rows", 10);
-        params.put("columns", 10);
+        params.put("rows", 15);
+        params.put("columns", 15);
         params.put("frames", 600);
         params.put("fps", 59.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        runPerfTest(ctx, "quad10x10ShareAll", params);
+        runPerfTest(ctx, "quad15x15ShareAll", params);
     }
 
     @Test
-    public void quad10x10ShareGeo() throws TimeoutException {
+    public void quad15x15ShareGeo() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
         Map<String, Object> params = new HashMap<String, Object>();
 
         params.put("quadgeometry", 1);
         params.put("share_geometry", 1);
-        params.put("rows", 10);
-        params.put("columns", 10);
+        params.put("rows", 15);
+        params.put("columns", 15);
         params.put("frames", 600);
         params.put("fps", 59.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        runPerfTest(ctx, "quad10x10ShareGeo", params);
+        runPerfTest(ctx, "quad15x15ShareGeo", params);
     }
 
     @Test
-    public void quad10x10ShareMtll() throws TimeoutException {
+    public void quad15x15ShareMtll() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
         Map<String, Object> params = new HashMap<String, Object>();
 
         params.put("quadgeometry", 1);
         params.put("share_material", 1);
-        params.put("rows", 10);
-        params.put("columns", 10);
+        params.put("rows", 15);
+        params.put("columns", 15);
         params.put("frames", 600);
         params.put("fps", 59.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        runPerfTest(ctx, "quad10x10ShareMtl", params);
+        runPerfTest(ctx, "quad15x15ShareMtl", params);
     }
 
 
     @Test
-    public void quad10x10() throws TimeoutException {
+    public void quad15x15() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
         Map<String, Object> params = new HashMap<String, Object>();
 
         params.put("quadgeometry", 1);
-        params.put("rows", 10);
-        params.put("columns", 10);
+        params.put("rows", 15);
+        params.put("columns", 15);
         params.put("frames", 600);
         params.put("fps", 59.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        runPerfTest(ctx, "quad10x10", params);
+        runPerfTest(ctx, "quad15x15", params);
     }
 
 
@@ -599,68 +606,68 @@ public class RenderPerfTests
 
 
     @Test
-    public void quad10x10BitmapShareAll() throws TimeoutException {
+    public void quad15x15BitmapShareAll() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
         Map<String, Object> params = new HashMap<String, Object>();
 
         params.put("quadgeometry", 1);
         params.put("share_material", 1);
         params.put("share_geometry", 1);
-        params.put("rows", 10);
-        params.put("columns", 10);
+        params.put("rows", 15);
+        params.put("columns", 15);
         params.put("bitmap", BITMAP_TEXTURE);
         params.put("frames", 600);
         params.put("fps", 59.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        runPerfTest(ctx, "quad10x10BitmapShareAll", params);
+        runPerfTest(ctx, "quad15x15BitmapShareAll", params);
     }
 
     @Test
-    public void quad10x10BitmapShareGeo() throws TimeoutException {
+    public void quad15x15BitmapShareGeo() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
         Map<String, Object> params = new HashMap<String, Object>();
 
         params.put("quadgeometry", 1);
         params.put("share_geometry", 1);
-        params.put("rows", 10);
-        params.put("columns", 10);
+        params.put("rows", 15);
+        params.put("columns", 15);
         params.put("bitmap", BITMAP_TEXTURE);
         params.put("frames", 600);
         params.put("fps", 59.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        runPerfTest(ctx, "quad10x10BitmapShareGeo", params);
+        runPerfTest(ctx, "quad15x15BitmapShareGeo", params);
     }
 
     @Test
-    public void quad10x10BitmapShareMtll() throws TimeoutException {
+    public void quad15x15BitmapShareMtll() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
         Map<String, Object> params = new HashMap<String, Object>();
 
         params.put("quadgeometry", 1);
         params.put("share_material", 1);
-        params.put("rows", 10);
-        params.put("columns", 10);
+        params.put("rows", 15);
+        params.put("columns", 15);
         params.put("bitmap", BITMAP_TEXTURE);
         params.put("frames", 600);
         params.put("fps", 59.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        runPerfTest(ctx, "quad10x10BitmapShareMtl", params);
+        runPerfTest(ctx, "quad15x15BitmapShareMtl", params);
     }
 
 
     @Test
-    public void quad10x10Bitmap() throws TimeoutException {
+    public void quad15x15Bitmap() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
         Map<String, Object> params = new HashMap<String, Object>();
 
         params.put("quadgeometry", 1);
-        params.put("rows", 10);
-        params.put("columns", 10);
+        params.put("rows", 15);
+        params.put("columns", 15);
         params.put("bitmap", BITMAP_TEXTURE);
         params.put("frames", 600);
         params.put("fps", 59.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        runPerfTest(ctx, "quad10x10Bitmap", params);
+        runPerfTest(ctx, "quad15x15Bitmap", params);
     }
 
 
@@ -714,68 +721,68 @@ public class RenderPerfTests
 
 
     @Test
-    public void quad10x10CubemapShareAll() throws TimeoutException {
+    public void quad15x15CubemapShareAll() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
         Map<String, Object> params = new HashMap<String, Object>();
 
         params.put("quadgeometry", 1);
         params.put("share_material", 1);
         params.put("share_geometry", 1);
-        params.put("rows", 10);
-        params.put("columns", 10);
+        params.put("rows", 15);
+        params.put("columns", 15);
         params.put("cubemap", CUBEMAP_TEXTURE);
         params.put("frames", 600);
         params.put("fps", 59.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        runPerfTest(ctx, "quad10x10CubemapShareAll", params);
+        runPerfTest(ctx, "quad15x15CubemapShareAll", params);
     }
 
     @Test
-    public void quad10x10CubemapShareGeo() throws TimeoutException {
+    public void quad15x15CubemapShareGeo() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
         Map<String, Object> params = new HashMap<String, Object>();
 
         params.put("quadgeometry", 1);
         params.put("share_geometry", 1);
-        params.put("rows", 10);
-        params.put("columns", 10);
+        params.put("rows", 15);
+        params.put("columns", 15);
         params.put("cubemap", CUBEMAP_TEXTURE);
         params.put("frames", 600);
         params.put("fps", 59.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        runPerfTest(ctx, "quad10x10CubemapShareGeo", params);
+        runPerfTest(ctx, "quad15x15CubemapShareGeo", params);
     }
 
     @Test
-    public void quad10x10CubemapShareMtll() throws TimeoutException {
+    public void quad15x15CubemapShareMtll() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
         Map<String, Object> params = new HashMap<String, Object>();
 
         params.put("quadgeometry", 1);
         params.put("share_material", 1);
-        params.put("rows", 10);
-        params.put("columns", 10);
+        params.put("rows", 15);
+        params.put("columns", 15);
         params.put("cubemap", CUBEMAP_TEXTURE);
         params.put("frames", 600);
         params.put("fps", 59.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        runPerfTest(ctx, "quad10x10CubemapShareMtl", params);
+        runPerfTest(ctx, "quad15x15CubemapShareMtl", params);
     }
 
 
     @Test
-    public void quad10x10Cubemap() throws TimeoutException {
+    public void quad15x15Cubemap() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
         Map<String, Object> params = new HashMap<String, Object>();
 
         params.put("quadgeometry", 1);
-        params.put("rows", 10);
-        params.put("columns", 10);
+        params.put("rows", 15);
+        params.put("columns", 15);
         params.put("cubemap", CUBEMAP_TEXTURE);
         params.put("frames", 600);
         params.put("fps", 59.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        runPerfTest(ctx, "quad10x10Cubemap", params);
+        runPerfTest(ctx, "quad15x15Cubemap", params);
     }
 
 
@@ -845,68 +852,68 @@ public class RenderPerfTests
     }
 
     @Test
-    public void quad10x10CompBmapShareAll() throws TimeoutException {
+    public void quad15x15CompBmapShareAll() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
         Map<String, Object> params = new HashMap<String, Object>();
 
         params.put("quadgeometry", 1);
         params.put("share_material", 1);
         params.put("share_geometry", 1);
-        params.put("rows", 10);
-        params.put("columns", 10);
+        params.put("rows", 15);
+        params.put("columns", 15);
         params.put("compressedbitmap", COMPRESSED_TEXTURE);
         params.put("frames", 600);
         params.put("fps", 59.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        runPerfTest(ctx, "quad10x10CompBmapShareAll", params);
+        runPerfTest(ctx, "quad15x15CompBmapShareAll", params);
     }
 
     @Test
-    public void quad10x10CompBmapShareGeo() throws TimeoutException {
+    public void quad15x15CompBmapShareGeo() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
         Map<String, Object> params = new HashMap<String, Object>();
 
         params.put("quadgeometry", 1);
         params.put("share_geometry", 1);
-        params.put("rows", 10);
-        params.put("columns", 10);
+        params.put("rows", 15);
+        params.put("columns", 15);
         params.put("compressedbitmap", COMPRESSED_TEXTURE);
         params.put("frames", 600);
         params.put("fps", 59.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        runPerfTest(ctx, "quad10x10CompBmapShareGeo", params);
+        runPerfTest(ctx, "quad15x15CompBmapShareGeo", params);
     }
 
     @Test
-    public void quad10x10CompBmapShareMtll() throws TimeoutException {
+    public void quad15x15CompBmapShareMtll() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
         Map<String, Object> params = new HashMap<String, Object>();
 
         params.put("quadgeometry", 1);
         params.put("share_material", 1);
-        params.put("rows", 10);
-        params.put("columns", 10);
+        params.put("rows", 15);
+        params.put("columns", 15);
         params.put("compressedbitmap", COMPRESSED_TEXTURE);
         params.put("frames", 600);
         params.put("fps", 59.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        runPerfTest(ctx, "quad10x10CompBmapShareMtl", params);
+        runPerfTest(ctx, "quad15x15CompBmapShareMtl", params);
     }
 
 
     @Test
-    public void quad10x10CompBmap() throws TimeoutException {
+    public void quad15x15CompBmap() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
         Map<String, Object> params = new HashMap<String, Object>();
 
         params.put("quadgeometry", 1);
-        params.put("rows", 10);
-        params.put("columns", 10);
+        params.put("rows", 15);
+        params.put("columns", 15);
         params.put("compressedbitmap", COMPRESSED_TEXTURE);
         params.put("frames", 600);
         params.put("fps", 59.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        runPerfTest(ctx, "quad10x10CompBmap", params);
+        runPerfTest(ctx, "quad15x15CompBmap", params);
     }
 
     @Test
@@ -1000,7 +1007,7 @@ public class RenderPerfTests
         ctx.getEventReceiver().removeListener(loadHandler);
 
         createObjects(scene, tex.getImage(), mesh, 4);
-        mTestUtils.waitForXFrames(10000);
+        mTestUtils.waitForXFrames(10);
     }
 
     private void createObjects(GVRScene scene, GVRImage image, GVRMesh mesh, int n)
@@ -1029,7 +1036,7 @@ public class RenderPerfTests
         }
     }
 
-    private static class TextureLoadHandler extends GVREventListeners.AssetEvents
+    private static class TextureLoadHandler implements IAssetEvents
     {
         private GVRContext mContext;
         private boolean mTextureLoaded = false;
@@ -1040,6 +1047,10 @@ public class RenderPerfTests
         {
             mContext = ctx;
         }
+
+        public void onAssetLoaded(GVRContext ctx, GVRSceneObject model, String fileName, String errors) { }
+        public void onModelLoaded(GVRContext ctx, GVRSceneObject model, String fileName) { }
+        public void onModelError(GVRContext ctx, String fileName, String errors) { }
 
         @Override
         public void onTextureLoaded(GVRContext context, GVRTexture texture, String filePath)
