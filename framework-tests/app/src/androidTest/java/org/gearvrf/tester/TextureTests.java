@@ -598,6 +598,43 @@ public class TextureTests
         mTestUtils.screenShot(getClass().getSimpleName(), "testLoadTextureFromResource", mWaiter, mDoCompare);
     }
 
+
+    @Test
+    public void testSwitchTextures() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        String[] texFiles = new String[] { "NumberOne.png", "NumberTwo.png" };
+        GVRTexture[] textures = new GVRTexture[texFiles.length];
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, texFiles.length);
+        int i = 0;
+        ctx.getEventReceiver().addListener(texHandler);
+        try
+        {
+            for (String texFile : texFiles)
+            {
+                GVRAndroidResource r = new GVRAndroidResource(ctx, texFile);
+                textures[i++] = ctx.getAssetLoader().loadTexture(r);
+            }
+        }
+        catch (IOException ex)
+        {
+            mWaiter.fail(ex);
+        }
+        mTestUtils.waitForAssetLoad();
+        GVRTexture tex = new GVRTexture(ctx);
+        GVRSceneObject quad = new GVRSceneObject(ctx, 2, 2, tex);
+        quad.getTransform().setPositionZ(-4.0f);
+        scene.addSceneObject(quad);
+        for (i = 0; i < 1000; ++i)
+        {
+            GVRTexture t = textures[i % texFiles.length];
+            GVRImage image = t.getImage();
+            tex.setImage(image);
+            mTestUtils.waitForXFrames(1);
+        }
+    }
+
     public void checkResults(int actual, int truth)
     {
         mWaiter.assertEquals(truth, actual);
