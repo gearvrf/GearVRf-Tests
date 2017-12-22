@@ -5,35 +5,22 @@ import android.support.test.runner.AndroidJUnit4;
 
 import net.jodah.concurrentunit.Waiter;
 
-import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRCamera;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCubemapTexture;
 import org.gearvrf.GVRDirectLight;
-import org.gearvrf.GVRLightBase;
 import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVROrthogonalCamera;
-import org.gearvrf.GVRPerspectiveCamera;
-import org.gearvrf.GVRPointLight;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRShadowMap;
 import org.gearvrf.GVRSpotLight;
-import org.gearvrf.GVRTexture;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
-import org.gearvrf.GVRPhongShader;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
-import org.joml.Vector3f;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.IOException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
 @RunWith(AndroidJUnit4.class)
