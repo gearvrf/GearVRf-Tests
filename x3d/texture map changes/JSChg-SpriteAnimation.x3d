@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <Scene>
+  
+	<Viewpoint position='0 0 0'/>
+	<Background skyColor='.5 .9 1'/>
+	<PointLight location='0 0 0'/>
+
+      <Transform translation='-.5 -.5 -2.5'>
+        <Shape>
+          <Appearance>
+            <ImageTexture DEF='MyImg2' url="lattitudelongitude.png"/>
+	        <Material DEF='ResetMaterial2' diffuseColor='1 1 1'/>
+          </Appearance>
+          <Box/>
+        </Shape>
+      </Transform>
+
+    <Transform DEF='Ball' translation='3 -2 -6'>
+    	<Transform DEF='BallSpin'>
+    		<Shape>
+    			<Appearance>
+    				<Material DEF="myMaterial" diffuseColor='1 1 1'/>
+    				<ImageTexture url="lattitudelongitude.png" repeatS="TRUE" repeatT="TRUE"/>
+    			</Appearance>
+    			<Sphere/>
+    		</Shape>
+    	</Transform>
+    </Transform>
+
+
+	<Script DEF='SpriteAnimationScript' mustEvaluate='true'>
+		<field accessType='inputOnly' name='value_changed' type='SFFloat'/>
+        <field accessType='inputOutput' name='ballSpin' type='SFRotation'/>
+        <field accessType='outputOnly' name='imgURL' type='MFString'/>
+
+		<![CDATA[
+			ecmascript:
+		  function value_changed (eventValue, timeStamp) {
+
+                    ballSpin.setValue( (timeStamp * 180/Math.PI)/10, 1, 0, 0 );
+
+
+                    imageName = "dog_walk_00";
+                    //Make sure we don't get a '31'
+                    spriteNum = Math.min( (Math.floor(30*eventValue/1.2) + 1), 30);
+                    if (spriteNum < 10) imageName += "0";
+                    imageName += spriteNum + ".png";
+                    imgURL = new MFString(imageName);
+		  }
+		]]>
+	</Script>
+    
+	<TimeSensor DEF='AnimationClock' cycleInterval='1.2' loop='true'/>
+
+	<ROUTE fromField='fraction_changed' fromNode='AnimationClock' toField='value_changed' toNode='SpriteAnimationScript'/>
+    <ROUTE fromField='imgURL' fromNode='SpriteAnimationScript' toField='url' toNode='MyImg2'/>
+
+    <ROUTE fromField='rotation' fromNode='BallSpin' toField='ballSpin' toNode='SpriteAnimationScript'/>
+    <ROUTE fromField='ballSpin' fromNode='SpriteAnimationScript' toField='rotation' toNode='BallSpin'/>
+
+  </Scene>
+</X3D>
