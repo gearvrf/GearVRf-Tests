@@ -187,62 +187,6 @@ public class TextureTests
         mTestUtils.waitForXFrames(3);
         mTestUtils.screenShot(getClass().getSimpleName(), "testCompressedTextureASTCUnlit", mWaiter, mDoCompare);
     }
-    @Test
-    public void testCompressedTextureASTC_Transparent() throws TimeoutException
-    {
-        final GVRContext ctx  = mTestUtils.getGvrContext();
-        final GVRMaterial material = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
-        final GVRSceneObject groundObject = new GVRCubeSceneObject(ctx, true, material);
-        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
-
-        ctx.getEventReceiver().addListener(texHandler);
-        groundObject.getTransform().setPositionZ(-3.0f);
-        mTestUtils.getMainScene().addSceneObject(groundObject);
-
-        // load astc, RenderOrder == TRANSPARENT
-        try {
-            GVRTexture tex = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, "3dgreen_transparent.astc"));
-            material.setTexture("diffuseTexture", tex);
-        } catch (IOException ex) {
-            mWaiter.fail(ex);
-        }
-
-        mTestUtils.waitForAssetLoad();
-        texHandler.checkTextureLoaded(mWaiter);
-        mTestUtils.waitForXFrames(2);
-        int order = groundObject.getRenderData().getRenderingOrder();
-        android.util.Log.d("gvrf", "rgba1 order = " + order);
-        checkResults(order, GVRRenderData.GVRRenderingOrder.TRANSPARENT);
-    }
-
-    @Test
-    public void testCompressedTextureASTC_Opaque() throws TimeoutException
-    {
-        final GVRContext ctx  = mTestUtils.getGvrContext();
-        final GVRMaterial material = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
-        final GVRSceneObject groundObject = new GVRCubeSceneObject(ctx, true, material);
-        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
-
-        ctx.getEventReceiver().addListener(texHandler);
-        groundObject.getTransform().setPositionZ(-3.0f);
-        mTestUtils.getMainScene().addSceneObject(groundObject);
-
-        // load astc, RenderOrder == GEOMETRY
-        texHandler.reset();
-        try {
-            GVRTexture tex = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, "3dgreen_opaque.astc"));
-            material.setTexture("diffuseTexture", tex);
-        } catch (IOException ex) {
-            mWaiter.fail(ex);
-        }
-
-        mTestUtils.waitForAssetLoad();
-        texHandler.checkTextureLoaded(mWaiter);
-        mTestUtils.waitForXFrames(2);
-        int order = groundObject.getRenderData().getRenderingOrder();
-        android.util.Log.d("Texture:", "rgb8 order = " + order);
-        checkResults(order, GVRRenderData.GVRRenderingOrder.GEOMETRY);
-    }
 
     @Test
     public void testLayeredDiffuseTexture() throws TimeoutException
