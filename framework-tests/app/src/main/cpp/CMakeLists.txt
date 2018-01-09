@@ -11,8 +11,4 @@ include_directories(${INCLUDE_DIR}/../../GearVRf/GVRf/Framework/framework/src/ma
 
 string(TOLOWER ${CMAKE_BUILD_TYPE} buildType)
 
-add_library(gvrf SHARED IMPORTED)
-set_property(TARGET gvrf PROPERTY IMPORTED_LOCATION
-             ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../../GearVRf/GVRf/Framework/framework/build/intermediates/ndkBuild/${buildType}/obj/local/${ANDROID_ABI}/libgvrf.so)
-
-target_link_libraries(framework-tests gvrf log GLESv3)
+target_link_libraries(framework-tests log GLESv3)
