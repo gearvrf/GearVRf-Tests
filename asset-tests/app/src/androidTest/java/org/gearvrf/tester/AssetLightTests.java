@@ -5,6 +5,8 @@ import android.support.test.runner.AndroidJUnit4;
 import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRDirectLight;
+import org.gearvrf.GVRLightBase;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRPointLight;
 import org.gearvrf.GVRScene;
@@ -21,6 +23,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 @RunWith(AndroidJUnit4.class)
@@ -208,9 +211,43 @@ public class AssetLightTests
     @Test
     public void x3dShininess() throws TimeoutException
     {
-        mHandler.loadTestModel("x3d/teapotandtorus_AddPtLt.x3d", 2);
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "x3d/teapotandtorus_AddPtLt.x3d", 2, 0, "x3dShininess");
+    }
+
+    @Test
+    public void testAddLight() throws TimeoutException
+    {
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/animals/wolf-obj.obj", 5, 0, null);
         mTestUtils.waitForXFrames(2);
-        mTestUtils.screenShot(getClass().getSimpleName(), "x3dShininess", mWaiter, mDoCompare);
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRDirectLight light1 = new GVRDirectLight(ctx);
+        GVRDirectLight light2 = new GVRDirectLight(ctx);
+        GVRSceneObject topLight = new GVRSceneObject(ctx);
+
+        light1.setDiffuseIntensity(1, 1, 0.5f, 1);
+        topLight.attachComponent(light2);
+        topLight.getTransform().rotateByAxis(-90.0f, 1, 0, 0);
+        topLight.getTransform().setPositionY(1.0f);
+        scene.addSceneObject(topLight);
+        scene.getMainCameraRig().getHeadTransformObject().attachComponent(light1);
+        mTestUtils.waitForXFrames(2);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testAddLight", mWaiter, mDoCompare);
+    }
+
+    @Test
+    public void testRemoveLight() throws TimeoutException
+    {
+        GVRSceneObject model = mHandler.loadTestModel("jassimp/astro_boy.dae", 4, 0, null);
+        mTestUtils.waitForXFrames(2);
+        List<GVRLightBase> lights = model.getAllComponents(GVRLightBase.getComponentType());
+
+        for (GVRLightBase l : lights)
+        {
+            l.getOwnerObject().detachComponent(GVRLightBase.getComponentType());
+        }
+        mTestUtils.waitForXFrames(2);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testRemoveLight", mWaiter, mDoCompare);
     }
 
  /*
