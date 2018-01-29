@@ -387,4 +387,39 @@ public class RenderShaderTests
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void meshWithLightingTest() throws TimeoutException {
+        String screenshotName = null;
+
+        try {
+            JSONObject jsonScene = new JSONObject("{id: scene}");
+
+            JSONObject object = new JSONObject();
+            object.put("geometry", new JSONObject("{type: cube}"));
+            object.put("material", new JSONObject(createMaterialFormat(
+                    GVRMaterial.GVRShaderType.Phong.ID, R.drawable.checker)));
+            object.put("position", new JSONObject("{x: -1.0, z: -2.0}"));
+
+            jsonScene.put("objects", new JSONArray().put(object));
+            jsonScene.put("lights", new JSONArray("["
+                    + createLightType("directional", 1.0f, 0.3f, 0.3f, 0.0f) + "]"));
+            GVRSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(), jsonScene);
+
+            gvrTestUtils.waitForSceneRendering();
+            screenshotName = "testMeshWithLighting";
+            gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
+
+            // remove lighting from the scene
+            GVRSceneObject lightNode = gvrTestUtils.getMainScene().getSceneObjectByName("lightNode");
+            gvrTestUtils.getMainScene().removeSceneObject(lightNode);
+
+            gvrTestUtils.waitForSceneRendering();
+            screenshotName = "testMeshRemoveLighting";
+            gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 }
