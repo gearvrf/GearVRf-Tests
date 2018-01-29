@@ -7,6 +7,7 @@ import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
@@ -347,31 +348,43 @@ public class RenderShaderTests
     }
 
     @Test
-    public void meshStartWithtTextureTest() throws JSONException {
-        JSONObject jsonScene = null;
-        GVRContext ctx = gvrTestUtils.getGvrContext();
-        GVRScene scene = gvrTestUtils.getMainScene();
-        List<String> materials = null;
-        materials = createMaterialWithTextureFormats();
+    public void meshWithoutLightingTest() throws TimeoutException {
+        String screenshotName = null;
 
-        for (int i = 0; i < materials.size(); i++) { // Materials with textures
-            jsonScene = new JSONObject("{\"id\": \"scene" + i + "\"}");
-            String objName = "cubeObj" + i;
-            JSONObject object = new JSONObject(String.format("{name: %s}", objName));
+        try {
+            JSONObject jsonScene = new JSONObject("{id: scene}");
+
+            JSONObject object = new JSONObject();
             object.put("geometry", new JSONObject("{type: cube}"));
-            object.put("material", new JSONObject(materials.get(i)));
-            object.put("position", new JSONObject("{z: -2.0}"));
-            object.put("rotation", new JSONObject("{w: 0.5f, x: 0.2f, y: 1.0f, z:0.0f}"));
+            object.put("material", new JSONObject(createMaterialFormat(
+                    GVRMaterial.GVRShaderType.Phong.ID, R.drawable.checker)));
+            object.put("position", new JSONObject("{x: -1.0, z: -2.0}"));
 
             jsonScene.put("objects", new JSONArray().put(object));
-            GVRSceneMaker.makeScene(ctx, scene, jsonScene);
-            gvrTestUtils.waitForSceneRendering();
+            GVRSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(), jsonScene);
 
-            GVRSceneObject obj = scene.getSceneObjectByName(objName);
-            obj.getRenderData().getMaterial().setMainTexture(null);
             gvrTestUtils.waitForSceneRendering();
+            screenshotName = "testMeshWithoutLighting";
+            gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
 
-            scene.clear();
+
+            // add lighting on the scene
+            GVRSceneObject lightNode = new GVRSceneObject(gvrTestUtils.getGvrContext());
+            GVRDirectLight light = new GVRDirectLight(gvrTestUtils.getGvrContext(), lightNode);
+            lightNode.getTransform().setPosition(0, 0, 0);
+            lightNode.getTransform().setRotation(1, 0, 0, 0);
+            light.setAmbientIntensity(0.3f * 1, 0.3f * 0.3f, 0.3f * 0.3f, 1);
+            light.setDiffuseIntensity(1, 0.3f, 0.3f, 1);
+            light.setSpecularIntensity(1, 0.3f, 0.3f, 1);
+
+            gvrTestUtils.getMainScene().addSceneObject(lightNode);
+
+            gvrTestUtils.waitForSceneRendering();
+            screenshotName = "testMeshAddLighting";
+            gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 }
