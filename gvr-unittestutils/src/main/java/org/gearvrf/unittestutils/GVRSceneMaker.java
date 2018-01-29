@@ -4,7 +4,11 @@ import android.util.ArrayMap;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRPointLight;
+import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRSpotLight;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
 import org.json.JSONArray;
@@ -206,5 +210,139 @@ public class GVRSceneMaker {
         if (jsonScale != null) {
             setScale(transform, jsonScale);
         }
+    }
+
+    private static void setPointLightIntensity(GVRPointLight light, JSONObject jsonLight)
+            throws JSONException {
+
+        JSONObject jsonAmbientIntensity = jsonLight.optJSONObject("ambientintensity");
+        if (jsonAmbientIntensity != null) {
+            RGBAColor ambientCoord = getColorCoordinates(jsonAmbientIntensity);
+            light.setAmbientIntensity(ambientCoord.r, ambientCoord.g, ambientCoord.b,
+                    ambientCoord.a);
+        }
+
+        JSONObject jsonDiffuseIntensity = jsonLight.optJSONObject("diffuseintensity");
+        if (jsonDiffuseIntensity != null) {
+            RGBAColor diffuseCoord = getColorCoordinates(jsonDiffuseIntensity);
+            light.setDiffuseIntensity(diffuseCoord.r, diffuseCoord.g, diffuseCoord.b,
+                    diffuseCoord.a);
+        }
+
+        JSONObject jsonSpecularIntensity = jsonLight.optJSONObject("specularintensity");
+        if (jsonSpecularIntensity != null) {
+            RGBAColor specularCoord = getColorCoordinates(jsonSpecularIntensity);
+            light.setSpecularIntensity(specularCoord.r, specularCoord.g, specularCoord.b,
+                    specularCoord.a);
+        }
+    }
+
+    private static void setDirectLightIntensity(GVRDirectLight light, JSONObject jsonLight)
+            throws JSONException {
+
+        JSONObject jsonAmbientIntensity = jsonLight.optJSONObject("ambientintensity");
+        if (jsonAmbientIntensity != null) {
+            RGBAColor ambientCoord = getColorCoordinates(jsonAmbientIntensity);
+            light.setAmbientIntensity(ambientCoord.r, ambientCoord.g, ambientCoord.b,
+                    ambientCoord.a);
+        }
+
+        JSONObject jsonDiffuseIntensity = jsonLight.optJSONObject("diffuseintensity");
+        if (jsonDiffuseIntensity != null) {
+            RGBAColor diffuseCoord = getColorCoordinates(jsonDiffuseIntensity);
+            light.setDiffuseIntensity(diffuseCoord.r, diffuseCoord.g, diffuseCoord.b,
+                    diffuseCoord.a);
+        }
+
+        JSONObject jsonSpecularIntensity = jsonLight.optJSONObject("specularintensity");
+        if (jsonSpecularIntensity != null) {
+            RGBAColor specularCoord = getColorCoordinates(jsonSpecularIntensity);
+            light.setSpecularIntensity(specularCoord.r, specularCoord.g, specularCoord.b,
+                    specularCoord.a);
+        }
+    }
+
+    private static void setLightConeAngle(GVRSpotLight light, JSONObject jsonLight)
+            throws JSONException {
+
+        float innerAngle = (float) jsonLight.optDouble("innerconeangle");
+        if (!Double.isNaN(innerAngle)) {
+            light.setInnerConeAngle(innerAngle);
+        }
+
+        float outAngle = (float) jsonLight.optDouble("outerconeangle");
+        if (!Double.isNaN(outAngle)) {
+            light.setOuterConeAngle(outAngle);
+        }
+    }
+
+    private static GVRSceneObject createSpotLight(GVRContext gvrContext, JSONObject jsonLight)
+            throws JSONException {
+
+        GVRSceneObject lightObj = new GVRSceneObject(gvrContext);
+        GVRSpotLight spotLight = new GVRSpotLight(gvrContext);
+        setPointLightIntensity(spotLight, jsonLight);
+        setLightConeAngle(spotLight, jsonLight);
+        lightObj.attachLight(spotLight);
+
+        return lightObj;
+    }
+
+    private static GVRSceneObject createDirectLight(GVRContext gvrContext, JSONObject jsonLight)
+            throws JSONException {
+
+        GVRSceneObject lightObj = new GVRSceneObject(gvrContext);
+        lightObj.setName("lightNode");
+        GVRDirectLight directLight = new GVRDirectLight(gvrContext);
+        setDirectLightIntensity(directLight, jsonLight);
+        lightObj.attachLight(directLight);
+
+        return lightObj;
+    }
+
+    private static GVRSceneObject createPointLight(GVRContext gvrContext, JSONObject jsonLight)
+            throws JSONException {
+
+        GVRSceneObject lightObj = new GVRSceneObject(gvrContext);
+        GVRPointLight pointLight = new GVRPointLight(gvrContext);
+        setPointLightIntensity(pointLight, jsonLight);
+        lightObj.attachLight(pointLight);
+
+        return lightObj;
+    }
+
+    /*
+     {
+      type: ("spot" | "directional" | "point")
+      castshadow: ("true" | "false")
+      position: {x: 0, y: 0, z: 0}
+      rotation: {w: 0, x: 0, y: 0, z: 0}
+      ambientintensity: {r: [0.0-1.0], g: [0.0-1.0], b: [0.0-1.0], a: [0.0-1.0]}
+      diffuseintensity:  {r: [0.0-1.0], g: [0.0-1.0], b: [0.0-1.0], a: [0.0-1.0]}
+      specularintensity:  {r: [0.0-1.0], g: [0.0-1.0], b: [0.0-1.0], a: [0.0-1.0]}
+      innerconeangle: [0.0-9.0]+
+      outerconeangle: [0.0-9.0]+
+     }
+     */
+    private static GVRSceneObject createLight(GVRContext gvrContext, JSONObject jsonLight) throws
+            JSONException {
+
+        GVRSceneObject light = null;
+        String type = jsonLight.optString("type");
+
+        if (type.equals("spot")) {
+            light = createSpotLight(gvrContext, jsonLight);
+        } else if (type.equals("directional")) {
+            light = createDirectLight(gvrContext, jsonLight);
+        } else if (type.equals("point")) {
+            light = createPointLight(gvrContext, jsonLight);
+        }
+
+        if (light != null) {
+            light.getLight().setCastShadow(jsonLight.optBoolean("castshadow"));
+            setTransform(light.getTransform(), jsonLight);
+        }
+
+        return light;
     }
 }
