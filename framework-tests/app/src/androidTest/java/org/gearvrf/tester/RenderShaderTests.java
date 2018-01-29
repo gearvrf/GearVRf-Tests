@@ -5,9 +5,13 @@ import android.support.test.runner.AndroidJUnit4;
 
 import net.jodah.concurrentunit.Waiter;
 
+import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRScene;
+import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRShaderId;
+import org.gearvrf.GVRTexture;
 import org.gearvrf.unittestutils.GVRSceneMaker;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
@@ -240,6 +244,79 @@ public class RenderShaderTests
             }
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void meshStartWithoutTextureTest() throws TimeoutException {
+        String screenshotName = null;
+        JSONObject jsonScene = null;
+        GVRContext ctx = gvrTestUtils.getGvrContext();
+        GVRScene scene = gvrTestUtils.getMainScene();
+        int[] textures = new int[] {R.drawable.checker, R.drawable.rock_normal, R.raw.jpg_opaque};
+
+        try {
+            List<String> materials = new ArrayList<String>();
+            materials.add(createMaterialFormat(GVRMaterial.GVRShaderType.Phong.ID));
+            materials.add(createMaterialFormat(GVRMaterial.GVRShaderType.Texture.ID));
+
+            for (int i = 0; i < materials.size(); i++) { // Materials without textures
+                for (int j = 0; j < textures.length; j++) { // Textures
+                    jsonScene = new JSONObject("{\"id\": \"scene" + j + "\"}");
+                    String objName = "cubeObj" + j;
+                    JSONObject object = new JSONObject(String.format("{name: %s}", objName));
+                    object.put("geometry", new JSONObject("{type: cube}"));
+                    object.put("material", new JSONObject(materials.get(i)));
+                    object.put("position", new JSONObject("{z: -2.0}"));
+                    object.put("rotation", new JSONObject("{w: 0.5f, x: 0.2f, y: 1.0f, z:0.0f}"));
+
+                    jsonScene.put("objects", new JSONArray().put(object));
+                    GVRSceneMaker.makeScene(ctx, scene, jsonScene);
+
+                    gvrTestUtils.waitForSceneRendering();
+                    screenshotName = "testMeshWithoutTexture" + i + "." + j;
+                    gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
+
+                    GVRSceneObject obj = scene.getSceneObjectByName(objName);
+                    GVRTexture text = ctx.getAssetLoader().loadTexture(new
+                            GVRAndroidResource(ctx, textures[j]));
+                    obj.getRenderData().getMaterial().setMainTexture(text);
+
+                    gvrTestUtils.waitForSceneRendering();
+                    screenshotName = "testMeshAddTexture" + i + "." + j;
+                    gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
+
+
+                    scene.clear();
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+        for (int i = 0; i < materials.size(); i++) { // Materials without textures
+            for (int j = 0; j < textures.length; j++) { // Textures
+                jsonScene = new JSONObject("{\"id\": \"scene" + j + "\"}");
+                String objName = "cubeObj" + j;
+                JSONObject object = new JSONObject(String.format("{name: %s}", objName));
+                object.put("geometry", new JSONObject("{type: cube}"));
+                object.put("material", new JSONObject(materials.get(i)));
+                object.put("position", new JSONObject("{z: -2.0}"));
+                object.put("rotation", new JSONObject("{w: 0.5f, x: 0.2f, y: 1.0f, z:0.0f}"));
+
+                jsonScene.put("objects", new JSONArray().put(object));
+                GVRSceneMaker.makeScene(ctx, scene, jsonScene);
+                gvrTestUtils.waitForSceneRendering();
+
+                GVRSceneObject obj = scene.getSceneObjectByName(objName);
+                GVRTexture text = ctx.getAssetLoader().loadTexture(new
+                        GVRAndroidResource(ctx, textures[j]));
+                obj.getRenderData().getMaterial().setMainTexture(text);
+                gvrTestUtils.waitForSceneRendering();
+
+                scene.clear();
+            }
         }
     }
 }
