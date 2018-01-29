@@ -1,7 +1,11 @@
 package org.gearvrf.unittestutils;
 
+import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRContext;
+import org.gearvrf.GVRTexture;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 public class GVRSceneMaker {
     private static class RGBAColor {
@@ -36,5 +40,16 @@ public class GVRSceneMaker {
         }
 
         return array;
+    }
+
+    private static GVRTexture createBitmapTexture(GVRContext gvrContext, JSONObject jsonTexture) throws JSONException {
+
+        int resourceId = jsonTexture.optInt("resource_id", -1);
+        if (resourceId == -1) {
+            return null;
+        }
+
+        return gvrContext.getAssetLoader().loadTexture(
+                new GVRAndroidResource(gvrContext, resourceId));
     }
 }
