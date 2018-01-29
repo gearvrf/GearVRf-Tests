@@ -8,12 +8,14 @@ import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRPointLight;
+import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSpotLight;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
+import org.gearvrf.utility.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -537,5 +539,88 @@ public class GVRSceneMaker {
             GVRSceneObject child = createLight(gvrContext, jsonChildren.getJSONObject(i));
             root.addChildObject(child);
         }
+    }
+
+    private static void createShareables(GVRContext gvrContext,
+                                         ArrayMap<String, GVRTexture> textures,
+                                         ArrayMap<String, GVRMaterial> materials,
+                                         JSONObject jsonObject) throws JSONException {
+        // Shared textures
+        JSONArray texArray = jsonObject.optJSONArray("textures");
+        if (texArray != null) {
+            for (int i = 0; i < texArray.length(); i++) {
+                String id = texArray.optJSONObject(i).optString("id");
+                if (!id.isEmpty()) {
+                    textures.put(id, createTexture(gvrContext, texArray.getJSONObject(i)));
+                }
+            }
+        }
+
+        // Shared materials
+        JSONArray matArray = jsonObject.optJSONArray("materials");
+        if (matArray != null) {
+            for (int i = 0; i < matArray.length(); i++) {
+                String id = matArray.optJSONObject(i).optString("id");
+                if (!id.isEmpty()) {
+                    materials.put(id,
+                            createMaterial(gvrContext, textures, matArray.getJSONObject(i)));
+                }
+            }
+        }
+    }
+
+    public static void makeScene(GVRContext gvrContext, GVRScene scene, JSONObject jsonScene,
+                                 JSONObject jsonShareables) throws JSONException {
+        ArrayMap<String, GVRTexture> textures = new ArrayMap<>();
+        ArrayMap<String, GVRMaterial> materials = new ArrayMap<>();
+
+        Log.d("SceneMaker", jsonScene.toString());
+
+        if (jsonShareables != null) {
+            createShareables(gvrContext, textures, materials, jsonShareables);
+        }
+
+        createShareables(gvrContext, textures, materials, jsonScene);
+
+        JSONObject jsonBgColor = jsonScene.optJSONObject("bgcolor");
+        if (jsonBgColor != null) {
+            RGBAColor bgcolorCoord = getColorCoordinates(jsonBgColor);
+            scene.setBackgroundColor(bgcolorCoord.r, bgcolorCoord.g, bgcolorCoord.b,
+                    bgcolorCoord.a);
+        }
+
+        JSONArray jsonChildrenLights = jsonScene.optJSONArray("lights");
+        if (jsonChildrenLights != null) {
+            addChildrenLights(gvrContext, scene.getRoot(), jsonChildrenLights);
+        }
+
+        JSONArray jsonChildrenObjects = jsonScene.optJSONArray("objects");
+        if (jsonChildrenObjects != null) {
+            addChildrenObjects(gvrContext, scene.getRoot(), textures, materials,
+                    jsonChildrenObjects);
+        }
+    }
+
+    public static void makeScene(GVRContext gvrContext, GVRScene scene,
+                                 String jsonScene) throws JSONException {
+        makeScene(gvrContext, scene, new JSONObject(jsonScene), null);
+    }
+
+    public static void makeScene(GVRContext gvrContext, GVRScene scene,
+                                 String jsonScene, String jsonShareables) throws JSONException {
+        makeScene(gvrContext, scene, new JSONObject(jsonScene), new JSONObject(jsonShareables));
+    }
+
+    /*
+     {
+      id: "scene name"
+      bgcolor: {red: [0.0-1.0], green: [0.0-1.0], blue: [0.0-1.0], alpha: [0.0-1.0]}
+      lights: [...]
+      objects: [...]
+     }
+     */
+    public static void makeScene(GVRContext gvrContext, GVRScene scene,
+                                 JSONObject jsonScene) throws JSONException {
+        makeScene(gvrContext, scene, jsonScene, null);
     }
 }
