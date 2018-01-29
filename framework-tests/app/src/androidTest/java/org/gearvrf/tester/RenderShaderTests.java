@@ -422,4 +422,39 @@ public class RenderShaderTests
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void meshWithLightingDisableRenderDataLightTest() throws TimeoutException {
+        String screenshotName = null;
+
+        try {
+            JSONObject jsonScene = new JSONObject("{id: scene}");
+
+            JSONObject object = new JSONObject();
+            object.put("geometry", new JSONObject("{type: cube}"));
+            object.put("material", new JSONObject(createMaterialFormat(
+                    GVRMaterial.GVRShaderType.Phong.ID, R.drawable.checker)));
+            object.put("position", new JSONObject("{x: -1.0, z: -2.0}"));
+
+            jsonScene.put("objects", new JSONArray().put(object));
+            jsonScene.put("lights", new JSONArray("["
+                    + createLightType("directional", 1.0f, 0.3f, 0.3f, 0.0f) + "]"));
+            GVRSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(), jsonScene);
+
+            gvrTestUtils.waitForSceneRendering();
+            screenshotName = "testMeshWithLightAndRenderDataEnabled";
+            gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
+
+            // disable light in object render data
+            GVRSceneObject cubeSceneObj = gvrTestUtils.getMainScene().getSceneObjectByName("cubeSceneObj");
+            cubeSceneObj.getRenderData().disableLight();
+
+            gvrTestUtils.waitForSceneRendering();
+            screenshotName = "testMeshDisableRenderDataLight";
+            gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 }
