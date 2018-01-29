@@ -52,4 +52,26 @@ public class GVRSceneMaker {
         return gvrContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(gvrContext, resourceId));
     }
+
+    /*
+     {
+      id: "texture id"
+      name: ("u_texture" | "diffuseTexture")
+      type: ("bitmap", "cube", "compressed")
+      resourceid: [0-9]+
+     }
+     */
+    private static GVRTexture createTexture(GVRContext gvrContext, JSONObject jsonTexture) throws JSONException {
+        GVRTexture texture = null;
+
+        String type = jsonTexture.optString("type");
+        if (type.equals("compressed")) {
+        } else if (type.equals("cube")) {
+        } else {
+            // type.equals("bitmap") || type.isEmpty()
+            texture = createBitmapTexture(gvrContext, jsonTexture);
+        }
+
+        return texture;
+    }
 }
