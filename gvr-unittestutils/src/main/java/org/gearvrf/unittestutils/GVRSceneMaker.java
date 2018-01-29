@@ -6,11 +6,14 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRPointLight;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSpotLight;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
+import org.gearvrf.scene_objects.GVRCubeSceneObject;
+import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -344,5 +347,138 @@ public class GVRSceneMaker {
         }
 
         return light;
+    }
+
+    /*
+     {
+      vertices: [0, ... n]
+      normals: [0, ... n]
+      texcoords: [[0, ... n], [0, ... n]]
+      triangles: [0, ... n]
+     }
+     */
+    private static GVRMesh createPolygonMesh(GVRContext gvrContext, JSONObject jsonObject)
+            throws JSONException {
+        String descriptor = "float3 a_position";
+
+        if (jsonObject.has( "texcoords")) {
+            descriptor += " float2 a_texcoord";
+        }
+
+        if (jsonObject.has("normals")) {
+            descriptor += " float3 a_normal";
+        }
+
+        GVRMesh mesh = new GVRMesh(gvrContext, descriptor);
+
+        if (jsonObject.has("vertices")) {
+            mesh.setVertices(jsonToFloatArray(jsonObject.optJSONArray("vertices")));
+        }
+
+        if (jsonObject.has("normals")) {
+            mesh.setNormals(jsonToFloatArray(jsonObject.optJSONArray("normals")));
+        }
+
+        if (jsonObject.has("triangles")) {
+            mesh.setTriangles(jsonToIntArray(jsonObject.optJSONArray("triangles")));
+        }
+
+        if (jsonObject.has("texcoords")) {
+            JSONArray jsonCorrds = jsonObject.optJSONArray("texcoords");
+            if (jsonCorrds != null) {
+                for (int i = 0; i < jsonCorrds.length(); i++) {
+                    mesh.setTexCoords(jsonToFloatArray(jsonCorrds.optJSONArray(i)), i);
+                }
+            }
+        }
+
+        return mesh;
+    }
+
+    private static GVRSceneObject createQuad(GVRContext gvrContext, JSONObject jsonObject)
+            throws JSONException {
+        float width = 1.0f;
+        float height = 1.0f;
+        String descriptor = "float3 a_position float2 a_texcoord float3 a_normal";
+
+        if (jsonObject != null) {
+            width = (float) jsonObject.optDouble("width", width);
+            height = (float) jsonObject.optDouble("height", height);
+            descriptor = jsonObject.optString("descriptor", descriptor);
+        }
+
+        return new GVRSceneObject(gvrContext,
+                GVRMesh.createQuad(gvrContext, descriptor, width, height));
+    }
+
+    private static GVRSceneObject createPolygon(GVRContext gvrContext, JSONObject jsonObject)
+            throws JSONException {
+        return new GVRSceneObject(gvrContext, createPolygonMesh(gvrContext, jsonObject));
+    }
+
+    private static GVRSceneObject createCube(GVRContext gvrContext, JSONObject jsonObject)
+            throws JSONException {
+        String descriptor = "float3 a_position float2 a_texcoord float3 a_normal";
+
+        float width = (float) jsonObject.optDouble("width", 1.0f);
+        float height = (float) jsonObject.optDouble("height", 1.0f);
+        float depth = (float) jsonObject.optDouble("depth", 1.0f);
+        boolean facing_out = jsonObject.optBoolean("facing_out", true);
+        descriptor = jsonObject.optString("descriptor", descriptor);
+
+        GVRMesh mesh = GVRCubeSceneObject.createCube(gvrContext, descriptor, facing_out,
+                new org.joml.Vector3f(width, height, depth));
+
+        return new GVRSceneObject(gvrContext, mesh);
+    }
+
+    private static GVRSceneObject createCylinder(GVRContext gvrContext, JSONObject jsonObject)
+            throws JSONException {
+        return null;
+    }
+
+    private static GVRSceneObject createSphere(GVRContext gvrContext, JSONObject jsonObject)
+            throws JSONException {
+        float radius = (float) jsonObject.optDouble("radius", 1.0f);
+        boolean facing_out = jsonObject.optBoolean("facing_out", true);
+
+        return new GVRSphereSceneObject(gvrContext, facing_out, radius);
+    }
+
+    /*
+     {
+      type: ("quad" | "cylinder" | "sphere" | "cube" | "polygon")
+      width: [0.0-9.0]+
+      height: [0.0-9.0]+
+      depth: [0.0-9.0]+
+      radius: [0.0-9.0]+
+      vertices: [[0.0-9.0]+, ...]
+      normals: [[0.0-9.0]+, ...]
+      texcoords: [[0.0-9.0]+, ...]
+      triangles:  [[0-9]+, ...]
+      bone_weights:  [[0.0-9.0]+, ...]
+      bone_indices:  [[0-9]+, ...]
+     }
+     */
+    private static GVRSceneObject createGeometry(GVRContext gvrContext, JSONObject jsonObject)
+            throws JSONException {
+        GVRSceneObject sceneObject = null;
+
+        String type = jsonObject.optString("type");
+
+        if (type.equals("polygon")) {
+            sceneObject = createPolygon(gvrContext, jsonObject);
+        } else if (type.equals("cube")) {
+            sceneObject = createCube(gvrContext, jsonObject);
+            sceneObject.setName("cubeSceneObj");
+        } else if (type.equals("cylinder")) {
+            sceneObject = createCylinder(gvrContext, jsonObject);
+        } else if (type.equals("sphere")) {
+            sceneObject = createSphere(gvrContext, jsonObject);
+        } else {
+            sceneObject = createQuad(gvrContext, jsonObject);
+        }
+
+        return sceneObject;
     }
 }
