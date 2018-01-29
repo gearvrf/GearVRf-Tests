@@ -188,6 +188,16 @@ public class RenderShaderTests
         return materials;
     }
 
+    private List<String> createMaterialWithTextureFormats() {
+        List<String> materials = new ArrayList<String>();
+        int[] textures = new int[] {R.drawable.checker, R.drawable.rock_normal, R.raw.jpg_opaque};
+        for (int j = 0; j < textures.length; j++) { // Textures
+            materials.add(createMaterialFormat(GVRMaterial.GVRShaderType.Phong.ID, textures[j]));
+            materials.add(createMaterialFormat(GVRMaterial.GVRShaderType.Texture.ID, textures[j]));
+        }
+        return materials;
+    }
+
     /**
      * Test mesh formats and shader combinations.
      *
@@ -295,10 +305,20 @@ public class RenderShaderTests
         }
     }
 
-        for (int i = 0; i < materials.size(); i++) { // Materials without textures
-            for (int j = 0; j < textures.length; j++) { // Textures
-                jsonScene = new JSONObject("{\"id\": \"scene" + j + "\"}");
-                String objName = "cubeObj" + j;
+    @Test
+    public void meshStartWithtTextureTest() throws TimeoutException {
+        String screenshotName = null;
+        JSONObject jsonScene = null;
+        GVRContext ctx = gvrTestUtils.getGvrContext();
+        GVRScene scene = gvrTestUtils.getMainScene();
+        List<String> materials = null;
+
+        try {
+            materials = createMaterialWithTextureFormats();
+
+            for (int i = 0; i < materials.size(); i++) { // Materials with textures
+                jsonScene = new JSONObject("{\"id\": \"scene" + i + "\"}");
+                String objName = "cubeObj" + i;
                 JSONObject object = new JSONObject(String.format("{name: %s}", objName));
                 object.put("geometry", new JSONObject("{type: cube}"));
                 object.put("material", new JSONObject(materials.get(i)));
@@ -307,16 +327,51 @@ public class RenderShaderTests
 
                 jsonScene.put("objects", new JSONArray().put(object));
                 GVRSceneMaker.makeScene(ctx, scene, jsonScene);
+
                 gvrTestUtils.waitForSceneRendering();
+                screenshotName = "testMeshWithTexture" + i;
+                gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
 
                 GVRSceneObject obj = scene.getSceneObjectByName(objName);
-                GVRTexture text = ctx.getAssetLoader().loadTexture(new
-                        GVRAndroidResource(ctx, textures[j]));
-                obj.getRenderData().getMaterial().setMainTexture(text);
+                obj.getRenderData().getMaterial().setMainTexture(null);
+
                 gvrTestUtils.waitForSceneRendering();
+                screenshotName = "testMeshRemoveTexture" + i;
+                gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
 
                 scene.clear();
             }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void meshStartWithtTextureTest() throws JSONException {
+        JSONObject jsonScene = null;
+        GVRContext ctx = gvrTestUtils.getGvrContext();
+        GVRScene scene = gvrTestUtils.getMainScene();
+        List<String> materials = null;
+        materials = createMaterialWithTextureFormats();
+
+        for (int i = 0; i < materials.size(); i++) { // Materials with textures
+            jsonScene = new JSONObject("{\"id\": \"scene" + i + "\"}");
+            String objName = "cubeObj" + i;
+            JSONObject object = new JSONObject(String.format("{name: %s}", objName));
+            object.put("geometry", new JSONObject("{type: cube}"));
+            object.put("material", new JSONObject(materials.get(i)));
+            object.put("position", new JSONObject("{z: -2.0}"));
+            object.put("rotation", new JSONObject("{w: 0.5f, x: 0.2f, y: 1.0f, z:0.0f}"));
+
+            jsonScene.put("objects", new JSONArray().put(object));
+            GVRSceneMaker.makeScene(ctx, scene, jsonScene);
+            gvrTestUtils.waitForSceneRendering();
+
+            GVRSceneObject obj = scene.getSceneObjectByName(objName);
+            obj.getRenderData().getMaterial().setMainTexture(null);
+            gvrTestUtils.waitForSceneRendering();
+
+            scene.clear();
         }
     }
 }
