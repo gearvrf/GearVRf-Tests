@@ -481,4 +481,53 @@ public class GVRSceneMaker {
 
         return sceneObject;
     }
+
+    /*
+     {
+      name: "object name"
+      geometry: {...}
+      material: {..}
+      position: {x: [0.0-9.0]+, y: [0.0-9.0]+, z: [0.0-9.0]+}
+      rotation: {x: [0.0-9.0]+, y: [0.0-9.0]+, z: [0.0-9.0]+}
+      scale: {x: [0.0-9.0]+, y: [0.0-9.0]+, z: [0.0-9.0]+}
+     }
+     */
+    private static GVRSceneObject createChildObject(GVRContext gvrContext,
+                                                    ArrayMap<String, GVRTexture> textures,
+                                                    ArrayMap<String, GVRMaterial> materials,
+                                                    JSONObject jsonObject) throws JSONException {
+
+        JSONObject jsonGeometry = jsonObject.optJSONObject("geometry");
+        GVRSceneObject child = (jsonGeometry != null) ? createGeometry(gvrContext, jsonGeometry) :
+                createQuad(gvrContext, null);
+
+        String objectName = jsonObject.optString("name");
+        if (!objectName.isEmpty()){
+            child.setName(objectName);
+        }
+
+        setTransform(child.getTransform(), jsonObject);
+
+        JSONObject jsonMaterial = jsonObject.optJSONObject("material");
+        if (jsonMaterial != null) {
+            String sharedId = jsonMaterial.optString("shared");
+            GVRMaterial material = sharedId.isEmpty() ?
+                    createMaterial(gvrContext, textures, jsonMaterial) :  materials.get(sharedId);
+
+            child.getRenderData().setMaterial(material);
+        }
+
+        return child;
+    }
+
+    private static void addChildrenObjects(GVRContext gvrContext, GVRSceneObject root,
+                                           ArrayMap<String, GVRTexture> textures,
+                                           ArrayMap<String, GVRMaterial> materials,
+                                           JSONArray jsonChildren) throws JSONException {
+        for (int i = 0; i < jsonChildren.length(); i++) {
+            GVRSceneObject child = createChildObject(gvrContext,
+                    textures, materials, jsonChildren.getJSONObject(i));
+            root.addChildObject(child);
+        }
+    }
 }
