@@ -530,4 +530,12 @@ public class GVRSceneMaker {
             root.addChildObject(child);
         }
     }
+
+    private static void addChildrenLights(GVRContext gvrContext, GVRSceneObject root, JSONArray
+            jsonChildren) throws JSONException {
+        for (int i = 0; i < jsonChildren.length(); i++) {
+            GVRSceneObject child = createLight(gvrContext, jsonChildren.getJSONObject(i));
+            root.addChildObject(child);
+        }
+    }
 }
