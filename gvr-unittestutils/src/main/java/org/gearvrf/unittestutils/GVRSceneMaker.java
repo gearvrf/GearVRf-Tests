@@ -1,7 +1,10 @@
 package org.gearvrf.unittestutils;
 
+import android.util.ArrayMap;
+
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRTexture;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,6 +54,23 @@ public class GVRSceneMaker {
 
         return gvrContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(gvrContext, resourceId));
+    }
+
+    /*
+     {
+      r: 1, g: 1, b: 1, a: 0
+     }
+     */
+    private static RGBAColor getColorCoordinates(JSONObject jsonObject) throws
+            JSONException {
+
+        float cordR = (float) jsonObject.optDouble("r", 0.0f);
+        float cordG = (float) jsonObject.optDouble("g", 0.0f);
+        float cordB = (float) jsonObject.optDouble("b", 0.0f);
+        float cordA = (float) jsonObject.optDouble("a", 1.0f);
+
+        RGBAColor coordinates = new RGBAColor(cordR, cordG, cordB, cordA);
+        return coordinates;
     }
 
     /*
