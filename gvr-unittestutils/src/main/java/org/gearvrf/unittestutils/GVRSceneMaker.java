@@ -94,4 +94,60 @@ public class GVRSceneMaker {
 
         return texture;
     }
+
+    /*
+     {
+      shader: ("phong" | "texture" | "cube")
+      color: {r: [0.0-1.0], g: [0.0-1.0], b: [0.0-1.0], a: [0.0-1.0]}
+      textures:[...]
+     }
+     */
+    private static GVRMaterial createMaterial(GVRContext gvrContext,
+                                              ArrayMap<String, GVRTexture> textures,
+                                              JSONObject jsonObject) throws JSONException {
+        GVRMaterial material;
+        String shader_type = jsonObject.optString("shader", "texture");
+
+        if (shader_type.equals("phong")) {
+            material = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Phong.ID);
+        } else if (shader_type.equals("cube")) {
+            material = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Cubemap.ID);
+        } else {
+            material = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Texture.ID);
+        }
+
+        JSONArray jsonArray = jsonObject.optJSONArray("textures");
+        if (jsonArray != null) {
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonTexture = jsonArray.getJSONObject(i);
+
+                String sharedId = jsonTexture.optString("shared");
+                GVRTexture texture = sharedId.isEmpty() ? createTexture(gvrContext, jsonTexture) :
+                        textures.get(sharedId);
+
+                String texture_name = jsonTexture.optString("name");
+                if (texture_name.isEmpty()) {
+                    if (material.getShaderType() == GVRMaterial.GVRShaderType.Phong.ID) {
+                        material.setTexture("diffuseTexture", texture);
+                    } else {
+                        material.setMainTexture(texture);
+                    }
+                } else {
+                    material.setTexture(texture_name, texture);
+                }
+            }
+        }
+
+        JSONObject jsonColor = jsonObject.optJSONObject("color");
+        if (jsonColor != null) {
+            RGBAColor color = getColorCoordinates(jsonColor);
+            if (material.getShaderType() == GVRMaterial.GVRShaderType.Texture.ID) {
+                material.setColor(color.r, color.g, color.b);
+            } else {
+                material.setDiffuseColor(color.r, color.g, color.b, color.a);
+            }
+        }
+
+        return material;
+    }
 }
