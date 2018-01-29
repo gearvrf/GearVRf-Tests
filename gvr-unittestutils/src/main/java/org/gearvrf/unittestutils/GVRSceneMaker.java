@@ -6,6 +6,7 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.GVRTransform;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -149,5 +150,61 @@ public class GVRSceneMaker {
         }
 
         return material;
+    }
+
+    private static void setScale(GVRTransform transform, JSONObject jsonScale)
+            throws JSONException {
+
+        float x = (float) jsonScale.optDouble("x", 1.0f);
+        float y = (float) jsonScale.optDouble("y", 1.0f);
+        float z = (float) jsonScale.optDouble("z", 1.0f);
+
+        transform.setScale(x, y, z);
+    }
+
+    private static void setPosition(GVRTransform transform, JSONObject jsonPosition)
+            throws JSONException {
+
+        float x = (float) jsonPosition.optDouble("x", 0.0f);
+        float y = (float) jsonPosition.optDouble("y", 0.0f);
+        float z = (float) jsonPosition.optDouble("z", 0.0f);
+
+        transform.setPosition(x, y, z);
+    }
+
+    private static void setRotation(GVRTransform transform, JSONObject jsonRotation)
+            throws JSONException {
+
+        float x = (float) jsonRotation.optDouble("x", 0.0f);
+        float y = (float) jsonRotation.optDouble("y", 0.0f);
+        float z = (float) jsonRotation.optDouble("z", 0.0f);
+        float w = (float) jsonRotation.optDouble("w", 0.0f);
+
+        transform.setRotation(w, x, y, z);
+    }
+
+    /*
+     {
+      position: {x: 0, y: 0, z: 0}
+      scale: {x: 0, y: 0, z: 0}
+      rotation: {w: 0, x: 0, y: 0, z: 0}
+     }
+     */
+    private static void setTransform(GVRTransform transform, JSONObject jsonObject) throws JSONException {
+
+        JSONObject jsonPosition = jsonObject.optJSONObject("position");
+        if (jsonPosition != null) {
+            setPosition(transform, jsonPosition);
+        }
+
+        JSONObject jsonRotation = jsonObject.optJSONObject("rotation");
+        if (jsonRotation != null) {
+            setRotation(transform, jsonRotation);
+        }
+
+        JSONObject jsonScale = jsonObject.optJSONObject("scale");
+        if (jsonScale != null) {
+            setScale(transform, jsonScale);
+        }
     }
 }
