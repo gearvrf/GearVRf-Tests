@@ -348,6 +348,55 @@ public class RenderShaderTests
     }
 
     @Test
+    public void meshSwitchTexcoordSet() throws TimeoutException {
+        String screenshotName = null;
+        JSONObject jsonScene = null;
+        GVRContext ctx = gvrTestUtils.getGvrContext();
+        GVRScene scene = gvrTestUtils.getMainScene();
+
+        try {
+
+            String material = createMaterialFormat(GVRMaterial.GVRShaderType.Phong.ID,
+                    R.drawable.colortex);
+
+            final String type = "type: quad";
+            final String descriptor = "descriptor: \"float3 a_position float2 a_texcoord float3 " +
+                    "a_normal float2 a_texcoord1\"";
+            String geometry = "{" + type + ", " + descriptor + "}";
+
+            jsonScene = new JSONObject("{id: scene}");
+            String objName = "cubeObj";
+            JSONObject object = new JSONObject(String.format("{name: %s}", objName));
+            object.put("geometry", new JSONObject(geometry));
+            object.put("material", new JSONObject(material));
+            object.put("position", new JSONObject("{z: -2.0}"));
+
+            jsonScene.put("objects", new JSONArray().put(object));
+            GVRSceneMaker.makeScene(ctx, scene, jsonScene);
+            GVRSceneObject obj = scene.getSceneObjectByName(objName);
+            obj.getRenderData().getMesh().setTexCoords(
+                    new float[]{0.5F, 0.5F, 1.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F}, 1);
+
+            gvrTestUtils.waitForSceneRendering();
+            screenshotName = "testMeshWithFirstSetTextCoord";
+            gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
+
+            // change text coordinates
+            obj.getRenderData().getMaterial().setTexCoord("diffuseTexture",
+                    "a_texcoord1",
+                    "diffuse_coord");
+
+            gvrTestUtils.waitForSceneRendering();
+            screenshotName = "testMeshWithSecondSetTextCoord";
+            gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
+            // test failed, textcoord is not changing
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
     public void meshWithoutLightingTest() throws TimeoutException {
         String screenshotName = null;
 
