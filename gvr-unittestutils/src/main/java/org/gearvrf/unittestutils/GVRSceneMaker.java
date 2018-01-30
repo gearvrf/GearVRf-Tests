@@ -20,6 +20,73 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/*
+
+scene:
+{
+    id: "scene name"
+    bgcolor: {red: [0.0-1.0], green: [0.0-1.0], blue: [0.0-1.0], alpha: [0.0-1.0]}
+    lights: [...]
+    objects: [...]
+}
+
+light:
+{
+        type: ("spot" | "directional" | "point")
+        castshadow: ("true" | "false")
+        position: {x: 0, y: 0, z: 0}
+        rotation: {w: 0, x: 0, y: 0, z: 0}
+        ambientintensity: {r: [0.0-1.0], g: [0.0-1.0], b: [0.0-1.0], a: [0.0-1.0]}
+        diffuseintensity:  {r: [0.0-1.0], g: [0.0-1.0], b: [0.0-1.0], a: [0.0-1.0]}
+        specularintensity:  {r: [0.0-1.0], g: [0.0-1.0], b: [0.0-1.0], a: [0.0-1.0]}
+        innerconeangle: [0.0-9.0]+
+        outerconeangle: [0.0-9.0]+
+}
+
+object:
+{
+    name: "object name"
+    geometry: {...}
+    material: {..}
+    position: {x: [0.0-9.0]+, y: [0.0-9.0]+, z: [0.0-9.0]+}
+    rotation: {x: [0.0-9.0]+, y: [0.0-9.0]+, z: [0.0-9.0]+}
+    scale: {x: [0.0-9.0]+, y: [0.0-9.0]+, z: [0.0-9.0]+}
+}
+
+geometry:
+{
+    type: ("quad" | "cylinder" | "sphere" | "cube" | "polygon")
+    width: [0.0-9.0]+
+    height: [0.0-9.0]+
+    depth: [0.0-9.0]+
+    radius: [0.0-9.0]+
+    vertices: [[0.0-9.0]+, ...]
+    normals: [[0.0-9.0]+, ...]
+    texcoords: [[0.0-9.0]+, ...]
+    triangles:  [[0-9]+, ...]
+    bone_weights:  [[0.0-9.0]+, ...]
+    bone_indices:  [[0-9]+, ...]
+}
+
+material:
+{
+    shader: ("phong" | "texture" | "cube")
+    color: {r: [0.0-1.0], g: [0.0-1.0], b: [0.0-1.0], a: [0.0-1.0]}
+    textures:[...]
+}
+
+texture:
+{
+    id: "texture id"
+    name: ("u_texture" | "diffuseTexture")
+    type: ("bitmap", "cube", "compressed")
+    resourceid: [0-9]+
+}
+ */
+
+/**
+ * Parse a JSON object to build the equivalent GVRScene.
+ */
 public class GVRSceneMaker {
     private static class RGBAColor {
         public final float r;
