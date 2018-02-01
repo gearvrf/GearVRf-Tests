@@ -23,6 +23,7 @@ import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.gearvrf.utility.Log;
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.junit.Before;
@@ -424,37 +425,43 @@ public class PickerTests
         GVRSphereCollider collider1 = new GVRSphereCollider(context);
         GVRSphereCollider collider2 = new GVRSphereCollider(context);
         GVRSceneObject box = new GVRCubeSceneObject(context, true, mRed);
+        Vector3f sphereCtr1 = new Vector3f(-2, 0, -2);
+        Vector3f sphereCtr2 = new Vector3f(2, 0, -2);
+        Vector3f boxCtr = new Vector3f(0, 0, -2);
+        float radius1 = 2.0f;
 
         sphere1.setName("sphere1");
-        sphere1.getTransform().setPosition(0, 0, -2);
-        collider1.setRadius(1.0f);
+        sphere1.getTransform().setPosition(sphereCtr1.x, sphereCtr1.y, sphereCtr1.z);
+        sphere1.getTransform().setScale(radius1, radius1, radius1);
+        collider1.setRadius(radius1);
         sphere1.attachComponent(collider1);
         sphere2.setName("sphere2");
-        sphere2.getTransform().setPosition(2, 0, 0);
-        collider2.setRadius(1.0f);
+        sphere2.getTransform().setPosition(sphereCtr2.x, sphereCtr2.y, sphereCtr2.z);
         sphere2.attachComponent(collider2);
         box.setName("box");
-        box.getTransform().setScale(0.25f, 0.25f, 0.25f);
-        box.getTransform().setPosition(0.5f, 0, -1.75f);
+        box.getTransform().setPosition(boxCtr.x, boxCtr.y, boxCtr.z);
+        box.getTransform().setScale(2, 2, 2);
         scene.addSceneObject(sphere1);
         scene.addSceneObject(sphere2);
         scene.addSceneObject(box);
 
-        GVRSceneObject.BoundingVolume bv = box.getBoundingVolume();
-        Vector3f boxCtr = new Vector3f(0.5f, 0, -1.75f);
-        Vector3f sphereCtr = new Vector3f(0, 0, -2.0f);
-        Vector3f sphereToBox = new Vector3f();
-        sphereCtr.sub(boxCtr, sphereToBox);
-        float dist = sphereToBox.length();
-        sphereToBox.normalize();
+        Vector3f hit = new Vector3f();
+        Matrix4f inv = new Matrix4f(box.getTransform().getModelMatrix4f());
+
+        inv.invert();
+        sphereCtr2.mulPosition(inv);
+        sphereCtr1.sub(boxCtr, hit);
+        hit.normalize();
+        hit.mul(radius1);
+
         gvrTestUtils.waitForXFrames(1);
 
         GVRBoundsPicker picker = new GVRBoundsPicker(scene, true);
-        picker.addCollidable(box);
         picker.getEventReceiver().addListener(mPickHandler);
+        picker.addCollidable(box);
         gvrTestUtils.waitForXFrames(NUM_WAIT_FRAMES);
         mPickHandler.countPicks(NUM_WAIT_FRAMES);
-        mPickHandler.checkHits("sphere1", new Vector3f[] { new Vector3f(-0.894427f, 0, -0.447214f) }, null);
+        mPickHandler.checkHits("sphere1", new Vector3f[] { hit }, null);
         mPickHandler.checkNoHits("sphere2");
     }
 
