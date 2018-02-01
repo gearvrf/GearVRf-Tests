@@ -7,6 +7,7 @@ import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRScene;
+import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRShaderId;
 import org.gearvrf.unittestutils.GVRSceneMaker;
 import org.gearvrf.unittestutils.GVRTestUtils;
@@ -93,6 +94,44 @@ public class RenderConfigTests {
 
             gvrTestUtils.waitForXFrames(10 * 60);
             screenshotName = "testRenderingOrder";
+            gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void polygonOffsetTest() throws TimeoutException {
+        String screenshotName = null;
+
+        try {
+            String pos = "{z: -2.0}";
+            JSONObject jsonScene = new JSONObject(("{id: scene}"));
+
+            JSONObject quad_bg = new JSONObject("{name: quad_bg}");
+            quad_bg.put("geometry", new JSONObject("{type: quad}"));
+            quad_bg.put("material", new JSONObject("{shader: phong"
+                    + ", color: {r: 0.0, b: 0.0}}"));
+            quad_bg.put("position", new JSONObject(pos));
+            quad_bg.put("scale", new JSONObject("{x: 2.0, y: 2.0}"));
+
+            JSONObject quad_fg = new JSONObject("{name: quad_fg}");
+            quad_fg.put("geometry", new JSONObject("{type: quad}"));
+            quad_fg.put("material", new JSONObject("{shader: phong"
+                    + ", color: {g: 0.0, b: 0.0}}"));
+            quad_fg.put("position", new JSONObject(pos));
+
+            jsonScene.put("objects", new JSONArray().put(quad_fg).put(quad_bg));
+            GVRSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(), jsonScene);
+
+            GVRSceneObject obj =  gvrTestUtils.getMainScene().getSceneObjectByName("quad_fg");
+            obj.getRenderData().setOffset(true);
+            obj.getRenderData().setOffsetFactor(-1.0f);
+            obj.getRenderData().setOffsetUnits(-1.0f);
+
+            gvrTestUtils.waitForSceneRendering();
+            screenshotName = "testPolygonOffset";
             gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
 
         } catch (JSONException e) {
