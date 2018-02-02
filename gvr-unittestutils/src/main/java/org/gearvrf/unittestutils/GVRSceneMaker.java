@@ -1,5 +1,6 @@
 package org.gearvrf.unittestutils;
 
+import android.opengl.GLES30;
 import android.util.ArrayMap;
 
 import org.gearvrf.GVRAndroidResource;
@@ -8,6 +9,7 @@ import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRPointLight;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSpotLight;
@@ -51,6 +53,7 @@ object:
     position: {x: [0.0-9.0]+, y: [0.0-9.0]+, z: [0.0-9.0]+}
     rotation: {x: [0.0-9.0]+, y: [0.0-9.0]+, z: [0.0-9.0]+}
     scale: {x: [0.0-9.0]+, y: [0.0-9.0]+, z: [0.0-9.0]+}
+    renderconfig: {...}
 }
 
 geometry:
@@ -81,6 +84,12 @@ texture:
     name: ("u_texture" | "diffuseTexture")
     type: ("bitmap", "cube", "compressed")
     resourceid: [0-9]+
+}
+
+renderconfig:
+{
+   drawmode: (GL_TRIANGLES | GL_TRIANGLE_STRIP | GL_TRIANGLE_FAN
+              | GL_LINES | GL_LINE_STRIP | GL_LINE_LOOP)
 }
  */
 
@@ -282,6 +291,17 @@ public class GVRSceneMaker {
         if (jsonScale != null) {
             setScale(transform, jsonScale);
         }
+    }
+
+    /*
+     {
+      drawmode: (GL_TRIANGLES | GL_TRIANGLE_STRIP | GL_TRIANGLE_FAN
+              | GL_LINES | GL_LINE_STRIP | GL_LINE_LOOP)
+     }
+     */
+    private static void setRenderConfig(GVRRenderData renderData, JSONObject jsonConfig)
+            throws JSONException {
+        renderData.setDrawMode(jsonConfig.optInt("drawmode", GLES30.GL_TRIANGLES));
     }
 
     private static void setPointLightIntensity(GVRPointLight light, JSONObject jsonLight)
@@ -584,6 +604,12 @@ public class GVRSceneMaker {
                     createMaterial(gvrContext, textures, jsonMaterial) :  materials.get(sharedId);
 
             child.getRenderData().setMaterial(material);
+        }
+
+        JSONObject jsonRenderConf = jsonObject.optJSONObject("renderconfig");
+
+        if (jsonRenderConf != null) {
+            setRenderConfig(child.getRenderData(), jsonRenderConf);
         }
 
         return child;
