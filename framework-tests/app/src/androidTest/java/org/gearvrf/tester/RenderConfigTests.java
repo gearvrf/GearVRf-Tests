@@ -1,5 +1,7 @@
 package org.gearvrf.tester;
 
+import android.opengl.GLES20;
+import android.opengl.GLES30;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -21,6 +23,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 @RunWith(AndroidJUnit4.class)
@@ -132,6 +136,123 @@ public class RenderConfigTests {
 
             gvrTestUtils.waitForSceneRendering();
             screenshotName = "testPolygonOffset";
+            gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private List<String> createDrawModeMeshes() {
+        final String type = "type: polygon";
+
+        final String vertices_triangles = "vertices: ["
+                + "0.0000, 0.0000, 0.0000, 0.2242, 0.9745, 0.0000, -0.2208, 0.9753, 0.0000,"
+                + "0.0000, 0.0000, 0.0000, -0.2208, 0.9753, 0.0000, -0.6221, 0.7829, 0.0000,"
+                + "0.0000, 0.0000, 0.0000, -0.6221, 0.7829, 0.0000, -0.9002, 0.4355, 0.0000,"
+                + "0.0000, 0.0000, 0.0000, -0.9002, 0.4355, 0.0000, -1.0000, 0.0018, 0.0000,"
+                + "0.0000, 0.0000, 0.0000, -1.0000, 0.0018, 0.0000, -0.9017, -0.4323, 0.0000,"
+                + "0.0000, 0.0000, 0.0000, -0.9017, -0.4323, 0.0000, -0.6249, -0.7807, 0.0000,"
+                + "0.0000, 0.0000, 0.0000, -0.6249, -0.7807, 0.0000, -0.2242, -0.9745, 0.0000,"
+                + "0.0000, 0.0000, 0.0000, -0.2242, -0.9745, 0.0000, 0.2208, -0.9753, 0.0000,"
+                + "0.0000, 0.0000, 0.0000, 0.2208, -0.9753, 0.0000, 0.6221, -0.7829, 0.0000,"
+                + "0.0000, 0.0000, 0.0000, 0.6221, -0.7829, 0.0000, 0.9002, -0.4355, 0.0000,"
+                + "0.0000, 0.0000, 0.0000, 0.9002, -0.4355, 0.0000, 1.0000, -0.0018, 0.0000,"
+                + "0.0000, 0.0000, 0.0000, 1.0000, -0.0018, 0.0000, 0.9017, 0.4323, 0.0000,"
+                + "0.0000, 0.0000, 0.0000, 0.9017, 0.4323, 0.0000, 0.6249, 0.7807, 0.0000,"
+                + "0.0000, 0.0000, 0.0000, 0.6249, 0.7807, 0.0000, 0.2242, 0.9745, 0.0000"
+                + "]";
+
+        final String vertices_strip = "vertices: ["
+                + "0.2242, 0.9745, 0.0000, -0.2208, 0.9753, 0.0000, 0.6249, 0.7807, 0.0000,"
+                + "-0.6221, 0.7829, 0.0000, 0.9017, 0.4323, 0.0000, -0.9002, 0.4355, 0.0000,"
+                + "1.0000, -0.0018, 0.0000, -1.0000, 0.0018, 0.0000, 0.9002, -0.4355, 0.0000,"
+                + "-0.9017, -0.4323, 0.0000, 0.6221, -0.7829, 0.0000, -0.6249, -0.7807, 0.0000,"
+                + "0.2208, -0.9753, 0.0000, -0.2242, -0.9745, 0.0000"
+                + "]";
+
+        final String vertices_loop = "vertices: ["
+                + "0.0000, 0.0000, 0.0000, 0.2242, 0.9745, 0.0000, -0.2208, 0.9753, 0.0000,"
+                + "-0.6221, 0.7829, 0.0000, -0.9002, 0.4355, 0.0000, -1.0000, 0.0018, 0.0000,"
+                + "-0.9017, -0.4323, 0.0000, -0.6249, -0.7807, 0.0000, -0.2242, -0.9745, 0.0000,"
+                + "0.2208, -0.9753, 0.0000, 0.6221, -0.7829, 0.0000, 0.9002, -0.4355, 0.0000,"
+                + "1.0000, -0.0018, 0.0000, 0.9017, 0.4323, 0.0000, 0.6249, 0.7807, 0.0000,"
+                + "0.2242, 0.9745, 0.0000"
+                + "]";
+
+        List<String> meshFormats = new ArrayList<String>();
+
+        meshFormats.add("{" + type + "," + vertices_triangles + "}");
+        meshFormats.add("{" + type + "," + vertices_strip + "}");
+        meshFormats.add("{" + type + "," + vertices_loop + "}");
+
+        return meshFormats;
+    }
+
+    @Test
+    public void drawModeTest() throws TimeoutException {
+        String screenshotName = null;
+        List<String> meshFormats = createDrawModeMeshes();
+
+        try {
+            JSONObject jsonScene = new JSONObject(("{id: scene}"));
+
+            JSONObject lineMode = new JSONObject();
+            lineMode.put("geometry", new JSONObject(meshFormats.get(0)));
+            lineMode.put("material",
+                    new JSONObject("{shader: phong, color: {r: 1.0}}"));
+            lineMode.put("position", new JSONObject("{x: -2.0, y: 1.0, z: -4.0}"));
+            lineMode.put("renderconfig",
+                    new JSONObject("{drawmode:"+ GLES30.GL_LINES +"}"));
+
+            JSONObject lineStripMode = new JSONObject();
+            lineStripMode.put("geometry", new JSONObject(meshFormats.get(1)));
+            lineStripMode.put("material",
+                    new JSONObject("{shader: phong, color: {g: 1.0}}"));
+            lineStripMode.put("position", new JSONObject("{y: 1.0, z: -4.0}"));
+            lineStripMode.put("renderconfig",
+                    new JSONObject("{drawmode:"+ GLES30.GL_LINE_STRIP +"}"));
+
+            JSONObject lineLoopMode = new JSONObject();
+            lineLoopMode.put("geometry", new JSONObject(meshFormats.get(2)));
+            lineLoopMode.put("material",
+                    new JSONObject("{shader: phong, color: {b: 1.0}}"));
+            lineLoopMode.put("position", new JSONObject("{x: 2.0, y: 1.0, z: -4.0}"));
+            lineLoopMode.put("renderconfig",
+                    new JSONObject("{drawmode:"+ GLES30.GL_LINE_LOOP +"}"));
+
+            JSONObject triangleMode = new JSONObject();
+            triangleMode.put("geometry", new JSONObject(meshFormats.get(0)));
+            triangleMode.put("material",
+                    new JSONObject("{shader: phong, color: {r: 1.0}}"));
+            triangleMode.put("position", new JSONObject("{x: -2.0, y: -1.0, z: -4.0}"));
+            triangleMode.put("renderconfig",
+                    new JSONObject("{drawmode:"+ GLES30.GL_TRIANGLES +"}"));
+
+            JSONObject triStripMode = new JSONObject();
+            triStripMode.put("geometry", new JSONObject(meshFormats.get(1)));
+            triStripMode.put("material",
+                    new JSONObject("{shader: phong, color: {g: 1.0}}"));
+            triStripMode.put("position", new JSONObject("{y: -1.0, z: -4.0}"));
+            triStripMode.put("renderconfig",
+                    new JSONObject("{drawmode:"+ GLES30.GL_TRIANGLE_STRIP +"}"));
+
+            JSONObject triLoopMode = new JSONObject();
+            triLoopMode.put("geometry", new JSONObject(meshFormats.get(2)));
+            triLoopMode.put("material",
+                    new JSONObject("{shader: phong, color: {b: 1.0}}"));
+            triLoopMode.put("position", new JSONObject("{x: 2.0, y: -1.0, z: -4.0}"));
+            triLoopMode.put("renderconfig",
+                    new JSONObject("{drawmode:"+ GLES30.GL_TRIANGLE_FAN +"}"));
+
+            jsonScene.put("objects",
+                    new JSONArray().put(lineMode).put(lineStripMode).put(lineLoopMode)
+                                   .put(triangleMode).put(triStripMode).put(triLoopMode));
+
+            GVRSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(), jsonScene);
+
+            gvrTestUtils.waitForSceneRendering();
+            screenshotName = "testDrawMode";
             gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
 
         } catch (JSONException e) {
