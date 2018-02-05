@@ -8,6 +8,7 @@ import android.support.test.runner.AndroidJUnit4;
 import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRShaderId;
@@ -68,6 +69,9 @@ public class RenderConfigTests {
         if (textureResourceID == -1) {
             final String color = "color: {r: 0.0, g: 1.0, b: 0.0, a: 1.0}";
             materialFormat = "{ " + type + color + "}";
+        } else if (textureResourceID == -2) {
+            final String color = "color: {r: 0.0, g: 0.0, b: 1.0, a: 1.0}";
+            materialFormat = "{ " + type + color + "}";
         } else {
             final String textureFormat = "textures: [{" +
                     "id: default, " +
@@ -85,19 +89,42 @@ public class RenderConfigTests {
         String screenshotName = null;
 
         try {
+            JSONArray sceneObjects = new JSONArray();
             JSONObject jsonScene = new JSONObject(("{id: scene}"));
 
-            JSONObject object = new JSONObject();
-            object.put("geometry", new JSONObject("{type: cube}"));
+            JSONObject object = new JSONObject("{name: quadObj}");
+            object.put("geometry", new JSONObject("{type: quad}"));
             object.put("material", new JSONObject(createMaterialFormat(
-                    GVRMaterial.GVRShaderType.Phong.ID, R.drawable.checker)));
-            object.put("position", new JSONObject("{z: -2.0}"));
+                    GVRMaterial.GVRShaderType.Phong.ID, -1)));
+            object.put("position", new JSONObject("{x: -0.3, z: -2.0}"));
+            sceneObjects.put(object);
 
-            jsonScene.put("objects", new JSONArray().put(object));
+            JSONObject object2 = new JSONObject("{name: quadObj2}");
+            object2.put("geometry", new JSONObject("{type: quad}"));
+            object2.put("material", new JSONObject(createMaterialFormat(
+                    GVRMaterial.GVRShaderType.Phong.ID, -2)));
+            object2.put("position", new JSONObject("{x: 0.3, z: -2.0}"));
+            sceneObjects.put(object2);
+
+            jsonScene.put("objects", sceneObjects);
+
             GVRSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(), jsonScene);
 
-            gvrTestUtils.waitForXFrames(10 * 60);
-            screenshotName = "testRenderingOrder";
+            gvrTestUtils.waitForSceneRendering();
+            screenshotName = "testRenderingOrder1";
+            gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
+
+
+            GVRSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(), jsonScene);
+
+            gvrTestUtils.getMainScene().getSceneObjectByName("quadObj").getRenderData().
+                    setRenderingOrder(GVRRenderData.GVRRenderingOrder.GEOMETRY);
+
+            gvrTestUtils.getMainScene().getSceneObjectByName("quadObj2").getRenderData().
+                    setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
+
+            gvrTestUtils.waitForSceneRendering();
+            screenshotName = "testRenderingOrder2";
             gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
 
         } catch (JSONException e) {
