@@ -133,6 +133,64 @@ public class RenderConfigTests {
     }
 
     @Test
+    public void depthTest() throws TimeoutException {
+        String screenshotName = null;
+
+        try {
+            JSONArray sceneObjects = new JSONArray();
+            JSONObject jsonScene = new JSONObject(("{id: scene}"));
+
+            JSONObject object = new JSONObject("{name: quadObj}");
+            object.put("geometry", new JSONObject("{type: quad}"));
+            object.put("material", new JSONObject(createMaterialFormat(
+                    GVRMaterial.GVRShaderType.Phong.ID, -1)));
+            object.put("position", new JSONObject("{y: 0.3, z: -2.0}"));
+            object.put("rotation", new JSONObject("{w: 0.924, x: 0.383, y: 0.0, z: 0.0}"));
+            sceneObjects.put(object);
+
+            JSONObject object2 = new JSONObject("{name: quadObj2}");
+            object2.put("geometry", new JSONObject("{type: quad}"));
+            object2.put("material", new JSONObject(createMaterialFormat(
+                    GVRMaterial.GVRShaderType.Phong.ID, -2)));
+            object2.put("position", new JSONObject("{z: -2.1}"));
+            sceneObjects.put(object2);
+
+            jsonScene.put("objects", sceneObjects);
+
+            GVRSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(), jsonScene);
+
+            gvrTestUtils.getMainScene().getSceneObjectByName("quadObj").getRenderData().
+                    setDepthTest(false);
+
+            gvrTestUtils.getMainScene().getSceneObjectByName("quadObj2").getRenderData().
+                    setDepthTest(false);
+
+            gvrTestUtils.waitForSceneRendering();
+            screenshotName = "testDepthTest1";
+            gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
+
+
+
+
+            GVRSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(), jsonScene);
+
+            gvrTestUtils.getMainScene().getSceneObjectByName("quadObj").getRenderData().
+                    setDepthTest(true);
+
+            gvrTestUtils.getMainScene().getSceneObjectByName("quadObj2").getRenderData().
+                    setDepthTest(true);
+
+            gvrTestUtils.waitForSceneRendering();
+            screenshotName = "testDepthTest2";
+            gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
     public void polygonOffsetTest() throws TimeoutException {
         String screenshotName = null;
 
