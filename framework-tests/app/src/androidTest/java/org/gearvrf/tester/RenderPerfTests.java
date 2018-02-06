@@ -58,7 +58,6 @@ import java.util.concurrent.TimeoutException;
 
 import static android.opengl.GLES20.GL_ONE;
 import static android.opengl.GLES20.GL_SRC_ALPHA;
-import static com.google.devtools.build.android.desugar.runtime.ThrowableExtension.printStackTrace;
 
 @RunWith(AndroidJUnit4.class)
 
@@ -997,7 +996,7 @@ public class RenderPerfTests
         }
         catch (IOException ex)
         {
-            printStackTrace(ex);
+            ex.printStackTrace();
             return;
         }
 
