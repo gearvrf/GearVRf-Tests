@@ -13,6 +13,7 @@ import org.gearvrf.GVRCompressedTexture;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRCubemapTexture;
 import org.gearvrf.GVRDirectLight;
+import org.gearvrf.GVRDrawFrameListener;
 import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRImage;
 import org.gearvrf.GVRIndexBuffer;
@@ -1007,6 +1008,49 @@ public class RenderPerfTests
 
         createObjects(scene, tex.getImage(), mesh, 4);
         mTestUtils.waitForXFrames(10);
+    }
+
+    @Test
+    public void testChangeMeshData() throws TimeoutException
+    {
+        int nframes = 600;
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        final GVRScene scene = ctx.getMainScene();
+        final GVRMesh mesh = new GVRMesh(ctx, "float3 a_position float2 a_texcoord");
+        GVRAndroidResource texFile = null;
+
+        mesh.createQuad(1, 1);
+        scene.setBackgroundColor(1, 1, 1, 1);
+        texFile = new GVRAndroidResource(ctx, BITMAP_TEXTURE);
+
+        TextureLoadHandler loadHandler = new TextureLoadHandler(ctx);
+        ctx.getEventReceiver().addListener(loadHandler);
+        GVRTexture tex = loadHandler.loadTexture(texFile);
+        ctx.getEventReceiver().removeListener(loadHandler);
+
+        createObjects(scene, tex.getImage(), mesh, 8);
+
+        ctx.registerDrawFrameListener(new GVRDrawFrameListener() {
+            boolean full = false;
+            @Override
+            public void onDrawFrame(float v) {
+                if (full) {
+                    mesh.setTexCoords(new float[]{0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f});
+                } else {
+                    mesh.setTexCoords(new float[]{0.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.0f, 0.5f, 0.5f});
+                }
+
+                full = !full;
+            }
+        });
+
+        mTestUtils.waitForXFrames(2);
+        long startTime = System.currentTimeMillis();
+        mTestUtils.waitForXFrames(nframes);
+        long endTime = System.currentTimeMillis();
+        float fps =  (1000.0f * nframes) / ((float) (endTime - startTime));
+        Log.e("PERFORMANCE","testChangeMeshData FPS = %f", fps);
+        mWaiter.assertTrue(fps >= 59);
     }
 
     private void createObjects(GVRScene scene, GVRImage image, GVRMesh mesh, int n)
