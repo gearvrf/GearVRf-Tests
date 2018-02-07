@@ -436,7 +436,7 @@ public class RenderPerfTests
         GVRSceneObject root = new GVRSceneObject(ctx);
 
         mScene.setBackgroundColor(0.8f, 1.0f, 0.8f, 1.0f);
-        //createLights(ctx, params);
+        createLights(ctx, params);
         for (int y = 0; y < nrows; ++y)
         {
             float ypos = (y - nrows / 2.0f);
@@ -965,7 +965,6 @@ public class RenderPerfTests
         runPerfTest(ctx, "cyl10x10CompBmapShareMtl", params);
     }
 
-
     @Test
     public void cyl10x10CompBmap() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
@@ -1051,6 +1050,85 @@ public class RenderPerfTests
         float fps =  (1000.0f * nframes) / ((float) (endTime - startTime));
         Log.e("PERFORMANCE","testChangeMeshData FPS = %f", fps);
         mWaiter.assertTrue(fps >= 59);
+    }
+
+    @Test
+    public void quad10x10MultipleLights() throws TimeoutException {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        params.put("quadgeometry", 1);
+        params.put("rows", 10);
+        params.put("columns", 10);
+        params.put("enablelight", 1);
+        params.put("castshadows", 0);
+        params.put("spotlight", 1);
+        params.put("directlight", 1);
+        params.put("pointlight", 1);
+        params.put("frames", 600);
+        params.put("fps", 59.0f);
+        params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
+        runPerfTest(ctx, "quad10x10MultipleLights", params);
+    }
+
+    @Test
+    public void quad10x10BitmapMultipleLights() throws TimeoutException {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        params.put("quadgeometry", 1);
+        params.put("rows", 10);
+        params.put("columns", 10);
+        params.put("bitmap", BITMAP_TEXTURE);
+        params.put("enablelight", 1);
+        params.put("castshadows", 0);
+        params.put("spotlight", 1);
+        params.put("directlight", 1);
+        params.put("pointlight", 1);
+        params.put("frames", 600);
+        params.put("fps", 59.0f);
+        params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
+        runPerfTest(ctx, "quad10x10BitmapMultipleLights", params);
+    }
+
+    @Test
+    public void quad10x10CompBitmapMultipleLights() throws TimeoutException {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        params.put("quadgeometry", 1);
+        params.put("rows", 10);
+        params.put("columns", 10);
+        params.put("compressedbitmap", COMPRESSED_TEXTURE);
+        params.put("enablelight", 1);
+        params.put("castshadows", 0);
+        params.put("spotlight", 1);
+        params.put("directlight", 1);
+        params.put("pointlight", 1);
+        params.put("frames", 600);
+        params.put("fps", 59.0f);
+        params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
+        runPerfTest(ctx, "quad10x10CompBitmapMultipleLights", params);
+    }
+
+    @Test
+    public void quad10x10CubemapMultipleLights() throws TimeoutException {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        params.put("quadgeometry", 1);
+        params.put("rows", 10);
+        params.put("columns", 10);
+        params.put("cubemap", CUBEMAP_TEXTURE);
+        params.put("enablelight", 1);
+        params.put("castshadows", 0);
+        params.put("spotlight", 1);
+        params.put("directlight", 1);
+        params.put("pointlight", 1);
+        params.put("frames", 600);
+        params.put("fps", 59.0f);
+        params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
+        runPerfTest(ctx, "quad10x10CubemapMultipleLights", params);
     }
 
     private void createObjects(GVRScene scene, GVRImage image, GVRMesh mesh, int n)
