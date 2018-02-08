@@ -22,6 +22,7 @@ import org.gearvrf.GVRRenderPass;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.io.TestSendEvents;
 import org.gearvrf.scene_objects.GVRCylinderSceneObject;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
@@ -227,6 +228,14 @@ public class MiscTests {
             final float[] bound = new float[4];
             final float radius = so.getRenderData().getMesh().getVertexBuffer().getSphereBound(bound);
             mWaiter.assertTrue(0 != radius);
+        }
+    }
+
+    @Test
+    public void testSendEvents() {
+        final boolean result = new TestSendEvents().test1();
+        if (!result) {
+            throw new AssertionError("test1() returned false");
         }
     }
 

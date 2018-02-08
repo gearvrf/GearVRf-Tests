@@ -213,7 +213,7 @@ public class ShadowTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        mTestUtils.waitForXFrames(2);
+        mTestUtils.waitForXFrames(10);
         mTestUtils.screenShot(getClass().getSimpleName(), "directLightAtFrontCastsShadow", mWaiter, mDoCompare);
     }
 
@@ -328,6 +328,7 @@ public class ShadowTests
         floormtl.setDiffuseColor(0.7f, 0.4f, 0.7f, 1.0f);
 
         floor.getRenderData().setMaterial(floormtl);
+        floor.getRenderData().setCastShadows(false);
         floor.getTransform().rotateByAxis(-90, 1, 0, 0);
         floor.getTransform().setPosition(0, -2.0f, -2.0f);
 

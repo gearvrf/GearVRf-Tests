@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <Scene>
+  
+    <Viewpoint position='0 0 0'/>
+    <Background skyColor='.4 .4 .4'/>
+
+      <Transform translation='1 -.5 -6'>
+        <TouchSensor DEF='ButtonTouch' description='touch to toggle'/>
+        <Shape>
+          <Appearance>
+            <ImageTexture DEF='MyImg' url="red.jpg"/>
+            <Material DEF="myMaterial" diffuseColor='1 1 1'/>
+          </Appearance>
+          <Box/>
+        </Shape>
+      </Transform>
+    
+
+    <Script DEF='ControlScript'>
+      <field accessType='inputOnly' name='buttonOver' type='SFBool'/>
+      <field accessType='inputOutput' name='imgURL' type='MFString'/>
+
+      <![CDATA[
+      ecmascript:
+      function buttonOver (value)
+      {
+        if (value) {
+            if ( imgURL.get1Value(0).equals("blue.jpg") ) imgURL.set1Value(0, "red.jpg");
+            else if ( imgURL.get1Value(0).equals("red.jpg") ) imgURL.set1Value(0, "green.jpg");
+            else imgURL.set1Value(0, "blue.jpg");
+      	}
+      }
+	]]>
+    </Script>
+
+    <ROUTE fromField='isOver' fromNode='ButtonTouch' toField='buttonOver' toNode='ControlScript'/>
+    <ROUTE fromField='url' fromNode='MyImg' toField='imgURL' toNode='ControlScript'/>
+    <ROUTE fromField='imgURL' fromNode='ControlScript' toField='url' toNode='MyImg'/>
+
+  </Scene>
+</X3D>
