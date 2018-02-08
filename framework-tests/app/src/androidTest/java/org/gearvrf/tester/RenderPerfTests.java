@@ -1131,17 +1131,65 @@ public class RenderPerfTests
         runPerfTest(ctx, "quad10x10CubemapMultipleLights", params);
     }
 
+    @Test
+    public void meshWithTwoShaderTest() throws TimeoutException {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        Map<String, Object> params = new HashMap<String, Object>();
+        float expectedFPS = 59.0f;
+        int nframes = 600;
+        int nrows = 10;
+        int ncols = 10;
+
+        params.put("quadgeometry", 1);
+
+        float zpos = (nrows > ncols) ? (float) nrows : (float) ncols;
+        GVRMaterial sourceMtl = createMaterial(ctx, params);
+        GVRSceneObject root = new GVRSceneObject(ctx);
+        GVRMaterial anotherMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.HorizontalFlip.ID);
+        GVRRenderPass pass = new GVRRenderPass(ctx);
+        pass.setMaterial(anotherMtl);
+
+        mScene.setBackgroundColor(0.8f, 1.0f, 0.8f, 1.0f);
+
+        for (int y = 0; y < nrows; ++y)
+        {
+            float ypos = (y - nrows / 2.0f);
+
+            for (int x = 0; x < ncols; ++x)
+            {
+                float xpos = (x - ncols / 2.0f);
+                GVRSceneObject testObj;
+                GVRMaterial material = sourceMtl;
+                testObj = createGeometry(ctx, material, params);
+                testObj.getRenderData().addPass(pass);
+
+                testObj.getTransform().setPosition(xpos, ypos, -zpos);
+                root.addChildObject(testObj);
+            }
+        }
+        mScene.addSceneObject(root);
+
+        mTestUtils.waitForXFrames(2);
+        long startTime = System.currentTimeMillis();
+        mTestUtils.waitForXFrames(nframes);
+        long endTime = System.currentTimeMillis();
+        float fps = (1000.0f * nframes) / ((float) (endTime - startTime));
+        Log.e("PERFORMANCE", "meshWithTwoShaderTest FPS = %f", fps);
+        mWaiter.assertTrue(fps >= expectedFPS);
+
+    }
+
+    @Test
     public void renderDataPropertiesTest() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
         Map<String, Object> params = new HashMap<String, Object>();
         float expectedFPS = 59.0f;
         int nframes = 600;
-        int nrows = 15;
-        int ncols = 15;
+        int nrows = 10;
+        int ncols = 10;
         int depthTest = -1;
 
         params.put("quadgeometry", 1);
-        params.put("compressedbitmap", COMPRESSED_TEXTURE);
 
         float zpos = (nrows > ncols) ? (float) nrows : (float) ncols;
         GVRMaterial sourceMtl = createMaterial(ctx, params);
