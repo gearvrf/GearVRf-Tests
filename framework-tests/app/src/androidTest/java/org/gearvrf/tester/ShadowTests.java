@@ -331,6 +331,7 @@ public class ShadowTests
         floor.getRenderData().setCastShadows(false);
         floor.getTransform().rotateByAxis(-90, 1, 0, 0);
         floor.getTransform().setPosition(0, -2.0f, -2.0f);
+        floor.getRenderData().setCastShadows(false);
 
         rightside.getRenderData().setMaterial(rightmtl);
         rightside.getRenderData().setCastShadows(false);
