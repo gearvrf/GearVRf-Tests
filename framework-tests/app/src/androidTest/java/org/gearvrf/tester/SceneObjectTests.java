@@ -6,9 +6,12 @@ import android.support.test.runner.AndroidJUnit4;
 import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRAssetLoader;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRPhongShader;
+import org.gearvrf.GVRPointLight;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
@@ -29,6 +32,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
+import java.util.ArrayList;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
@@ -140,6 +144,36 @@ public class SceneObjectTests
     }
 
     @Test
+    public void canDisplayLitSpheres() throws Exception
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRSceneObject sphere1 = new GVRSphereSceneObject(ctx, true, mBlueMtl);
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
+        ctx.getEventReceiver().addListener(texHandler);
+
+        final GVRTexture tex = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.checker));
+        GVRSceneObject sphere2 = new GVRSphereSceneObject(ctx, false, tex);
+        GVRSceneObject light = new GVRSceneObject(ctx);
+        GVRPointLight lightSource = new GVRPointLight(ctx);
+
+        light.setName("light");
+        light.attachComponent(lightSource);
+        sphere1.getTransform().setPosition(0, 0, -4);
+        sphere2.getTransform().setScale(10, 10, 10);
+        sphere1.setName("sphere1");
+        sphere2.setName("sphere2");
+        mTestUtils.waitForAssetLoad();
+        scene.addSceneObject(light);
+        scene.addSceneObject(sphere1);
+        scene.addSceneObject(sphere2);
+        mTestUtils.waitForXFrames(2);
+        mWaiter.assertNotNull(scene.getSceneObjectByName("sphere2"));
+        mWaiter.assertNotNull(scene.getSceneObjectByName("sphere1"));
+        mTestUtils.screenShot(getClass().getSimpleName(), "canDisplayLitSpheres", mWaiter, mDoCompare);
+    }
+
+    @Test
     public void canDisplayCubes() throws Exception
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
@@ -148,7 +182,7 @@ public class SceneObjectTests
         TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
         ctx.getEventReceiver().addListener(texHandler);
 
-        final GVRTexture tex = ctx.getAssetLoader().loadCubemapTexture(new GVRAndroidResource(ctx, R.raw.beach));
+        final GVRTexture tex = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.raw.beach));
         final GVRMaterial cubeMapMtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Cubemap.ID);
         cubeMapMtl.setMainTexture(tex);
         GVRSceneObject cube2 = new GVRCubeSceneObject(ctx, false, cubeMapMtl);
@@ -191,6 +225,77 @@ public class SceneObjectTests
         mWaiter.assertNotNull(scene.getSceneObjectByName("cylinder1"));
         mWaiter.assertNotNull(scene.getSceneObjectByName("cylinder2"));
         mTestUtils.screenShot(getClass().getSimpleName(), "canDisplayCylinders", mWaiter, mDoCompare);
+    }
+
+    @Test
+    public void canDisplayLitCylinders() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
+        ctx.getEventReceiver().addListener(texHandler);
+        GVRTexture tex = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.color_sphere));
+        GVRSceneObject cylinder1 = new GVRCylinderSceneObject(ctx, true, mBlueMtl);
+        GVRSceneObject cylinder2 = new GVRCylinderSceneObject(ctx, false, tex);
+        GVRSceneObject light = new GVRSceneObject(ctx);
+        GVRDirectLight lightSource = new GVRDirectLight(ctx);
+
+        light.setName("light");
+        light.attachComponent(lightSource);
+        cylinder1.getTransform().setPosition(0, 0, -4);
+        cylinder1.setName("cylinder1");
+        cylinder2.getTransform().setScale(8, 8, 8);
+        cylinder2.setName("cylinder2");
+        mTestUtils.waitForAssetLoad();
+        scene.addSceneObject(light);
+        scene.addSceneObject(cylinder1);
+        scene.addSceneObject(cylinder2);
+        mTestUtils.waitForXFrames(2);
+        mWaiter.assertNotNull(scene.getSceneObjectByName("cylinder1"));
+        mWaiter.assertNotNull(scene.getSceneObjectByName("cylinder2"));
+        mTestUtils.screenShot(getClass().getSimpleName(), "canDisplayLitCylinders", mWaiter, mDoCompare);
+    }
+
+    @Test
+    public void canDisplayComplexCylinders() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        ArrayList<GVRTexture> mBackTextures = new ArrayList<>(3);
+        ArrayList<GVRTexture> mObjectTextures = new ArrayList<>(3);
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 4);
+        GVRAssetLoader loader = ctx.getAssetLoader();
+
+        ctx.getEventReceiver().addListener(texHandler);
+        mBackTextures.add(0, loader.loadTexture(new GVRAndroidResource(ctx, R.drawable.color_sphere)));
+        mBackTextures.add(1, loader.loadTexture(new GVRAndroidResource(ctx, R.drawable.checker)));
+        mBackTextures.add(2, loader.loadTexture(new GVRAndroidResource(ctx, R.drawable.wavylines)));
+        mObjectTextures.add(0, loader.loadTexture(new GVRAndroidResource(ctx, R.drawable.rock_normal)));
+        mObjectTextures.add(1, mBackTextures.get(1));
+        mObjectTextures.add(2, mBackTextures.get(2));
+
+
+        GVRSceneObject background = new GVRCylinderSceneObject(ctx, false, mBackTextures);
+        GVRSceneObject cylinder = new GVRCylinderSceneObject(ctx, true, mObjectTextures);
+        GVRSceneObject light = new GVRSceneObject(ctx);
+        GVRDirectLight lightSource = new GVRDirectLight(ctx);
+
+        light.setName("light");
+        light.attachComponent(lightSource);
+        cylinder.getTransform().setPosition(0, 0, -2);
+        cylinder.getTransform().rotateByAxis(45, 1, 0, 0);
+        cylinder.setName("cylinder");
+        background.getTransform().setScale(8, 8, 8);
+        background.getTransform().rotateByAxis(45, 1, 0, 0);
+        background.setName("background");
+        mTestUtils.waitForAssetLoad();
+        scene.addSceneObject(light);
+        scene.addSceneObject(cylinder);
+        scene.addSceneObject(background);
+        mTestUtils.waitForXFrames(2);
+        mWaiter.assertNotNull(scene.getSceneObjectByName("cylinder"));
+        mWaiter.assertNotNull(scene.getSceneObjectByName("background"));
+        mTestUtils.screenShot(getClass().getSimpleName(), "canDisplayComplexCylinders", mWaiter, mDoCompare);
     }
 
 
