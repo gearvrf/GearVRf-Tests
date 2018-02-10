@@ -18,6 +18,7 @@ package org.gearvrf.unittestutils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.mtp.MtpConstants;
 import android.os.Build;
 import android.os.Environment;
 
@@ -284,7 +285,194 @@ public class GVRTestUtils implements GVRMainMonitor {
     }
 
     /**
-     * Captures a screenshot and compares it with a golden screenshot from the
+     * Class which captures a screenshot and compares it with a golden screenshot from the
+     * assets directory. This method looks for a file named "diff_$testname$.png" in the assets
+     * folder for the reference screenshot of the expected result. The captured screenshots are
+     * stored in /sdcard/GearVRfTests/$category$/$testname$.png
+     */
+    class ScreenShooter implements GVRScreenshotCallback
+    {
+        private Waiter mWaiter;
+        private String mTestName;
+        private String mCategory;
+        private boolean mDoCompare;
+
+        /**
+         * Prepare for a new screen capture.
+         * @param category directory to store screenshots in.
+         * @param testname the name of the test method.
+         * @param waiter instance of the {@link Waiter} class.
+         * @param compare flag used to turnon/off comparison of screenshots.
+         */
+        public void init(String testname, String category, Waiter waiter, boolean compare)
+        {
+            mTestName = testname;
+            mCategory = category;
+            mWaiter = waiter;
+            mDoCompare = compare;
+        }
+
+        private void compareWithGolden(final Bitmap screenshot)
+        {
+            try
+            {
+                Bitmap golden = null;
+                String testname = mTestName + ".png";
+
+                try
+                {
+                    URL url = new URL(GOLDEN_MASTERS_URL + "/" + mCategory + "/" + testname);
+                    Log.v(TAG, "Fetching golden master " + url.toString());
+                    final InputStream inputStream = url.openStream();
+                    try
+                    {
+                        final BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inMutable = true;
+                        golden = BitmapFactory.decodeStream(inputStream, null, options);
+                    }
+                    finally
+                    {
+                        inputStream.close();
+                    }
+                }
+                catch (Throwable ex)
+                {
+                    mWaiter.fail(ex);
+                }
+                if (golden != null)
+                {
+                    try
+                    {
+                        final float[] diff = {0.0f};
+
+                        final int goldenHeight = golden.getHeight();
+                        final int goldenWidth = golden.getWidth();
+
+                        mWaiter.assertEquals(goldenWidth, screenshot.getWidth());
+                        mWaiter.assertEquals(goldenHeight, screenshot.getHeight());
+
+                        final ReentrantLock lockDiff = new ReentrantLock();
+
+                        try
+                        {
+                            final CountDownLatch cdl = new CountDownLatch(goldenHeight);
+
+                            final int[] goldenPixels = new int[goldenHeight * goldenWidth];
+                            golden.getPixels(goldenPixels, 0, goldenWidth, 0, 0, goldenWidth,
+                                             goldenHeight);
+
+                            final int[] screenshotPixels = new int[goldenHeight * goldenWidth];
+                            screenshot.getPixels(screenshotPixels, 0, goldenWidth, 0, 0,
+                                                 goldenWidth, goldenHeight);
+
+                            for (int y = 0; y < goldenHeight; y++)
+                            {
+                                Threads.spawn(
+                                        new CompareRunnable(goldenWidth, y, goldenPixels, lockDiff,
+                                                            diff, screenshotPixels, cdl));
+                            }
+
+                            cdl.await();
+                            golden.setPixels(goldenPixels, 0, goldenWidth, 0, 0, goldenWidth,
+                                             goldenHeight);
+                            //hints
+                            System.gc();
+                            System.runFinalization();
+                        }
+                        catch (Throwable t)
+                        {
+                            mWaiter.fail(t);
+                        }
+
+                        Log.e(mCategory, "RESULT: %s %s diff = %f", mCategory, mTestName, diff[0]);
+                        if (diff[0] > 2000.0f)
+                        {
+                            writeBitmap(mCategory, "diff_" + testname, golden);
+                        }
+
+                        mWaiter.assertTrue(diff[0] <= 30000.0f);
+                    }
+                    finally
+                    {
+                        golden.recycle();
+                    }
+                }
+            }
+            finally
+            {
+                screenshot.recycle();
+            }
+        }
+
+        protected void writeBitmap(String dir, String filename, Bitmap bitmap)
+        {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+
+            File sdcard = Environment.getExternalStorageDirectory();
+            dir = sdcard.getAbsolutePath() + "/GearVRFTests/" + dir + "/";
+            File d = new File(dir);
+            d.mkdirs();
+
+            try
+            {
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes);
+                FileOutputStream fo = new FileOutputStream(new File(d, filename));
+                try {
+                    bytes.writeTo(fo);
+                } finally {
+                    fo.close();
+                }
+            }
+            catch (Throwable ex)
+            {
+                ex.printStackTrace();
+                mWaiter.fail(ex);
+            } finally {
+                try {
+                    bytes.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+
+        @Override
+        public void onScreenCaptured(Bitmap bitmap)
+        {
+            synchronized (onScreenshotLock)
+            {
+                String basename = mTestName + ".png";
+
+                try
+                {
+                    writeBitmap(mCategory, basename, bitmap);
+                }
+                catch (Exception e)
+                {
+                    Log.e(mCategory, "Could not save screenshot of %s", mTestName);
+                    mWaiter.fail(e);
+                }
+                try
+                {
+                    Log.d(mCategory, "Saved screenshot of %s", mTestName);
+                    if (mDoCompare)
+                    {
+                        compareWithGolden(bitmap);
+                    }
+                }
+                catch (Throwable t)
+                {
+                    Log.d(mCategory, "Exception while comparing screenshot for %s", mTestName);
+                    mWaiter.fail(t);
+                }
+                mWaiter.resume();
+            }
+        }
+    };
+
+    ScreenShooter mScreenShooter = new ScreenShooter();
+
+    /**
+     * Captures a center screenshot and compares it with a golden screenshot from the
      * assets directory. This method looks for a file named "diff_$testname$.png" in the assets
      * folder for the reference screenshot of the expected result. The captured screenshots are
      * stored in /sdcard/GearVRfTests/$category$/$testname$.png
@@ -297,142 +485,29 @@ public class GVRTestUtils implements GVRMainMonitor {
     public void screenShot(final String category, final String testname, final Waiter waiter,
                            final boolean doCompare) throws TimeoutException
     {
-        GVRScreenshotCallback callback = new GVRScreenshotCallback()
-        {
-            private void compareWithGolden(final Bitmap screenshot, String testname, Waiter waiter)
-            {
-                try {
-                    Bitmap golden = null;
-
-                    try {
-                        URL url = new URL(GOLDEN_MASTERS_URL + "/" + category + "/" + testname);
-                        Log.v(TAG, "Fetching golden master "+url.toString());
-                        final InputStream inputStream = url.openStream();
-                        try {
-                            final BitmapFactory.Options options = new BitmapFactory.Options();
-                            options.inMutable = true;
-                            golden = BitmapFactory.decodeStream(inputStream, null, options);
-                        } finally {
-                            inputStream.close();
-                        }
-                    } catch (Throwable ex) {
-                        waiter.fail(ex);
-                    }
-                    if (golden != null) {
-                        try {
-                            final float[] diff = {0.0f};
-
-                            final int goldenHeight = golden.getHeight();
-                            final int goldenWidth = golden.getWidth();
-
-                            waiter.assertEquals(goldenWidth, screenshot.getWidth());
-                            waiter.assertEquals(goldenHeight, screenshot.getHeight());
-
-                            final ReentrantLock lockDiff = new ReentrantLock();
-
-                            try {
-                                final CountDownLatch cdl = new CountDownLatch(goldenHeight);
-
-                                final int[] goldenPixels = new int[goldenHeight*goldenWidth];
-                                golden.getPixels(goldenPixels, 0, goldenWidth, 0, 0, goldenWidth, goldenHeight);
-
-                                final int[] screenshotPixels = new int[goldenHeight*goldenWidth];
-                                screenshot.getPixels(screenshotPixels, 0, goldenWidth, 0, 0, goldenWidth, goldenHeight);
-
-                                for (int y = 0; y < goldenHeight; y++) {
-                                    Threads.spawn(new CompareRunnable(goldenWidth, y, goldenPixels, lockDiff, diff, screenshotPixels, cdl));
-                                }
-
-                                cdl.await();
-                                golden.setPixels(goldenPixels, 0, goldenWidth, 0, 0, goldenWidth, goldenHeight);
-                                //hints
-                                System.gc();
-                                System.runFinalization();
-                            } catch (Throwable t) {
-                                waiter.fail(t);
-                            }
-
-                            Log.e(category, "RESULT: %s %s diff = %f", category, testname, diff[0]);
-                            if (diff[0] > 2000.0f) {
-                                writeBitmap(category, "diff_" + testname, golden);
-                            }
-
-                            waiter.assertTrue(diff[0] <= 30000.0f);
-                        } finally {
-                            golden.recycle();
-                        }
-                    }
-                } finally {
-                    screenshot.recycle();
-                }
-            }
-
-            protected void writeBitmap(String dir, String filename, Bitmap bitmap)
-            {
-                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-
-                File sdcard = Environment.getExternalStorageDirectory();
-                dir = sdcard.getAbsolutePath() + "/GearVRFTests/" + dir + "/";
-                File d = new File(dir);
-                d.mkdirs();
-
-                try
-                {
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes);
-                    FileOutputStream fo = new FileOutputStream(new File(d, filename));
-                    try {
-                        bytes.writeTo(fo);
-                    } finally {
-                        fo.close();
-                    }
-                }
-                catch (Throwable ex)
-                {
-                    ex.printStackTrace();
-                    waiter.fail(ex);
-                } finally {
-                    try {
-                        bytes.close();
-                    } catch (IOException e) {
-                    }
-                }
-            }
-
-            @Override
-            public void onScreenCaptured(Bitmap bitmap)
-            {
-                synchronized (onScreenshotLock)
-                {
-                    String basename = testname + ".png";
-
-                    try
-                    {
-                        writeBitmap(category, basename, bitmap);
-                    }
-                    catch (Exception e)
-                    {
-                        Log.e(category, "Could not save screenshot of %s", testname);
-                        waiter.fail(e);
-                    }
-                    try
-                    {
-                        Log.d(category, "Saved screenshot of %s", testname);
-                        if (doCompare)
-                        {
-                            compareWithGolden(bitmap, basename, waiter);
-                        }
-                    }
-                    catch (Throwable t)
-                    {
-                        Log.d(category, "Exception while comparing screenshot for %s", testname);
-                        waiter.fail(t);
-                    }
-                    waiter.resume();
-                }
-            }
-        };
+        mScreenShooter.init(testname, category, waiter, doCompare);
         waitForSceneRendering();
-        gvrContext.captureScreenCenter(callback);
+        gvrContext.captureScreenCenter(mScreenShooter);
+        waiter.await(SCREENSHOT_TEST_TIMEOUT);
+    }
+
+    /**
+     * Captures a right screenshot and compares it with a golden screenshot from the
+     * assets directory. This method looks for a file named "diff_$testname$.png" in the assets
+     * folder for the reference screenshot of the expected result. The captured screenshots are
+     * stored in /sdcard/GearVRfTests/$category$/$testname$.png
+     * @param category directory to store screenshots in.
+     * @param testname the name of the test method.
+     * @param waiter instance of the {@link Waiter} class.
+     * @param doCompare flag used to turnon/off comparison of screenshots.
+     * @throws TimeoutException
+     */
+    public void screenShotRight(final String category, final String testname, final Waiter waiter,
+                           final boolean doCompare) throws TimeoutException
+    {
+        mScreenShooter.init(testname, category, waiter, doCompare);
+        waitForSceneRendering();
+        gvrContext.captureScreenRight(mScreenShooter);
         waiter.await(SCREENSHOT_TEST_TIMEOUT);
     }
 
