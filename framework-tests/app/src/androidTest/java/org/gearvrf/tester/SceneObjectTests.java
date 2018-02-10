@@ -22,6 +22,7 @@ import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.gearvrf.utility.Log;
 import org.joml.Vector3f;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
@@ -46,15 +47,17 @@ public class SceneObjectTests
     private boolean mDoCompare = true;
 
     @Rule
-    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
+    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class);
+
+    @After
+    public void tearDown()
     {
-        protected void afterActivityFinished() {
-            GVRScene scene = mTestUtils.getMainScene();
-            if (scene != null) {
-                scene.clear();
-            }
+        GVRScene scene = mTestUtils.getMainScene();
+        if (scene != null)
+        {
+            scene.clear();
         }
-    };
+    }
 
     @Before
     public void setUp() throws Exception
