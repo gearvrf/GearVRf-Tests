@@ -26,6 +26,7 @@ import org.gearvrf.utility.Log;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -50,13 +51,14 @@ public class PickerTests
     }
 
     @Rule
-    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
+    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class);
+
+    @After
+    public void tearDown()
     {
-        protected void afterActivityFinished() {
-            GVRScene scene = gvrTestUtils.getMainScene();
-            if (scene != null) {
-                scene.clear();
-            }
+        GVRScene scene = gvrTestUtils.getMainScene();
+        if (scene != null) {
+            scene.clear();
         }
     };
 
