@@ -7,6 +7,7 @@ import android.view.Gravity;
 import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRImage;
@@ -82,39 +83,41 @@ public class TextureTests
         mesh.setFloatArray("a_texcoord1", texcoords);
     }
 
-    @Test
-    public void testAlphaToCoverage() throws TimeoutException
+    private GVRSceneObject makeObject(GVRContext ctx, float w, float h)
     {
-        GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRTextViewSceneObject t = new GVRTextViewSceneObject(ctx, 2, 2, "very very long test text");
-        GVRRenderData rd = t.getRenderData();
-        GVRMaterial m = rd.getMaterial();
+        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
+        GVRSceneObject sceneObj = new GVRSceneObject(ctx, w, h, "float3 a_position float2 a_texcoord", mtl);
+        GVRRenderData rd = sceneObj.getRenderData();
 
-        t.setTextSize(16);
-        t.setGravity(Gravity.TOP | Gravity.LEFT);
-        t.getTransform().setPosition(0, 1, -2);
-        t.setName("textview");
-        m.setColor(1, 0, 0);
+        mtl.setDiffuseColor(0, 1, 0, 0.5f);
         rd.setAlphaBlend(true);
         rd.setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
         rd.setCullFace(GVRRenderPass.GVRCullFaceEnum.None);
         rd.setDepthTest(false);
         rd.setAlphaToCoverage(true);
+        return sceneObj;
+    }
 
-        GVRSceneObject polygon = new GVRSceneObject(ctx, 4, 4);
-        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
+    @Test
+    public void testAlphaToCoverage() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRCameraRig rig = ctx.getMainScene().getMainCameraRig();
+        GVRSceneObject middle = makeObject(ctx, 3, 3);
+        GVRSceneObject bottom = makeObject(ctx, 2, 2);
+        GVRSceneObject top = makeObject(ctx, 2, 2);
 
-        rd = polygon.getRenderData();
-        polygon.setName("polygon");
-        polygon.getTransform().setPosition(0, 1, -3);
-        mtl.setDiffuseColor(0, 1, 0, 0.5f);
-        rd.setMaterial(mtl);
-        rd.setAlphaBlend(true);
-        rd.setAlphaToCoverage(true);
-        rd.setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
-        rd.setCullFace(GVRRenderPass.GVRCullFaceEnum.None);
-        mRoot.addChildObject(t);
-        mRoot.addChildObject(polygon);
+        rig.getLeftCamera().setBackgroundColor(1, 1, 1, 1);
+        rig.getRightCamera().setBackgroundColor(1, 1, 1, 1);
+        top.getTransform().setPosition(0.5f, 0, -2);
+        top.getRenderData().getMaterial().setDiffuseColor(0, 1, 0, 0.5f);
+        middle.getTransform().setPosition(0, 0, -2.2f);
+        middle.getRenderData().getMaterial().setDiffuseColor(0, 0, 1, 0.5f);
+        bottom.getTransform().setPosition(-1, 0, -3);
+        bottom.getRenderData().getMaterial().setDiffuseColor(1, 0, 0, 0.5f);
+        mRoot.addChildObject(top);
+        mRoot.addChildObject(middle);
+        mRoot.addChildObject(bottom);
         mTestUtils.waitForXFrames(3);
         mTestUtils.screenShot(getClass().getSimpleName(), "testAlphaToCoverage", mWaiter, mDoCompare);
     }

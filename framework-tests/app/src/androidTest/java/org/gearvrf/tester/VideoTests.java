@@ -138,6 +138,7 @@ public class VideoTests
             mWaiter.fail(ex);
         }
         gvrTestUtils.waitForAssetLoad();
+        gvrTestUtils.waitForXFrames(4);
         gvrTestUtils.screenShotRight(getClass().getSimpleName(), "testMonoVideo", mWaiter, mDoCompare);
     }
 
@@ -159,6 +160,7 @@ public class VideoTests
             mWaiter.fail(ex);
         }
         gvrTestUtils.waitForAssetLoad();
+        gvrTestUtils.waitForXFrames(4);
         gvrTestUtils.screenShotRight(getClass().getSimpleName(), "testMonoVideoMesh", mWaiter, mDoCompare);
     }
 
@@ -178,6 +180,7 @@ public class VideoTests
             mWaiter.fail(ex);
         }
         gvrTestUtils.waitForAssetLoad();
+        gvrTestUtils.waitForXFrames(4);
         gvrTestUtils.screenShotRight(getClass().getSimpleName(), "testHorizontalStereo", mWaiter, mDoCompare);
     }
 
@@ -197,6 +200,7 @@ public class VideoTests
             mWaiter.fail(ex);
         }
         gvrTestUtils.waitForAssetLoad();
+        gvrTestUtils.waitForXFrames(4);
         gvrTestUtils.screenShotRight(getClass().getSimpleName(), "testVerticalStereo", mWaiter, mDoCompare);
     }
 
