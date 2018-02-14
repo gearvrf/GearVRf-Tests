@@ -72,6 +72,12 @@ dependencies {
     } else {
         compile(name:'backend_oculus-debug', ext:'aar')
     }
+    if (findProject(':x3d')) {
+        compile project(':x3d')
+    } else {
+        debugCompile(name: 'x3d-debug', ext: 'aar')
+        releaseCompile(name: 'x3d-release', ext: 'aar')
+    }
 
     androidTestCompile 'com.android.support:support-annotations:23.+'
     androidTestCompile 'com.android.support.test:runner:0.4.1'

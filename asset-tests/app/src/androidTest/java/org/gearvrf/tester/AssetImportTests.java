@@ -29,6 +29,7 @@ import org.gearvrf.GVRPhongShader;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -52,15 +53,17 @@ public class AssetImportTests
     private AssetEventHandler mHandler;
 
     @Rule
-    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
+    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class);
+
+    @After
+    public void tearDown()
     {
-        protected void afterActivityFinished() {
-            GVRScene scene = mTestUtils.getMainScene();
-            if (scene != null) {
-                scene.clear();
-            }
+        GVRScene scene = mTestUtils.getMainScene();
+        if (scene != null)
+        {
+            scene.clear();
         }
-    };
+    }
 
     @Before
     public void setUp() throws TimeoutException
@@ -481,6 +484,24 @@ public class AssetImportTests
     }
 
     @Test
+    public void jassimpLoadError() throws TimeoutException
+    {
+        try
+        {
+            mTestUtils.getGvrContext().getAssetLoader().loadModel("missingmodel.obj");
+        }
+        catch (IOException ex)
+        {
+            mWaiter.assertTrue(ex.getMessage().contains("FileNotFoundException"));
+            return;
+        }
+        catch (Exception ex)
+        {
+            mWaiter.fail(ex);
+        }
+    }
+
+    @Test
     public void x3dTeapotTorus() throws TimeoutException
     {
         mHandler.loadTestModel("x3d/teapottorusdirlights.x3d", 2, 0, "x3dTeapotTorus");
@@ -501,12 +522,30 @@ public class AssetImportTests
     @Test
     public void x3dEmissive() throws TimeoutException
     {
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "x3d/general/emissivecolor.x3d", 0, 0, "x3dEmissive");
+        mHandler.loadTestModel("x3d/emissivecolor.x3d", 0, 0, "x3dEmissive");
     }
 
     @Test
     public void x3dHierarchy() throws TimeoutException
     {
         mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "x3d/general/twoplaneswithchildren.x3d", 5, 0, "x3dHierarchy");
+    }
+
+    @Test
+    public void x3dLoadError() throws TimeoutException
+    {
+        try
+        {
+            mTestUtils.getGvrContext().getAssetLoader().loadModel("missingmodel.x3d");
+        }
+        catch (IOException ex)
+        {
+            mWaiter.assertTrue(ex.getMessage().contains("FileNotFoundException"));
+            return;
+        }
+        catch (Exception ex)
+        {
+            mWaiter.fail(ex);
+        }
     }
 }

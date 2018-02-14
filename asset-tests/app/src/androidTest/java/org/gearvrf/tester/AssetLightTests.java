@@ -18,6 +18,7 @@ import org.gearvrf.GVRPhongShader;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,15 +39,17 @@ public class AssetLightTests
     private AssetEventHandler mHandler;
 
     @Rule
-    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
+    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class);
+
+    @After
+    public void tearDown()
     {
-        protected void afterActivityFinished() {
-            GVRScene scene = mTestUtils.getMainScene();
-            if (scene != null) {
-                scene.clear();
-            }
+        GVRScene scene = mTestUtils.getMainScene();
+        if (scene != null)
+        {
+            scene.clear();
         }
-    };
+    }
 
     @Before
     public void setUp() throws TimeoutException
@@ -211,7 +214,7 @@ public class AssetLightTests
     @Test
     public void x3dShininess() throws TimeoutException
     {
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "x3d/teapotandtorus_AddPtLt.x3d", 2, 0, "x3dShininess");
+        mHandler.loadTestModel("x3d/teapotandtorus_AddPtLt.x3d", 2, 0, "x3dShininess");
     }
 
     @Test
