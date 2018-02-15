@@ -24,6 +24,7 @@ import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.joml.Vector3f;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,9 +42,17 @@ public class TextureTransparencyTests
     private GVRSceneObject mRoot;
 
     @Rule
-    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
+    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class);
+
+    @After
+    public void tearDown()
     {
-    };
+        GVRScene scene = mTestUtils.getMainScene();
+        if (scene != null)
+        {
+            scene.clear();
+        }
+    }
 
     @Before
     public void setUp() throws TimeoutException
