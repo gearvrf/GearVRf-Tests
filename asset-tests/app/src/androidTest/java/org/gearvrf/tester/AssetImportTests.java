@@ -10,7 +10,7 @@ import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRComponent;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRExternalScene;
-import org.gearvrf.GVRLightBase;
+import org.gearvrf.GVRLight;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRPointLight;
@@ -24,7 +24,6 @@ import org.gearvrf.GVRVertexBuffer;
 import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
-import org.gearvrf.GVRPhongShader;
 
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
@@ -38,7 +37,6 @@ import java.io.IOException;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
-import org.gearvrf.tester.R;
 
 @RunWith(AndroidJUnit4.class)
 public class AssetImportTests
@@ -277,7 +275,7 @@ public class AssetImportTests
                     mWaiter.assertTrue(vbuf.hasAttribute("a_texcoord"));
                 }
             }
-            else if (comp.getClass().isAssignableFrom(GVRLightBase.class))
+            else if (comp.getClass().isAssignableFrom(GVRLight.class))
             {
                 mWaiter.fail("Light sources are present and should not be");
             }

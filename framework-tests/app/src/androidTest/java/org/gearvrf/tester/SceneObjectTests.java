@@ -8,7 +8,6 @@ import net.jodah.concurrentunit.Waiter;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRPhongShader;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
@@ -20,7 +19,6 @@ import org.gearvrf.GVRBillboard;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
-import org.gearvrf.utility.Log;
 import org.joml.Vector3f;
 import org.junit.After;
 import org.junit.Before;
@@ -30,7 +28,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
 import static java.lang.Thread.sleep;

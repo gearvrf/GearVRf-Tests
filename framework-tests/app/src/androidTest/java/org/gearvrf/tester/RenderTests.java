@@ -1,16 +1,13 @@
 package org.gearvrf.tester;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRBone;
-import org.gearvrf.GVRColorBlendShader;
+import org.gearvrf.shaders.GVRColorBlendShader;
 import org.gearvrf.GVRIndexBuffer;
-import org.gearvrf.GVRShaderData;
 import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRContext;
@@ -25,7 +22,6 @@ import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRCylinderSceneObject;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
-import org.gearvrf.utility.Log;
 import org.joml.Matrix4f;
 import org.junit.After;
 import org.junit.Before;
@@ -41,10 +37,6 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import static android.opengl.GLES20.GL_ONE;
@@ -231,7 +223,7 @@ public class RenderTests {
         mesh.setVertices(vertices);
         mesh.setNormals(normals);
         mesh.setTexCoords(texCoords);
-        mesh.setTriangles(triangles);
+        mesh.setIndices(triangles);
         ftmp = mesh.getFloatArray("a_position");
         mWaiter.assertTrue(compareArrays(vertices, ftmp));
         ftmp = mesh.getFloatArray("a_texcoord");

@@ -272,7 +272,7 @@ public class PickerTests
         float[] a = {0f, 0f, 0f, 5f, 5f, 5f, 1f, 4f, 1f};
         char indices[] = { 0, 1, 2 };
         triangleMesh.setVertices(a);
-        triangleMesh.setTriangles(indices);
+        triangleMesh.setIndices(indices);
         GVRSceneObject sceneObjTriangle = new GVRSceneObject(context, triangleMesh);
         GVRMeshCollider collider = new GVRMeshCollider(context, sceneObjTriangle.getRenderData().getMesh(), true);
         GVRRenderData rdata = sceneObjTriangle.getRenderData();
