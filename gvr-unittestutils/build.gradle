@@ -31,7 +31,10 @@ android {
     }
 }
 
+project.ext.jomlVersion = "1.9.1-SNAPSHOT"
+
 dependencies {
+    compile "org.joml:joml-android:${jomlVersion}"
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     if (findProject(':framework')) {

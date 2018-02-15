@@ -18,7 +18,7 @@ package org.gearvrf.unittestutils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import org.gearvrf.GVRBitmapTexture;
+import org.gearvrf.GVRBitmapImage;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
@@ -105,7 +105,7 @@ class GVRTestableMain extends GVRMain{
                 R.mipmap.ic_launcher);
         // return the correct splash screen bitmap
         GVRTexture tex = new GVRTexture(gvrContext);
-        tex.setImage(new GVRBitmapTexture(gvrContext, bitmap));
+        tex.setImage(new GVRBitmapImage(gvrContext, bitmap));
         return tex;
     }
 }
