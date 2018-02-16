@@ -419,7 +419,9 @@ public class RenderShaderTests
 
             // add lighting on the scene
             GVRSceneObject lightNode = new GVRSceneObject(gvrTestUtils.getGvrContext());
-            GVRDirectLight light = new GVRDirectLight(gvrTestUtils.getGvrContext(), lightNode);
+            GVRDirectLight light = new GVRDirectLight(gvrTestUtils.getGvrContext());
+
+            lightNode.attachComponent(light);
             lightNode.getTransform().setPosition(0, 0, 0);
             lightNode.getTransform().setRotation(1, 0, 0, 0);
             light.setAmbientIntensity(0.3f * 1, 0.3f * 0.3f, 0.3f * 0.3f, 1);
