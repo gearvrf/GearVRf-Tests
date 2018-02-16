@@ -44,7 +44,7 @@ public class TestSendEvents {
         };
         Looper.myLooper().quit();
 
-        final GearCursorController.SendEvents sendEvents = new GearCursorController.SendEvents(dummyActivity);
+        final GVRGearCursorController.SendEvents sendEvents = new GVRGearCursorController.SendEvents(dummyActivity);
 
         final Runnable producer = new Runnable() {
             @Override
