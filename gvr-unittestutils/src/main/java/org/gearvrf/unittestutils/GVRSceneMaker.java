@@ -469,7 +469,7 @@ public class GVRSceneMaker {
         }
 
         if (jsonObject.has("triangles")) {
-            mesh.setTriangles(jsonToIntArray(jsonObject.optJSONArray("triangles")));
+            mesh.setIndices(jsonToIntArray(jsonObject.optJSONArray("triangles")));
         }
 
         if (jsonObject.has("texcoords")) {

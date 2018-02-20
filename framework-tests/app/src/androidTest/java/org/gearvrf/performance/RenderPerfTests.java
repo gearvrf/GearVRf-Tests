@@ -1,21 +1,15 @@
-package org.gearvrf.tester;
+package org.gearvrf.performance;
 
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import net.jodah.concurrentunit.Waiter;
 
+import org.gearvrf.tester.TextureEventHandler;
 import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRBitmapTexture;
-import org.gearvrf.GVRBone;
-import org.gearvrf.GVRColorBlendShader;
-import org.gearvrf.GVRCompressedTexture;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCubemapTexture;
 import org.gearvrf.GVRDirectLight;
-import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRImage;
-import org.gearvrf.GVRIndexBuffer;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRPointLight;
@@ -27,16 +21,12 @@ import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRSpotLight;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTextureParameters;
-import org.gearvrf.GVRVertexBuffer;
 import org.gearvrf.IAssetEvents;
-import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRCylinderSceneObject;
-import org.gearvrf.scene_objects.GVRSphereSceneObject;
+import org.gearvrf.tester.R;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.gearvrf.utility.Log;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -44,20 +34,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.CharBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-import static android.opengl.GLES20.GL_ONE;
-import static android.opengl.GLES20.GL_SRC_ALPHA;
 import static com.google.devtools.build.android.desugar.runtime.ThrowableExtension.printStackTrace;
 
 @RunWith(AndroidJUnit4.class)
@@ -492,7 +472,7 @@ public class RenderPerfTests
         params.put("rows", 15);
         params.put("columns", 15);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "quad15x15ShareAll", params);
     }
@@ -507,7 +487,7 @@ public class RenderPerfTests
         params.put("rows", 15);
         params.put("columns", 15);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "quad15x15ShareGeo", params);
     }
@@ -522,7 +502,7 @@ public class RenderPerfTests
         params.put("rows", 15);
         params.put("columns", 15);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "quad15x15ShareMtl", params);
     }
@@ -537,7 +517,7 @@ public class RenderPerfTests
         params.put("rows", 15);
         params.put("columns", 15);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "quad15x15", params);
     }
@@ -554,7 +534,7 @@ public class RenderPerfTests
         params.put("rows", 10);
         params.put("columns", 10);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "cyl10x10ShareAll", params);
     }
@@ -569,7 +549,7 @@ public class RenderPerfTests
         params.put("rows", 10);
         params.put("columns", 10);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "cyl10x10ShareGeo", params);
     }
@@ -584,7 +564,7 @@ public class RenderPerfTests
         params.put("rows", 10);
         params.put("columns", 10);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "cyl10x10ShareMtl", params);
     }
@@ -598,7 +578,7 @@ public class RenderPerfTests
         params.put("rows", 10);
         params.put("columns", 10);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "cyl10x10", params);
     }
@@ -617,7 +597,7 @@ public class RenderPerfTests
         params.put("columns", 15);
         params.put("bitmap", BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 27.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "quad15x15BitmapShareAll", params);
     }
@@ -633,7 +613,7 @@ public class RenderPerfTests
         params.put("columns", 15);
         params.put("bitmap", BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "quad15x15BitmapShareGeo", params);
     }
@@ -649,7 +629,7 @@ public class RenderPerfTests
         params.put("columns", 15);
         params.put("bitmap", BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 25.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "quad15x15BitmapShareMtl", params);
     }
@@ -665,7 +645,7 @@ public class RenderPerfTests
         params.put("columns", 15);
         params.put("bitmap", BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 27.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "quad15x15Bitmap", params);
     }
@@ -682,7 +662,7 @@ public class RenderPerfTests
         params.put("columns", 10);
         params.put("bitmap", BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "cyl10x10BitmapShareGeo", params);
     }
@@ -698,7 +678,7 @@ public class RenderPerfTests
         params.put("columns", 10);
         params.put("bitmap", BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "cyl10x10BitmapShareMtl", params);
     }
@@ -713,7 +693,7 @@ public class RenderPerfTests
         params.put("columns", 10);
         params.put("bitmap", BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "cyl10x10Bitmap", params);
     }
@@ -732,7 +712,7 @@ public class RenderPerfTests
         params.put("columns", 15);
         params.put("cubemap", CUBEMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 28.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "quad15x15CubemapShareAll", params);
     }
@@ -748,7 +728,7 @@ public class RenderPerfTests
         params.put("columns", 15);
         params.put("cubemap", CUBEMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "quad15x15CubemapShareGeo", params);
     }
@@ -764,7 +744,7 @@ public class RenderPerfTests
         params.put("columns", 15);
         params.put("cubemap", CUBEMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 26.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "quad15x15CubemapShareMtl", params);
     }
@@ -780,7 +760,7 @@ public class RenderPerfTests
         params.put("columns", 15);
         params.put("cubemap", CUBEMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "quad15x15Cubemap", params);
     }
@@ -798,7 +778,7 @@ public class RenderPerfTests
         params.put("columns", 10);
         params.put("cubemap", CUBEMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "cyl10x10CubemapShareAll", params);
     }
@@ -814,7 +794,7 @@ public class RenderPerfTests
         params.put("columns", 10);
         params.put("cubemap", CUBEMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "cyl10x10CubemapShareGeo", params);
     }
@@ -830,7 +810,7 @@ public class RenderPerfTests
         params.put("columns", 10);
         params.put("cubemap", CUBEMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "cyl10x10CubemapShareMtl", params);
     }
@@ -846,7 +826,7 @@ public class RenderPerfTests
         params.put("columns", 10);
         params.put("bitmap", BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "cyl10x10Cubemap", params);
     }
@@ -863,7 +843,7 @@ public class RenderPerfTests
         params.put("columns", 15);
         params.put("compressedbitmap", COMPRESSED_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 27.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "quad15x15CompBmapShareAll", params);
     }
@@ -879,7 +859,7 @@ public class RenderPerfTests
         params.put("columns", 15);
         params.put("compressedbitmap", COMPRESSED_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 28.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "quad15x15CompBmapShareGeo", params);
     }
@@ -895,7 +875,7 @@ public class RenderPerfTests
         params.put("columns", 15);
         params.put("compressedbitmap", COMPRESSED_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 26.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "quad15x15CompBmapShareMtl", params);
     }
@@ -911,7 +891,7 @@ public class RenderPerfTests
         params.put("columns", 15);
         params.put("compressedbitmap", COMPRESSED_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 27.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "quad15x15CompBmap", params);
     }
@@ -928,7 +908,7 @@ public class RenderPerfTests
         params.put("columns", 10);
         params.put("compressedbitmap", COMPRESSED_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "cyl10x10CompBmapShareAll", params);
     }
@@ -944,7 +924,7 @@ public class RenderPerfTests
         params.put("columns", 10);
         params.put("compressedbitmap", COMPRESSED_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "cyl10x10CompBmapShareGeo", params);
     }
@@ -960,7 +940,7 @@ public class RenderPerfTests
         params.put("columns", 10);
         params.put("compressedbitmap", COMPRESSED_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "cyl10x10CompBmapShareMtl", params);
     }
@@ -976,7 +956,7 @@ public class RenderPerfTests
         params.put("columns", 10);
         params.put("bitmap", BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "cyl10x10CompBmap", params);
     }

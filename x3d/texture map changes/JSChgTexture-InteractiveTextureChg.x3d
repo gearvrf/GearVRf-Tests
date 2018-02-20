@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <Scene>
+  
+    <Viewpoint position='0 0 0'/>
+    <PointLight DEF='PL1'/>
+    <PointLight DEF='PLleft' location='-10 0 0'/>
+    <PointLight DEF='PLright' location='10 0 0'/>
+    <Background skyColor='.1 .2 .4'/>
+
+      <Transform translation='2 -.5 -6'>
+        <TouchSensor DEF='ButtonTouch' description='touch to toggle'/>
+        <Shape>
+          <Appearance>
+            <ImageTexture DEF='MyImg' url="red.jpg"/>
+			<Material DEF='ResetMaterial' diffuseColor='1 1 1'/>
+          </Appearance>
+          <Box/>
+        </Shape>
+      </Transform>
+
+
+      <Transform translation='-2 -.5 -6'>
+        <TouchSensor DEF='ButtonTouch2' description='touch to toggle'/>
+        <Shape>
+          <Appearance>
+            <ImageTexture DEF='MyImg2' url="caltrain.png"/>
+	        <Material DEF='ResetMaterial2' diffuseColor='1 1 1'/>
+          </Appearance>
+          <Box/>
+        </Shape>
+      </Transform>
+    
+
+    <Script DEF='ControlScript'>
+      <field accessType='inputOnly' name='buttonOver' type='SFBool'/>
+      <field accessType='outputOnly' name='imgURL' type='MFString'/>
+
+      <![CDATA[
+      ecmascript:
+      function initialize()
+      {
+            red = new MFString("red.jpg");
+            green = new MFString("green.jpg");
+            blue = new MFString("blue.jpg");
+            redValue = 0;
+            greenValue = 1;
+            blueValue = 2;
+            rgbValue = redValue;
+      }
+      function buttonOver (value)
+      {
+        if ( value ) {
+      	    imgURL = new MFString("green.jpg");
+      	    if (rgbValue == redValue) {
+      	        rgbValue = greenValue;
+      	        imgURL = green;
+      	    }
+      	    else if (rgbValue == greenValue) {
+      	        rgbValue = blueValue;
+      	        imgURL = blue;
+      	    }
+      	    else {
+      	        rgbValue = redValue;
+      	        imgURL = red;
+      	    }
+      	}
+      }
+	]]>
+    </Script>
+    <ROUTE fromField='isActive' fromNode='ButtonTouch' toField='buttonOver' toNode='ControlScript'/>
+    <ROUTE fromField='imgURL' fromNode='ControlScript' toField='url' toNode='MyImg'/>
+
+
+    <Script DEF='ControlScript2'>
+      <field accessType='inputOnly' name='buttonOver' type='SFBool'/>
+      <field accessType='outputOnly' name='imgURL' type='MFString'/>
+
+      <![CDATA[
+      ecmascript:
+      function initialize()
+      {
+        textureNumber = 0;
+        imgURL1 = new MFString("NumberOne.png");
+	    imgURL2 = new MFString("NumberTwo.png");
+	    imgURL3 = new MFString("NumberThree.png");
+	    imgURL4 = new MFString("NumberFour.png");
+	    imgURL5 = new MFString("NumberFive.png");
+      }
+      function buttonOver (value)
+      {
+        if ( value ) {
+            if ( textureNumber == 0 ) {
+              imgURL = imgURL1;
+            }
+            else if ( textureNumber == 1 ) {
+              imgURL = imgURL2;
+            }
+            else if ( textureNumber == 2 ) {
+               imgURL = imgURL3;
+            }
+            else if ( textureNumber == 3 ) {
+               imgURL = imgURL4;
+            }
+            else if ( textureNumber == 4 ) {
+               imgURL = imgURL5;
+            }
+            textureNumber++;
+            if ( textureNumber >= 5) textureNumber = 0;
+        }
+      }
+	]]>
+    </Script>
+    <ROUTE fromField='isOver' fromNode='ButtonTouch2' toField='buttonOver' toNode='ControlScript2'/>
+    <ROUTE fromField='imgURL' fromNode='ControlScript2' toField='url' toNode='MyImg2'/>
+
+  </Scene>
+</X3D>

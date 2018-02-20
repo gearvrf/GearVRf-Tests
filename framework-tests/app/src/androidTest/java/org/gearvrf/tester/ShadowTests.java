@@ -5,35 +5,22 @@ import android.support.test.runner.AndroidJUnit4;
 
 import net.jodah.concurrentunit.Waiter;
 
-import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRCamera;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCubemapTexture;
 import org.gearvrf.GVRDirectLight;
-import org.gearvrf.GVRLightBase;
 import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVROrthogonalCamera;
-import org.gearvrf.GVRPerspectiveCamera;
-import org.gearvrf.GVRPointLight;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRShadowMap;
 import org.gearvrf.GVRSpotLight;
-import org.gearvrf.GVRTexture;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
-import org.gearvrf.GVRPhongShader;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
-import org.joml.Vector3f;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.IOException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
 @RunWith(AndroidJUnit4.class)
@@ -213,7 +200,7 @@ public class ShadowTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        mTestUtils.waitForXFrames(2);
+        mTestUtils.waitForXFrames(10);
         mTestUtils.screenShot(getClass().getSimpleName(), "directLightAtFrontCastsShadow", mWaiter, mDoCompare);
     }
 
@@ -328,8 +315,10 @@ public class ShadowTests
         floormtl.setDiffuseColor(0.7f, 0.4f, 0.7f, 1.0f);
 
         floor.getRenderData().setMaterial(floormtl);
+        floor.getRenderData().setCastShadows(false);
         floor.getTransform().rotateByAxis(-90, 1, 0, 0);
         floor.getTransform().setPosition(0, -2.0f, -2.0f);
+        floor.getRenderData().setCastShadows(false);
 
         rightside.getRenderData().setMaterial(rightmtl);
         rightside.getRenderData().setCastShadows(false);

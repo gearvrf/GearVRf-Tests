@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <Scene>
+  
+	<Viewpoint description='GearVR location' position='0 0 0'/>
+	<Background skyColor='.1 .2 .3'/>
+	<PointLight location='0 0 0'/>
+
+	<Transform DEF="GearVRposition" rotation='1 0 0 .5' translation='-3 -1 -8'>
+		<Transform DEF='Pointer' translation='1 0 1'>
+			<Transform rotation='1 0 0 1.57'>
+				<Shape>
+					<Cone bottomRadius='0.5' height='1.5'/>
+	    				<Appearance>
+	    					<Material DEF='ConeMaterial' diffuseColor='0.4 1 0.16'/>
+	    				</Appearance>
+	    			</Shape>
+	    		</Transform>
+	    	</Transform>
+	</Transform>
+
+
+      <Transform translation='-2 -.5 -6'>
+        <TouchSensor DEF='ButtonTouch2' description='touch to toggle'/>
+        <Shape>
+          <Appearance>
+            <ImageTexture DEF='MyImg2' url="caltrain.png"/>
+	        <Material DEF='ResetMaterial2' diffuseColor='1 1 1'/>
+          </Appearance>
+          <Box/>
+        </Shape>
+      </Transform>
+
+    <Transform DEF='Ball' translation='0 -2 -10'>
+    	<Transform DEF='BallSpin'>
+    		<Shape>
+    			<Appearance>
+    				<Material DEF="myMaterial" diffuseColor='1 1 1'/>
+    				<ImageTexture url="lattitudelongitude.png" repeatS="TRUE" repeatT="TRUE"/>
+    			</Appearance>
+    			<Sphere/>
+    		</Shape>
+    	</Transform>
+    </Transform>
+
+
+	<Script DEF='myScript' mustEvaluate='true'>
+		<field accessType='inputOnly' name='value_changed' type='SFFloat'/>
+        <field accessType='inputOutput' name='ballSpin' type='SFRotation'/>
+        <field accessType='outputOnly' name='imgURL' type='MFString'/>
+
+		<![CDATA[
+			ecmascript:
+                  function initialize()
+                  {
+                        imgURL1 = new MFString("NumberOne.png");
+                        imgURL2 = new MFString("NumberTwo.png");
+                        imgURL3 = new MFString("NumberThree.png");
+                        imgURL4 = new MFString("NumberFour.png");
+                        imgURL5 = new MFString("NumberFive.png");
+                  }
+				function value_changed (eventValue, timeStamp) {
+
+                    ballSpin.setValue( (timeStamp * 180/Math.PI)/10, 1, 0, 0 );
+                    if ( eventValue < 1 ) imgURL = imgURL1;
+                    else if ( eventValue < 2 ) imgURL = imgURL2;
+                    else if ( eventValue < 3 ) imgURL = imgURL3;
+                    else if ( eventValue < 4 ) imgURL = imgURL4;
+                    else imgURL = imgURL5;
+				}
+		]]>
+	</Script>
+    
+	<TimeSensor DEF='AnimationClock' cycleInterval='5' loop='true'/>
+
+	<ROUTE fromField='fraction_changed' fromNode='AnimationClock' toField='value_changed' toNode='myScript'/>
+
+    <ROUTE fromField='imgURL' fromNode='myScript' toField='url' toNode='MyImg2'/>
+
+    <ROUTE fromField='rotation' fromNode='BallSpin' toField='ballSpin' toNode='myScript'/>
+    <ROUTE fromField='ballSpin' fromNode='myScript' toField='rotation' toNode='BallSpin'/>
+
+  </Scene>
+</X3D>
