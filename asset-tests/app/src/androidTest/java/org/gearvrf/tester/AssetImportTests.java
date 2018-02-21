@@ -310,7 +310,6 @@ public class AssetImportTests
     public void canLoadModelWithoutAnimation() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject model = null;
 
         ctx.getEventReceiver().addListener(mHandler);
@@ -324,6 +323,31 @@ public class AssetImportTests
             mWaiter.fail(ex);
         }
         mTestUtils.waitForAssetLoad();
+        mTestUtils.waitForXFrames(5);
+        mHandler.checkAssetLoaded(null, 4);
+        mHandler.checkAssetErrors(0, 0);
+        mWaiter.assertNull(model.getComponent(GVRAnimator.getComponentType()));
+        model.forAllComponents(new MeshVisitorNoAnim(), GVRRenderData.getComponentType());
+    }
+
+    @Test
+    public void canLoadX3DModelWithoutAnimation() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRSceneObject model = null;
+
+        ctx.getEventReceiver().addListener(mHandler);
+        try
+        {
+            EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(GVRImportSettings.NO_ANIMATION));
+            model = ctx.getAssetLoader().loadModel(GVRTestUtils.GITHUB_URL + "x3d/animation/animation04.x3d", settings, true, (GVRScene) null);
+        }
+        catch (IOException ex)
+        {
+            mWaiter.fail(ex);
+        }
+        mTestUtils.waitForAssetLoad();
+        mTestUtils.waitForXFrames(5);
         mHandler.checkAssetLoaded(null, 4);
         mHandler.checkAssetErrors(0, 0);
         mWaiter.assertNull(model.getComponent(GVRAnimator.getComponentType()));
@@ -342,6 +366,29 @@ public class AssetImportTests
         {
             EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(GVRImportSettings.NO_TEXTURING));
             model = ctx.getAssetLoader().loadModel("jassimp/astro_boy.dae", settings, true, (GVRScene) null);
+        }
+        catch (IOException ex)
+        {
+            mWaiter.fail(ex);
+        }
+        mTestUtils.waitForAssetLoad();
+        mHandler.checkAssetLoaded(null, 0);
+        mHandler.checkAssetErrors(0, 0);
+        model.forAllComponents(new MeshVisitorNoTexture(), GVRRenderData.getComponentType());
+    }
+
+    @Test
+    public void canX3DLoadModelWithoutTextures() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRSceneObject model = null;
+
+        ctx.getEventReceiver().addListener(mHandler);
+        try
+        {
+            EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(GVRImportSettings.NO_TEXTURING));
+            model = ctx.getAssetLoader().loadModel(GVRTestUtils.GITHUB_URL + "x3d/twoplanesobjects.x3d", settings, true, (GVRScene) null);
         }
         catch (IOException ex)
         {
