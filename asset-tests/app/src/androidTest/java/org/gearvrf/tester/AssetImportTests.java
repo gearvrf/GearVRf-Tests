@@ -229,7 +229,6 @@ public class AssetImportTests
 
         ctx.getEventReceiver().addListener(mHandler);
         model.attachComponent(sceneLoader);
-        scene.addSceneObject(model);
         sceneLoader.load(scene);
         mWaiter.assertNotNull(model);
         mTestUtils.waitForAssetLoad();
@@ -507,4 +506,23 @@ public class AssetImportTests
     {
         mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "x3d/general/twoplaneswithchildren.x3d", 5, 0, "x3dHierarchy");
     }
+
+    @Test
+    public void x3dLoadError() throws TimeoutException
+    {
+        try
+        {
+            mTestUtils.getGvrContext().getAssetLoader().loadModel("missingmodel.x3d");
+        }
+        catch (IOException ex)
+        {
+            mWaiter.assertTrue(ex.getMessage().contains("FileNotFoundException"));
+            return;
+        }
+        catch (Exception ex)
+        {
+            mWaiter.fail(ex);
+        }
+    }
+
 }
