@@ -13,14 +13,14 @@ import org.gearvrf.utility.FileNameUtils;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-class TextureEventHandler implements IAssetEvents
+public class TextureEventHandler implements IAssetEvents
 {
     public int TexturesLoaded = 0;
     public int TextureErrors = 0;
     protected GVRTestUtils mTester;
     protected int mNumTextures = 0;
 
-    TextureEventHandler(GVRTestUtils tester, int numTex)
+    public TextureEventHandler(GVRTestUtils tester, int numTex)
     {
         mTester = tester;
         mNumTextures = numTex;

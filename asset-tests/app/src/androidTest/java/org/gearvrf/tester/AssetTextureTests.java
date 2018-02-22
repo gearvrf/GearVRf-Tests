@@ -9,17 +9,14 @@ import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRAssetLoader;
-import org.gearvrf.GVRCompressedTexture;
+import org.gearvrf.GVRCompressedImage;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRImage;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRTextureParameters;
-import org.gearvrf.GVRTransform;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
-import org.gearvrf.GVRPhongShader;
 
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
@@ -32,7 +29,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
@@ -189,7 +185,7 @@ public class AssetTextureTests
             }
         };
         gvr.getAssetLoader().loadTexture(resource, callback, gvr.getAssetLoader().getDefaultTextureParameters(),
-                                         GVRAssetLoader.DEFAULT_PRIORITY, GVRCompressedTexture.BALANCED);
+                                         GVRAssetLoader.DEFAULT_PRIORITY, GVRCompressedImage.BALANCED);
         mTestUtils.waitForAssetLoad();
     }
 }

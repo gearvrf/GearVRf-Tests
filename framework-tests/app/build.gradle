@@ -49,8 +49,7 @@ android {
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
-            output.outputFileName = output.outputFile.parent +
-                    rootProject.name + ".apk"
+            output.outputFileName = rootProject.name + ".apk"
         }
     }
 

@@ -43,7 +43,7 @@ class PickHandler implements IPickEvents
         }
     }
 
-    private Map<String, PickInfo> mPicked = new HashMap<String, PickInfo>();
+    private Map<String, PickInfo> mPicked = null;
     private int mNumNoPick = 0;
     private int mNumPick = 0;
     Waiter mWaiter;
@@ -52,13 +52,7 @@ class PickHandler implements IPickEvents
     public PickHandler(Waiter waiter)
     {
         mWaiter = waiter;
-    }
-
-    public void reset()
-    {
-        mPicked.clear();
-        mNumPick = 0;
-        mNumNoPick = 0;
+        mPicked = new HashMap<String, PickInfo>();
     }
 
     public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
@@ -90,10 +84,13 @@ class PickHandler implements IPickEvents
             PickInfo p = mPicked.get(name);
 
             // onEnter or onPick should be called first
-            // It puts the PickInfo in the map
-            mWaiter.assertNotNull(p);
-            p.NumExit++;
-            Log.d("Picker", "onExit %s", name);
+            // but sometimes onExit gets called after the
+            // scene has been cleared
+            if (p != null)
+            {
+                p.NumExit++;
+                Log.d("Picker", "onExit %s", name);
+            }
         }
     }
 
