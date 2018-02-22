@@ -6,7 +6,7 @@ import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
-import org.gearvrf.GVRLightBase;
+import org.gearvrf.GVRLight;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
@@ -240,11 +240,11 @@ public class AssetLightTests
     {
         GVRSceneObject model = mHandler.loadTestModel("jassimp/astro_boy.dae", 4, 0, null);
         mTestUtils.waitForXFrames(2);
-        List<GVRLightBase> lights = model.getAllComponents(GVRLightBase.getComponentType());
+        List<GVRLight> lights = model.getAllComponents(GVRLight.getComponentType());
 
-        for (GVRLightBase l : lights)
+        for (GVRLight l : lights)
         {
-            l.getOwnerObject().detachComponent(GVRLightBase.getComponentType());
+            l.getOwnerObject().detachComponent(GVRLight.getComponentType());
         }
         mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "testRemoveLight", mWaiter, mDoCompare);
