@@ -6,7 +6,7 @@ import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
-import org.gearvrf.GVRLightBase;
+import org.gearvrf.GVRLight;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
@@ -15,6 +15,7 @@ import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -35,15 +36,17 @@ public class AssetLightTests
     private AssetEventHandler mHandler;
 
     @Rule
-    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
+    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class);
+
+    @After
+    public void tearDown()
     {
-        protected void afterActivityFinished() {
-            GVRScene scene = mTestUtils.getMainScene();
-            if (scene != null) {
-                scene.clear();
-            }
+        GVRScene scene = mTestUtils.getMainScene();
+        if (scene != null)
+        {
+            scene.clear();
         }
-    };
+    }
 
     @Before
     public void setUp() throws TimeoutException
@@ -208,7 +211,7 @@ public class AssetLightTests
     @Test
     public void x3dShininess() throws TimeoutException
     {
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "x3d/teapotandtorus_AddPtLt.x3d", 2, 0, "x3dShininess");
+        mHandler.loadTestModel("x3d/teapotandtorus_AddPtLt.x3d", 2, 0, "x3dShininess");
     }
 
     @Test
@@ -237,11 +240,11 @@ public class AssetLightTests
     {
         GVRSceneObject model = mHandler.loadTestModel("jassimp/astro_boy.dae", 4, 0, null);
         mTestUtils.waitForXFrames(2);
-        List<GVRLightBase> lights = model.getAllComponents(GVRLightBase.getComponentType());
+        List<GVRLight> lights = model.getAllComponents(GVRLight.getComponentType());
 
-        for (GVRLightBase l : lights)
+        for (GVRLight l : lights)
         {
-            l.getOwnerObject().detachComponent(GVRLightBase.getComponentType());
+            l.getOwnerObject().detachComponent(GVRLight.getComponentType());
         }
         mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "testRemoveLight", mWaiter, mDoCompare);

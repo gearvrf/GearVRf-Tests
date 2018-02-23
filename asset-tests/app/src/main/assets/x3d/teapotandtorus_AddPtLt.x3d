@@ -21,12 +21,6 @@
     </Transform>
     </Transform>
 
-     <timeSensor DEF="timea" cycleInterval="9" loop="true"></timeSensor>
-     <OrientationInterpolator DEF="rotate" key="0 0.5 1" keyValue="0 1 0 0   0 1 0 3.14    0 1 0 6.28"></OrientationInterpolator>
-     <Route fromNode="timea" fromField ="fraction_changed" toNode="rotate" toField="set_fraction"></Route>
-     <Route fromNode="rotate" fromField ="value_changed" toNode="item1" toField="set_rotation"></Route>
-    
-    
     <Transform DEF='Teapot01' rotation='0 .8 .6 -.92' translation='25 -25 -125.5'>
     <Transform DEF='item2'>
       <Shape>
@@ -42,12 +36,6 @@
       </Shape>
     </Transform>
     </Transform>
-    
-     <timeSensor DEF="timeteapot" cycleInterval="13" loop="true"></timeSensor>
-     <OrientationInterpolator DEF="rotateteapot" key="0 0.5 1" keyValue="0 1 0 0   0 1 0 3.14    0 1 0 6.28"></OrientationInterpolator>
-     <Route fromNode="timeteapot" fromField ="fraction_changed" toNode="rotateteapot" toField="set_fraction"></Route>
-     <Route fromNode="rotateteapot" fromField ="value_changed" toNode="item2" toField="set_rotation"></Route>
-    
     
   </Scene>
 </X3D>
