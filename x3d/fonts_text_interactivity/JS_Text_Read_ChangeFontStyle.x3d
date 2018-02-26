@@ -1,0 +1,51 @@
+<X3D>
+    <Scene>
+        <Viewpoint position='0 1 -3'/>
+        <PointLight/>
+        <Background skyColor='.4 .4 .4'/>
+
+
+	<Transform translation='1.5 -1.5 -8'>
+        <TouchSensor DEF='ConeButtonTouch' description='touch to toggle'/>
+		<Shape>
+		  <Appearance>
+		    <Material diffuseColor='0 1 0'/>
+		  </Appearance>
+		  <Cone/>
+		</Shape>
+	</Transform>
+
+        <Transform translation="0 1 -7">
+	        <Shape>
+	          <Text string='"Font Style Test " "Read Font Style" "Then Change Style"'>
+	            <FontStyle DEF='fs1' family='Prisma.ttf' style="PLAIN" justify='MIDDLE' spacing='2.0'/>
+	          </Text>
+	          <Appearance>
+	          </Appearance>
+	        </Shape>
+	    </Transform>
+
+    <Script DEF='ControlScript'>
+      <field accessType='inputOnly' name='buttonOver' type='SFBool'/>
+      <field accessType='inputOutput' name='fontStyle' type='SFString'/>
+
+      <![CDATA[
+      ecmascript:
+      function buttonOver (value)
+      {
+        if ( value ) {
+            if ( fontStyle.getValue().equals("PLAIN") ) fontStyle.setValue("BOLD");
+            else if ( fontStyle.getValue().equals("BOLD") ) fontStyle.setValue("ITALIC");
+            else if ( fontStyle.getValue().equals("ITALIC") ) fontStyle.setValue("BOLDITALIC");
+            else if ( fontStyle.getValue().equals("BOLDITALIC") ) fontStyle.setValue("PLAIN");
+      	}
+      }
+	]]>
+    </Script>
+
+    <ROUTE fromField='isOver' fromNode='ConeButtonTouch' toField='buttonOver' toNode='ControlScript'/>
+    <ROUTE fromField='style' fromNode='fs1' toField='fontStyle' toNode='ControlScript'/>
+    <ROUTE fromField='fontStyle' fromNode='ControlScript' toField='set_style' toNode='fs1'/>
+
+    </Scene>
+</X3D>
