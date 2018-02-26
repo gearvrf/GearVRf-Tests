@@ -232,7 +232,6 @@ public class AssetImportTests
 
         ctx.getEventReceiver().addListener(mHandler);
         model.attachComponent(sceneLoader);
-        scene.addSceneObject(model);
         sceneLoader.load(scene);
         mWaiter.assertNotNull(model);
         mTestUtils.waitForAssetLoad();
@@ -593,4 +592,5 @@ public class AssetImportTests
             mWaiter.fail(ex);
         }
     }
+
 }
