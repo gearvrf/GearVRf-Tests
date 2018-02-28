@@ -458,7 +458,7 @@ public class RenderPerfTests
         mTestUtils.waitForXFrames(nframes);
         long endTime = System.currentTimeMillis();
         float fps =  (1000.0f * nframes) / ((float) (endTime - startTime));
-        Log.e("PERFORMANCE", testName + " FPS = %f", fps);
+        Log.e("PERFORMANCE", testName + " FPS = %f, expected %f", fps, expectedFPS);
         mWaiter.assertTrue(fps >= expectedFPS);
     }
 
@@ -974,7 +974,7 @@ public class RenderPerfTests
         params.put("columns", 15);
         params.put("bitmap", R11_BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 27.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "quad15x15R11BitmapShareAll", params);
     }
@@ -990,13 +990,13 @@ public class RenderPerfTests
         params.put("columns", 15);
         params.put("bitmap", R11_BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 28.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "quad15x15R11BitmapShareGeo", params);
     }
 
     @Test
-    public void quad15x15R11BitmapShareMtll() throws TimeoutException {
+    public void quad15x15R11BitmapShareMtl() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
         Map<String, Object> params = new HashMap<String, Object>();
 
@@ -1004,11 +1004,11 @@ public class RenderPerfTests
         params.put("share_material", 1);
         params.put("rows", 15);
         params.put("columns", 15);
-        params.put("bitmap", R11_BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("bitmap", R11_BITMAP_TEXTURE);
+        params.put("fps", 25.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        runPerfTest(ctx, "quad15x15R11BitmapShareMtll", params);
+        runPerfTest(ctx, "quad15x15R11BitmapShareMtl", params);
     }
 
     @Test
@@ -1021,7 +1021,7 @@ public class RenderPerfTests
         params.put("columns", 15);
         params.put("bitmap", R11_BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 27.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "quad15x15R11Bitmap", params);
     }
@@ -1038,7 +1038,7 @@ public class RenderPerfTests
         params.put("columns", 10);
         params.put("compressedbitmap", R11_BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "cyl10x10R11BitmapShareAll", params);
     }
@@ -1054,13 +1054,13 @@ public class RenderPerfTests
         params.put("columns", 10);
         params.put("bitmap", R11_BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 32.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "cyl10x10R11BitmapShareGeo", params);
     }
 
     @Test
-    public void cyl10x10R11BitmapShareMtll() throws TimeoutException {
+    public void cyl10x10R11BitmapShareMtl() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
         Map<String, Object> params = new HashMap<String, Object>();
 
@@ -1070,9 +1070,9 @@ public class RenderPerfTests
         params.put("columns", 10);
         params.put("bitmap", R11_BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 26.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        runPerfTest(ctx, "cyl10x10R11BitmapShareMtll", params);
+        runPerfTest(ctx, "cyl10x10R11BitmapShareMtl", params);
     }
 
     @Test
@@ -1085,7 +1085,7 @@ public class RenderPerfTests
         params.put("columns", 10);
         params.put("bitmap", R11_BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "cyl10x10R11Bitmap", params);
     }
@@ -1102,7 +1102,7 @@ public class RenderPerfTests
         params.put("columns", 15);
         params.put("bitmap", RG11_BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 28.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "quad15x15RG11BitmapShareAll", params);
     }
@@ -1118,13 +1118,13 @@ public class RenderPerfTests
         params.put("columns", 15);
         params.put("bitmap", RG11_BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 27.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "quad15x15RG11BitmapShareGeo", params);
     }
 
     @Test
-    public void quad15x15RG11BitmapShareMtll() throws TimeoutException {
+    public void quad15x15RG11BitmapShareMtl() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
         Map<String, Object> params = new HashMap<String, Object>();
 
@@ -1134,9 +1134,9 @@ public class RenderPerfTests
         params.put("columns", 15);
         params.put("bitmap", RG11_BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 26.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        runPerfTest(ctx, "quad15x15RG11BitmapShareMtll", params);
+        runPerfTest(ctx, "quad15x15RG11BitmapShareMtl", params);
     }
 
     @Test
@@ -1149,7 +1149,7 @@ public class RenderPerfTests
         params.put("columns", 15);
         params.put("bitmap", RG11_BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 25.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "quad15x15RG11Bitmap", params);
     }
@@ -1166,7 +1166,7 @@ public class RenderPerfTests
         params.put("columns", 10);
         params.put("compressedbitmap", RG11_BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 32.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "cyl10x10RG11BitmapShareAll", params);
     }
@@ -1182,13 +1182,13 @@ public class RenderPerfTests
         params.put("columns", 10);
         params.put("bitmap", RG11_BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 32.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "cyl10x10RG11BitmapShareGeo", params);
     }
 
     @Test
-    public void cyl10x10RG11BitmapShareMtll() throws TimeoutException {
+    public void cyl10x10RG11BitmapShareMtl() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
         Map<String, Object> params = new HashMap<String, Object>();
 
@@ -1198,9 +1198,9 @@ public class RenderPerfTests
         params.put("columns", 10);
         params.put("bitmap", RG11_BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        runPerfTest(ctx, "cyl10x10RG11BitmapShareMtll", params);
+        runPerfTest(ctx, "cyl10x10RG11BitmapShareMtl", params);
     }
 
     @Test
@@ -1213,7 +1213,7 @@ public class RenderPerfTests
         params.put("columns", 10);
         params.put("bitmap", RG11_BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "cyl10x10RG11Bitmap", params);
     }
@@ -1230,7 +1230,7 @@ public class RenderPerfTests
         params.put("columns", 15);
         params.put("bitmap", RGB8_BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 27.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "quad15x15RGB8BitmapShareAll", params);
     }
@@ -1252,7 +1252,7 @@ public class RenderPerfTests
     }
 
     @Test
-    public void quad15x15RGB8BitmapShareMtll() throws TimeoutException {
+    public void quad15x15RGB8BitmapShareMtl() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
         Map<String, Object> params = new HashMap<String, Object>();
 
@@ -1262,9 +1262,9 @@ public class RenderPerfTests
         params.put("columns", 15);
         params.put("bitmap", RGB8_BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 25.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        runPerfTest(ctx, "quad15x15RGB8BitmapShareMtll", params);
+        runPerfTest(ctx, "quad15x15RGB8BitmapShareMtl", params);
     }
 
     @Test
@@ -1277,7 +1277,7 @@ public class RenderPerfTests
         params.put("columns", 15);
         params.put("bitmap", RGB8_BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 27.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "quad15x15RGB8Bitmap", params);
     }
@@ -1294,7 +1294,7 @@ public class RenderPerfTests
         params.put("columns", 10);
         params.put("compressedbitmap", RGB8_BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 32.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "cyl10x10RGB8BitmapShareAll", params);
     }
@@ -1310,13 +1310,13 @@ public class RenderPerfTests
         params.put("columns", 10);
         params.put("bitmap", RGB8_BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 32.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "cyl10x10RGB8BitmapShareGeo", params);
     }
 
     @Test
-    public void cyl10x10RGB8BitmapShareMtll() throws TimeoutException {
+    public void cyl10x10RGB8BitmapShareMtl() throws TimeoutException {
         final GVRContext ctx = mTestUtils.getGvrContext();
         Map<String, Object> params = new HashMap<String, Object>();
 
@@ -1326,9 +1326,9 @@ public class RenderPerfTests
         params.put("columns", 10);
         params.put("bitmap", RGB8_BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 25.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        runPerfTest(ctx, "cyl10x10RGB8BitmapShareMtll", params);
+        runPerfTest(ctx, "cyl10x10RGB8BitmapShareMtl", params);
     }
 
     @Test
@@ -1341,7 +1341,7 @@ public class RenderPerfTests
         params.put("columns", 10);
         params.put("bitmap", RGB8_BITMAP_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 59.0f);
+        params.put("fps", 29.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "cyl10x10RGB8Bitmap", params);
     }
