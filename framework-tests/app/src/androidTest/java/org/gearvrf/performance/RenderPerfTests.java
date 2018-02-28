@@ -957,7 +957,7 @@ public class RenderPerfTests
         params.put("columns", 10);
         params.put("bitmap", COMPRESSED_TEXTURE);
         params.put("frames", 600);
-        params.put("fps", 29.0f);
+        params.put("fps", 27.0f);
         params.put("renderingorder", (int) GVRRenderData.GVRRenderingOrder.GEOMETRY);
         runPerfTest(ctx, "cyl10x10CompBmap", params);
     }
