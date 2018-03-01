@@ -5,6 +5,8 @@ import android.os.Looper;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
+import org.gearvrf.io.GVRCursorController;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;

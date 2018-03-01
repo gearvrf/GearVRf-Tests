@@ -103,6 +103,23 @@ public class LightTests
     }
 
     @Test
+    public void canDisableLightInRenderData() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRSceneObject lightObj = new GVRSceneObject(ctx);
+        GVRPointLight light = new GVRPointLight(ctx);
+
+        lightObj.attachComponent(light);
+        mRoot.addChildObject(lightObj);
+        mRoot.addChildObject(mCube);
+        mRoot.addChildObject(mSphere);
+        mTestUtils.waitForXFrames(2);
+        mSphere.getRenderData().disableLight();
+        mTestUtils.waitForXFrames(2);
+        mTestUtils.screenShot(getClass().getSimpleName(), "canDisableLightInRenderData", mWaiter, mDoCompare);
+    }
+
+    @Test
     public void pointLightIlluminatesInColor() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
@@ -332,6 +349,56 @@ public class LightTests
         mTestUtils.screenShot(getClass().getSimpleName(), "directAndPointLightsIlluminate", mWaiter, mDoCompare);
     }
 
+    @Test
+    public void canDisableLight() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRSceneObject lightObj1 = new GVRSceneObject(ctx);
+        GVRDirectLight light1 = new GVRDirectLight(ctx);
+        GVRSceneObject lightObj2 = new GVRSceneObject(ctx);
+        GVRPointLight light2 = new GVRPointLight(ctx);
+
+        light1.setDiffuseIntensity(1, 0, 0.5f, 1);
+        light2.setDiffuseIntensity(0, 0.2f, 0.5f, 1);
+        lightObj1.getTransform().rotateByAxis(-90, 1, 0, 0);
+        lightObj2.getTransform().setPositionZ(4);
+        lightObj1.attachComponent(light1);
+        lightObj2.attachComponent(light2);
+        mSphere.getRenderData().getMaterial().setDiffuseColor(1, 1, 1, 1);
+        mRoot.addChildObject(lightObj1);
+        mRoot.addChildObject(lightObj2);
+        mRoot.addChildObject(mSphere);
+        mTestUtils.waitForXFrames(2);
+        light2.setEnable(false);
+        mTestUtils.waitForXFrames(2);
+        mTestUtils.screenShot(getClass().getSimpleName(), "canDisableLight", mWaiter, mDoCompare);
+    }
+
+    @Test
+    public void canEnableLight() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRSceneObject lightObj1 = new GVRSceneObject(ctx);
+        GVRDirectLight light1 = new GVRDirectLight(ctx);
+        GVRSceneObject lightObj2 = new GVRSceneObject(ctx);
+        GVRPointLight light2 = new GVRPointLight(ctx);
+
+        light1.setEnable(false);
+        light1.setDiffuseIntensity(1, 0, 0.5f, 1);
+        light2.setDiffuseIntensity(0, 0.2f, 0.5f, 1);
+        lightObj1.getTransform().rotateByAxis(-90, 1, 0, 0);
+        lightObj2.getTransform().setPositionZ(4);
+        lightObj1.attachComponent(light1);
+        lightObj2.attachComponent(light2);
+        mSphere.getRenderData().getMaterial().setDiffuseColor(1, 1, 1, 1);
+        mRoot.addChildObject(lightObj1);
+        mRoot.addChildObject(lightObj2);
+        mRoot.addChildObject(mSphere);
+        mTestUtils.waitForXFrames(2);
+        light1.setEnable(true);
+        mTestUtils.waitForXFrames(2);
+        mTestUtils.screenShot(getClass().getSimpleName(), "directAndPointLightsIlluminate", mWaiter, mDoCompare);
+    }
 
     @Test
     public void twoSpotLightsIlluminate() throws TimeoutException
