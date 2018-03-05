@@ -12,7 +12,6 @@ allprojects {
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '25.0.0'
 
     defaultConfig {
         applicationId "org.gearvrf.tester"
@@ -34,14 +33,6 @@ android {
 
     sourceSets.main {
         jniLibs.srcDir 'libs' // pre-compiled libraries
-    }
-
-    applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            output.outputFile = new File(
-                    output.outputFile.parent,
-                    rootProject.name + ".apk")
-        }
     }
 }
 
