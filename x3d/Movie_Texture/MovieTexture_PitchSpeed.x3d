@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <Scene>
+  
+    <Viewpoint position='0 0 7.5'/>
+    <Background skyColor='.4 .5 .6'/>
+    <DirectionalLight/>
+
+
+      <Transform translation='0 -2.5 -1'>
+        <!-- Flat-surface movie, with fixed position and orientation -->
+        <Shape DEF='MovieShapeStandardDefinition'>
+			<IndexedFaceSet
+				coordIndex='0 1 2 -1    0 3 1 -1'
+				texCoordIndex='0 1 2 -1   0 3 1 -1'
+				normalIndex='0 0 0 -1   0 0 0 -1'
+			>
+				<Coordinate point='-4 -3 0    4 3 0    -4 3 0    4 -3 0' />
+				<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+				<Normal vector='0 0 1   0 0 1'/>
+			</IndexedFaceSet>
+          <Appearance>
+			<Material diffuseColor="0 1 1"/>
+			<ImageTexture url="deedee1.jpg" repeatS="TRUE" repeatT="TRUE"/>
+            <MovieTexture DEF='X3dMovieNode' description='click to start movie'
+            	url=' "CanadaWildlife2017.mp4" "CalTrain_1min_25mb.mp4" ' loop="TRUE"/>
+          </Appearance>
+        </Shape>
+      </Transform>
+
+
+        <transform translation="-2.75 1.5 0">
+        	<TouchSensor DEF='StopButtonTS' description='play'/>
+	        <shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="stop.png" repeatS="TRUE" repeatT="TRUE"/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-1 -.5 0    1 .5 0    -1 .5 0    1 -.5 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </shape>
+        </transform>
+
+        <transform translation="0 1.5 0">
+        	<TouchSensor DEF='PauseButtonTS'/>
+	        <shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="pause.png" repeatS="TRUE" repeatT="TRUE"/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-1 -.5 0    1 .5 0    -1 .5 0    1 -.5 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </shape>
+        </transform>
+
+        <transform translation="2.75 1.5 0">
+        	<TouchSensor DEF='StartButtonTS'/>
+	        <shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="start.png" repeatS="TRUE" repeatT="TRUE"/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-1 -.5 0    1 .5 0    -1 .5 0    1 -.5 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </shape>
+        </transform>
+
+
+        <ROUTE fromNode='StopButtonTS' fromField='touchTime' toNode='X3dMovieNode' toField='set_stopTime'/>
+        <ROUTE fromNode='PauseButtonTS' fromField='touchTime' toNode='X3dMovieNode' toField='set_pauseTime'/>
+        <ROUTE fromNode='StartButtonTS' fromField='touchTime' toNode='X3dMovieNode' toField='set_startTime'/>
+
+
+        <transform translation="-2.75 -4 2">
+        	<TouchSensor DEF='SpeedNegButtonTS' description='play'/>
+	        <shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="SpeedNeg.png" repeatS="TRUE" repeatT="TRUE"/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-1 -.5 0    1 .5 0    -1 .5 0    1 -.5 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </shape>
+        </transform>
+
+        <transform translation="0 -4 2">
+        	<TouchSensor DEF='ResetMovieParamsButtonTS' description='play'/>
+	        <shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="ResetMovieParams.png" repeatS="TRUE" repeatT="TRUE"/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-1 -.5 0    1 .5 0    -1 .5 0    1 -.5 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </shape>
+        </transform>
+
+        <transform translation="2.75 -4 2">
+        	<TouchSensor DEF='SpeedPosButtonTS' description='play'/>
+	        <shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="SpeedPos.png" repeatS="TRUE" repeatT="TRUE"/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-1 -.5 0    1 .5 0    -1 .5 0    1 -.5 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </shape>
+        </transform>
+
+        <Script DEF='DoubleSpeedScript'>
+              <field accessType='inputOnly' type='SFBool' name='doubleSpeed'/>
+              <field accessType='inputOutput' type='SFFloat' name='speed_changed'/>
+            <![CDATA[
+                ecmascript:
+                function doubleSpeed (value)
+                {
+                    if ( value ) {
+                        currSpeed = speed_changed.getValue();
+                        speed_changed.setValue( currSpeed * 2 );
+                    }
+                }
+            ]]>
+        </Script>
+        <ROUTE fromNode='X3dMovieNode' fromField='speed' toNode='DoubleSpeedScript' toField='speed_changed'/>
+        <ROUTE fromNode='DoubleSpeedScript' fromField='speed_changed' toNode='X3dMovieNode' toField='set_speed'/>
+        <ROUTE fromNode='SpeedPosButtonTS' fromField='isOver' toNode='DoubleSpeedScript' toField='doubleSpeed'/>
+
+        <Script DEF='HalveSpeedScript'>
+              <field accessType='inputOnly' type='SFBool' name='speedHalved'/>
+              <field accessType='inputOutput' type='SFFloat' name='speed_changed'/>
+            <![CDATA[
+                ecmascript:
+                function speedHalved (value)
+                {
+                    if ( value ) {
+                        currSpeed = speed_changed.getValue();
+                        speed_changed.setValue( currSpeed / 2.0 );
+                    }
+                }
+            ]]>
+        </Script>
+        <ROUTE fromNode='SpeedNegButtonTS' fromField='isOver' toNode='HalveSpeedScript' toField='speedHalved'/>
+        <ROUTE fromNode='X3dMovieNode' fromField='speed' toNode='HalveSpeedScript' toField='speed_changed'/>
+        <ROUTE fromNode='HalveSpeedScript' fromField='speed_changed' toNode='X3dMovieNode' toField='set_speed'/>
+
+		<Script DEF='ResetSpeedScript'>
+    	      <field accessType='inputOnly' type='SFBool' name='resetSpeed'/>
+    	      <field accessType='outputOnly' type='SFFloat' name='speed_changed'/>
+    		<![CDATA[
+    			ecmascript:
+    			function resetSpeed (value)
+    			{
+    			    if ( value ) {
+    				    speed_changed = new SFFloat(1);
+    				}
+    			}
+    		]]>
+    	</Script>
+    	<ROUTE fromNode='ResetMovieParamsButtonTS' fromField='isOver' toNode='ResetSpeedScript' toField='resetSpeed'/>
+    	<ROUTE fromNode='ResetSpeedScript' fromField='speed_changed' toNode='X3dMovieNode' toField='set_speed'/>
+
+  </Scene>
+</X3D>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.0//EN" "http://www.web3d.org/specifications/x3d-3.0.dtd">
+<X3D xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' profile='Full' version='3.0' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.0.xsd'>
+  <Scene DEF='scene'>
+
+  <Viewpoint position='0 3 5'/>
+  <Background skyColor='.3 .4 .6'/>
+  <PointLight location='0 0 2'/>
+
+    <Transform DEF='primitive0Box' translation='-1.5 2 0'>
+      <Shape>
+        <Appearance>
+          <Material diffuseColor='1 1 1'/>
+          <ImageTexture url='"teapot.png"'/>
+          <MovieTexture url=' "CalTrain_1min_25mb.mp4" "BayshoreFreeway.mp4" ' loop="TRUE"/>
+        </Appearance>
+        <Box/>
+      </Shape>
+    </Transform>
+
+
+    <Transform DEF='primitive1Sphere' translation='1.5 2 0' rotation='0 1 0 .5'>
+      <Shape>
+        <Appearance>
+          <Material diffuseColor='1 1 1'/>
+          <ImageTexture url='"teapot.png"'/>
+          <MovieTexture url='  "BayshoreFreeway.mp4" "SunnyvaleGoldCourse_10mb.mp4"  "Freight_Train_3mb.mp4" "fish.mp4" ' loop="TRUE"/>
+        </Appearance>
+        <Sphere/>
+      </Shape>
+    </Transform>
+
+    <Transform DEF='primitive2Cone' translation='1.75 -2 0'>
+        <!-- Transform rotation='1 0 0 1.57' -->
+          <Shape>
+            <Appearance>
+              <Material diffuseColor='1 1 1'/>
+              <ImageTexture url='"teapot.png"'/>
+              <MovieTexture url=' "fish.mp4" "SunnyvaleGoldCourse_3mb.mp4" "BayshoreFreeway.mp4" ' loop="TRUE"/>
+            </Appearance>
+            <Cone/>
+          </Shape>
+        <!-- /Transform -->
+    </Transform>
+
+    <Transform DEF='primitive3Cylinder' translation='-1.75 -2 0'>
+      <Shape>
+        <Appearance>
+          <Material diffuseColor='1 0 0'/>
+        </Appearance>
+        <Box size='3 .01 3'/>
+      </Shape>
+      <Shape>
+        <Appearance>
+          <Material diffuseColor='1 1 1'/>
+          <ImageTexture url='"teapot.png"'/>
+          <MovieTexture DEF='Movie with thin boxes' url='"fish.mp4"  "BayshoreFreeway.mp4" ' loop="TRUE"/>
+        </Appearance>
+        <Cylinder/>
+      </Shape>
+      <Shape>
+        <Appearance>
+          <Material diffuseColor='0 1 0'/>
+        </Appearance>
+        <Box size='2.5 .1 2.5'/>
+      </Shape>
+    </Transform>
+
+            <timeSensor DEF="timea" cycleInterval="30" loop="true"></timeSensor>
+            <OrientationInterpolator DEF="rotate" key="0 0.5 1" keyValue="0 1 0 0   0 1 0 3.14    0 1 0 6.28"/>
+
+            <Route fromNode="timea" fromField ="fraction_changed" toNode="rotate" toField="set_fraction"></Route>
+            <Route fromNode="rotate" fromField ="value_changed" toNode="primitive0Box" toField="set_rotation"></Route>
+
+            <timeSensor DEF="timeb" cycleInterval="37" loop="true"></timeSensor>
+            <!-- Route fromNode="timeb" fromField ="fraction_changed" toNode="rotate" toField="set_fraction"></Route>
+            <Route fromNode="rotate" fromField ="value_changed" toNode="primitive1Sphere" toField="set_rotation"></Route-->
+
+            <!-- Route fromNode="timea" fromField ="fraction_changed" toNode="rotate" toField="set_fraction"></Route>
+            <Route fromNode="rotate" fromField ="value_changed" toNode="primitive2Cone" toField="set_rotation"></Route -->
+
+            <Route fromNode="timeb" fromField ="fraction_changed" toNode="rotate" toField="set_fraction"/>
+            <Route fromNode="rotate" fromField ="value_changed" toNode="primitive3Cylinder" toField="set_rotation"/>
+
+  </Scene>
+</X3D>

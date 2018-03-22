@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <Scene>
+  
+    <Viewpoint DEF='VP1' position='0 0 0'/>
+    <Background skyColor='.4 .4 .4'/>
+    <DirectionalLight on='true'/>
+    <NavigationInfo headlight='false'/>
+
+
+      <Transform translation='0 -1 -10'>
+        <Shape DEF='MovieShapeStandardDefinition'>
+			<IndexedFaceSet
+				coordIndex='0 1 2 -1    0 3 1 -1'
+				texCoordIndex='0 1 2 -1   0 3 1 -1'
+				normalIndex='0 0 0 -1   0 0 0 -1'
+			>
+				<Coordinate point='-4 -3 0    4 3 0    -4 3 0    4 -3 0' />
+				<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+				<Normal vector='0 0 1   0 0 1'/>
+			</IndexedFaceSet>
+          <Appearance>
+			<Material diffuseColor="1 1 1"/>
+			<ImageTexture url="deedee1.jpg" repeatS="TRUE" repeatT="TRUE"/>
+            <MovieTexture DEF='X3dMovieNode' description='click to start movie'
+            	url=' "CalTrain_1min_25mb.mp4" "Saber_the_dog.mp4" ' loop="TRUE"/>
+          </Appearance>
+        </Shape>
+      </Transform>
+
+
+	<!-- begin slider bar control -->
+
+        <Transform DEF='animText' translation="0 -2.1 -2">
+	        <Shape>
+	          <Text DEF='animTextMessage' string='"slider value here"'>
+	            <FontStyle DEF='fs1' family='Air Americana.ttf' justify='END' spacing='2.0'/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="1 1 0"/>
+	          </Appearance>
+	        </Shape>
+	    </Transform>
+
+      <Transform DEF="SliderController"  translation='0 -7 0'>
+        <TouchSensor DEF='SliderTouchSensor' description='Slider controller'/>
+        <Transform DEF="SliderRotate">
+            <Transform DEF="SliderTranslate"  translation='-4 0 -10'>
+            <Shape>
+              <Appearance>
+                <Material DEF="SliderControllerMaterial" emissiveColor='.5 .5 0' diffuseColor='0 0 0' specularColor='0 0 0'/>
+              </Appearance>
+              <Box size='1 .5 1'/>
+            </Shape>
+          </Transform>
+        </Transform>
+      </Transform>
+
+   
+   <Script DEF='IsOverSliderControllerScript'>
+      <field accessType='inputOnly' name='IsOverSliderController' type='SFBool'/>
+      <field accessType='inputOnly' name='sliderTranslation' type='SFVec3f'/>
+      <field accessType='inputOnly' type='SFTime' name='movieLength'/>
+      <field accessType='outputOnly' name='material' type='SFColor'/>
+      <field accessType='outputOnly' type='SFTime' name='frameNumber'/>
+
+        <![CDATA[
+            ecmascript:
+    	    function initialize() {
+    	        offColor = .5;
+    	        onColor = 1;
+    	        SliderSelected = false;
+    	        sliderColor = offColor;
+    	    }
+            function IsOverSliderController( isOverBoolean )
+            {
+                sliderColor = offColor;
+                SliderSelected = isOverBoolean;
+              	if ( isOverBoolean ) {
+              	    sliderColor = onColor;
+              	}
+              	else {
+                     movieFrame = ((sliderTranslation.getX() + 4) / 8) * movieLength.getValue();
+                     frameNumber = new SFTime( Math.floor( movieFrame ) );
+                     sliderColor = offColor;
+              	}
+              	material = new SFColor (sliderColor, sliderColor, 0);
+            }
+        ]]>
+   </Script>
+   <ROUTE fromNode='SliderTouchSensor' fromField='isOver' toNode='IsOverSliderControllerScript' toField='IsOverSliderController'/>
+   <ROUTE fromField='translation' fromNode='SliderTranslate' toField='sliderTranslation' toNode='IsOverSliderControllerScript'/>
+   <ROUTE fromNode='X3dMovieNode' fromField='duration' toNode='IsOverSliderControllerScript' toField='movieLength'/>
+
+   <ROUTE fromNode='IsOverSliderControllerScript' fromField='material'    toNode='SliderControllerMaterial' toField='emissiveColor'/>
+   <ROUTE fromNode='IsOverSliderControllerScript' fromField='frameNumber' toNode='X3dMovieNode'             toField='set_startTime'/>
+
+
+  <TimeSensor DEF='AnimationClock' cycleInterval='1' loop='true'/>
+
+    <Script DEF='SliderAnimScript' mustEvaluate='true'>
+      <field accessType='inputOnly'   type='SFFloat'    name='perFrameCall'/>
+      <field accessType='inputOnly'   type='SFRotation' name='vpRot'/>
+      <field accessType='inputOnly'   type='SFTime'     name='movieDuration'/>
+      <field accessType='inputOnly'   type='SFTime'     name='elapsed'/>
+      <field accessType='inputOutput' type='SFVec3f'    name='SliderCtrlTranslation'/>
+      <field accessType='outputOnly'  type='MFString'   name='textFrameNumber'/>
+      <![CDATA[
+  	    ecmascript:
+            function perFrameCall (eventValue) {
+
+                if ( !SliderSelected ) {
+                   SliderCtrlX = elapsed.getValue() / movieDuration.getValue() * 8 - 4;
+                   SliderCtrlTranslation.setValue( SliderCtrlX, 0, SliderCtrlTranslation.getZ() );
+                   textFrameNumber = new MFString( "millisec " + elapsed.getValue() );
+               }
+               else {
+                   currQuaternion = new Quaternionf(vpRot);
+                   matrix = new Matrix4f();
+                   currQuaternion.get(matrix);
+                   camDirVector = new SFVec3f(0,0,-1);
+                   camDirVector.mulDirection( matrix, camDirVector );
+
+                   SliderCtrlX = camDirVector.getX()*SliderCtrlTranslation.getZ()/camDirVector.getZ();
+                   if ( SliderCtrlX < -4 ) SliderCtrlX = -4;
+                   else if ( SliderCtrlX > 4 ) SliderCtrlX = 4;
+                   SliderCtrlTranslation.setValue( SliderCtrlX, 0, SliderCtrlTranslation.getZ() );
+                   movieFrameNumber = Math.floor( ((SliderCtrlX + 4) / 8) * movieDuration.getValue() );
+                   textFrameNumber = new MFString( "millisec " + movieFrameNumber );
+               }
+            }
+  	]]>
+    </Script>
+
+    <ROUTE fromField='fraction_changed' fromNode='AnimationClock' toField='perFrameCall' toNode='SliderAnimScript'/>
+    <ROUTE fromField='orientation' fromNode='VP1' toField='vpRot' toNode='SliderAnimScript'/>
+    <ROUTE fromField='translation' fromNode='SliderTranslate' toField='SliderCtrlTranslation' toNode='SliderAnimScript'/>
+    <ROUTE fromNode='X3dMovieNode' fromField='duration' toNode='SliderAnimScript' toField='movieDuration'/>
+    <ROUTE fromNode='X3dMovieNode' fromField='elapsedTime' toNode='SliderAnimScript' toField='elapsed'/>
+
+    <ROUTE fromField='SliderCtrlTranslation' fromNode='SliderAnimScript' toField='translation' toNode='SliderTranslate'/>
+    <ROUTE fromField='textFrameNumber' fromNode='SliderAnimScript' toField='string' toNode='animTextMessage'/>
+
+  </Scene>
+</X3D>
