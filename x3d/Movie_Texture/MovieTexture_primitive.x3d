@@ -12,7 +12,7 @@
         <Appearance>
           <Material diffuseColor='1 1 1'/>
           <ImageTexture url='"teapot.png"'/>
-          <MovieTexture url=' "CalTrain_1min_25mb.mp4" "BayshoreFreeway.mp4" ' loop="TRUE"/>
+          <MovieTexture DEF='boxMovie' url=' "Freight_Train_3mb.mp4" "BayshoreFreeway.mp4" ' loop="TRUE"/>
         </Appearance>
         <Box/>
       </Shape>
@@ -24,23 +24,23 @@
         <Appearance>
           <Material diffuseColor='1 1 1'/>
           <ImageTexture url='"teapot.png"'/>
-          <MovieTexture url='  "BayshoreFreeway.mp4" "SunnyvaleGoldCourse_10mb.mp4"  "Freight_Train_3mb.mp4" "fish.mp4" ' loop="TRUE"/>
+          <MovieTexture DEF='sphereMovie' url=' "fish.mp4"  "BayshoreFreeway.mp4" "SunnyvaleGoldCourse_10mb.mp4"  "Freight_Train_3mb.mp4" "fish.mp4" ' loop="TRUE"/>
         </Appearance>
         <Sphere/>
       </Shape>
     </Transform>
 
     <Transform DEF='primitive2Cone' translation='1.75 -2 0'>
-        <!-- Transform rotation='1 0 0 1.57' -->
+        <Transform rotation='1 0 0 1.57'>
           <Shape>
             <Appearance>
               <Material diffuseColor='1 1 1'/>
               <ImageTexture url='"teapot.png"'/>
-              <MovieTexture url=' "fish.mp4" "SunnyvaleGoldCourse_3mb.mp4" "BayshoreFreeway.mp4" ' loop="TRUE"/>
+              <MovieTexture DEF='fishMovie' url=' "BayshoreFreeway.mp4" "fish.mp4" "SunnyvaleGoldCourse_3mb.mp4" "BayshoreFreeway.mp4" ' loop="TRUE"/>
             </Appearance>
             <Cone/>
           </Shape>
-        <!-- /Transform -->
+        </Transform>
     </Transform>
 
     <Transform DEF='primitive3Cylinder' translation='-1.75 -2 0'>
@@ -54,7 +54,7 @@
         <Appearance>
           <Material diffuseColor='1 1 1'/>
           <ImageTexture url='"teapot.png"'/>
-          <MovieTexture DEF='Movie with thin boxes' url='"fish.mp4"  "BayshoreFreeway.mp4" ' loop="TRUE"/>
+          <MovieTexture DEF='Movie with thin boxes' url='"Saber_the_dog.mp4"  "BayshoreFreeway.mp4" ' loop="TRUE"/>
         </Appearance>
         <Cylinder/>
       </Shape>
@@ -73,14 +73,36 @@
             <Route fromNode="rotate" fromField ="value_changed" toNode="primitive0Box" toField="set_rotation"></Route>
 
             <timeSensor DEF="timeb" cycleInterval="37" loop="true"></timeSensor>
-            <!-- Route fromNode="timeb" fromField ="fraction_changed" toNode="rotate" toField="set_fraction"></Route>
-            <Route fromNode="rotate" fromField ="value_changed" toNode="primitive1Sphere" toField="set_rotation"></Route-->
+            <Route fromNode="timeb" fromField ="fraction_changed" toNode="rotate" toField="set_fraction"></Route>
+            <Route fromNode="rotate" fromField ="value_changed" toNode="primitive1Sphere" toField="set_rotation"></Route>
 
-            <!-- Route fromNode="timea" fromField ="fraction_changed" toNode="rotate" toField="set_fraction"></Route>
-            <Route fromNode="rotate" fromField ="value_changed" toNode="primitive2Cone" toField="set_rotation"></Route -->
+            <Route fromNode="timea" fromField ="fraction_changed" toNode="rotate" toField="set_fraction"></Route>
+            <Route fromNode="rotate" fromField ="value_changed" toNode="primitive2Cone" toField="set_rotation"></Route>
 
             <Route fromNode="timeb" fromField ="fraction_changed" toNode="rotate" toField="set_fraction"/>
             <Route fromNode="rotate" fromField ="value_changed" toNode="primitive3Cylinder" toField="set_rotation"/>
+
+      <Transform translation='0 -2 -2' rotation='0 1 0 -.4'>
+        <!-- Flat-surface movie, with fixed position and orientation -->
+        <Shape DEF='MovieShapeStandardDefinition'>
+			<IndexedFaceSet
+				coordIndex='0 1 2 -1    0 3 1 -1'
+				texCoordIndex='0 1 2 -1   0 3 1 -1'
+				normalIndex='0 0 0 -1   0 0 0 -1'
+			>
+				<Coordinate point='-4 -3 0    4 3 0    -4 3 0    4 -3 0' />
+				<!-- Coordinate point='-6 -4 0    6 4 0    -6 4 0    6 -4 0' / -->
+				<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+				<Normal vector='0 0 1   0 0 1'/>
+			</IndexedFaceSet>
+          <Appearance>
+			<Material diffuseColor="1 1 1"/>
+			<ImageTexture url="deedee1.jpg" repeatS="TRUE" repeatT="TRUE"/>
+            <MovieTexture DEF='X3dMovieNode' description='click to start movie'
+            	url=' "SunnyvaleGoldCourse_3mb.mp4" "Saber_the_dog.mp4" ' loop="TRUE"/>
+          </Appearance>
+        </Shape>
+      </Transform>
 
   </Scene>
 </X3D>
