@@ -1,0 +1,105 @@
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+	<Scene>
+		<Viewpoint position='0 0 0'/>
+		<Background skyColor='.4 .4 .4'/>
+		<DirectionalLight/>
+		<NavigationInfo headlight='false'/>
+		
+		<Transform translation="0 -2 -6" rotation="-0 1 0 -0" scale='.6 .6 .6'>
+			<Shape>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-2 -2 0    2 2 0    -2 2 0    2 -2 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="texture_rotation_testpattern.jpg"/>
+					<TextureTransform center='-.5 -.5' rotation='.785' scale='2 2' translation='0 0'/>
+				</Appearance>
+			</Shape>
+		</Transform>
+
+		<Transform translation="3.5 0 -9" rotation="-0 1 0 -0">
+			<Shape>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-2 -2 0    2 2 0    -2 2 0    2 -2 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="texture_rotation_testpattern.jpg"/>
+					<TextureTransform center='0 0' rotation='0' scale='2 3' translation='0 0'/>
+				</Appearance>
+			</Shape>
+		</Transform>
+
+		<Transform translation="-3.5 0 -9" rotation="-0 1 0 -0">
+			<Shape>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-2 -2 0    2 2 0    -2 2 0    2 -2 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="texture_rotation_testpattern.jpg"/>
+					<TextureTransform center='0 0' rotation='0' scale='1 1' translation='.3 .2'/>
+				</Appearance>
+			</Shape>
+		</Transform>
+
+		<Transform translation="2.5 -6.5 -8" rotation="-0 1 0 -0">
+			<Shape>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-2 -2 0    2 2 0    -2 2 0    2 -2 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="texture_rotation_testpattern.jpg"/>
+					<TextureTransform center='0 0' rotation='.785' scale='1 1' translation='0 0'/>
+				</Appearance>
+			</Shape>
+		</Transform>
+
+		<Transform translation="-2.5 -6.5 -8" rotation="-0 1 0 -0">
+			<Shape>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-2 -2 0    2 2 0    -2 2 0    2 -2 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="texture_rotation_testpattern.jpg"/>
+					<TextureTransform center='-.5 -.5' rotation='.785' scale='1 1' translation='0 0'/>
+				</Appearance>
+			</Shape>
+		</Transform>
+
+
+	</Scene>
+</X3D>
