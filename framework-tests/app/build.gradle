@@ -12,7 +12,7 @@ allprojects {
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '25.0.0'
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "org.gearvrf.tester"
@@ -48,10 +48,8 @@ android {
     }
 
     applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            output.outputFile = new File(
-                    output.outputFile.parent,
-                    rootProject.name + ".apk")
+        variant.outputs.all { output ->
+            output.outputFileName = rootProject.name + ".apk"
         }
     }
 

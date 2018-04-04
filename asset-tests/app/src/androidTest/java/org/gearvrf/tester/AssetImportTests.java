@@ -10,7 +10,7 @@ import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRComponent;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRExternalScene;
-import org.gearvrf.GVRLightBase;
+import org.gearvrf.GVRLight;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRPointLight;
@@ -24,11 +24,11 @@ import org.gearvrf.GVRVertexBuffer;
 import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
-import org.gearvrf.GVRPhongShader;
 
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,7 +38,6 @@ import java.io.IOException;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
-import org.gearvrf.tester.R;
 
 @RunWith(AndroidJUnit4.class)
 public class AssetImportTests
@@ -52,15 +51,17 @@ public class AssetImportTests
     private AssetEventHandler mHandler;
 
     @Rule
-    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
+    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class);
+
+    @After
+    public void tearDown()
     {
-        protected void afterActivityFinished() {
-            GVRScene scene = mTestUtils.getMainScene();
-            if (scene != null) {
-                scene.clear();
-            }
+        GVRScene scene = mTestUtils.getMainScene();
+        if (scene != null)
+        {
+            scene.clear();
         }
-    };
+    }
 
     @Before
     public void setUp() throws TimeoutException
@@ -231,7 +232,6 @@ public class AssetImportTests
 
         ctx.getEventReceiver().addListener(mHandler);
         model.attachComponent(sceneLoader);
-        scene.addSceneObject(model);
         sceneLoader.load(scene);
         mWaiter.assertNotNull(model);
         mTestUtils.waitForAssetLoad();
@@ -277,7 +277,7 @@ public class AssetImportTests
                     mWaiter.assertTrue(vbuf.hasAttribute("a_texcoord"));
                 }
             }
-            else if (comp.getClass().isAssignableFrom(GVRLightBase.class))
+            else if (comp.getClass().isAssignableFrom(GVRLight.class))
             {
                 mWaiter.fail("Light sources are present and should not be");
             }
@@ -307,7 +307,6 @@ public class AssetImportTests
     public void canLoadModelWithoutAnimation() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject model = null;
 
         ctx.getEventReceiver().addListener(mHandler);
@@ -321,6 +320,31 @@ public class AssetImportTests
             mWaiter.fail(ex);
         }
         mTestUtils.waitForAssetLoad();
+        mTestUtils.waitForXFrames(5);
+        mHandler.checkAssetLoaded(null, 4);
+        mHandler.checkAssetErrors(0, 0);
+        mWaiter.assertNull(model.getComponent(GVRAnimator.getComponentType()));
+        model.forAllComponents(new MeshVisitorNoAnim(), GVRRenderData.getComponentType());
+    }
+
+    @Test
+    public void canLoadX3DModelWithoutAnimation() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRSceneObject model = null;
+
+        ctx.getEventReceiver().addListener(mHandler);
+        try
+        {
+            EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(GVRImportSettings.NO_ANIMATION));
+            model = ctx.getAssetLoader().loadModel(GVRTestUtils.GITHUB_URL + "x3d/animation/animation04.x3d", settings, true, (GVRScene) null);
+        }
+        catch (IOException ex)
+        {
+            mWaiter.fail(ex);
+        }
+        mTestUtils.waitForAssetLoad();
+        mTestUtils.waitForXFrames(5);
         mHandler.checkAssetLoaded(null, 4);
         mHandler.checkAssetErrors(0, 0);
         mWaiter.assertNull(model.getComponent(GVRAnimator.getComponentType()));
@@ -339,6 +363,29 @@ public class AssetImportTests
         {
             EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(GVRImportSettings.NO_TEXTURING));
             model = ctx.getAssetLoader().loadModel("jassimp/astro_boy.dae", settings, true, (GVRScene) null);
+        }
+        catch (IOException ex)
+        {
+            mWaiter.fail(ex);
+        }
+        mTestUtils.waitForAssetLoad();
+        mHandler.checkAssetLoaded(null, 0);
+        mHandler.checkAssetErrors(0, 0);
+        model.forAllComponents(new MeshVisitorNoTexture(), GVRRenderData.getComponentType());
+    }
+
+    @Test
+    public void canX3DLoadModelWithoutTextures() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRSceneObject model = null;
+
+        ctx.getEventReceiver().addListener(mHandler);
+        try
+        {
+            EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(GVRImportSettings.NO_TEXTURING));
+            model = ctx.getAssetLoader().loadModel(GVRTestUtils.GITHUB_URL + "x3d/twoplanesobjects.x3d", settings, true, (GVRScene) null);
         }
         catch (IOException ex)
         {
@@ -481,6 +528,24 @@ public class AssetImportTests
     }
 
     @Test
+    public void jassimpLoadError() throws TimeoutException
+    {
+        try
+        {
+            mTestUtils.getGvrContext().getAssetLoader().loadModel("missingmodel.obj");
+        }
+        catch (IOException ex)
+        {
+            mWaiter.assertTrue(ex.getMessage().contains("FileNotFoundException"));
+            return;
+        }
+        catch (Exception ex)
+        {
+            mWaiter.fail(ex);
+        }
+    }
+
+    @Test
     public void x3dTeapotTorus() throws TimeoutException
     {
         mHandler.loadTestModel("x3d/teapottorusdirlights.x3d", 2, 0, "x3dTeapotTorus");
@@ -501,7 +566,7 @@ public class AssetImportTests
     @Test
     public void x3dEmissive() throws TimeoutException
     {
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "x3d/general/emissivecolor.x3d", 0, 0, "x3dEmissive");
+        mHandler.loadTestModel("x3d/emissivecolor.x3d", 0, 0, "x3dEmissive");
     }
 
     @Test
@@ -509,4 +574,35 @@ public class AssetImportTests
     {
         mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "x3d/general/twoplaneswithchildren.x3d", 5, 0, "x3dHierarchy");
     }
+
+    @Test
+    public void x3dLoadError() throws TimeoutException
+    {
+        try
+        {
+            mTestUtils.getGvrContext().getAssetLoader().loadModel("missingmodel.x3d");
+        }
+        catch (IOException ex)
+        {
+            mWaiter.assertTrue(ex.getMessage().contains("FileNotFoundException"));
+        }
+        catch (Exception ex)
+        {
+            mWaiter.fail(ex);
+        }
+
+        try
+        {
+            mTestUtils.getGvrContext().getAssetLoader().loadModel("http://blah.blah/missingmodel.x3d");
+        }
+        catch (IOException ex)
+        {
+            mWaiter.assertTrue(ex.getMessage().contains("UnknownHostException"));
+        }
+        catch (Exception ex)
+        {
+            mWaiter.fail(ex);
+        }
+    }
+
 }

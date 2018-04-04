@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <Scene>
+  
+	<Viewpoint description='GearVR location' position='0 0 0'/>
+	<Background skyColor='.5 .9 1'/>
+	<PointLight location='0 0 0'/>
+
+      <Transform translation='3 -2 -4' rotation='0 1 0 .785'>
+        <Shape>
+          <Appearance>
+            <ImageTexture DEF='DogSprite' url="lattitudelongitude.png"/>
+          </Appearance>
+				<IndexedFaceSet DEF='ifs'
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-2 -2 0    2 2 0    -2 2 0    2 -2 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1   0 .6 .8'/>
+				</IndexedFaceSet>
+        </Shape>
+      </Transform>
+
+
+      <Transform translation='-2 -2 -4' rotation='0 1 0 -.785'>
+        <Shape>
+          <Appearance>
+            <ImageTexture DEF='PresentSprite' url="lattitudelongitude.png"/>
+          </Appearance>
+				<IndexedFaceSet USE='ifs'/>
+        </Shape>
+      </Transform>
+
+    <Transform DEF='Ball' translation='0 1 -6'>
+    	<Transform DEF='BallSpin'>
+    		<Shape>
+    			<Appearance>
+    				<Material DEF="myMaterial" diffuseColor='1 1 1'/>
+    				<ImageTexture url="lattitudelongitude.png" repeatS="TRUE" repeatT="TRUE"/>
+    			</Appearance>
+    			<Sphere/>
+    		</Shape>
+    	</Transform>
+    </Transform>
+
+
+	<Script DEF='SpriteAnimationScript' mustEvaluate='true'>
+	  <field accessType='inputOnly' name='value_changed' type='SFFloat'/>
+          <field accessType='inputOutput' name='ballSpin' type='SFRotation'/>
+          <field accessType='outputOnly' name='dogImgURL' type='MFString'/>
+          <field accessType='outputOnly' name='presentImgURL' type='MFString'/>
+
+		<![CDATA[
+			ecmascript:
+		  function value_changed (eventValue, timeStamp) {
+
+              ballSpin.setValue( (timeStamp * 180/Math.PI)/10, 1, 0, 0 );
+
+              dogTextureMap = "dog_walk_00";
+              presentTextureMap = "spinning_present_00";
+              //Make sure we don't get a '31'
+              spriteNum = Math.min( (Math.floor(30*eventValue/1.2) + 1), 30);
+              if (spriteNum < 10) {
+                  dogTextureMap += "0";
+                  presentTextureMap += "0";
+              }
+              dogTextureMap += spriteNum + ".png";
+              presentTextureMap += spriteNum + ".png";
+
+              dogImgURL = new MFString(dogTextureMap);
+              presentImgURL = new MFString(presentTextureMap);
+
+		  }
+		]]>
+	</Script>
+    
+	<TimeSensor DEF='AnimationClock' cycleInterval='1.2' loop='true'/>
+
+	<ROUTE fromField='fraction_changed' fromNode='AnimationClock' toField='value_changed' toNode='SpriteAnimationScript'/>
+
+
+    	<ROUTE fromField='rotation' fromNode='BallSpin' toField='ballSpin' toNode='SpriteAnimationScript'/>
+    	<ROUTE fromField='ballSpin' fromNode='SpriteAnimationScript' toField='rotation' toNode='BallSpin'/>
+    
+    	<ROUTE fromField='dogImgURL' fromNode='SpriteAnimationScript' toField='url' toNode='DogSprite'/>
+
+        <ROUTE fromField='presentImgURL' fromNode='SpriteAnimationScript' toField='url' toNode='PresentSprite'/>
+    
+        
+
+
+  </Scene>
+</X3D>

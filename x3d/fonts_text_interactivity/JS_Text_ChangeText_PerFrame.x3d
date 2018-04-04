@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <Scene>
+    <Viewpoint description='GearVR location' position='0 0 0'/>
+    <DirectionalLight DEF='light1'/>
+
+    <Transform DEF="ConeObject" translation='-3 -3 -6'>
+        <TouchSensor DEF='ButtonTouch' description='touch to toggle'/>
+            <Shape>
+                <Cone/>
+                <Appearance>
+                    <Material DEF='ConeMaterial' diffuseColor='1 .5 0'/>
+                </Appearance>
+            </Shape>
+    </Transform>
+
+    <Transform DEF="Sphere1" translation='-2 -2 -6'>
+        <Shape>
+            <Sphere/>
+            <Appearance>
+                <Material DEF='SphereMaterial' diffuseColor='0 1 0.25'/>
+            </Appearance>
+        </Shape>
+    </Transform>
+
+        <Transform DEF='obj4' translation="0 .5 -4">
+	        <Shape>
+	          <Text DEF='MyTextMessage' string='"FontStyle" "Air Americana" "Justify=END"'>
+	            <FontStyle DEF='fs1' family='Air Americana.ttf' justify='END' spacing='2.0'/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="1 1 1"/>
+	          </Appearance>
+	        </Shape>
+	    </Transform>
+
+        <Transform DEF='animText' translation="0 -1 -2.5">
+	        <Shape>
+	          <Text DEF='animTextMessage' string='"time will go here: really long"'>
+	            <FontStyle USE='fs1'/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="1 1 0"/>
+	          </Appearance>
+	        </Shape>
+	    </Transform>
+
+
+    <Script DEF='ControlScript'>
+      <field accessType='inputOnly' name='buttonOver' type='SFBool'/>
+      <field accessType='outputOnly' name='myNewText' type='MFString'/>
+      <field accessType='outputOnly' name='material' type='SFColor'/>
+
+      <![CDATA[
+      ecmascript:
+      function buttonOver (value)
+      {
+      	myNewText = new MFString("Very LONG New Text");
+      	material = new SFColor (1, 1, 0);
+      }
+	]]>
+    </Script>
+
+    <ROUTE fromField='isOver' fromNode='ButtonTouch' toField='buttonOver' toNode='ControlScript'/>
+    <ROUTE fromField='myNewText' fromNode='ControlScript' toField='string' toNode='MyTextMessage'/>
+    <ROUTE fromField='material' fromNode='ControlScript' toField='diffuseColor' toNode='ConeMaterial'/>
+
+
+
+      <Script DEF='ColorChangeScript' mustEvaluate='true'>
+        <field accessType='inputOnly' name='value_changed' type='SFFloat'/>
+        <field accessType='inputOutput' name='sphere1Loc' type='SFVec3f'/>
+        <field accessType='outputOnly' name='newColor' type='SFColor'/>
+        <field accessType='outputOnly' name='textTime' type='MFString'/>
+       <![CDATA[
+	ecmascript:
+	      function initialize()
+          {
+          	ballDir = 1;
+          }
+
+	    function value_changed (eventValue, timeStamp) {
+	      red = (10.0 - eventValue) / 20;
+	      green = Math.max(eventValue / 10, .4);
+	      blue = Math.max(eventValue/10.0, .3);
+	      newColor = new SFColor(red, green, blue);
+
+		  sphere1LocX = sphere1Loc.getX() + (.04 * ballDir);
+		  if ( (sphere1LocX >= 3) || (sphere1LocX <= -3) ) ballDir = -ballDir;
+		  y = sphere1Loc.getY();
+		  z = sphere1Loc.getZ();
+		  sphere1Loc = new SFVec3f (sphere1LocX, y, z);
+
+          timeString = eventValue + "*";
+		  textTime = new MFString(timeString);
+	    }
+	]]>
+      </Script>
+
+    <TimeSensor DEF='AnimationClock' cycleInterval='10' loop='true'/>
+    <ROUTE fromField='fraction_changed' fromNode='AnimationClock' toField='value_changed' toNode='ColorChangeScript'/>
+    <ROUTE fromField='newColor' fromNode='ColorChangeScript' toField='diffuseColor' toNode='SphereMaterial'/>
+
+    <ROUTE fromField='translation' fromNode='Sphere1' toField='sphere1Loc' toNode='ColorChangeScript'/>
+    <ROUTE fromField='sphere1Loc' fromNode='ColorChangeScript' toField='translation' toNode='Sphere1'/>
+    <ROUTE fromField='textTime' fromNode='ColorChangeScript' toField='string' toNode='animTextMessage'/>
+
+  </Scene>
+</X3D>

@@ -12,7 +12,7 @@ import android.util.Log;
 import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRBitmapTexture;
+import org.gearvrf.GVRBitmapImage;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
@@ -22,6 +22,7 @@ import org.gearvrf.GVRRenderPass;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.io.TestSendEvents;
 import org.gearvrf.scene_objects.GVRCylinderSceneObject;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
@@ -89,7 +90,7 @@ public class MiscTests {
         try {
             for (int testRun = 0; testRun < 2000; ++testRun) {
                 GVRTexture t = new GVRTexture(ctx);
-                GVRBitmapTexture bmap = new GVRBitmapTexture(ctx, gearvr_logo);
+                GVRBitmapImage bmap = new GVRBitmapImage(ctx, gearvr_logo);
                 t.setImage(bmap);
                 final GVRSceneObject so1 = new GVRSceneObject(ctx, 3, 2, t);
                 so1.getTransform().setPosition(0, 0, -3);
@@ -147,7 +148,7 @@ public class MiscTests {
                 if (createBitmap) {
                     Bitmap bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
                     texture = new GVRTexture(gvrContext);
-                    texture.setImage(new GVRBitmapTexture(gvrContext, bitmap));
+                    texture.setImage(new GVRBitmapImage(gvrContext, bitmap));
                 } else {
                     texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, "StencilTests/GearVR.jpg"));
                 }
@@ -185,7 +186,7 @@ public class MiscTests {
         final GVRCylinderSceneObject so = new GVRCylinderSceneObject(ctx);
         final GVRMesh mesh = so.getRenderData().getMesh();
 
-        mWaiter.assertTrue(0 < mesh.getIndices().length);
+        mWaiter.assertTrue(0 < mesh.getIndexBuffer().getIndexCount());
 
         float[] asArray = mesh.getVertices();
         mWaiter.assertTrue(0 < asArray.length);
@@ -227,6 +228,14 @@ public class MiscTests {
             final float[] bound = new float[4];
             final float radius = so.getRenderData().getMesh().getVertexBuffer().getSphereBound(bound);
             mWaiter.assertTrue(0 != radius);
+        }
+    }
+
+    @Test
+    public void testSendEvents() {
+        final boolean result = new TestSendEvents().test1();
+        if (!result) {
+            throw new AssertionError("test1() returned false");
         }
     }
 

@@ -9,29 +9,26 @@ import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRAssetLoader;
-import org.gearvrf.GVRCompressedTexture;
+import org.gearvrf.GVRCompressedImage;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRImage;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRTextureParameters;
-import org.gearvrf.GVRTransform;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
-import org.gearvrf.GVRPhongShader;
 
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 
 import org.joml.Vector3f;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
@@ -49,15 +46,17 @@ public class AssetTextureTests
     private AssetEventHandler mHandler;
 
     @Rule
-    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
+    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class);
+
+    @After
+    public void tearDown()
     {
-        protected void afterActivityFinished() {
-            GVRScene scene = mTestUtils.getMainScene();
-            if (scene != null) {
-                scene.clear();
-            }
+        GVRScene scene = mTestUtils.getMainScene();
+        if (scene != null)
+        {
+            scene.clear();
         }
-    };
+    }
 
     @Before
     public void setUp() throws TimeoutException
@@ -150,63 +149,10 @@ public class AssetTextureTests
     @Test
     public void NormalDiffuseSpecularLightmap() throws TimeoutException
     {
-        final GVRContext ctx = mTestUtils.getGvrContext();
-
-        GVRDirectLight light = new GVRDirectLight(ctx);
-        GVRSceneObject lightObj = new GVRSceneObject(ctx);
-
-        lightObj.attachComponent(light);
-        mTestUtils.getMainScene().addSceneObject(lightObj);
         mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/lightmap/normal_diffuse_specular_lightmap.fbx", "testNormalDiffuseSpecularLightmap",
                 0.006f, true, new Vector3f( 0.05f, -0.05f, -4.5f));
     }
 
-    @Test
-    public void testNormalDiffuseSpecularLightmapUnlit() throws TimeoutException
-    {
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/lightmap/normal_diffuse_specular_lightmap.fbx", "testNormalDiffuseSpecularLightmapUnlit",
-                0.006f, true, new Vector3f( 0.05f, -0.05f, -4.5f));
-    }
-
-    @Test
-    public void testNormalLightmap() throws TimeoutException
-    {
-        final GVRContext ctx = mTestUtils.getGvrContext();
-
-        GVRDirectLight light = new GVRDirectLight(ctx);
-        GVRSceneObject lightObj = new GVRSceneObject(ctx);
-
-        lightObj.attachComponent(light);
-        mTestUtils.getMainScene().addSceneObject(lightObj);
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/lightmap/normal_lightmap.fbx", "testNormalLightmap",
-                0.006f, true, new Vector3f( 0.05f, -0.05f, -4.5f));
-    }
-
-    @Test
-    public void testNormalLightmapUnlit() throws TimeoutException
-    {
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/lightmap/normal_lightmap.fbx", "testNormalLightmapUnlit",
-                0.006f, true, new Vector3f( 0.05f, -0.05f, -4.5f));
-    }
-
-    @Test
-    public void testSpecularLightmap() throws TimeoutException
-    {
-        final GVRContext ctx = mTestUtils.getGvrContext();
-
-        GVRDirectLight light = new GVRDirectLight(ctx);
-        GVRSceneObject lightObj = new GVRSceneObject(ctx);
-
-        lightObj.attachComponent(light);
-        mTestUtils.getMainScene().addSceneObject(lightObj);
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/lightmap/specular_lightmap.fbx", "testSpecularLightmap", 1, true, null);
-    }
-
-    @Test
-    public void testSpecularLightmapUnlit() throws TimeoutException
-    {
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/lightmap/specular_lightmap.fbx", "testSpecularLightmapUnlit", 1, true, null);
-    }
 
     @Test
     public void testDownloadTextureCache() throws MalformedURLException {
@@ -239,7 +185,7 @@ public class AssetTextureTests
             }
         };
         gvr.getAssetLoader().loadTexture(resource, callback, gvr.getAssetLoader().getDefaultTextureParameters(),
-                                         GVRAssetLoader.DEFAULT_PRIORITY, GVRCompressedTexture.BALANCED);
+                                         GVRAssetLoader.DEFAULT_PRIORITY, GVRCompressedImage.BALANCED);
         mTestUtils.waitForAssetLoad();
     }
 }

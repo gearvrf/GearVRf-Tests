@@ -7,6 +7,7 @@ import android.view.Gravity;
 import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRImage;
@@ -24,6 +25,7 @@ import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 import org.gearvrf.utility.Log;
 import org.joml.Vector3f;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -44,9 +46,17 @@ public class TextureTests
     private boolean mDoCompare = true;
 
     @Rule
-    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class)
+    public ActivityTestRule<GVRTestableActivity> ActivityRule = new ActivityTestRule<GVRTestableActivity>(GVRTestableActivity.class);
+
+    @After
+    public void tearDown()
     {
-    };
+        GVRScene scene = mTestUtils.getMainScene();
+        if (scene != null)
+        {
+            scene.clear();
+        }
+    }
 
     @Before
     public void setUp() throws TimeoutException
@@ -82,39 +92,41 @@ public class TextureTests
         mesh.setFloatArray("a_texcoord1", texcoords);
     }
 
-    @Test
-    public void testAlphaToCoverage() throws TimeoutException
+    private GVRSceneObject makeObject(GVRContext ctx, float w, float h)
     {
-        GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRTextViewSceneObject t = new GVRTextViewSceneObject(ctx, 2, 2, "very very long test text");
-        GVRRenderData rd = t.getRenderData();
-        GVRMaterial m = rd.getMaterial();
+        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
+        GVRSceneObject sceneObj = new GVRSceneObject(ctx, w, h, "float3 a_position float2 a_texcoord", mtl);
+        GVRRenderData rd = sceneObj.getRenderData();
 
-        t.setTextSize(16);
-        t.setGravity(Gravity.TOP | Gravity.LEFT);
-        t.getTransform().setPosition(0, 1, -2);
-        t.setName("textview");
-        m.setColor(1, 0, 0);
+        mtl.setDiffuseColor(0, 1, 0, 0.5f);
         rd.setAlphaBlend(true);
         rd.setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
         rd.setCullFace(GVRRenderPass.GVRCullFaceEnum.None);
         rd.setDepthTest(false);
         rd.setAlphaToCoverage(true);
+        return sceneObj;
+    }
 
-        GVRSceneObject polygon = new GVRSceneObject(ctx, 4, 4);
-        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
+    @Test
+    public void testAlphaToCoverage() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRCameraRig rig = ctx.getMainScene().getMainCameraRig();
+        GVRSceneObject middle = makeObject(ctx, 3, 3);
+        GVRSceneObject bottom = makeObject(ctx, 2, 2);
+        GVRSceneObject top = makeObject(ctx, 2, 2);
 
-        rd = polygon.getRenderData();
-        polygon.setName("polygon");
-        polygon.getTransform().setPosition(0, 1, -3);
-        mtl.setDiffuseColor(0, 1, 0, 0.5f);
-        rd.setMaterial(mtl);
-        rd.setAlphaBlend(true);
-        rd.setAlphaToCoverage(true);
-        rd.setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
-        rd.setCullFace(GVRRenderPass.GVRCullFaceEnum.None);
-        mRoot.addChildObject(t);
-        mRoot.addChildObject(polygon);
+        rig.getLeftCamera().setBackgroundColor(1, 1, 1, 1);
+        rig.getRightCamera().setBackgroundColor(1, 1, 1, 1);
+        top.getTransform().setPosition(0.5f, 0, -2);
+        top.getRenderData().getMaterial().setDiffuseColor(0, 1, 0, 0.5f);
+        middle.getTransform().setPosition(0, 0, -2.2f);
+        middle.getRenderData().getMaterial().setDiffuseColor(0, 0, 1, 0.5f);
+        bottom.getTransform().setPosition(-1, 0, -3);
+        bottom.getRenderData().getMaterial().setDiffuseColor(1, 0, 0, 0.5f);
+        mRoot.addChildObject(top);
+        mRoot.addChildObject(middle);
+        mRoot.addChildObject(bottom);
         mTestUtils.waitForXFrames(3);
         mTestUtils.screenShot(getClass().getSimpleName(), "testAlphaToCoverage", mWaiter, mDoCompare);
     }
@@ -596,6 +608,43 @@ public class TextureTests
         scene.addSceneObject(groundObject);
         mTestUtils.waitForXFrames(3);
         mTestUtils.screenShot(getClass().getSimpleName(), "testLoadTextureFromResource", mWaiter, mDoCompare);
+    }
+
+
+    @Test
+    public void testSwitchTextures() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        String[] texFiles = new String[] { "NumberOne.png", "NumberTwo.png" };
+        GVRTexture[] textures = new GVRTexture[texFiles.length];
+        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, texFiles.length);
+        int i = 0;
+        ctx.getEventReceiver().addListener(texHandler);
+        try
+        {
+            for (String texFile : texFiles)
+            {
+                GVRAndroidResource r = new GVRAndroidResource(ctx, texFile);
+                textures[i++] = ctx.getAssetLoader().loadTexture(r);
+            }
+        }
+        catch (IOException ex)
+        {
+            mWaiter.fail(ex);
+        }
+        mTestUtils.waitForAssetLoad();
+        GVRTexture tex = new GVRTexture(ctx);
+        GVRSceneObject quad = new GVRSceneObject(ctx, 2, 2, tex);
+        quad.getTransform().setPositionZ(-4.0f);
+        scene.addSceneObject(quad);
+        for (i = 0; i < 1000; ++i)
+        {
+            GVRTexture t = textures[i % texFiles.length];
+            GVRImage image = t.getImage();
+            tex.setImage(image);
+            mTestUtils.waitForXFrames(1);
+        }
     }
 
     public void checkResults(int actual, int truth)
