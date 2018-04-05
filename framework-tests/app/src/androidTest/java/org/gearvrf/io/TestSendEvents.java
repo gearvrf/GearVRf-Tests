@@ -5,6 +5,7 @@ import android.os.Looper;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
+import org.gearvrf.GVRActivity;
 import org.gearvrf.io.GVRCursorController;
 
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public class TestSendEvents {
         Arrays.fill(recorder, 0);
 
         // set up the test environment
-        final Activity dummyActivity = new Activity() {
+        final GVRActivity dummyActivity = new GVRActivity() {
             @Override
             public boolean dispatchKeyEvent(KeyEvent event) {
                 return true;
@@ -46,7 +47,7 @@ public class TestSendEvents {
         };
         Looper.myLooper().quit();
 
-        final GVRGearCursorController.SendEvents sendEvents = new GVRGearCursorController.SendEvents(dummyActivity);
+        final GVRGearCursorController.SendEvents sendEvents = new GVRGearCursorController.SendEvents(dummyActivity.getGVRContext());
 
         final Runnable producer = new Runnable() {
             @Override

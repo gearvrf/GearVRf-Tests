@@ -82,6 +82,11 @@ dependencies {
     } else {
         compile(name:'framework-debug', ext:'aar')
     }
+    if (findProject(':backend_monoscopic')) {
+        compile project (':backend_monoscopic')
+    } else {
+        compile(name:'backend_monoscopic-debug', ext:'aar')
+    }
     if (findProject(':backend_daydream')) {
         compile project (':backend_daydream')
     } else {
