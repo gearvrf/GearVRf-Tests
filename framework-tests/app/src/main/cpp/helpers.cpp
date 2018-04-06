@@ -1,4 +1,4 @@
-#include "engine/renderer/renderer.h"
+#include <jni.h>
 
 extern "C" {
 
