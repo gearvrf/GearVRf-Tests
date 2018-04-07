@@ -142,12 +142,9 @@ public class TextureTests
         GVRDirectLight light = new GVRDirectLight(ctx);
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
 
-        if (!GVRShader.isVulkanInstance())
-        {
-            light.setSpecularIntensity(0.5f, 0.5f, 0.5f, 1.0f);
-            lightObj.attachComponent(light);
-            scene.addSceneObject(lightObj);
-        }
+        light.setSpecularIntensity(0.5f, 0.5f, 0.5f, 1.0f);
+        lightObj.attachComponent(light);
+        scene.addSceneObject(lightObj);
         TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
 
         ctx.getEventReceiver().addListener(texHandler);
@@ -219,10 +216,7 @@ public class TextureTests
         layeredMtl.setInt("diffuseTexture1_blendop", 0);
         layeredMtl.setTexCoord("diffuseTexture", "a_texcoord", "diffuse_coord");
         layeredMtl.setTexCoord("diffuseTexture1", "a_texcoord", "diffuse_coord1");
-        if (!GVRShader.isVulkanInstance())
-        {
-            scene.getMainCameraRig().getOwnerObject().attachComponent(light);
-        }
+        scene.getMainCameraRig().getOwnerObject().attachComponent(light);
         model.getTransform().setPositionZ(-2.0f);
         mTestUtils.waitForAssetLoad();
         scene.addSceneObject(model);
@@ -299,11 +293,8 @@ public class TextureTests
         mtl.setTexture("diffuseTexture", tex1);
         model.getTransform().setPositionZ(-2.0f);
 
-        if (!GVRShader.isVulkanInstance())
-        {
-            GVRSceneObject rig = scene.getMainCameraRig().getOwnerObject();
-            rig.attachComponent(light);
-        }
+        GVRSceneObject rig = scene.getMainCameraRig().getOwnerObject();
+        rig.attachComponent(light);
         mTestUtils.waitForAssetLoad();
         scene.addSceneObject(model);
         mTestUtils.waitForXFrames(3);
@@ -360,10 +351,7 @@ public class TextureTests
         mtl.setSpecularExponent(4.0f);
         mtl.setTexture("specularTexture", tex2);
         mtl.setTexCoord("specularTexture", "a_texcoord", "specular_coord");
-        if (!GVRShader.isVulkanInstance())
-        {
-            scene.getMainCameraRig().getOwnerObject().attachComponent(light);
-        }
+        scene.getMainCameraRig().getOwnerObject().attachComponent(light);
         model.getTransform().setPositionZ(-2.0f);
         scene.addSceneObject(model);
         mTestUtils.waitForXFrames(3);
@@ -412,10 +400,7 @@ public class TextureTests
         layeredMtl.setInt("specularTexture1_blendop", 0);
         layeredMtl.setTexCoord("specularTexture", "a_texcoord", "specular_coord");
         layeredMtl.setTexCoord("specularTexture1", "a_texcoord", "specular_coord1");
-        if (!GVRShader.isVulkanInstance())
-        {
-            scene.getMainCameraRig().getOwnerObject().attachComponent(light);
-        }
+        scene.getMainCameraRig().getOwnerObject().attachComponent(light);
         model.getTransform().setPositionZ(-2.0f);
         mTestUtils.waitForAssetLoad();
         scene.addSceneObject(model);
@@ -479,10 +464,7 @@ public class TextureTests
         mtl.setTexture("specularTexture", tex2);
         mtl.setTexCoord("diffuseTexture", "a_texcoord1", "diffuse_coord");
         mtl.setTexCoord("specularTexture", "a_texcoord", "specular_coord");
-        if (!GVRShader.isVulkanInstance())
-        {
-            scene.getMainCameraRig().getOwnerObject().attachComponent(light);
-        }
+        scene.getMainCameraRig().getOwnerObject().attachComponent(light);
         mTestUtils.waitForAssetLoad();
         scene.addSceneObject(model);
         mTestUtils.waitForXFrames(3);
@@ -550,10 +532,7 @@ public class TextureTests
         mtl.setTexture("normalTexture", tex2);
         tex1.setTexCoord("a_texcoord1", "diffuse_coord");
         tex2.setTexCoord("a_texcoord", "normal_coord");
-        if (!GVRShader.isVulkanInstance())
-        {
-            scene.getMainCameraRig().getOwnerObject().attachComponent(light);
-        }
+        scene.getMainCameraRig().getOwnerObject().attachComponent(light);
         model.getTransform().setPositionZ(-2.0f);
         mTestUtils.waitForAssetLoad();
         scene.addSceneObject(model);

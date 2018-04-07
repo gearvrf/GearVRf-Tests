@@ -27,6 +27,7 @@ import java.util.concurrent.TimeoutException;
 public class ShadowTests
 {
     private static final String TAG = ShadowTests.class.getSimpleName();
+    private static final int WAIT_FRAMES = 8;
     private GVRTestUtils mTestUtils;
     private Waiter mWaiter;
     private GVRSceneObject mRoot;
@@ -106,7 +107,7 @@ public class ShadowTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        mTestUtils.waitForXFrames(2);
+        mTestUtils.waitForXFrames(WAIT_FRAMES);
         mTestUtils.screenShot(getClass().getSimpleName(), "spotLightAtCornerCastsShadow", mWaiter, mDoCompare);
     }
 
@@ -125,7 +126,7 @@ public class ShadowTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        mTestUtils.waitForXFrames(2);
+        mTestUtils.waitForXFrames(WAIT_FRAMES);
         mTestUtils.screenShot(getClass().getSimpleName(), "spotLightAtFrontCastsShadow", mWaiter, mDoCompare);
     }
 
@@ -145,7 +146,7 @@ public class ShadowTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        mTestUtils.waitForXFrames(2);
+        mTestUtils.waitForXFrames(WAIT_FRAMES);
         mTestUtils.screenShot(getClass().getSimpleName(), "spotLightAtSideCastsShadow", mWaiter, mDoCompare);
     }
 
@@ -165,7 +166,7 @@ public class ShadowTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        mTestUtils.waitForXFrames(2);
+        mTestUtils.waitForXFrames(WAIT_FRAMES);
         mTestUtils.screenShot(getClass().getSimpleName(), "spotLightAtTopCastsShadow", mWaiter, mDoCompare);
     }
 
@@ -183,7 +184,7 @@ public class ShadowTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        mTestUtils.waitForXFrames(2);
+        mTestUtils.waitForXFrames(WAIT_FRAMES);
         mTestUtils.screenShot(getClass().getSimpleName(), "directLightAtCornerCastsShadow", mWaiter, mDoCompare);
     }
 
@@ -200,7 +201,7 @@ public class ShadowTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        mTestUtils.waitForXFrames(10);
+        mTestUtils.waitForXFrames(WAIT_FRAMES);
         mTestUtils.screenShot(getClass().getSimpleName(), "directLightAtFrontCastsShadow", mWaiter, mDoCompare);
     }
 
@@ -216,7 +217,7 @@ public class ShadowTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        mTestUtils.waitForXFrames(2);
+        mTestUtils.waitForXFrames(WAIT_FRAMES);
         mTestUtils.screenShot(getClass().getSimpleName(), "directLightAtSideCastsShadow", mWaiter, mDoCompare);
     }
 
@@ -232,7 +233,7 @@ public class ShadowTests
         mRoot.addChildObject(lightObj);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        mTestUtils.waitForXFrames(2);
+        mTestUtils.waitForXFrames(WAIT_FRAMES);
         mTestUtils.screenShot(getClass().getSimpleName(), "directLightAtTopCastsShadow", mWaiter, mDoCompare);
     }
 
@@ -256,7 +257,7 @@ public class ShadowTests
         mRoot.addChildObject(lightObj2);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        mTestUtils.waitForXFrames(2);
+        mTestUtils.waitForXFrames(WAIT_FRAMES);
         mTestUtils.screenShot(getClass().getSimpleName(), "twoLightsCastShadows", mWaiter, mDoCompare);
     }
 
@@ -289,7 +290,7 @@ public class ShadowTests
         mRoot.addChildObject(lightObj3);
         mRoot.addChildObject(mCube);
         mRoot.addChildObject(mSphere);
-        mTestUtils.waitForXFrames(2);
+        mTestUtils.waitForXFrames(WAIT_FRAMES);
         mTestUtils.screenShot(getClass().getSimpleName(), "threeLightsCastShadows", mWaiter, mDoCompare);
     }
 
@@ -315,7 +316,6 @@ public class ShadowTests
         floormtl.setDiffuseColor(0.7f, 0.4f, 0.7f, 1.0f);
 
         floor.getRenderData().setMaterial(floormtl);
-        floor.getRenderData().setCastShadows(false);
         floor.getTransform().rotateByAxis(-90, 1, 0, 0);
         floor.getTransform().setPosition(0, -2.0f, -2.0f);
         floor.getRenderData().setCastShadows(false);
