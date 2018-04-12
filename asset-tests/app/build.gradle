@@ -43,6 +43,11 @@ android {
             output.outputFileName = rootProject.name + ".apk"
         }
     }
+
+    packagingOptions {
+        pickFirst 'lib/*/libc++_shared.so'
+        pickFirst 'lib/*/libgnustl_shared.so'
+    }
 }
 
 task copyOculusSignature(type: Copy) {
