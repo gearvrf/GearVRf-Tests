@@ -24,7 +24,7 @@
 			<Material diffuseColor="0 1 1"/>
 			<ImageTexture url="deedee1.jpg" repeatS="TRUE" repeatT="TRUE"/>
             <MovieTexture DEF='X3dMovieNode' description='click to start movie'
-            	url=' "CanadaWildlife2017.mp4" "CalTrain_1min_25mb.mp4" ' loop="TRUE"/>
+            	url=' "CalTrain_1min_25mb.mp4" "Saber_the_dog.mp4" ' loop="TRUE"/>
           </Appearance>
         </Shape>
       </Transform>
