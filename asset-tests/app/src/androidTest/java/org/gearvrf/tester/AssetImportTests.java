@@ -585,7 +585,19 @@ public class AssetImportTests
         catch (IOException ex)
         {
             mWaiter.assertTrue(ex.getMessage().contains("FileNotFoundException"));
-            return;
+        }
+        catch (Exception ex)
+        {
+            mWaiter.fail(ex);
+        }
+
+        try
+        {
+            mTestUtils.getGvrContext().getAssetLoader().loadModel("http://blah.blah/missingmodel.x3d");
+        }
+        catch (IOException ex)
+        {
+            mWaiter.assertTrue(ex.getMessage().contains("UnknownHostException"));
         }
         catch (Exception ex)
         {

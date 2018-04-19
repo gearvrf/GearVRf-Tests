@@ -233,7 +233,7 @@ public class MiscTests {
 
     @Test
     public void testSendEvents() {
-        final boolean result = new TestSendEvents().test1();
+        final boolean result = new TestSendEvents().test1(mTestUtils.getGvrContext());
         if (!result) {
             throw new AssertionError("test1() returned false");
         }

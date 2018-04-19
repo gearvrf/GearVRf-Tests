@@ -5,6 +5,7 @@ import android.os.Looper;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
+import org.gearvrf.GVRContext;
 import org.gearvrf.io.GVRCursorController;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class TestSendEvents {
      * result by checking all events were consumed in the order they
      * were produced.
      */
-    public boolean test1() {
+    public boolean test1(final GVRContext context) {
         // total number of events produced controlled by these two
         final int outerLoops = 100;
         final int innerLoops = 10;
@@ -46,7 +47,7 @@ public class TestSendEvents {
         };
         Looper.myLooper().quit();
 
-        final SendEvents sendEvents = new SendEvents(dummyActivity);
+        final GVRGearCursorController.SendEvents sendEvents = new GVRGearCursorController.SendEvents(context);
 
         final Runnable producer = new Runnable() {
             @Override

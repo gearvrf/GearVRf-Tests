@@ -133,10 +133,7 @@ class AssetEventHandler implements IAssetEvents
         ctx.getEventReceiver().addListener(this);
         try
         {
-            EnumSet<GVRImportSettings> settings = GVRShader.isVulkanInstance() ?
-                    GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(GVRImportSettings.NO_LIGHTING)) :
-                    GVRImportSettings.getRecommendedSettings();
-            model = ctx.getAssetLoader().loadModel(modelfile, settings, true, scene);
+            model = ctx.getAssetLoader().loadModel(modelfile, scene);
         }
         catch (IOException ex)
         {
