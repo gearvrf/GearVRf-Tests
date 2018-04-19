@@ -98,6 +98,12 @@ dependencies {
         compile(name:'backend_oculus-debug', ext:'aar')
     }
 
+    if (findProject(':backend_monoscopic')) {
+        compile project (':backend_monoscopic')
+    } else {
+        compile(name:'backend_monoscopic-debug', ext:'aar')
+    }
+
     androidTestCompile 'com.android.support:support-annotations:23.+'
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'

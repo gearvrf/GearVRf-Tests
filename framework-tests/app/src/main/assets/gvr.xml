@@ -48,8 +48,8 @@
             depthFormat="DEPTH_24_STENCIL_8"
             fov-y="90.0"
             multiSamples="1"
-            resolutionWidth="DEFAULT"
-            resolutionHeight="DEFAULT"
+            resolutionWidth="1024"
+            resolutionHeight="1024"
             resolveDepth="false" />
 
         <head-model-parms
