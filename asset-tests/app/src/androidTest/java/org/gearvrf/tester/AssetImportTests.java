@@ -528,6 +528,24 @@ public class AssetImportTests
     }
 
     @Test
+    public void jassimpBoxGLTF() throws TimeoutException
+    {
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/gltf/BoxTextured-glTF/BoxTextured.gltf", 1, 0, "jassimpBoxGLTF");
+    }
+
+    @Test
+    public void jassimpEngineBinaryGLTF() throws TimeoutException
+    {
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/gltf/2CylinderEngine-glTF-Binary/2CylinderEngine.glb", 0, 0, "jassimpEngineBinaryGLTF");
+    }
+
+    @Test
+    public void jassimpBoxEmbeddedGLTF() throws TimeoutException
+    {
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/gltf/BoxTextured-glTF-Embedded/BoxTextured.gltf", 2, 0, "jassimpBoxEmbeddedGLTF");
+    }
+
+    @Test
     public void jassimpLoadError() throws TimeoutException
     {
         try
