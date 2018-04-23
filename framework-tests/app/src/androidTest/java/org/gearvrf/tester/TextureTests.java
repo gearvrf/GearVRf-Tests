@@ -379,6 +379,27 @@ public class TextureTests
     }
 
     @Test
+    public void testRemoveTexture() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Texture.ID);
+        GVRSceneObject model = new GVRCubeSceneObject(ctx, true, mtl);
+        GVRTexture tex2 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.specularring));
+
+        mtl.setDiffuseColor(0.7f, 0, 0.7f, 1);
+        mtl.setSpecularColor(1, 1, 1, 1);
+        mtl.setSpecularExponent(4.0f);
+        mtl.setTexture("diffuseTexture", tex2);
+        model.getTransform().setPositionZ(-2.0f);
+        scene.addSceneObject(model);
+        mTestUtils.waitForXFrames(3);
+        mtl.setTexture("diffuseTexture", null);
+        mTestUtils.waitForXFrames(3);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testRemoveTexture", mWaiter, mDoCompare);
+    }
+
+    @Test
     public void testLayeredSpecularTexture() throws TimeoutException
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
