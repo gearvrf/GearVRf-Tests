@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.0//EN" "http://www.web3d.org/specifications/x3d-3.0.dtd">
+<X3D profile='Interactive' version='3.0' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.0.xsd'>
+  <Scene>
+
+    <NavigationInfo headlight='false'/>
+    <PointLight DEF='PL1' location='0 -2.5 5'/>
+    <Viewpoint position='0 1.5 6'/>
+
+    <Transform translation='0 0 0'>
+      <PlaneSensor DEF='PLANE_SENSOR' minPosition='0 1' maxPosition='0 2'/>
+      <Transform DEF='BOX'  translation='-1 1.5 0'>
+        <Shape>
+          <Appearance>
+            <Material emissiveColor='1 0 0' diffuseColor='0 0 0'/>
+          </Appearance>
+          <Box size='.5 1 1'/>
+        </Shape>
+      </Transform>
+    </Transform>
+    
+      <ROUTE fromField='translation_changed' fromNode='PLANE_SENSOR' toField='translation' toNode='BOX'/>
+
+
+    <Transform translation='0 0 0'>
+      <PlaneSensor DEF='Green_PLANE_SENSOR' minPosition='0 1' maxPosition='0 2'/>
+      <Transform DEF='Green_BOX'  translation='0 1.5 0'>
+        <Shape>
+          <Appearance>
+            <Material emissiveColor='0 1 0' diffuseColor='0 0 0'/>
+          </Appearance>
+          <Box size='.5 1 1'/>
+        </Shape>
+      </Transform>
+    </Transform>
+    
+      <ROUTE fromField='translation_changed' fromNode='Green_PLANE_SENSOR' toField='translation' toNode='Green_BOX'/>
+
+    <Transform translation='0 0 0'>
+      <PlaneSensor DEF='PLANE_SENSOR_blue' minPosition='0 1' maxPosition='0 2'/>
+      <Transform DEF='Blue_BOX'  translation='1 1.5 0'>
+        <Shape>
+          <Appearance>
+            <Material emissiveColor='.1 .1 1' diffuseColor='0 0 0'/>
+          </Appearance>
+          <Box size='.5 1 1'/>
+        </Shape>
+      </Transform>
+    </Transform>
+    
+      <ROUTE fromField='translation_changed' fromNode='PLANE_SENSOR_blue' toField='translation' toNode='Blue_BOX'/>
+
+
+
+            <Script DEF='ControlScript'>
+              <field accessType='inputOnly' name='translation' type='SFVec2f'/>
+              <field accessType='inputOutput' name='lightColor' type='SFColor'/>
+    
+              <![CDATA[
+              ecmascript:
+              function translation (nonValue, valueRed)
+              {
+                    red = valueRed - 1;
+                    lightColor.setValue( red, lightColor.getGreen(), lightColor.getBlue() );
+             }
+    
+        	]]>
+            </Script>
+        
+    	    <ROUTE fromField='translation_changed' fromNode='PLANE_SENSOR' toField='translation' toNode='ControlScript'/>
+            <ROUTE fromField='color' fromNode='PL1' toField='lightColor' toNode='ControlScript'/>
+            <ROUTE fromField='lightColor' fromNode='ControlScript' toField='color' toNode='PL1'/>
+
+
+            <Script DEF='GreenControlScript'>
+              <field accessType='inputOnly' name='greenControlTranslation' type='SFVec2f'/>
+              <field accessType='inputOutput' name='lightGreen' type='SFColor'/>
+    
+              <![CDATA[
+              ecmascript:
+              function greenControlTranslation (nonValue, valueGreen)
+              {
+                    green = valueGreen - 1;
+                    lightGreen.setValue( lightGreen.getRed(), green, lightGreen.getBlue() );
+             }
+    
+        	]]>
+            </Script>
+        
+    	    <ROUTE fromField='translation_changed' fromNode='Green_PLANE_SENSOR' toField='greenControlTranslation' toNode='GreenControlScript'/>
+            <ROUTE fromField='color' fromNode='PL1' toField='lightGreen' toNode='GreenControlScript'/>
+            <ROUTE fromField='lightGreen' fromNode='GreenControlScript' toField='color' toNode='PL1'/>
+
+
+            <Script DEF='BlueControlScript'>
+              <field accessType='inputOnly' name='blueControlTranslation' type='SFVec2f'/>
+              <field accessType='inputOutput' name='lightBlue' type='SFColor'/>
+    
+              <![CDATA[
+              ecmascript:
+              function blueControlTranslation (nonValue, valueBlue)
+              {
+                    blue = valueBlue - 1;
+                    lightBlue.setValue( lightBlue.getRed(), lightBlue.getGreen(), blue );
+             }
+    
+        	]]>
+            </Script>
+        
+    	    <ROUTE fromField='translation_changed' fromNode='PLANE_SENSOR_blue' toField='blueControlTranslation' toNode='BlueControlScript'/>
+            <ROUTE fromField='color' fromNode='PL1' toField='lightBlue' toNode='BlueControlScript'/>
+            <ROUTE fromField='lightBlue' fromNode='BlueControlScript' toField='color' toNode='PL1'/>
+
+
+          <Transform translation='0 -4 -2'>
+            <Shape>
+              <Appearance>
+                <Material diffuseColor='1 1 1'/>
+              </Appearance>
+              <Box size='5 1 1'/>
+            </Shape>
+          </Transform>
+
+          <Transform translation='-2 -2 -2'>
+            <Shape>
+              <Appearance>
+                <Material diffuseColor='1 1 0'/>
+              </Appearance>
+              <Cone/>
+            </Shape>
+          </Transform>
+
+          <Transform translation='0 -2 -2'>
+            <Shape>
+              <Appearance>
+                <Material diffuseColor='1 0 1'/>
+              </Appearance>
+              <Cylinder/>
+            </Shape>
+          </Transform>
+
+          <Transform translation='2 -2 -2' size='1.5 1.5 1.5'>
+            <Shape>
+              <Appearance>
+                <Material diffuseColor='0 1 1'/>
+              </Appearance>
+              <Sphere/>
+            </Shape>
+          </Transform>
+
+  </Scene>
+</X3D>

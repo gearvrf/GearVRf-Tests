@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.0//EN" "http://www.web3d.org/specifications/x3d-3.0.dtd">
+<X3D profile='Interactive' version='3.0' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.0.xsd'>
+  <Scene>
+
+    <NavigationInfo headlight='false'/>
+    <!-- DirectionalLight/ -->
+    <PointLight location='0 0 5'/>
+    <Background skyColor='.6 .6 .6'/>
+
+    <Transform translation='0 0 0'>
+      <PlaneSensor DEF='hockeyStick_PLANE_SENSOR' minPosition='-3 -3' maxPosition='3 3'/>
+      <Transform DEF='hockeyStick' translation='0 -1.5 0'>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='1 1 1'/>
+    		<ImageTexture url="markerthree.png"/>
+          </Appearance>
+            <IndexedFaceSet
+                    coordIndex='0 1 2 -1    0 3 1 -1'
+                    texCoordIndex='0 1 2 -1   0 3 1 -1'
+                    normalIndex='0 0 0 -1   0 0 0 -1'
+            >
+                <Coordinate point='-1.5 -.5 0    1.5 .5 0    -1.5 .5 0    1.5 -.5 0' />
+                <TextureCoordinate point='0 0   1 .2    0 .2   1 0'/>
+                <Normal vector='0 0 1   0 0 1'/>
+            </IndexedFaceSet>
+        </Shape>
+      </Transform>
+    </Transform>
+    <ROUTE fromField='translation_changed' fromNode='hockeyStick_PLANE_SENSOR' toField='translation' toNode='hockeyStick'/>
+
+          <Transform DEF='puck' translation='0 -1 -5'>
+            <Shape>
+              <Appearance>
+                <Material diffuseColor='.1 .1 .1' specularColor='1 1 1'/>
+              </Appearance>
+              <Cylinder height='.5' radius='1'/>
+            </Shape>
+          </Transform>
+
+
+            <transform translation="3 2 -5">
+            	<TouchSensor DEF='StartButtonTouchSensor'/>
+    	        <shape>
+    				<Appearance>
+    					<Material diffuseColor="1 1 1"/>
+    					<ImageTexture url="start.png"/>
+    				</Appearance>
+    				<IndexedFaceSet
+    					coordIndex='0 1 2 -1    0 3 1 -1'
+    					texCoordIndex='0 1 2 -1   0 3 1 -1'
+    					normalIndex='0 0 0 -1   0 0 0 -1'
+    				>
+    					<Coordinate point='-2 -1 0    2 1 0    -2 1 0    2 -1 0' />
+    					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+    					<Normal vector='0 0 1'/>
+    				</IndexedFaceSet>
+    	        </shape>
+            </transform>
+
+
+            <Script DEF='StartButtonScript'>
+              <field accessType='inputOnly' name='beginGame' type='SFBool'/>
+
+              <![CDATA[
+              ecmascript:
+	  	        function initialize()
+	            {
+	            	gameOn = false;
+	            	xInc = 0;
+	            	yInc = 0;
+	            }
+              function beginGame (value)
+              {
+                    if (value) {
+                        xInc = Math.random()/20.0 - .025;
+                        yInc = Math.random()/20.0 - .025;
+                        gameOn = true;
+                    }
+              }
+        	]]>
+            </Script>
+    	    <ROUTE fromField='isActive' fromNode='StartButtonTouchSensor' toField='beginGame' toNode='StartButtonScript'/>
+
+        <Transform translation="-3 2 -5">
+	        <Shape>
+	          <Text DEF='ScoreText' string='"  000"'>
+	            <FontStyle DEF='fs1' family='Air Americana.ttf' justify='MIDDLE' size='5.0'/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="1 1 0"/>
+	          </Appearance>
+	        </Shape>
+	    </Transform>
+
+
+	      <TimeSensor DEF='AnimationClock' cycleInterval='10' loop='true'/>
+        <Script DEF='PuckScript'>
+	          <field accessType='inputOnly' name='value_changed' type='SFFloat'/>
+	          <field accessType='inputOutput' name='puckLoc' type='SFVec3f'/>
+	          <field accessType='inputOnly' name='hockeyStickLoc' type='SFVec3f'/>
+               <field accessType='outputOnly' name='scoreAsText' type='MFString'/>
+	         <![CDATA[
+                ecmascript:
+	  	        function initialize()
+	            {
+	            	score = 0;
+	            }
+                function value_changed (eventValue) {
+                  x = puckLoc.getX();
+                  y = puckLoc.getY();
+                  z = puckLoc.getZ();
+	        	  if ( gameOn ) {
+                      z += .02;
+                      x += xInc;
+                      y += yInc;
+                      if ( z > 0 ) {
+                          gameOn = false;
+                          if ( (x > (hockeyStickLoc.getX() - 1.5)) &&
+                             (x < (hockeyStickLoc.getX() + 1.5))  &&
+                             (y > (hockeyStickLoc.getY() - .5))  &&
+                             (y < (hockeyStickLoc.getY() + .5))
+                           )
+                          {
+                                score++;
+                          }
+                          x = 0;
+                          y = 0;
+                          z = -5;
+                      }
+                      if ( (x < -3) || (x > 3) ) xInc = -xInc;
+                      if ( (y < -3) || (y > 3) ) yInc = -yInc;
+
+	        	  }
+                  puckLoc.setValue(x, y, z);
+                  scoreAsText = new MFString(" " + score);
+
+                }
+	  	    ]]>
+	     </Script>
+
+	      <ROUTE fromField='fraction_changed' fromNode='AnimationClock' toField='value_changed' toNode='PuckScript'/>
+
+	      <ROUTE fromField='translation' fromNode='puck' toField='puckLoc' toNode='PuckScript'/>
+	      <ROUTE fromField='puckLoc' fromNode='PuckScript' toField='translation' toNode='puck'/>
+
+	      <ROUTE fromField='translation' fromNode='hockeyStick' toField='hockeyStickLoc' toNode='PuckScript'/>
+          <ROUTE fromField='scoreAsText' fromNode='PuckScript' toField='string' toNode='ScoreText'/>
+
+  </Scene>
+</X3D>

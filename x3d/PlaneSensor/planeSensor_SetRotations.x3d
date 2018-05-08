@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.0//EN" "http://www.web3d.org/specifications/x3d-3.0.dtd">
+<X3D profile='Interactive' version='3.0' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.0.xsd'>
+  <Scene>
+
+    <NavigationInfo headlight='false'/>
+    <DirectionalLight/>
+    <Viewpoint position='0 0 8'/>
+
+       <Transform DEF="TheSphere" translation='-3 0 -2' scale='1.5 1.5 1.5'>
+		  <Transform DEF="SphereXrot">
+			  <Transform DEF="SphereYrot">
+				  <Transform DEF="SphereZrot">
+					    <Shape>
+					      <Appearance>
+                            <Material diffuseColor='1 1 1'/>
+                            <ImageTexture url="lattitudelongitude.png"/>
+					      </Appearance>
+					      <Sphere/>
+					    </Shape>
+				  </Transform>
+			  </Transform>
+		  </Transform>
+       </Transform>
+
+    <Transform>
+      <PlaneSensor DEF='X_PLANE_SENSOR' minPosition='0 -3.14' maxPosition='0 3.14'/>
+      <Transform DEF='xControl'  translation='0 0 0'>
+        <Shape>
+          <Appearance>
+             <Material diffuseColor='1 1 1'/>
+             <ImageTexture url="X.png"/>
+          </Appearance>
+            <IndexedFaceSet
+                    coordIndex='0 1 2 -1    0 3 1 -1'
+                    texCoordIndex='0 1 2 -1   0 3 1 -1'
+                    normalIndex='0 0 0 -1   0 0 0 -1'
+            >
+                <Coordinate point='-.5 -.5 0    .5 .5 0    -.5 .5 0    .5 -.5 0' />
+                <TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+                <Normal vector='0 0 1'/>
+            </IndexedFaceSet>
+        </Shape>
+      </Transform>
+    </Transform>
+    
+      <ROUTE fromField='translation_changed' fromNode='X_PLANE_SENSOR' toField='translation' toNode='xControl'/>
+
+
+    <Transform>
+      <PlaneSensor DEF='Y_PLANE_SENSOR' minPosition='0 -3.14' maxPosition='0 3.14'/>
+      <Transform DEF='yControl'  translation='1.5 0 0'>
+        <Shape>
+          <Appearance>
+             <Material diffuseColor='1 1 1'/>
+             <ImageTexture url="Y.png"/>
+          </Appearance>
+            <IndexedFaceSet
+                    coordIndex='0 1 2 -1    0 3 1 -1'
+                    texCoordIndex='0 1 2 -1   0 3 1 -1'
+                    normalIndex='0 0 0 -1   0 0 0 -1'
+            >
+                <Coordinate point='-.5 -.5 0    .5 .5 0    -.5 .5 0    .5 -.5 0' />
+                <TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+                <Normal vector='0 0 1'/>
+            </IndexedFaceSet>
+        </Shape>
+      </Transform>
+    </Transform>
+    
+      <ROUTE fromField='translation_changed' fromNode='Y_PLANE_SENSOR' toField='translation' toNode='yControl'/>
+
+    <Transform>
+      <PlaneSensor DEF='Z_PLANE_SENSOR' minPosition='0 -3.14' maxPosition='0 3.14'/>
+      <Transform DEF='zControl'  translation='3 0 0'>
+        <Shape>
+          <Appearance>
+             <Material diffuseColor='1 1 1'/>
+             <ImageTexture url="Z.png"/>
+          </Appearance>
+            <IndexedFaceSet
+                    coordIndex='0 1 2 -1    0 3 1 -1'
+                    texCoordIndex='0 1 2 -1   0 3 1 -1'
+                    normalIndex='0 0 0 -1   0 0 0 -1'
+            >
+                <Coordinate point='-.5 -.5 0    .5 .5 0    -.5 .5 0    .5 -.5 0' />
+                <TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+                <Normal vector='0 0 1'/>
+            </IndexedFaceSet>
+        </Shape>
+      </Transform>
+    </Transform>
+    
+      <ROUTE fromField='translation_changed' fromNode='Z_PLANE_SENSOR' toField='translation' toNode='zControl'/>
+
+
+            <Script DEF='xRotationScript'>
+              <field accessType='inputOnly' name='planeSensorInputValues' type='SFVec2f'/>
+              <field accessType='inputOutput' name='xRotation' type='SFRotation'/>
+    
+              <![CDATA[
+              ecmascript:
+              function planeSensorInputValues (nonValue, xRotValue)
+              {
+                    xRotation.setValue( xRotValue, 1, 0, 0 );
+             }
+    
+        	]]>
+            </Script>
+        
+    	    <ROUTE fromField='translation_changed' fromNode='X_PLANE_SENSOR' toField='planeSensorInputValues' toNode='xRotationScript'/>
+            <ROUTE fromField='rotation' fromNode='SphereXrot' toField='xRotation' toNode='xRotationScript'/>
+            <ROUTE fromField='xRotation' fromNode='xRotationScript' toField='rotation' toNode='SphereXrot'/>
+
+
+             <Script DEF='yRotationScript'>
+               <field accessType='inputOnly' name='planeSensorInputValues' type='SFVec2f'/>
+               <field accessType='inputOutput' name='yRotation' type='SFRotation'/>
+
+               <![CDATA[
+               ecmascript:
+               function planeSensorInputValues (nonValue, yRotValue)
+               {
+                     yRotation.setValue( yRotValue, 0, 1, 0 );
+              }
+
+         	]]>
+             </Script>
+
+     	    <ROUTE fromField='translation_changed' fromNode='Y_PLANE_SENSOR' toField='planeSensorInputValues' toNode='yRotationScript'/>
+            <ROUTE fromField='rotation' fromNode='SphereYrot' toField='yRotation' toNode='yRotationScript'/>
+            <ROUTE fromField='yRotation' fromNode='yRotationScript' toField='rotation' toNode='SphereYrot'/>
+
+
+             <Script DEF='zRotationScript'>
+               <field accessType='inputOnly' name='planeSensorInputValues' type='SFVec2f'/>
+               <field accessType='inputOutput' name='zRotation' type='SFRotation'/>
+
+               <![CDATA[
+               ecmascript:
+               function planeSensorInputValues (nonValue, zRotValue)
+               {
+                     zRotation.setValue( zRotValue, 0, 0, 1 );
+              }
+
+         	]]>
+             </Script>
+
+     	    <ROUTE fromField='translation_changed' fromNode='Z_PLANE_SENSOR' toField='planeSensorInputValues' toNode='zRotationScript'/>
+            <ROUTE fromField='rotation' fromNode='SphereZrot' toField='zRotation' toNode='zRotationScript'/>
+            <ROUTE fromField='zRotation' fromNode='zRotationScript' toField='rotation' toNode='SphereZrot'/>
+
+
+
+	<Transform DEF="reset" translation="-4 -4 -2">
+        	<TouchSensor DEF='ResetButtonTouch' description='touch to toggle'/>
+		<Shape>
+			<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+			>
+				<Coordinate point='-2 -1 0    2 1 0    -2 1 0    2 -1 0' />
+				<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+				<Normal vector='0 0 1'/>
+			</IndexedFaceSet>
+			<Appearance>
+				<Material diffuseColor="1 1 1"/>
+				<ImageTexture url="reset.png"/>
+			</Appearance>
+		</Shape>
+	</Transform>		
+
+    <Script DEF='ResetScript'>
+      <field accessType='inputOnly' name='buttonOver' type='SFBool'/>
+      <field accessType='outputOnly' name='initXRotation' type='SFRotation'/>
+      <field accessType='outputOnly' name='initYRotation' type='SFRotation'/>
+      <field accessType='outputOnly' name='initZRotation' type='SFRotation'/>
+      <field accessType='outputOnly' name='initXcontrol' type='SFVec3f'/>
+      <field accessType='outputOnly' name='initYcontrol' type='SFVec3f'/>
+      <field accessType='outputOnly' name='initZcontrol' type='SFVec3f'/>
+
+      <![CDATA[
+      ecmascript:
+      function buttonOver (value)
+      {
+        if ( value ) {
+            initXRotation = new SFRotation(1, 0, 0, 0);
+            initYRotation = new SFRotation(0, 1, 0, 0);
+            initZRotation = new SFRotation(0, 0, 1, 0);
+            initXcontrol = new SFVec3f(0, 0, 0);
+            initYcontrol = new SFVec3f(1.5, 0, 0);
+            initZcontrol = new SFVec3f(3, 0, 0);
+      	}
+      }
+	]]>
+    </Script>
+
+    <ROUTE fromField='isActive' fromNode='ResetButtonTouch' toField='buttonOver' toNode='ResetScript'/>
+    <ROUTE fromField='initXRotation' fromNode='ResetScript' toField='rotation' toNode='SphereXrot'/>
+    <ROUTE fromField='initYRotation' fromNode='ResetScript' toField='rotation' toNode='SphereYrot'/>
+    <ROUTE fromField='initZRotation' fromNode='ResetScript' toField='rotation' toNode='SphereZrot'/>
+    <ROUTE fromField='initXcontrol' fromNode='ResetScript' toField='translation' toNode='xControl'/>
+    <ROUTE fromField='initYcontrol' fromNode='ResetScript' toField='translation' toNode='yControl'/>
+    <ROUTE fromField='initZcontrol' fromNode='ResetScript' toField='translation' toNode='zControl'/>
+
+
+  </Scene>
+</X3D>
