@@ -58,6 +58,11 @@ android {
             path 'src/main/cpp/CMakeLists.txt'
         }
     }
+
+    packagingOptions {
+        pickFirst 'lib/*/libc++_shared.so'
+        pickFirst 'lib/*/libgnustl_shared.so'
+    }
 }
 
 task copyOculusSignature(type: Copy) {
@@ -91,6 +96,12 @@ dependencies {
         compile project (':backend_oculus')
     } else {
         compile(name:'backend_oculus-debug', ext:'aar')
+    }
+
+    if (findProject(':backend_monoscopic')) {
+        compile project (':backend_monoscopic')
+    } else {
+        compile(name:'backend_monoscopic-debug', ext:'aar')
     }
 
     androidTestCompile 'com.android.support:support-annotations:23.+'

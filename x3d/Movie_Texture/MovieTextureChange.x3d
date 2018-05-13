@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <Scene>
+  
+    <Viewpoint position='-1 0 7'/>
+    <Background skyColor='.6 .6 .6'/>
+    <PointLight location='0 -3 4'/>
+
+
+	<Transform translation='-2.75 -2.75 1.5'>
+        <TouchSensor DEF='ButtonTouch'/>
+		<Shape>
+		  <Appearance>
+		    <Material DEF="CylMat" diffuseColor='1 .5 0'/>
+		  </Appearance>
+		  <Cylinder/>
+		</Shape>
+	</Transform>
+
+      <Transform translation='0 0 1'>
+        <!-- Flat-surface movie, with fixed position and orientation -->
+        <Shape DEF='MovieShapeStandardDefinition'>
+			<IndexedFaceSet
+				coordIndex='0 1 2 -1    0 3 1 -1'
+				texCoordIndex='0 1 2 -1   0 3 1 -1'
+				normalIndex='0 0 0 -1   0 0 0 -1'
+			>
+				<Coordinate point='-3 -2 0    3 2 0    -3 2 0    3 -2 0' />
+				<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+				<Normal vector='0 0 1   0 0 1'/>
+			</IndexedFaceSet>
+          <Appearance>
+			<Material diffuseColor="0 1 1"/>
+			<ImageTexture url="deedee1.jpg" repeatS="TRUE" repeatT="TRUE"/>
+            <MovieTexture DEF='X3dMovieNode' description='click to start movie'
+            	url='"SunnyvaleGoldCourse_3mb.mp4"' loop="TRUE"/>
+          </Appearance>
+        </Shape>
+      </Transform>
+
+
+	<Transform translation='2.25 -2.5 1.5'>
+        <TouchSensor DEF='ButtonTouch2'/>
+		<Shape>
+		  <Appearance>
+		    <Material DEF="myMaterial" diffuseColor='0 1 .25'/>
+		  </Appearance>
+		  <Cone/>
+		</Shape>
+	</Transform>
+
+    <Script DEF='ControlScript'>
+      <field accessType='inputOnly' name='buttonOver' type='SFBool'/>
+      <field accessType='outputOnly' name='dColor' type='SFColor'/>
+      <field accessType='outputOnly' name='imgURL' type='MFString'/>
+
+      <![CDATA[
+      ecmascript:
+      function buttonOver (value)
+      {
+      	if (value) {
+      	    dColor = new SFColor (.25, 1, 1); // dark blue
+          	imgURL = new MFString("fish.mp4");
+      	}
+      }
+	]]>
+    </Script>
+
+    <ROUTE fromField='isOver' fromNode='ButtonTouch' toField='buttonOver' toNode='ControlScript'/>
+    <ROUTE fromField='dColor' fromNode='ControlScript' toField='diffuseColor' toNode='myMaterial'/>
+    <ROUTE fromField='imgURL' fromNode='ControlScript' toField='url' toNode='X3dMovieNode'/>
+
+    <Script DEF='ControlScript2'>
+      <field accessType='inputOnly' name='buttonOver2' type='SFBool'/>
+      <field accessType='outputOnly' name='imgURL' type='MFString'/>
+      <field accessType='outputOnly' name='dColor2' type='SFColor'/>
+
+      <![CDATA[
+      ecmascript:
+      function buttonOver2 (value)
+      {
+      	if (value) {
+      	    dColor2 = new SFColor (1, 1, 0);
+          	imgURL = new MFString("BayshoreFreeway.mp4");
+      	}
+      }
+	]]>
+    </Script>
+
+    <ROUTE fromField='isOver' fromNode='ButtonTouch2' toField='buttonOver2' toNode='ControlScript2'/>
+    <ROUTE fromField='dColor2' fromNode='ControlScript2' toField='diffuseColor' toNode='CylMat'/>
+    <ROUTE fromField='imgURL' fromNode='ControlScript2' toField='url' toNode='X3dMovieNode'/>
+
+
+  </Scene>
+</X3D>
