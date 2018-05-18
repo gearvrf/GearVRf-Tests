@@ -13,7 +13,6 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.unittestutils.GVRSceneMaker;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.json.JSONArray;
@@ -34,7 +33,8 @@ public class RenderShaderTests
 {
     private GVRTestUtils gvrTestUtils;
     private Waiter mWaiter;
-    private boolean mDoCompare = false;
+    private boolean mDoCompare = true;
+    private final int NUM_FRAMES = 8;
 
     public RenderShaderTests() {
         super();
@@ -60,6 +60,7 @@ public class RenderShaderTests
         gvrTestUtils = new GVRTestUtils(ActivityRule.getActivity());
         mWaiter = new Waiter();
         gvrTestUtils.waitForOnInit();
+        GVRSceneMaker.Tester = gvrTestUtils;
     }
 
     private List<String> createMeshFormats() {
@@ -91,6 +92,29 @@ public class RenderShaderTests
         meshFormats.add("{" + type + ", " + vertices + ", " + triangles + ", "
                 + indices + ", " + weights + "}");
 
+        return meshFormats;
+    }
+
+    private List<String> createLighingMeshFormats() {
+        final String type = "type: polygon";
+        final String vertices = "vertices: [-0.5, 0.5, 0.0, -0.5, -0.5, 0.0, 0.5, 0.5, 0.0, 0.5, -0.5, 0.0]";
+        final String normals = "normals: [0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0]";
+        final String texcoords = "texcoords: [[0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0]]";
+        final String triangles = "triangles: [ 0, 1, 2, 1, 3, 2 ]";
+
+        final String weights = "bone_weights: [0.0, 1.0, 0.0, 0.0, 0.75, 0.25, 0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.2, 0.2, 0.2, 0.4]";
+        final String indices = "bone_indices: [ 0, 0, 0, 0, 0, 1, 0, 0, 1, 3, 0, 0, 0, 1, 3, 2 ]";
+
+        List<String> meshFormats = new ArrayList<String>();
+
+        // Mesh with positions, normals, texcoords
+        meshFormats.add("{" + type + ", " + vertices + ", " + triangles + ", " + normals + ", "
+                + texcoords + "}");
+        // Mesh with positions, normals
+        meshFormats.add("{" + type + ", " + vertices + ", " + triangles + ", " + normals + "}");
+        // Mesh with positions, normals, texcoords, bone indices, bone weights
+        meshFormats.add("{" + type + ", " + vertices + ", " + triangles + ", " + normals + ", "
+                + texcoords + ", " + indices + ", " + weights + "}");
         return meshFormats;
     }
 
@@ -214,12 +238,16 @@ public class RenderShaderTests
         String screenshotName = null;
         try {
             materials = createMaterialFormats();
-            meshFormats = createMeshFormats();
+            meshFormats = createLighingMeshFormats();
             lightingTypes = createLightingTypes();
 
             for (int i = 0; i < meshFormats.size(); i++) { // Mesh formats
                 for (int j = 0; j < lightingTypes.size(); j++) { // Lighting
-                    for (int k = 0; k < materials.size(); k+= 2) { // Materials/Shaders
+                    for (int k = 0; k < materials.size(); k += 2) { // Materials/Shaders
+                        if ((k > 1)  && (i == 1))
+                        {
+                            continue; // textured material with no texcoords in mesh
+                        }
                         jsonScene = new JSONObject("{\"id\": \"scene" + i + "\"}");
                         JSONArray objects = new JSONArray();
                         JSONObject objectPhong = new JSONObject();
@@ -245,8 +273,12 @@ public class RenderShaderTests
                         GVRSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(),
                                 jsonScene);
 
-                        gvrTestUtils.waitForSceneRendering();
+                        gvrTestUtils.waitForXFrames(2 * NUM_FRAMES);
                         screenshotName = "testMesh" + i + "Lighting" + j;
+                        if (k > 0)
+                        {
+                            screenshotName += k;
+                        }
                         gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
 
                         gvrTestUtils.getMainScene().clear();
@@ -284,16 +316,16 @@ public class RenderShaderTests
                     jsonScene.put("objects", new JSONArray().put(object));
                     GVRSceneMaker.makeScene(ctx, scene, jsonScene);
 
-                    gvrTestUtils.waitForSceneRendering();
+                    gvrTestUtils.waitForXFrames(NUM_FRAMES);
                     screenshotName = "testMeshWithoutTexture" + i + "." + j;
                     gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
 
                     GVRSceneObject obj = scene.getSceneObjectByName(objName);
-                    GVRTexture text = ctx.getAssetLoader().loadTexture(new
-                            GVRAndroidResource(ctx, textures[j]));
+                    GVRAndroidResource resource = new GVRAndroidResource(ctx, textures[j]);
+                    GVRTexture text = GVRSceneMaker.loadTexture(ctx, resource);
                     obj.getRenderData().getMaterial().setMainTexture(text);
 
-                    gvrTestUtils.waitForSceneRendering();
+                    gvrTestUtils.waitForXFrames(NUM_FRAMES);
                     screenshotName = "testMeshAddTexture" + i + "." + j;
                     gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
 
@@ -307,7 +339,7 @@ public class RenderShaderTests
     }
 
     @Test
-    public void meshStartWithtTextureTest() throws TimeoutException {
+    public void meshStartWithTextureTest() throws TimeoutException {
         String screenshotName = null;
         JSONObject jsonScene = null;
         GVRContext ctx = gvrTestUtils.getGvrContext();
@@ -328,15 +360,15 @@ public class RenderShaderTests
 
                 jsonScene.put("objects", new JSONArray().put(object));
                 GVRSceneMaker.makeScene(ctx, scene, jsonScene);
+                gvrTestUtils.waitForXFrames(NUM_FRAMES);
 
-                gvrTestUtils.waitForSceneRendering();
                 screenshotName = "testMeshWithTexture" + i;
                 gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
 
                 GVRSceneObject obj = scene.getSceneObjectByName(objName);
                 obj.getRenderData().getMaterial().setMainTexture(null);
+                gvrTestUtils.waitForXFrames(NUM_FRAMES);
 
-                gvrTestUtils.waitForSceneRendering();
                 screenshotName = "testMeshRemoveTexture" + i;
                 gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
 
@@ -492,7 +524,7 @@ public class RenderShaderTests
                     + createLightType("directional", 1.0f, 0.3f, 0.3f, 0.0f) + "]"));
             GVRSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(), jsonScene);
 
-            gvrTestUtils.waitForSceneRendering();
+            gvrTestUtils.waitForXFrames(NUM_FRAMES);
             screenshotName = "testMeshWithLightAndRenderDataEnabled";
             gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
 
@@ -500,7 +532,7 @@ public class RenderShaderTests
             GVRSceneObject cubeSceneObj = gvrTestUtils.getMainScene().getSceneObjectByName("cubeSceneObj");
             cubeSceneObj.getRenderData().disableLight();
 
-            gvrTestUtils.waitForSceneRendering();
+            gvrTestUtils.waitForXFrames(NUM_FRAMES);
             screenshotName = "testMeshDisableRenderDataLight";
             gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
 
