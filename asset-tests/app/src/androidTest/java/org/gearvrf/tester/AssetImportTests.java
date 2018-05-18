@@ -497,6 +497,22 @@ public class AssetImportTests
     }
 
     @Test
+    public void jassimpBikeOBJ() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRSceneObject lightObj = new GVRSceneObject(ctx);
+        GVRPointLight pointLight = new GVRPointLight(ctx);
+
+        pointLight.setDiffuseIntensity(0.8f, 0.8f, 08f, 1.0f);
+        pointLight.setSpecularIntensity(0.8f, 0.8f, 08f, 1.0f);
+        lightObj.attachComponent(pointLight);
+        lightObj.getTransform().setPosition(-1.0f, 1.0f, 0);
+        scene.addSceneObject(lightObj);
+        mHandler.loadTestModel("bike/bike.obj", 0, 0, "jassimpBikeOBJ");
+    }
+
+    @Test
     public void jassimpHippoOBJ() throws TimeoutException
     {
         mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/hippo/hippo.obj", 1, 0, "jassimpHippoOBJ");
@@ -530,7 +546,39 @@ public class AssetImportTests
     @Test
     public void jassimpBoxGLTF() throws TimeoutException
     {
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/gltf/BoxTextured-glTF/BoxTextured.gltf", 0, 2, "jassimpBoxGLTF");
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/gltf/BoxTextured-glTF/BoxTextured.gltf", 2, 0, "jassimpBoxGLTF");
+    }
+
+    @Test
+    public void jassimpTelephonePBRGLTF() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRSceneObject lightObj = new GVRSceneObject(ctx);
+        GVRPointLight pointLight = new GVRPointLight(ctx);
+
+        pointLight.setDiffuseIntensity(0.8f, 0.8f, 08f, 1.0f);
+        pointLight.setSpecularIntensity(0.8f, 0.8f, 08f, 1.0f);
+        lightObj.attachComponent(pointLight);
+        lightObj.getTransform().setPosition(-1.0f, 1.0f, 0);
+        scene.addSceneObject(lightObj);
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/gltf/Telephone/Telephone.gltf", 2, 0, "jassimpTelephonePBRGLTF");
+    }
+
+    @Test
+    public void jassimpCowPBRGLTF() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRSceneObject lightObj = new GVRSceneObject(ctx);
+        GVRPointLight pointLight = new GVRPointLight(ctx);
+
+        pointLight.setDiffuseIntensity(0.8f, 0.8f, 08f, 1.0f);
+        pointLight.setSpecularIntensity(0.8f, 0.8f, 08f, 1.0f);
+        lightObj.attachComponent(pointLight);
+        lightObj.getTransform().setPosition(-1.0f, 1.0f, 0);
+        scene.addSceneObject(lightObj);
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/gltf/cow/cow.gltf", 2, 0, "jassimpCowPBRGLTF");
     }
 
     @Test
