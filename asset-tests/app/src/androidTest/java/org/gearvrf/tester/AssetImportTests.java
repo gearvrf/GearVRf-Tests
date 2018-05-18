@@ -616,7 +616,7 @@ public class AssetImportTests
     @Test
     public void x3dEmissive() throws TimeoutException
     {
-        mHandler.loadTestModel("x3d/emissivecolor.x3d", 0, 0, "x3dEmissive");
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "x3d/emissivecolor.x3d", 0, 0, "x3dEmissive");
     }
 
     @Test
