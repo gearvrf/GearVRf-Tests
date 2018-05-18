@@ -20,6 +20,7 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRResourceVolume;
 import org.gearvrf.GVRImportSettings;
 import org.gearvrf.GVRShaderId;
+import org.gearvrf.GVRSpotLight;
 import org.gearvrf.GVRVertexBuffer;
 import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
@@ -28,6 +29,7 @@ import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 
+import org.joml.Quaternionf;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -528,9 +530,31 @@ public class AssetImportTests
     }
 
     @Test
-    public void jassimpBoxGLTF() throws TimeoutException
+    public void jassimpRoughBoomboxGLTF() throws TimeoutException
     {
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/gltf/BoxTextured-glTF/BoxTextured.gltf", 0, 2, "jassimpBoxGLTF");
+        GVRSceneObject light1 = createLight(mTestUtils.getGvrContext(), 1, 1, 1, 1.8f);
+        GVRSceneObject light2 = createLight(mTestUtils.getGvrContext(), 1, 1, 1, -0.8f);
+        mRoot.addChildObject(light1);
+        mRoot.addChildObject(light2);
+
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "/jassimp/gltf/BoomBox/BoomBox.gltf", 5, 1, "jassimpRoughBoomboxGLTF");
+
+        mRoot.removeChildObject(light1);
+        mRoot.removeChildObject(light2);
+    }
+
+    @Test
+    public void jassimpGlossWaterBottleGLTF() throws TimeoutException
+    {
+        GVRSceneObject light1 = createLight(mTestUtils.getGvrContext(), 1, 1, 1, 1.8f);
+        GVRSceneObject light2 = createLight(mTestUtils.getGvrContext(), 1, 1, 1, -0.8f);
+        mRoot.addChildObject(light1);
+        mRoot.addChildObject(light2);
+
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "/jassimp/gltf/WaterBottle/WaterBottle.gltf", 6, 1, "jassimpGlossWaterBottleGLTF");
+
+        mRoot.removeChildObject(light1);
+        mRoot.removeChildObject(light2);
     }
 
     @Test
@@ -542,7 +566,7 @@ public class AssetImportTests
     @Test
     public void jassimpBoxEmbeddedGLTF() throws TimeoutException
     {
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/gltf/BoxTextured-glTF-Embedded/BoxTextured.gltf", 2, 0, "jassimpBoxEmbeddedGLTF");
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/gltf/BoxTextured-glTF-Embedded/BoxTextured.gltf", 1, 1, "jassimpBoxEmbeddedGLTF");
     }
 
     @Test
@@ -622,5 +646,22 @@ public class AssetImportTests
             mWaiter.fail(ex);
         }
     }
+
+    private GVRSceneObject createLight(GVRContext context, float r, float g, float b, float y)
+    {
+        GVRSceneObject lightNode = new GVRSceneObject(context);
+        GVRSpotLight light = new GVRSpotLight(context);
+        Quaternionf q = new Quaternionf();
+
+        lightNode.attachLight(light);
+        lightNode.getTransform().setPosition(0, y, 3);
+        light.setAmbientIntensity(0.3f * r, 0.3f * g, 0.3f * b, 1);
+        light.setDiffuseIntensity(r, g, b, 1);
+        light.setSpecularIntensity(r, g, b, 1);
+        light.setInnerConeAngle(8);
+        light.setOuterConeAngle(12);
+        return lightNode;
+    }
+
 
 }
