@@ -385,7 +385,7 @@ public class AssetImportTests
         try
         {
             EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(GVRImportSettings.NO_TEXTURING));
-            model = ctx.getAssetLoader().loadModel(GVRTestUtils.GITHUB_URL + "x3d/twoplanesobjects.x3d", settings, true, (GVRScene) null);
+            model = ctx.getAssetLoader().loadModel(GVRTestUtils.GITHUB_URL + "x3d/general/twoplanesobjects.x3d", settings, true, (GVRScene) null);
         }
         catch (IOException ex)
         {
