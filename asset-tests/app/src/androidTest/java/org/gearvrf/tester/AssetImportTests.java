@@ -29,7 +29,6 @@ import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 
-import org.joml.Quaternionf;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -651,7 +650,6 @@ public class AssetImportTests
     {
         GVRSceneObject lightNode = new GVRSceneObject(context);
         GVRSpotLight light = new GVRSpotLight(context);
-        Quaternionf q = new Quaternionf();
 
         lightNode.attachLight(light);
         lightNode.getTransform().setPosition(0, y, 3);
