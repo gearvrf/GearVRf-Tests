@@ -23,6 +23,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /*
 
 scene:
@@ -99,6 +102,7 @@ renderconfig:
  */
 public class GVRSceneMaker {
     public static GVRTestUtils Tester = null;
+    private static Map<Integer, GVRTexture> TextureCache = new HashMap<Integer, GVRTexture>();
     private static class RGBAColor {
         public final float r;
         public final float g;
@@ -136,18 +140,27 @@ public class GVRSceneMaker {
     private static GVRTexture createBitmapTexture(GVRContext gvrContext, JSONObject jsonTexture) throws JSONException {
 
         int resourceId = jsonTexture.optInt("resource_id", -1);
-        if (resourceId == -1) {
+        if (resourceId == -1)
+        {
             return null;
         }
-        GVRAndroidResource resource = new GVRAndroidResource(gvrContext, resourceId);
-        return loadTexture(gvrContext, resource);
+        if (TextureCache.containsKey(resourceId))
+        {
+            return TextureCache.get(resourceId);
+        }
+        return loadTexture(gvrContext, resourceId);
     }
 
-    public static GVRTexture loadTexture(GVRContext gvrContext, GVRAndroidResource res) throws JSONException {
-
+    public static GVRTexture loadTexture(GVRContext gvrContext, int resourceId) throws JSONException {
+        if (TextureCache.containsKey(resourceId))
+        {
+            return TextureCache.get(resourceId);
+        }
+        GVRAndroidResource resource = new GVRAndroidResource(gvrContext, resourceId);
         TextureEventHandler waitForTextureLoad = new TextureEventHandler(Tester, 1);
         gvrContext.getEventReceiver().addListener(waitForTextureLoad);
-        GVRTexture tex = gvrContext.getAssetLoader().loadTexture(res);
+        GVRTexture tex = gvrContext.getAssetLoader().loadTexture(resource);
+        TextureCache.put(resourceId, tex);
         Tester.waitForAssetLoad();
         gvrContext.getEventReceiver().removeListener(waitForTextureLoad);
         return tex;

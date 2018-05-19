@@ -63,7 +63,7 @@ public class RenderShaderTests
         GVRSceneMaker.Tester = gvrTestUtils;
     }
 
-    private List<String> createMeshFormats() {
+    private List<String> createNonTexturedMeshFormats() {
         final String type = "type: polygon";
         final String vertices = "vertices: [-0.5, 0.5, 0.0, -0.5, -0.5, 0.0, 0.5, 0.5, 0.0, 0.5, -0.5, 0.0]";
         final String normals = "normals: [0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0]";
@@ -75,27 +75,16 @@ public class RenderShaderTests
 
         List<String> meshFormats = new ArrayList<String>();
 
-        // Mesh with positions, normals, texcoords
-        meshFormats.add("{" + type + ", " + vertices + ", " + triangles + ", " + normals + ", "
-                + texcoords + "}");
-        // Mesh with positions, texcoords
-        meshFormats.add("{" + type + ", " + vertices + ", " + triangles + ", " + texcoords + "}");
+        meshFormats.add(null);  // positions, normals, texcoords
         // Mesh with positions, normals
         meshFormats.add("{" + type + ", " + vertices + ", " + triangles + ", " + normals + "}");
-        // Mesh with positions, normals, texcoords, bone indices, bone weights
-        meshFormats.add("{" + type + ", " + vertices + ", " + triangles + ", " + normals + ", "
-                + texcoords + ", " + indices + ", " + weights + "}");
-        // Mesh with positions, texcoords, bone indices, bone weights
-        meshFormats.add("{" + type + ", " + vertices + ", " + triangles + ", " + texcoords + ", "
-                + indices + ", " + weights + "}");
-        // Mesh with positions, bone indices, bone weights
-        meshFormats.add("{" + type + ", " + vertices + ", " + triangles + ", "
-                + indices + ", " + weights + "}");
-
+        meshFormats.add(null);  // positions, normals, texcoords, bone indices, bone weights
+        // Mesh with positions, normals, bone indices, bone weights
+//        meshFormats.add("{" + type + ", " + vertices + ", " + triangles + ", " + normals + ", " + indices + ", " + weights + "}");
         return meshFormats;
     }
 
-    private List<String> createLighingMeshFormats() {
+    private List<String> createTexturedMeshFormats() {
         final String type = "type: polygon";
         final String vertices = "vertices: [-0.5, 0.5, 0.0, -0.5, -0.5, 0.0, 0.5, 0.5, 0.0, 0.5, -0.5, 0.0]";
         final String normals = "normals: [0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0]";
@@ -108,13 +97,13 @@ public class RenderShaderTests
         List<String> meshFormats = new ArrayList<String>();
 
         // Mesh with positions, normals, texcoords
-        meshFormats.add("{" + type + ", " + vertices + ", " + triangles + ", " + normals + ", "
-                + texcoords + "}");
-        // Mesh with positions, normals
-        meshFormats.add("{" + type + ", " + vertices + ", " + triangles + ", " + normals + "}");
+        meshFormats.add("{" + type + ", " + vertices + ", " + triangles + ", " + normals + ", " + texcoords + "}");
+        meshFormats.add(null);  // positions, normals
         // Mesh with positions, normals, texcoords, bone indices, bone weights
         meshFormats.add("{" + type + ", " + vertices + ", " + triangles + ", " + normals + ", "
                 + texcoords + ", " + indices + ", " + weights + "}");
+//        meshFormats.add(null); // positions, normals, bone indices, bone weights
+
         return meshFormats;
     }
 
@@ -229,64 +218,132 @@ public class RenderShaderTests
      * @throws TimeoutException
      */
     @Test
-    public void meshFormatsWithShaderCombinationsTest() throws TimeoutException {
+    public void meshFormatsShaderCombinations() throws TimeoutException {
         // Mesh with positions, normals, texcoords, bone indices, bone weights
         JSONObject jsonScene = null;
-        List<String> meshFormats = null;
-        List<String> materials = null;
+        List<String> meshFormats = createNonTexturedMeshFormats();
         List<String> lightingTypes = null;
         String screenshotName = null;
-        try {
-            materials = createMaterialFormats();
-            meshFormats = createLighingMeshFormats();
+        List<String> materials = new ArrayList<String>();
+
+        materials.add(createMaterialFormat(GVRMaterial.GVRShaderType.Phong.ID));
+        materials.add(createMaterialFormat(GVRMaterial.GVRShaderType.Texture.ID));
+
+        try
+        {
             lightingTypes = createLightingTypes();
 
-            for (int i = 0; i < meshFormats.size(); i++) { // Mesh formats
-                for (int j = 0; j < lightingTypes.size(); j++) { // Lighting
-                    for (int k = 0; k < materials.size(); k += 2) { // Materials/Shaders
-                        if ((k > 1)  && (i == 1))
-                        {
-                            continue; // textured material with no texcoords in mesh
-                        }
-                        jsonScene = new JSONObject("{\"id\": \"scene" + i + "\"}");
-                        JSONArray objects = new JSONArray();
-                        JSONObject objectPhong = new JSONObject();
-                        objectPhong.put("geometry", new JSONObject(meshFormats.get(i)));
-                        objectPhong.put("material", new JSONObject(materials.get(k)));
-                        objectPhong.put("position", new JSONObject("{x: -1.0f, z: -2.0}"));
-                        objectPhong.put("scale", new JSONObject("{x: 2.0, y: 2.0, z: 2.0}"));
+            for (int i = 0; i < meshFormats.size(); i++)
+            { // Mesh formats
+                String meshFormat = meshFormats.get(i);
+                if (meshFormat == null)
+                {
+                    continue;
+                }
+                for (int j = 0; j < lightingTypes.size(); j++)
+                { // Lighting
+                    jsonScene = new JSONObject("{\"id\": \"scene" + i + "\"}");
+                    JSONArray objects = new JSONArray();
+                    JSONObject objectPhong = new JSONObject();
+                    objectPhong.put("geometry", new JSONObject(meshFormat));
+                    objectPhong.put("material", new JSONObject(materials.get(0)));
+                    objectPhong.put("position", new JSONObject("{x: -1.0f, z: -2.0}"));
+                    objectPhong.put("scale", new JSONObject("{x: 2.0, y: 2.0, z: 2.0}"));
 
-                        JSONObject objectTexture = new JSONObject();
-                        objectTexture.put("geometry", new JSONObject(meshFormats.get(i)));
-                        objectTexture.put("material", new JSONObject(materials.get(k + 1)));
-                        objectTexture.put("position", new JSONObject("{x: 1.0f, z: -2.0}"));
-                        objectTexture.put("scale", new JSONObject("{x: 2.0, y: 2.0, z: 2.0}"));
+                    JSONObject objectTexture = new JSONObject();
+                    objectTexture.put("geometry", new JSONObject(meshFormat));
+                    objectTexture.put("material", new JSONObject(materials.get(1)));
+                    objectTexture.put("position", new JSONObject("{x: 1.0f, z: -2.0}"));
+                    objectTexture.put("scale", new JSONObject("{x: 2.0, y: 2.0, z: 2.0}"));
 
-                        objects.put(objectPhong);
-                        objects.put(objectTexture);
+                    objects.put(objectPhong);
+                    objects.put(objectTexture);
 
-                        jsonScene.put("objects", objects);
-                        if (j > 0) { // No lighting when j == 0
-                            jsonScene.put("lights", new JSONArray(lightingTypes.get(j)));
-                        }
-
-                        GVRSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(),
-                                jsonScene);
-
-                        gvrTestUtils.waitForXFrames(2 * NUM_FRAMES);
-                        screenshotName = "testMesh" + i + "Lighting" + j;
-                        if (k > 0)
-                        {
-                            screenshotName += k;
-                        }
-                        gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
-
-                        gvrTestUtils.getMainScene().clear();
+                    jsonScene.put("objects", objects);
+                    if (j > 0)
+                    { // No lighting when j == 0
+                        jsonScene.put("lights", new JSONArray(lightingTypes.get(j)));
                     }
+
+                    GVRSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(), jsonScene);
+
+                    gvrTestUtils.waitForXFrames(2 * NUM_FRAMES);
+                    screenshotName = "testMesh" + i + "Lighting" + j;
+                    gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
+                    gvrTestUtils.getMainScene().clear();
                 }
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
+        }
+        catch (JSONException e)
+        {
+            mWaiter.fail(e);
+        }
+    }
+
+    @Test
+    public void meshFormatsTexturedShaderCombinations() throws TimeoutException
+    {
+        // Mesh with positions, normals, texcoords, bone indices, bone weights
+        JSONObject jsonScene = null;
+        List<String> meshFormats = createTexturedMeshFormats();;
+        List<String> lightingTypes = null;
+        String screenshotName = null;
+        List<String> materials = new ArrayList<String>();
+
+        materials.add(createMaterialFormat(GVRMaterial.GVRShaderType.Phong.ID, R.drawable.checker));
+        materials.add(createMaterialFormat(GVRMaterial.GVRShaderType.Texture.ID, R.drawable.checker));
+
+        try
+        {
+            lightingTypes = createLightingTypes();
+
+            for (int i = 0; i < meshFormats.size(); i++)
+            { // Mesh formats
+                String meshFormat = meshFormats.get(i);
+                if (meshFormat == null)
+                {
+                    continue;
+                }
+                for (int j = 0; j < lightingTypes.size(); j++)
+                { // Lighting
+
+                    jsonScene = new JSONObject("{\"id\": \"scene" + i + "\"}");
+                    JSONArray objects = new JSONArray();
+                    JSONObject objectPhong = new JSONObject();
+                    objectPhong.put("geometry", new JSONObject(meshFormat));
+                    objectPhong.put("material", new JSONObject(materials.get(0)));
+                    objectPhong.put("position", new JSONObject("{x: -1.0f, z: -2.0}"));
+                    objectPhong.put("scale", new JSONObject("{x: 2.0, y: 2.0, z: 2.0}"));
+
+                    JSONObject objectTexture = new JSONObject();
+                    objectTexture.put("geometry", new JSONObject(meshFormat));
+                    objectTexture.put("material", new JSONObject(materials.get(1)));
+                    objectTexture.put("position", new JSONObject("{x: 1.0f, z: -2.0}"));
+                    objectTexture.put("scale", new JSONObject("{x: 2.0, y: 2.0, z: 2.0}"));
+
+                    objects.put(objectPhong);
+                    objects.put(objectTexture);
+
+                    jsonScene.put("objects", objects);
+                    if (j > 0)
+                    { // No lighting when j == 0
+                        jsonScene.put("lights", new JSONArray(lightingTypes.get(j)));
+                    }
+
+                    GVRSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(),
+                            jsonScene);
+
+                    gvrTestUtils.waitForXFrames(2 * NUM_FRAMES);
+                    screenshotName = "testMesh" + i + "Lighting" + j + "2";
+                    gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
+
+                    gvrTestUtils.getMainScene().clear();
+                }
+            }
+        }
+        catch (JSONException e)
+        {
+            mWaiter.fail(e);
         }
     }
 
@@ -321,8 +378,7 @@ public class RenderShaderTests
                     gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
 
                     GVRSceneObject obj = scene.getSceneObjectByName(objName);
-                    GVRAndroidResource resource = new GVRAndroidResource(ctx, textures[j]);
-                    GVRTexture text = GVRSceneMaker.loadTexture(ctx, resource);
+                    GVRTexture text = GVRSceneMaker.loadTexture(ctx, textures[j]);
                     obj.getRenderData().getMaterial().setMainTexture(text);
 
                     gvrTestUtils.waitForXFrames(NUM_FRAMES);
@@ -333,8 +389,10 @@ public class RenderShaderTests
                     scene.clear();
                 }
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
+        }
+        catch (JSONException e)
+        {
+            mWaiter.fail(e);
         }
     }
 
