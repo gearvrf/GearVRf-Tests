@@ -101,9 +101,11 @@ renderconfig:
  * Parse a JSON object to build the equivalent GVRScene.
  */
 public class GVRSceneMaker {
-    public static GVRTestUtils Tester = null;
-    private static Map<Integer, GVRTexture> TextureCache = new HashMap<Integer, GVRTexture>();
-    private static class RGBAColor {
+    private static GVRTestUtils Tester = null;
+    private  Map<Integer, GVRTexture> TextureCache = new HashMap<Integer, GVRTexture>();
+
+    private static class RGBAColor
+    {
         public final float r;
         public final float g;
         public final float b;
@@ -115,6 +117,11 @@ public class GVRSceneMaker {
             this. b = b;
             this. a = a;
         }
+    }
+
+    public GVRSceneMaker(GVRTestUtils tester)
+    {
+        Tester = tester;
     }
 
     private static float[] jsonToFloatArray(JSONArray jsonArray) throws JSONException {
@@ -137,7 +144,7 @@ public class GVRSceneMaker {
         return array;
     }
 
-    private static GVRTexture createBitmapTexture(GVRContext gvrContext, JSONObject jsonTexture) throws JSONException {
+    private GVRTexture createBitmapTexture(GVRContext gvrContext, JSONObject jsonTexture) throws JSONException {
 
         int resourceId = jsonTexture.optInt("resource_id", -1);
         if (resourceId == -1)
@@ -151,7 +158,7 @@ public class GVRSceneMaker {
         return loadTexture(gvrContext, resourceId);
     }
 
-    public static GVRTexture loadTexture(GVRContext gvrContext, int resourceId) throws JSONException {
+    public GVRTexture loadTexture(GVRContext gvrContext, int resourceId) throws JSONException {
         if (TextureCache.containsKey(resourceId))
         {
             return TextureCache.get(resourceId);
@@ -191,7 +198,7 @@ public class GVRSceneMaker {
       resourceid: [0-9]+
      }
      */
-    private static GVRTexture createTexture(GVRContext gvrContext, JSONObject jsonTexture) throws JSONException {
+    private GVRTexture createTexture(GVRContext gvrContext, JSONObject jsonTexture) throws JSONException {
         GVRTexture texture = null;
 
         String type = jsonTexture.optString("type");
@@ -212,9 +219,9 @@ public class GVRSceneMaker {
       textures:[...]
      }
      */
-    private static GVRMaterial createMaterial(GVRContext gvrContext,
-                                              ArrayMap<String, GVRTexture> textures,
-                                              JSONObject jsonObject) throws JSONException {
+    private GVRMaterial createMaterial(GVRContext gvrContext,
+                                       ArrayMap<String, GVRTexture> textures,
+                                       JSONObject jsonObject) throws JSONException {
         GVRMaterial material;
         String shader_type = jsonObject.optString("shader", "texture");
 
@@ -261,7 +268,7 @@ public class GVRSceneMaker {
         return material;
     }
 
-    private static void setScale(GVRTransform transform, JSONObject jsonScale)
+    private void setScale(GVRTransform transform, JSONObject jsonScale)
             throws JSONException {
 
         float x = (float) jsonScale.optDouble("x", 1.0f);
@@ -271,7 +278,7 @@ public class GVRSceneMaker {
         transform.setScale(x, y, z);
     }
 
-    private static void setPosition(GVRTransform transform, JSONObject jsonPosition)
+    private void setPosition(GVRTransform transform, JSONObject jsonPosition)
             throws JSONException {
 
         float x = (float) jsonPosition.optDouble("x", 0.0f);
@@ -281,7 +288,7 @@ public class GVRSceneMaker {
         transform.setPosition(x, y, z);
     }
 
-    private static void setRotation(GVRTransform transform, JSONObject jsonRotation)
+    private void setRotation(GVRTransform transform, JSONObject jsonRotation)
             throws JSONException {
 
         float x = (float) jsonRotation.optDouble("x", 0.0f);
@@ -299,7 +306,7 @@ public class GVRSceneMaker {
       rotation: {w: 0, x: 0, y: 0, z: 0}
      }
      */
-    private static void setTransform(GVRTransform transform, JSONObject jsonObject) throws JSONException {
+    private void setTransform(GVRTransform transform, JSONObject jsonObject) throws JSONException {
 
         JSONObject jsonPosition = jsonObject.optJSONObject("position");
         if (jsonPosition != null) {
@@ -323,12 +330,12 @@ public class GVRSceneMaker {
               | GL_LINES | GL_LINE_STRIP | GL_LINE_LOOP)
      }
      */
-    private static void setRenderConfig(GVRRenderData renderData, JSONObject jsonConfig)
+    private void setRenderConfig(GVRRenderData renderData, JSONObject jsonConfig)
             throws JSONException {
         renderData.setDrawMode(jsonConfig.optInt("drawmode", GLES30.GL_TRIANGLES));
     }
 
-    private static void setPointLightIntensity(GVRPointLight light, JSONObject jsonLight)
+    private void setPointLightIntensity(GVRPointLight light, JSONObject jsonLight)
             throws JSONException {
 
         JSONObject jsonAmbientIntensity = jsonLight.optJSONObject("ambientintensity");
@@ -353,7 +360,7 @@ public class GVRSceneMaker {
         }
     }
 
-    private static void setDirectLightIntensity(GVRDirectLight light, JSONObject jsonLight)
+    private void setDirectLightIntensity(GVRDirectLight light, JSONObject jsonLight)
             throws JSONException {
 
         JSONObject jsonAmbientIntensity = jsonLight.optJSONObject("ambientintensity");
@@ -378,7 +385,7 @@ public class GVRSceneMaker {
         }
     }
 
-    private static void setLightConeAngle(GVRSpotLight light, JSONObject jsonLight)
+    private void setLightConeAngle(GVRSpotLight light, JSONObject jsonLight)
             throws JSONException {
 
         float innerAngle = (float) jsonLight.optDouble("innerconeangle");
@@ -392,7 +399,7 @@ public class GVRSceneMaker {
         }
     }
 
-    private static GVRSceneObject createSpotLight(GVRContext gvrContext, JSONObject jsonLight)
+    private GVRSceneObject createSpotLight(GVRContext gvrContext, JSONObject jsonLight)
             throws JSONException {
 
         GVRSceneObject lightObj = new GVRSceneObject(gvrContext);
@@ -404,7 +411,7 @@ public class GVRSceneMaker {
         return lightObj;
     }
 
-    private static GVRSceneObject createDirectLight(GVRContext gvrContext, JSONObject jsonLight)
+    private GVRSceneObject createDirectLight(GVRContext gvrContext, JSONObject jsonLight)
             throws JSONException {
 
         GVRSceneObject lightObj = new GVRSceneObject(gvrContext);
@@ -416,7 +423,7 @@ public class GVRSceneMaker {
         return lightObj;
     }
 
-    private static GVRSceneObject createPointLight(GVRContext gvrContext, JSONObject jsonLight)
+    private GVRSceneObject createPointLight(GVRContext gvrContext, JSONObject jsonLight)
             throws JSONException {
 
         GVRSceneObject lightObj = new GVRSceneObject(gvrContext);
@@ -440,7 +447,7 @@ public class GVRSceneMaker {
       outerconeangle: [0.0-9.0]+
      }
      */
-    private static GVRSceneObject createLight(GVRContext gvrContext, JSONObject jsonLight) throws
+    private GVRSceneObject createLight(GVRContext gvrContext, JSONObject jsonLight) throws
             JSONException {
 
         GVRSceneObject light = null;
@@ -470,7 +477,7 @@ public class GVRSceneMaker {
       triangles: [0, ... n]
      }
      */
-    private static GVRMesh createPolygonMesh(GVRContext gvrContext, JSONObject jsonObject)
+    private GVRMesh createPolygonMesh(GVRContext gvrContext, JSONObject jsonObject)
             throws JSONException {
         String descriptor = "float3 a_position";
 
@@ -508,7 +515,7 @@ public class GVRSceneMaker {
         return mesh;
     }
 
-    private static GVRSceneObject createQuad(GVRContext gvrContext, JSONObject jsonObject)
+    private GVRSceneObject createQuad(GVRContext gvrContext, JSONObject jsonObject)
             throws JSONException {
         float width = 1.0f;
         float height = 1.0f;
@@ -524,12 +531,12 @@ public class GVRSceneMaker {
                 GVRMesh.createQuad(gvrContext, descriptor, width, height));
     }
 
-    private static GVRSceneObject createPolygon(GVRContext gvrContext, JSONObject jsonObject)
+    private GVRSceneObject createPolygon(GVRContext gvrContext, JSONObject jsonObject)
             throws JSONException {
         return new GVRSceneObject(gvrContext, createPolygonMesh(gvrContext, jsonObject));
     }
 
-    private static GVRSceneObject createCube(GVRContext gvrContext, JSONObject jsonObject)
+    private GVRSceneObject createCube(GVRContext gvrContext, JSONObject jsonObject)
             throws JSONException {
         String descriptor = "float3 a_position float2 a_texcoord float3 a_normal";
 
@@ -545,12 +552,12 @@ public class GVRSceneMaker {
         return new GVRSceneObject(gvrContext, mesh);
     }
 
-    private static GVRSceneObject createCylinder(GVRContext gvrContext, JSONObject jsonObject)
+    private GVRSceneObject createCylinder(GVRContext gvrContext, JSONObject jsonObject)
             throws JSONException {
         return null;
     }
 
-    private static GVRSceneObject createSphere(GVRContext gvrContext, JSONObject jsonObject)
+    private GVRSceneObject createSphere(GVRContext gvrContext, JSONObject jsonObject)
             throws JSONException {
         float radius = (float) jsonObject.optDouble("radius", 1.0f);
         boolean facing_out = jsonObject.optBoolean("facing_out", true);
@@ -573,7 +580,7 @@ public class GVRSceneMaker {
       bone_indices:  [[0-9]+, ...]
      }
      */
-    private static GVRSceneObject createGeometry(GVRContext gvrContext, JSONObject jsonObject)
+    private GVRSceneObject createGeometry(GVRContext gvrContext, JSONObject jsonObject)
             throws JSONException {
         GVRSceneObject sceneObject = null;
 
@@ -605,7 +612,7 @@ public class GVRSceneMaker {
       scale: {x: [0.0-9.0]+, y: [0.0-9.0]+, z: [0.0-9.0]+}
      }
      */
-    private static GVRSceneObject createChildObject(GVRContext gvrContext,
+    private GVRSceneObject createChildObject(GVRContext gvrContext,
                                                     ArrayMap<String, GVRTexture> textures,
                                                     ArrayMap<String, GVRMaterial> materials,
                                                     JSONObject jsonObject) throws JSONException {
@@ -639,7 +646,7 @@ public class GVRSceneMaker {
         return child;
     }
 
-    private static void addChildrenObjects(GVRContext gvrContext, GVRSceneObject root,
+    private void addChildrenObjects(GVRContext gvrContext, GVRSceneObject root,
                                            ArrayMap<String, GVRTexture> textures,
                                            ArrayMap<String, GVRMaterial> materials,
                                            JSONArray jsonChildren) throws JSONException {
@@ -650,7 +657,7 @@ public class GVRSceneMaker {
         }
     }
 
-    private static void addChildrenLights(GVRContext gvrContext, GVRSceneObject root, JSONArray
+    private void addChildrenLights(GVRContext gvrContext, GVRSceneObject root, JSONArray
             jsonChildren) throws JSONException {
         for (int i = 0; i < jsonChildren.length(); i++) {
             GVRSceneObject child = createLight(gvrContext, jsonChildren.getJSONObject(i));
@@ -658,7 +665,7 @@ public class GVRSceneMaker {
         }
     }
 
-    private static void createShareables(GVRContext gvrContext,
+    private void createShareables(GVRContext gvrContext,
                                          ArrayMap<String, GVRTexture> textures,
                                          ArrayMap<String, GVRMaterial> materials,
                                          JSONObject jsonObject) throws JSONException {
@@ -686,11 +693,11 @@ public class GVRSceneMaker {
         }
     }
 
-    public static void makeScene(GVRContext gvrContext, GVRScene scene, JSONObject jsonScene,
+    public void makeScene(GVRContext gvrContext, GVRScene scene, JSONObject jsonScene,
                                  JSONObject jsonShareables) throws JSONException {
         ArrayMap<String, GVRTexture> textures = new ArrayMap<>();
         ArrayMap<String, GVRMaterial> materials = new ArrayMap<>();
-
+        GVRSceneObject root = new GVRSceneObject(gvrContext);
         Log.d("SceneMaker", jsonScene.toString());
 
         if (jsonShareables != null) {
@@ -713,17 +720,18 @@ public class GVRSceneMaker {
 
         JSONArray jsonChildrenObjects = jsonScene.optJSONArray("objects");
         if (jsonChildrenObjects != null) {
-            addChildrenObjects(gvrContext, scene.getRoot(), textures, materials,
+            addChildrenObjects(gvrContext, root, textures, materials,
                     jsonChildrenObjects);
         }
+        scene.addSceneObject(root);
     }
 
-    public static void makeScene(GVRContext gvrContext, GVRScene scene,
+    public void makeScene(GVRContext gvrContext, GVRScene scene,
                                  String jsonScene) throws JSONException {
         makeScene(gvrContext, scene, new JSONObject(jsonScene), null);
     }
 
-    public static void makeScene(GVRContext gvrContext, GVRScene scene,
+    public void makeScene(GVRContext gvrContext, GVRScene scene,
                                  String jsonScene, String jsonShareables) throws JSONException {
         makeScene(gvrContext, scene, new JSONObject(jsonScene), new JSONObject(jsonShareables));
     }
@@ -736,7 +744,7 @@ public class GVRSceneMaker {
       objects: [...]
      }
      */
-    public static void makeScene(GVRContext gvrContext, GVRScene scene,
+    public void makeScene(GVRContext gvrContext, GVRScene scene,
                                  JSONObject jsonScene) throws JSONException {
         makeScene(gvrContext, scene, jsonScene, null);
     }
