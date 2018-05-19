@@ -55,7 +55,6 @@ class AssetEventHandler implements IAssetEvents
             if (mAddToScene)
             {
                 mScene.addSceneObject(model);
-                mTester.waitForXFrames(2);
             }
             mTester.onAssetLoaded(model);
         }
