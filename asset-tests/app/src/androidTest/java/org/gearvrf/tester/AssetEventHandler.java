@@ -159,12 +159,13 @@ class AssetEventHandler implements IAssetEvents
             mWaiter.fail(ex);
         }
         mTester.waitForAssetLoad();
+        mTester.waitForXFrames(10);
+
         centerModel(model, scene.getMainCameraRig().getTransform());
         checkAssetLoaded(FileNameUtils.getFilename(modelfile), numTex);
         checkAssetErrors(0, texError);
         if (testname != null)
         {
-            mTester.waitForXFrames(2);
             mTester.screenShot(mCategory, testname, mWaiter, mDoCompare);
         }
         return model;
