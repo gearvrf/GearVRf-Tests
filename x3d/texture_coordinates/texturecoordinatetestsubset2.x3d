@@ -1,6 +1,10 @@
 <X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
 	<Scene>
 
+    <Viewpoint position='0 0 10'/>
+    <Background skyColor='.3 .4 .2'/>
+    <NavigationInfo headlight='false'/>
+
 	<PointLight location="0 0 3" color="1 .5 .5" radius='100' attenuation='1 0 0' />
 	<PointLight location="8 0 1" color=".5 .5 1" radius='100' attenuation='1 0 0' />
 	<PointLight location="-3 0 0" color=".5 1 .5" radius='100' attenuation='1 0 0' />
@@ -8,7 +12,7 @@
 	<DirectionalLight color=".5 .5 .5"/>
 		
 	
-		<Transform translation="4 -4 0" rotation="-0 1 0 -1.4">
+		<Transform translation="5.5 -4 -1" rotation="-0 1 0 -.4">
 			<Shape>
 				<IndexedFaceSet
 					coordIndex='0 1 2 -1    0 3 1 -1    4 5 6  -1    5 4 7 -1'
@@ -20,7 +24,7 @@
 					<Normal vector='0 0 1   1 0 0'/>
 				</IndexedFaceSet>
 				<Appearance>
-					<ImageTexture url="sun.jpg"/>
+					<ImageTexture url="markerone.png"/>
 					<TextureTransform center='-.5 -.5' rotation='0' scale='1 1' translation='0 0'/>
           			<Material ambientIntensity='1' diffuseColor='1 1 1' shininess='0.145'/>
 				</Appearance>
@@ -28,8 +32,8 @@
 		</Transform>
 
 		
-		<Transform translation="0 -.5 0" rotation="-0 1 0 -1.75">
-			<Transform rotation="-0 1 0 .785">
+		<Transform rotation="-0 1 0 -1.75">
+			<Transform translation="-0 -.5 0" rotation="-0 1 0 .785">
 				<Shape>
 					<IndexedFaceSet
 						coordIndex='0 1 2 -1    0 3 1 -1    4 5 6  -1    4 7 5 -1'
@@ -48,8 +52,8 @@
 		</Transform>
 		
 
-		<Transform translation="-4 .5 0" rotation="-0 1 0 1.75">
-			<Transform rotation="0 1 0 -.785">
+		<Transform rotation="-0 1 0 1.5">
+			<Transform translation="-2 -.5 -6" rotation="0 1 0 -.785">
 				<Shape>
 					<IndexedFaceSet
 						coordIndex='0 1 2 -1    0 3 1 -1'
@@ -69,8 +73,8 @@
 		</Transform>
 
 
-		<Transform translation="-4 -5 0" rotation="-0 1 0 -1.57">
-			<Transform rotation="-0 1 0 .785">
+		<Transform rotation="-0 1 0 1.57">
+			<Transform translation="-5 -5 0" rotation="-0 1 0 -.785">
 				<Shape>
 					<IndexedFaceSet
 						coordIndex='0 1 2 -1    0 3 1 -1    4 5 6  -1    5 4 7 -1'
@@ -82,7 +86,7 @@
 						<Normal vector='0 0 1   1 0 0'/>
 					</IndexedFaceSet>
 					<Appearance>
-						<ImageTexture url="sun.jpg"/>
+						<ImageTexture url="markertwo.png"/>
 						<TextureTransform center='-.5 -.5' rotation='0' scale='1 1' translation='0 0'/>
 					<Material ambientIntensity='1' diffuseColor='1 1 1' shininess='0.145'/>
 					</Appearance>
