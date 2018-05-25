@@ -715,7 +715,7 @@ public class GVRSceneMaker {
 
         JSONArray jsonChildrenLights = jsonScene.optJSONArray("lights");
         if (jsonChildrenLights != null) {
-            addChildrenLights(gvrContext, scene.getRoot(), jsonChildrenLights);
+            addChildrenLights(gvrContext, root, jsonChildrenLights);
         }
 
         JSONArray jsonChildrenObjects = jsonScene.optJSONArray("objects");
