@@ -543,7 +543,7 @@ public class RenderShaderTests
                     + createLightType("directional", 1.0f, 0.3f, 0.3f, 0.0f) + "]"));
             mSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(), jsonScene);
 
-            gvrTestUtils.waitForSceneRendering();
+            gvrTestUtils.waitForXFrames(NUM_FRAMES);
             screenshotName = "testMeshWithLighting";
             gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
 
@@ -551,7 +551,7 @@ public class RenderShaderTests
             GVRSceneObject lightNode = gvrTestUtils.getMainScene().getSceneObjectByName("lightNode");
             gvrTestUtils.getMainScene().removeSceneObject(lightNode);
 
-            gvrTestUtils.waitForSceneRendering();
+            gvrTestUtils.waitForXFrames(NUM_FRAMES);
             screenshotName = "testMeshRemoveLighting";
             gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
 
