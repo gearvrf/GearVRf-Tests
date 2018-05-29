@@ -12,6 +12,7 @@ allprojects {
 
 android {
     compileSdkVersion 23
+    buildToolsVersion '25.0.0'
 
     defaultConfig {
         applicationId "org.gearvrf.tester"
@@ -33,6 +34,10 @@ android {
 
     sourceSets.main {
         jniLibs.srcDir 'libs' // pre-compiled libraries
+    }
+
+    packagingOptions {
+        pickFirst 'lib/*/libc++_shared.so'
     }
 }
 
