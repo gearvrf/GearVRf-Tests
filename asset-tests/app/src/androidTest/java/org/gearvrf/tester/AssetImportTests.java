@@ -535,7 +535,7 @@ public class AssetImportTests
         GVRSceneObject light2 = createLight(mTestUtils.getGvrContext(), 1, 1, 1, -0.8f);
         mRoot.addChildObject(light1);
         mRoot.addChildObject(light2);
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "/jassimp/gltf/WaterBottle/WaterBottle.gltf", 5, 1, "jassimpGlossWaterBottleGLTF");
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "/jassimp/gltf/WaterBottle/WaterBottle.gltf", 6, 0, "jassimpGlossWaterBottleGLTF");
     }
 
     @Test
