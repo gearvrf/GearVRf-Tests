@@ -32,6 +32,7 @@ class AssetEventHandler implements IAssetEvents
     protected String mCategory;
     protected boolean mDoCompare = true;
     protected boolean mAddToScene = true;
+    protected int mWaitFrames = 0;
 
     AssetEventHandler(GVRScene scene, Waiter waiter, GVRTestUtils tester, String category)
     {
@@ -41,6 +42,8 @@ class AssetEventHandler implements IAssetEvents
         mCategory = category;
         mAddToScene = true;
     }
+
+    public void setWaitFrames(int frames) { mWaitFrames = frames; }
 
     public void dontAddToScene()
     {
@@ -55,6 +58,7 @@ class AssetEventHandler implements IAssetEvents
             if (mAddToScene)
             {
                 mScene.addSceneObject(model);
+                mTester.waitForXFrames(2);
             }
             mTester.onAssetLoaded(model);
         }
@@ -159,12 +163,13 @@ class AssetEventHandler implements IAssetEvents
             mWaiter.fail(ex);
         }
         mTester.waitForAssetLoad();
+        mTester.waitForXFrames(10);
+
         centerModel(model, scene.getMainCameraRig().getTransform());
         checkAssetLoaded(FileNameUtils.getFilename(modelfile), numTex);
         checkAssetErrors(0, texError);
         if (testname != null)
         {
-            mTester.waitForXFrames(2);
             mTester.screenShot(mCategory, testname, mWaiter, mDoCompare);
         }
         return model;

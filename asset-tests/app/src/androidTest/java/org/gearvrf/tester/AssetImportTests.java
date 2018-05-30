@@ -20,6 +20,7 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRResourceVolume;
 import org.gearvrf.GVRImportSettings;
 import org.gearvrf.GVRShaderId;
+import org.gearvrf.GVRSpotLight;
 import org.gearvrf.GVRVertexBuffer;
 import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
@@ -203,7 +204,7 @@ public class AssetImportTests
         mHandler.dontAddToScene();
         ctx.getAssetLoader().loadModel(volume, model, settings, false, mHandler);
         mTestUtils.waitForAssetLoad();
-        mWaiter.assertEquals(5, volume.ResourcesLoaded);
+        mWaiter.assertEquals(8, volume.ResourcesLoaded);
         mHandler.checkAssetLoaded(null, 4);
         mWaiter.assertNull(scene.getSceneObjectByName("astro_boy.dae"));
         mWaiter.assertTrue(model.getChildrenCount() > 0);
@@ -528,9 +529,13 @@ public class AssetImportTests
     }
 
     @Test
-    public void jassimpBoxGLTF() throws TimeoutException
+    public void jassimpGlossWaterBottleGLTF() throws TimeoutException
     {
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/gltf/BoxTextured-glTF/BoxTextured.gltf", 2, 0, "jassimpBoxGLTF");
+        GVRSceneObject light1 = createLight(mTestUtils.getGvrContext(), 1, 1, 1, 1.8f);
+        GVRSceneObject light2 = createLight(mTestUtils.getGvrContext(), 1, 1, 1, -0.8f);
+        mRoot.addChildObject(light1);
+        mRoot.addChildObject(light2);
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "/jassimp/gltf/WaterBottle/WaterBottle.gltf", 5, 1, "jassimpGlossWaterBottleGLTF");
     }
 
     @Test
@@ -546,7 +551,7 @@ public class AssetImportTests
         lightObj.attachComponent(pointLight);
         lightObj.getTransform().setPosition(-1.0f, 1.0f, 0);
         scene.addSceneObject(lightObj);
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/gltf/Telephone/Telephone.gltf", 2, 0, "jassimpTelephonePBRGLTF");
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/gltf/Telephone/Telephone.gltf", 4, 0, "jassimpTelephonePBRGLTF");
     }
 
     @Test
@@ -562,19 +567,13 @@ public class AssetImportTests
         lightObj.attachComponent(pointLight);
         lightObj.getTransform().setPosition(-1.0f, 1.0f, 0);
         scene.addSceneObject(lightObj);
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/gltf/cow/cow.gltf", 2, 0, "jassimpCowPBRGLTF");
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/gltf/cow/cow.gltf", 1, 0, "jassimpCowPBRGLTF");
     }
 
     @Test
     public void jassimpEngineBinaryGLTF() throws TimeoutException
     {
         mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/gltf/2CylinderEngine-glTF-Binary/2CylinderEngine.glb", 0, 0, "jassimpEngineBinaryGLTF");
-    }
-
-    @Test
-    public void jassimpBoxEmbeddedGLTF() throws TimeoutException
-    {
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/gltf/BoxTextured-glTF-Embedded/BoxTextured.gltf", 2, 0, "jassimpBoxEmbeddedGLTF");
     }
 
     @Test
@@ -654,5 +653,21 @@ public class AssetImportTests
             mWaiter.fail(ex);
         }
     }
+
+    private GVRSceneObject createLight(GVRContext context, float r, float g, float b, float y)
+    {
+        GVRSceneObject lightNode = new GVRSceneObject(context);
+        GVRSpotLight light = new GVRSpotLight(context);
+
+        lightNode.attachLight(light);
+        lightNode.getTransform().setPosition(0, y, 3);
+        light.setAmbientIntensity(0.3f * r, 0.3f * g, 0.3f * b, 1);
+        light.setDiffuseIntensity(r, g, b, 1);
+        light.setSpecularIntensity(r, g, b, 1);
+        light.setInnerConeAngle(8);
+        light.setOuterConeAngle(12);
+        return lightNode;
+    }
+
 
 }

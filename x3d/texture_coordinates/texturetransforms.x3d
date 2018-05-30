@@ -1,5 +1,12 @@
 <X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
 	<Scene>
+
+    <Viewpoint position='0 0 5'/>
+    <PointLight location='0 0 10'/>
+    <Background skyColor='.2 .3 .3'/>
+    <NavigationInfo headlight='false'/>
+
+
 		<Transform translation="0 0 -7" rotation="-0 1 0 -0">
 			<Shape>
 				<IndexedFaceSet
@@ -13,12 +20,12 @@
 				</IndexedFaceSet>
 				<Appearance>
 					<Material diffuseColor="1 1 1"/>
-					<ImageTexture url="brick.jpg"/>
+					<ImageTexture url="pinwheel.jpg"/>
 					<TextureTransform center='-.5 -.5' rotation='0' scale='4 4' translation='0 0'/>
 				</Appearance>
 			</Shape>
 		</Transform>
-		<Transform translation="-3 3.5 -6" rotation="-0 1 0 .3">
+		<Transform translation="-2 2.5 -8" rotation="-0 1 0 .3">
 			<Shape>
 				<IndexedFaceSet
 					coordIndex='0 1 2 -1    0 3 1 -1'
@@ -36,7 +43,7 @@
 				</Appearance>
 			</Shape>
 		</Transform>
-		<Transform translation="3 -3.5 -6" rotation="-0 1 0 -.3">
+		<Transform translation="2 -2.5 -8" rotation="-0 1 0 -.3">
 			<Shape>
 				<IndexedFaceSet
 					coordIndex='0 1 2 -1    0 3 1 -1'

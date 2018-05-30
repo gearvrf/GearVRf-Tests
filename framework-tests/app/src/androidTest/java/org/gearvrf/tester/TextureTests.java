@@ -383,7 +383,7 @@ public class TextureTests
     {
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
-        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Texture.ID);
+        final GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Texture.ID);
         GVRSceneObject model = new GVRCubeSceneObject(ctx, true, mtl);
         GVRTexture tex2 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.specularring));
 
@@ -394,8 +394,14 @@ public class TextureTests
         model.getTransform().setPositionZ(-2.0f);
         scene.addSceneObject(model);
         mTestUtils.waitForXFrames(3);
-        mtl.setTexture("diffuseTexture", null);
-        mTestUtils.waitForXFrames(3);
+        ctx.runOnGlThread(new Runnable()
+        {
+            public void run()
+            {
+                mtl.setTexture("diffuseTexture", null);
+            }
+        });
+        mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "testRemoveTexture", mWaiter, mDoCompare);
     }
 
