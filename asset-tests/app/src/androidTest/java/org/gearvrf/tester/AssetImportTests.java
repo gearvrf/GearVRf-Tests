@@ -204,7 +204,7 @@ public class AssetImportTests
         mHandler.dontAddToScene();
         ctx.getAssetLoader().loadModel(volume, model, settings, false, mHandler);
         mTestUtils.waitForAssetLoad();
-        mWaiter.assertEquals(7, volume.ResourcesLoaded);
+        mWaiter.assertEquals(5, volume.ResourcesLoaded);
         mHandler.checkAssetLoaded(null, 4);
         mWaiter.assertNull(scene.getSceneObjectByName("astro_boy.dae"));
         mWaiter.assertTrue(model.getChildrenCount() > 0);
@@ -386,7 +386,7 @@ public class AssetImportTests
         try
         {
             EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(GVRImportSettings.NO_TEXTURING));
-            model = ctx.getAssetLoader().loadModel(GVRTestUtils.GITHUB_URL + "x3d/twoplanesobjects.x3d", settings, true, (GVRScene) null);
+            model = ctx.getAssetLoader().loadModel(GVRTestUtils.GITHUB_URL + "x3d/general/twoplanesobjects.x3d", settings, true, (GVRScene) null);
         }
         catch (IOException ex)
         {
@@ -536,7 +536,7 @@ public class AssetImportTests
         mRoot.addChildObject(light1);
         mRoot.addChildObject(light2);
 
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "/jassimp/gltf/BoomBox/BoomBox.gltf", 5, 1, "jassimpRoughBoomboxGLTF");
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "/jassimp/gltf/BoomBox/BoomBox.gltf", 5, 0, "jassimpRoughBoomboxGLTF");
 
         mRoot.removeChildObject(light1);
         mRoot.removeChildObject(light2);
@@ -550,7 +550,7 @@ public class AssetImportTests
         mRoot.addChildObject(light1);
         mRoot.addChildObject(light2);
 
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "/jassimp/gltf/WaterBottle/WaterBottle.gltf", 6, 1, "jassimpGlossWaterBottleGLTF");
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "/jassimp/gltf/WaterBottle/WaterBottle.gltf", 6, 0, "jassimpGlossWaterBottleGLTF");
 
         mRoot.removeChildObject(light1);
         mRoot.removeChildObject(light2);
@@ -565,7 +565,7 @@ public class AssetImportTests
     @Test
     public void jassimpBoxEmbeddedGLTF() throws TimeoutException
     {
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/gltf/BoxTextured-glTF-Embedded/BoxTextured.gltf", 1, 1, "jassimpBoxEmbeddedGLTF");
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/gltf/BoxTextured-glTF-Embedded/BoxTextured.gltf", 1, 0, "jassimpBoxEmbeddedGLTF");
     }
 
     @Test
