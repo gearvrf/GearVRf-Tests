@@ -204,7 +204,7 @@ public class AssetImportTests
         mHandler.dontAddToScene();
         ctx.getAssetLoader().loadModel(volume, model, settings, false, mHandler);
         mTestUtils.waitForAssetLoad();
-        mWaiter.assertEquals(8, volume.ResourcesLoaded);
+        mWaiter.assertEquals(5, volume.ResourcesLoaded);
         mHandler.checkAssetLoaded(null, 4);
         mWaiter.assertNull(scene.getSceneObjectByName("astro_boy.dae"));
         mWaiter.assertTrue(model.getChildrenCount() > 0);
@@ -574,6 +574,12 @@ public class AssetImportTests
     public void jassimpEngineBinaryGLTF() throws TimeoutException
     {
         mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/gltf/2CylinderEngine-glTF-Binary/2CylinderEngine.glb", 0, 0, "jassimpEngineBinaryGLTF");
+    }
+
+    @Test
+    public void jassimpBoxEmbeddedGLTF() throws TimeoutException
+    {
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/gltf/BoxTextured-glTF-Embedded/BoxTextured.gltf", 1, 0, "jassimpBoxEmbeddedGLTF");
     }
 
     @Test
