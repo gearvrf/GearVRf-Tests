@@ -8,6 +8,7 @@ import net.jodah.concurrentunit.Waiter;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRBoundsPicker;
 import org.gearvrf.GVRBoxCollider;
+import org.gearvrf.GVRColliderGroup;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRFrustumPicker;
 import org.gearvrf.GVRMaterial;
@@ -109,6 +110,28 @@ public class PickerTests
         sphere.getTransform().setPosition(0, 0, -2);
         collider.setRadius(1.0f);
         sphere.attachComponent(collider);
+        scene.addSceneObject(sphere);
+        scene.getEventReceiver().addListener(mPickHandler);
+        mPicker = new GVRPicker(context, scene);
+        gvrTestUtils.waitForXFrames(NUM_WAIT_FRAMES);
+        mPickHandler.countPicks(NUM_WAIT_FRAMES);
+        mPickHandler.checkHits("sphere", new Vector3f[] { new Vector3f(0, 0, 1) }, null);
+    }
+
+    @Test
+    public void canPickColliderGroup()
+    {
+        GVRContext context = gvrTestUtils.getGvrContext();
+        GVRScene scene = gvrTestUtils.getMainScene();
+        GVRSceneObject sphere = new GVRSphereSceneObject(context, true, mBlue);
+        GVRSphereCollider collider = new GVRSphereCollider(context);
+        GVRColliderGroup group = new GVRColliderGroup(context);
+
+        sphere.setName("sphere");
+        sphere.getTransform().setPosition(0, 0, -2);
+        collider.setRadius(1.0f);
+        group.addCollider(collider);
+        sphere.attachComponent(group);
         scene.addSceneObject(sphere);
         scene.getEventReceiver().addListener(mPickHandler);
         mPicker = new GVRPicker(context, scene);
@@ -350,8 +373,8 @@ public class PickerTests
         sphere1.attachComponent(collider1);
         scene.addSceneObject(sphere1);
 
-        final GVRPicker.GVRPickedObject pickedObject = GVRPicker.pickSceneObject(sphere1);
         gvrTestUtils.waitForXFrames(NUM_WAIT_FRAMES);
+        final GVRPicker.GVRPickedObject pickedObject = GVRPicker.pickSceneObject(sphere1);
         mWaiter.assertEquals(1.0f, pickedObject.getHitDistance());
     }
 

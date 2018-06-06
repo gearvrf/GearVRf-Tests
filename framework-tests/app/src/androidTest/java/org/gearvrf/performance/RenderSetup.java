@@ -214,7 +214,7 @@ public class RenderSetup
                 {
                     castShadows = true;
                 }
-                if (params.containsKey("spotlight"))
+                if (params.containsKey("phong_spotlight"))
                 {
                     GVRSceneObject lightObj = new GVRSceneObject(ctx);
                     GVRSpotLight spotLight = new GVRSpotLight(ctx);
@@ -222,7 +222,7 @@ public class RenderSetup
                     spotLight.setCastShadow(castShadows);
                     mScene.addSceneObject(lightObj);
                 }
-                if (params.containsKey("directlight"))
+                if (params.containsKey("phong_directlight"))
                 {
                     GVRSceneObject lightObj = new GVRSceneObject(ctx);
                     GVRDirectLight directLight = new GVRDirectLight(ctx);
@@ -231,7 +231,7 @@ public class RenderSetup
                     directLight.setCastShadow(castShadows);
                     mScene.addSceneObject(lightObj);
                 }
-                if (params.containsKey("pointlight"))
+                if (params.containsKey("phong_pointlight"))
                 {
                     GVRSceneObject lightObj = new GVRSceneObject(ctx);
                     GVRPointLight pointLight = new GVRPointLight(ctx);

@@ -231,7 +231,7 @@ public class AssetLightTests
         topLight.getTransform().setPositionY(1.0f);
         scene.addSceneObject(topLight);
         scene.getMainCameraRig().getHeadTransformObject().attachComponent(light1);
-        mTestUtils.waitForXFrames(2);
+        mTestUtils.waitForXFrames(4);
         mTestUtils.screenShot(getClass().getSimpleName(), "testAddLight", mWaiter, mDoCompare);
     }
 
@@ -246,7 +246,7 @@ public class AssetLightTests
         {
             l.getOwnerObject().detachComponent(GVRLight.getComponentType());
         }
-        mTestUtils.waitForXFrames(2);
+        mTestUtils.waitForXFrames(4);
         mTestUtils.screenShot(getClass().getSimpleName(), "testRemoveLight", mWaiter, mDoCompare);
     }
 

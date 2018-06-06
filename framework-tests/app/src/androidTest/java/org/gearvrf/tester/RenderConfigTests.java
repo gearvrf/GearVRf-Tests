@@ -1,6 +1,5 @@
 package org.gearvrf.tester;
 
-import android.opengl.GLES20;
 import android.opengl.GLES30;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -12,7 +11,6 @@ import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRShaderId;
-import org.gearvrf.unittestutils.GVRSceneMaker;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.json.JSONArray;
@@ -32,7 +30,8 @@ import java.util.concurrent.TimeoutException;
 public class RenderConfigTests {
     private GVRTestUtils gvrTestUtils;
     private Waiter mWaiter;
-    private boolean mDoCompare = false;
+    private boolean mDoCompare = true;
+    private GVRSceneMaker mSceneMaker;
 
     public RenderConfigTests() {
         super();
@@ -58,6 +57,7 @@ public class RenderConfigTests {
         gvrTestUtils = new GVRTestUtils(ActivityRule.getActivity());
         mWaiter = new Waiter();
         gvrTestUtils.waitForOnInit();
+        mSceneMaker = new GVRSceneMaker(gvrTestUtils);
     }
 
     private String createMaterialFormat(GVRShaderId shaderId, int textureResourceID) {
@@ -87,56 +87,62 @@ public class RenderConfigTests {
     @Test
     public void renderingOrderTest() throws TimeoutException {
         String screenshotName = null;
+        GVRScene mainScene = gvrTestUtils.getMainScene();
 
-        try {
+        try
+        {
             JSONArray sceneObjects = new JSONArray();
             JSONObject jsonScene = new JSONObject(("{id: scene}"));
 
             JSONObject object = new JSONObject("{name: quadObj}");
             object.put("geometry", new JSONObject("{type: quad}"));
             object.put("material", new JSONObject(createMaterialFormat(
-                    GVRMaterial.GVRShaderType.Phong.ID, -1)));
+                    GVRMaterial.GVRShaderType.Phong.ID, -1))); //green
             object.put("position", new JSONObject("{x: -0.3, z: -2.0}"));
             sceneObjects.put(object);
 
             JSONObject object2 = new JSONObject("{name: quadObj2}");
             object2.put("geometry", new JSONObject("{type: quad}"));
             object2.put("material", new JSONObject(createMaterialFormat(
-                    GVRMaterial.GVRShaderType.Phong.ID, -2)));
+                    GVRMaterial.GVRShaderType.Phong.ID, -2))); // blue
             object2.put("position", new JSONObject("{x: 0.3, z: -2.0}"));
             sceneObjects.put(object2);
 
             jsonScene.put("objects", sceneObjects);
 
-            GVRSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(), jsonScene);
-
-            gvrTestUtils.waitForSceneRendering();
+            mSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(), jsonScene);
+            mainScene.getSceneObjectByName("quadObj").getRenderData().
+                    setRenderingOrder(GVRRenderData.GVRRenderingOrder.GEOMETRY);
+            mainScene.getSceneObjectByName("quadObj2").getRenderData().
+                    setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
+            gvrTestUtils.waitForXFrames(4);
             screenshotName = "testRenderingOrder1";
             gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
 
 
-            GVRSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(), jsonScene);
-
-            gvrTestUtils.getMainScene().getSceneObjectByName("quadObj").getRenderData().
-                    setRenderingOrder(GVRRenderData.GVRRenderingOrder.GEOMETRY);
-
-            gvrTestUtils.getMainScene().getSceneObjectByName("quadObj2").getRenderData().
+            mSceneMaker.makeScene(gvrTestUtils.getGvrContext(), mainScene, jsonScene);
+            mainScene.getSceneObjectByName("quadObj").getRenderData().
                     setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
-
-            gvrTestUtils.waitForSceneRendering();
+            mainScene.getSceneObjectByName("quadObj2").getRenderData().
+                    setRenderingOrder(GVRRenderData.GVRRenderingOrder.GEOMETRY);
+            gvrTestUtils.waitForXFrames(4);
             screenshotName = "testRenderingOrder2";
             gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
 
-        } catch (JSONException e) {
-            e.printStackTrace();
+        }
+        catch (JSONException e)
+        {
+            mWaiter.fail(e);
         }
     }
 
     @Test
     public void depthTest() throws TimeoutException {
         String screenshotName = null;
+        GVRScene mainScene = gvrTestUtils.getMainScene();
 
-        try {
+        try
+        {
             JSONArray sceneObjects = new JSONArray();
             JSONObject jsonScene = new JSONObject(("{id: scene}"));
 
@@ -157,36 +163,25 @@ public class RenderConfigTests {
 
             jsonScene.put("objects", sceneObjects);
 
-            GVRSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(), jsonScene);
+            mSceneMaker.makeScene(gvrTestUtils.getGvrContext(), mainScene, jsonScene);
 
-            gvrTestUtils.getMainScene().getSceneObjectByName("quadObj").getRenderData().
-                    setDepthTest(false);
+            mainScene.getSceneObjectByName("quadObj").getRenderData().setDepthTest(false);
+            mainScene.getSceneObjectByName("quadObj2").getRenderData().setDepthTest(false);
 
-            gvrTestUtils.getMainScene().getSceneObjectByName("quadObj2").getRenderData().
-                    setDepthTest(false);
-
-            gvrTestUtils.waitForSceneRendering();
+            gvrTestUtils.waitForXFrames(4);
             screenshotName = "testDepthTest1";
             gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
 
+            mainScene.getSceneObjectByName("quadObj").getRenderData().setDepthTest(true);
+            mainScene.getSceneObjectByName("quadObj2").getRenderData().setDepthTest(true);
 
-
-
-            GVRSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(), jsonScene);
-
-            gvrTestUtils.getMainScene().getSceneObjectByName("quadObj").getRenderData().
-                    setDepthTest(true);
-
-            gvrTestUtils.getMainScene().getSceneObjectByName("quadObj2").getRenderData().
-                    setDepthTest(true);
-
-            gvrTestUtils.waitForSceneRendering();
+            gvrTestUtils.waitForXFrames(8);
             screenshotName = "testDepthTest2";
             gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
+        }
+        catch (JSONException e)
+        {
+            mWaiter.fail(e);
         }
     }
 
@@ -212,7 +207,7 @@ public class RenderConfigTests {
             quad_fg.put("position", new JSONObject(pos));
 
             jsonScene.put("objects", new JSONArray().put(quad_fg).put(quad_bg));
-            GVRSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(), jsonScene);
+            mSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(), jsonScene);
 
             GVRSceneObject obj =  gvrTestUtils.getMainScene().getSceneObjectByName("quad_fg");
             obj.getRenderData().setOffset(true);
@@ -223,8 +218,10 @@ public class RenderConfigTests {
             screenshotName = "testPolygonOffset";
             gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
 
-        } catch (JSONException e) {
-            e.printStackTrace();
+        }
+        catch (JSONException e)
+        {
+            mWaiter.fail(e);
         }
     }
 
@@ -334,14 +331,16 @@ public class RenderConfigTests {
                     new JSONArray().put(lineMode).put(lineStripMode).put(lineLoopMode)
                                    .put(triangleMode).put(triStripMode).put(triLoopMode));
 
-            GVRSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(), jsonScene);
+            mSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(), jsonScene);
 
-            gvrTestUtils.waitForSceneRendering();
+            gvrTestUtils.waitForXFrames(4);
             screenshotName = "testDrawMode";
             gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
 
-        } catch (JSONException e) {
-            e.printStackTrace();
+        }
+        catch (JSONException e)
+        {
+            mWaiter.fail(e);
         }
     }
 }
