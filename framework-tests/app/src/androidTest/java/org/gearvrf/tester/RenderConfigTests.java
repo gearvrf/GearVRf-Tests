@@ -6,11 +6,16 @@ import android.support.test.runner.AndroidJUnit4;
 
 import net.jodah.concurrentunit.Waiter;
 
+import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRShaderId;
+import org.gearvrf.GVRTexture;
+import org.gearvrf.scene_objects.GVRCubeSceneObject;
+import org.gearvrf.shaders.GVRColorBlendShader;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.json.JSONArray;
@@ -25,6 +30,9 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
+
+import static android.opengl.GLES20.GL_ONE;
+import static android.opengl.GLES20.GL_SRC_ALPHA;
 
 @RunWith(AndroidJUnit4.class)
 public class RenderConfigTests {
@@ -87,7 +95,7 @@ public class RenderConfigTests {
     @Test
     public void renderingOrderTest() throws TimeoutException {
         String screenshotName = null;
-        GVRScene mainScene = gvrTestUtils.getMainScene();
+        final GVRScene mainScene = gvrTestUtils.getMainScene();
 
         try
         {
@@ -110,21 +118,32 @@ public class RenderConfigTests {
 
             jsonScene.put("objects", sceneObjects);
 
-            mSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(), jsonScene);
-            mainScene.getSceneObjectByName("quadObj").getRenderData().
-                    setRenderingOrder(GVRRenderData.GVRRenderingOrder.GEOMETRY);
-            mainScene.getSceneObjectByName("quadObj2").getRenderData().
-                    setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
+            mSceneMaker.makeScene(gvrTestUtils, jsonScene,
+                new Runnable()
+                {
+                    public void run()
+                    {
+                        mainScene.getSceneObjectByName("quadObj").getRenderData().
+                                setRenderingOrder(GVRRenderData.GVRRenderingOrder.GEOMETRY);
+                        mainScene.getSceneObjectByName("quadObj2").getRenderData().
+                                setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
+                    }
+                });
             gvrTestUtils.waitForXFrames(4);
             screenshotName = "testRenderingOrder1";
             gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
 
-
-            mSceneMaker.makeScene(gvrTestUtils.getGvrContext(), mainScene, jsonScene);
-            mainScene.getSceneObjectByName("quadObj").getRenderData().
-                    setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
-            mainScene.getSceneObjectByName("quadObj2").getRenderData().
-                    setRenderingOrder(GVRRenderData.GVRRenderingOrder.GEOMETRY);
+            mSceneMaker.makeScene(gvrTestUtils, jsonScene,
+                new Runnable()
+                {
+                    public void run()
+                    {
+                        mainScene.getSceneObjectByName("quadObj").getRenderData().
+                                setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
+                        mainScene.getSceneObjectByName("quadObj2").getRenderData().
+                                setRenderingOrder(GVRRenderData.GVRRenderingOrder.GEOMETRY);
+                    }
+                });
             gvrTestUtils.waitForXFrames(4);
             screenshotName = "testRenderingOrder2";
             gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
@@ -139,7 +158,7 @@ public class RenderConfigTests {
     @Test
     public void depthTest() throws TimeoutException {
         String screenshotName = null;
-        GVRScene mainScene = gvrTestUtils.getMainScene();
+        final GVRScene mainScene = gvrTestUtils.getMainScene();
 
         try
         {
@@ -163,17 +182,26 @@ public class RenderConfigTests {
 
             jsonScene.put("objects", sceneObjects);
 
-            mSceneMaker.makeScene(gvrTestUtils.getGvrContext(), mainScene, jsonScene);
-
-            mainScene.getSceneObjectByName("quadObj").getRenderData().setDepthTest(false);
-            mainScene.getSceneObjectByName("quadObj2").getRenderData().setDepthTest(false);
-
+            mSceneMaker.makeScene(gvrTestUtils, jsonScene,
+                new Runnable()
+                {
+                    public void run()
+                    {
+                        mainScene.getSceneObjectByName("quadObj").getRenderData().setDepthTest(false);
+                        mainScene.getSceneObjectByName("quadObj2").getRenderData().setDepthTest(false);
+                    }
+                });
             gvrTestUtils.waitForXFrames(4);
             screenshotName = "testDepthTest1";
             gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
-
-            mainScene.getSceneObjectByName("quadObj").getRenderData().setDepthTest(true);
-            mainScene.getSceneObjectByName("quadObj2").getRenderData().setDepthTest(true);
+            gvrTestUtils.getGvrContext().runOnGlThread(new Runnable()
+            {
+                public void run()
+                {
+                    mainScene.getSceneObjectByName("quadObj").getRenderData().setDepthTest(true);
+                    mainScene.getSceneObjectByName("quadObj2").getRenderData().setDepthTest(true);
+                }
+            });
 
             gvrTestUtils.waitForXFrames(8);
             screenshotName = "testDepthTest2";
@@ -342,5 +370,95 @@ public class RenderConfigTests {
         {
             mWaiter.fail(e);
         }
+    }
+
+    @Test
+    public void testOnePostEffect() throws TimeoutException {
+        final GVRContext ctx = gvrTestUtils.getGvrContext();
+        final GVRScene scene = gvrTestUtils.getMainScene();
+        TextureEventHandler texHandler = new TextureEventHandler(gvrTestUtils, 1);
+
+        ctx.getEventReceiver().addListener(texHandler);
+        GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.gearvr_logo));;
+        GVRMaterial mat1 = new GVRMaterial(ctx);
+        GVRSceneObject cube1 = new GVRCubeSceneObject(ctx, true, mat1);
+        GVRMaterial flipHorzPostEffect = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.VerticalFlip.ID);
+
+        mat1.setMainTexture(tex1);
+        cube1.getTransform().setPositionZ(-2.0f);
+        scene.getMainCameraRig().getRightCamera().addPostEffect(flipHorzPostEffect);
+        scene.getMainCameraRig().getLeftCamera().addPostEffect(flipHorzPostEffect);
+        scene.addSceneObject(cube1);
+        gvrTestUtils.waitForAssetLoad();
+        ctx.getEventReceiver().removeListener(texHandler);
+        gvrTestUtils.waitForSceneRendering();
+        gvrTestUtils.screenShot(getClass().getSimpleName(), "testOnePostEffect", mWaiter, true);
+    }
+
+    @Test
+    public void testTwoPostEffects() throws TimeoutException {
+        final GVRContext ctx = gvrTestUtils.getGvrContext();
+        final GVRScene scene = gvrTestUtils.getMainScene();
+        TextureEventHandler texHandler = new TextureEventHandler(gvrTestUtils, 1);
+
+        ctx.getEventReceiver().addListener(texHandler);
+        GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.gearvr_logo));;
+        GVRMaterial mat1 = new GVRMaterial(ctx);
+        GVRSceneObject cube1 = new GVRCubeSceneObject(ctx, true, mat1);
+        GVRMaterial flipHorzPostEffect = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.VerticalFlip.ID);
+        GVRShaderId colorBlendID = new GVRShaderId(GVRColorBlendShader.class);
+        GVRMaterial colorBlendPostEffect = new GVRMaterial(ctx, colorBlendID);
+
+        colorBlendPostEffect.setVec3("u_color", 0.0f, 0.3f, 0.3f);
+        colorBlendPostEffect.setFloat("u_factor", 0.5f);
+        flipHorzPostEffect.setVec3("u_color", 0, 0, 0);
+        flipHorzPostEffect.setFloat("u_factor", 0);
+
+        mat1.setMainTexture(tex1);
+        cube1.getTransform().setPositionZ(-2.0f);
+        scene.getMainCameraRig().getRightCamera().addPostEffect(colorBlendPostEffect);
+        scene.getMainCameraRig().getLeftCamera().addPostEffect(colorBlendPostEffect);
+        scene.getMainCameraRig().getCenterCamera().addPostEffect(colorBlendPostEffect);
+        scene.getMainCameraRig().getRightCamera().addPostEffect(flipHorzPostEffect);
+        scene.getMainCameraRig().getLeftCamera().addPostEffect(flipHorzPostEffect);
+        scene.getMainCameraRig().getCenterCamera().addPostEffect(flipHorzPostEffect);
+        scene.addSceneObject(cube1);
+        gvrTestUtils.waitForAssetLoad();
+        ctx.getEventReceiver().removeListener(texHandler);
+        gvrTestUtils.waitForSceneRendering();
+        gvrTestUtils.screenShot(getClass().getSimpleName(), "testTwoPostEffects", mWaiter, true);
+    }
+
+
+    @Test
+    public void testBlendFunc() throws TimeoutException {
+        final GVRContext ctx = gvrTestUtils.getGvrContext();
+        final GVRScene scene = gvrTestUtils.getMainScene();
+        TextureEventHandler texHandler = new TextureEventHandler(gvrTestUtils, 2);
+
+        ctx.getEventReceiver().addListener(texHandler);
+        GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.checker));;
+        GVRTexture tex2 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.donut));
+        GVRMaterial mat1 = new GVRMaterial(ctx);
+        GVRSceneObject cube1 = new GVRCubeSceneObject(ctx, true, mat1);
+        GVRSceneObject quad2 = new GVRSceneObject(ctx, 1.0f, 1.0f, tex2);
+        GVRRenderData rdata2 = quad2.getRenderData();
+        GVRMaterial mat2 = rdata2.getMaterial();
+
+        mat1.setMainTexture(tex1);
+        mat2.setColor(1.0f, 1.0f, 0.0f);
+        rdata2.setAlphaBlend(true);
+        rdata2.setAlphaBlendFunc(GL_ONE, GL_SRC_ALPHA);
+        rdata2.setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
+        cube1.getTransform().setPositionZ(-2.0f);
+        quad2.getTransform().setPositionZ(-0.8f);
+        scene.addSceneObject(cube1);
+        scene.addSceneObject(quad2);
+        mWaiter.assertEquals(GL_ONE, rdata2.getSourceAlphaBlendFunc());
+        mWaiter.assertEquals(GL_SRC_ALPHA, rdata2.getDestAlphaBlendFunc());
+        gvrTestUtils.waitForAssetLoad();
+        ctx.getEventReceiver().removeListener(texHandler);
+        gvrTestUtils.waitForSceneRendering();
+        gvrTestUtils.screenShot(getClass().getSimpleName(), "testBlendFunc", mWaiter, true);
     }
 }

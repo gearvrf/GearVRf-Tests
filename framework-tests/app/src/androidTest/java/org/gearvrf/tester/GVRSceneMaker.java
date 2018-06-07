@@ -158,7 +158,7 @@ public class GVRSceneMaker {
         return loadTexture(gvrContext, resourceId);
     }
 
-    public GVRTexture loadTexture(GVRContext gvrContext, int resourceId) throws JSONException {
+    public GVRTexture loadTexture(GVRContext gvrContext, int resourceId) {
         if (TextureCache.containsKey(resourceId))
         {
             return TextureCache.get(resourceId);
@@ -693,11 +693,14 @@ public class GVRSceneMaker {
         }
     }
 
-    public void makeScene(GVRContext gvrContext, GVRScene scene, JSONObject jsonScene,
+
+
+    public GVRSceneObject makeScene(GVRContext gvrContext, GVRScene scene, JSONObject jsonScene,
                                  JSONObject jsonShareables) throws JSONException {
         ArrayMap<String, GVRTexture> textures = new ArrayMap<>();
         ArrayMap<String, GVRMaterial> materials = new ArrayMap<>();
-        GVRSceneObject root = new GVRSceneObject(gvrContext);
+        GVRSceneObject root  = new GVRSceneObject(gvrContext);
+        root.setName("root");
         Log.d("SceneMaker", jsonScene.toString());
 
         if (jsonShareables != null) {
@@ -723,18 +726,9 @@ public class GVRSceneMaker {
             addChildrenObjects(gvrContext, root, textures, materials,
                     jsonChildrenObjects);
         }
-        scene.addSceneObject(root);
+        return root;
     }
 
-    public void makeScene(GVRContext gvrContext, GVRScene scene,
-                                 String jsonScene) throws JSONException {
-        makeScene(gvrContext, scene, new JSONObject(jsonScene), null);
-    }
-
-    public void makeScene(GVRContext gvrContext, GVRScene scene,
-                                 String jsonScene, String jsonShareables) throws JSONException {
-        makeScene(gvrContext, scene, new JSONObject(jsonScene), new JSONObject(jsonShareables));
-    }
 
     /*
      {
@@ -745,7 +739,67 @@ public class GVRSceneMaker {
      }
      */
     public void makeScene(GVRContext gvrContext, GVRScene scene,
-                                 JSONObject jsonScene) throws JSONException {
-        makeScene(gvrContext, scene, jsonScene, null);
+                          JSONObject jsonScene) throws JSONException {
+        GVRSceneObject root = makeScene(gvrContext, scene, jsonScene, null);
+        scene.addSceneObject(root);
+    }
+
+    public GVRSceneObject makeScene(GVRTestUtils tester, JSONObject jsonScene)
+            throws JSONException
+    {
+        GVRScene scene = tester.getMainScene();
+        GVRSceneObject root = makeScene(tester.getGvrContext(), scene, jsonScene, null);
+        ChangeScene sceneChanger = new ChangeScene(scene);
+        sceneChanger.setRoot(root);
+        return root;
+    }
+
+    public GVRSceneObject makeScene(GVRTestUtils tester, JSONObject jsonScene, Runnable callback)
+            throws JSONException
+    {
+        GVRScene scene = tester.getMainScene();
+        GVRSceneObject root = makeScene(tester.getGvrContext(), scene, jsonScene, null);
+        ChangeScene sceneChanger = new ChangeScene(scene, callback);
+        sceneChanger.setRoot(root);
+        return root;
+    }
+
+    static class ChangeScene implements Runnable
+    {
+        private GVRScene mScene;
+        private GVRSceneObject mRoot;
+        private Runnable mCallback = null;
+
+        public ChangeScene(GVRScene scene)
+        {
+            mScene = scene;
+        }
+
+        public ChangeScene(GVRScene scene, Runnable callback)
+        {
+            mScene = scene;
+            mCallback = callback;
+        }
+
+        public void setRoot(GVRSceneObject root)
+        {
+            mRoot = root;
+            mScene.getGVRContext().runOnGlThread(this);
+        }
+
+        public void run()
+        {
+            GVRSceneObject root = mScene.getSceneObjectByName("root");
+
+            if (root != null)
+            {
+                mScene.clear();
+            }
+            mScene.addSceneObject(mRoot);
+            if (mCallback != null)
+            {
+                mCallback.run();
+            }
+        }
     }
 }

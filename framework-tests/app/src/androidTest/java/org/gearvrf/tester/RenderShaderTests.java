@@ -37,6 +37,52 @@ public class RenderShaderTests
     private boolean mDoCompare = true;
     private final int NUM_FRAMES = 8;
 
+    static class ChangeTexture implements Runnable
+    {
+        private GVRMaterial mMaterial;
+        private GVRTexture mTexture;
+
+        public ChangeTexture(GVRMaterial material)
+        {
+            mMaterial = material;
+        }
+
+        public void setTexture(GVRTexture tex)
+        {
+            mTexture = tex;
+            mMaterial.getGVRContext().runOnGlThread(this);
+        }
+
+        public void run()
+        {
+            mMaterial.setMainTexture(mTexture);
+        }
+    };
+
+    static class ChangeTexcoord implements Runnable
+    {
+        private GVRMaterial mMaterial;
+        private String mTextureType;
+        private String mTexCoord;
+
+        public ChangeTexcoord(GVRMaterial material)
+        {
+            mMaterial = material;
+        }
+
+        public void setTexCoord(String textureType, String texcoordSet)
+        {
+            mTextureType = textureType;
+            mTexCoord = texcoordSet;
+        }
+
+        public void run()
+        {
+            mMaterial.setTexCoord(mTextureType + "Texture",
+                                 mTexCoord, mTextureType + "_coord");
+        }
+    };
+
     public RenderShaderTests() {
         super();
     }
@@ -197,6 +243,7 @@ public class RenderShaderTests
         List<String> materials = new ArrayList<String>();
         int[] textures = new int[] {R.drawable.checker, R.drawable.rock_normal, R.raw.jpg_opaque};
         for (int j = 0; j < textures.length; j++) { // Textures
+            mSceneMaker.loadTexture(gvrTestUtils.getGvrContext(), textures[j]);
             materials.add(createMaterialFormat(GVRMaterial.GVRShaderType.Phong.ID, textures[j]));
             materials.add(createMaterialFormat(GVRMaterial.GVRShaderType.Texture.ID, textures[j]));
         }
@@ -256,13 +303,10 @@ public class RenderShaderTests
                         jsonScene.put("lights", new JSONArray(lightingTypes.get(j)));
                     }
 
-                    mSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(), jsonScene);
-
+                    mSceneMaker.makeScene(gvrTestUtils, jsonScene);
                     gvrTestUtils.waitForXFrames(NUM_FRAMES);
                     screenshotName = "testMesh" + i + "Lighting" + j;
                     gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
-                    gvrTestUtils.getMainScene().clear();
-                    gvrTestUtils.waitForXFrames(NUM_FRAMES);
                 }
             }
         }
@@ -322,13 +366,10 @@ public class RenderShaderTests
                         jsonScene.put("lights", new JSONArray(lightingTypes.get(j)));
                     }
 
-                    mSceneMaker.makeScene(gvrTestUtils.getGvrContext(), gvrTestUtils.getMainScene(), jsonScene);
-
+                    mSceneMaker.makeScene(gvrTestUtils, jsonScene);
                     gvrTestUtils.waitForXFrames(NUM_FRAMES);
                     screenshotName = "testMesh" + i + "Lighting" + j + "2";
                     gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
-                    gvrTestUtils.getMainScene().clear();
-                    gvrTestUtils.waitForXFrames(NUM_FRAMES);
                 }
             }
         }
@@ -346,6 +387,10 @@ public class RenderShaderTests
         GVRScene scene = gvrTestUtils.getMainScene();
         int[] textures = new int[] {R.drawable.checker, R.drawable.rock_normal, R.raw.jpg_opaque};
 
+        for (int t = 0; t < textures.length; ++t)
+        {
+            mSceneMaker.loadTexture(ctx, textures[t]);
+        }
         try {
             List<String> materials = new ArrayList<String>();
             materials.add(createMaterialFormat(GVRMaterial.GVRShaderType.Phong.ID));
@@ -362,7 +407,7 @@ public class RenderShaderTests
                     object.put("rotation", new JSONObject("{w: 0.5f, x: 0.2f, y: 1.0f, z:0.0f}"));
 
                     jsonScene.put("objects", new JSONArray().put(object));
-                    mSceneMaker.makeScene(ctx, scene, jsonScene);
+                    mSceneMaker.makeScene(gvrTestUtils, jsonScene);
 
                     gvrTestUtils.waitForXFrames(NUM_FRAMES);
                     screenshotName = "testMeshWithoutTexture" + i + "." + j;
@@ -370,13 +415,12 @@ public class RenderShaderTests
 
                     GVRSceneObject obj = scene.getSceneObjectByName(objName);
                     GVRTexture text = mSceneMaker.loadTexture(ctx, textures[j]);
-                    obj.getRenderData().getMaterial().setMainTexture(text);
+                    ChangeTexture changeTexture = new ChangeTexture(obj.getRenderData().getMaterial());
+                    changeTexture.setTexture(text);
 
                     gvrTestUtils.waitForXFrames(NUM_FRAMES);
                     screenshotName = "testMeshAddTexture" + i + "." + j;
                     gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
-                    scene.clear();
-                    gvrTestUtils.waitForXFrames(NUM_FRAMES);
                 }
             }
         }
@@ -386,17 +430,16 @@ public class RenderShaderTests
         }
     }
 
+
     @Test
     public void meshStartWithTextureTest() throws TimeoutException {
         String screenshotName = null;
         JSONObject jsonScene = null;
         GVRContext ctx = gvrTestUtils.getGvrContext();
         GVRScene scene = gvrTestUtils.getMainScene();
-        List<String> materials = null;
+        List<String> materials = createMaterialWithTextureFormats();
 
         try {
-            materials = createMaterialWithTextureFormats();
-
             for (int i = 0; i < materials.size(); i++) { // Materials with textures
                 jsonScene = new JSONObject("{\"id\": \"scene" + i + "\"}");
                 String objName = "cubeObj" + i;
@@ -407,20 +450,19 @@ public class RenderShaderTests
                 object.put("rotation", new JSONObject("{w: 0.5f, x: 0.2f, y: 1.0f, z:0.0f}"));
 
                 jsonScene.put("objects", new JSONArray().put(object));
-                mSceneMaker.makeScene(ctx, scene, jsonScene);
+                mSceneMaker.makeScene(gvrTestUtils, jsonScene);
                 gvrTestUtils.waitForXFrames(NUM_FRAMES);
 
                 screenshotName = "testMeshWithTexture" + i;
                 gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
 
                 GVRSceneObject obj = scene.getSceneObjectByName(objName);
-                obj.getRenderData().getMaterial().setMainTexture(null);
+                ChangeTexture changeTexture = new ChangeTexture(obj.getRenderData().getMaterial());
+                changeTexture.setTexture(null);
                 gvrTestUtils.waitForXFrames(NUM_FRAMES);
 
                 screenshotName = "testMeshRemoveTexture" + i;
                 gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
-
-                scene.clear();
             }
         }
         catch (JSONException e)
@@ -454,8 +496,8 @@ public class RenderShaderTests
             object.put("position", new JSONObject("{z: -2.0}"));
 
             jsonScene.put("objects", new JSONArray().put(object));
-            mSceneMaker.makeScene(ctx, scene, jsonScene);
-            GVRSceneObject obj = scene.getSceneObjectByName(objName);
+            GVRSceneObject root = mSceneMaker.makeScene(gvrTestUtils, jsonScene);
+            GVRSceneObject obj = root.getSceneObjectByName(objName);
             obj.getRenderData().getMesh().setTexCoords(
                     new float[]{0.5F, 0.5F, 1.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F}, 1);
 
@@ -463,16 +505,13 @@ public class RenderShaderTests
             screenshotName = "testMeshWithFirstSetTextCoord";
             gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
 
-            // change text coordinates
-            obj.getRenderData().getMaterial().setTexCoord("diffuseTexture",
-                    "a_texcoord1",
-                    "diffuse_coord");
+            // change texture coordinates
+            ChangeTexcoord changeTC = new ChangeTexcoord(obj.getRenderData().getMaterial());
+            changeTC.setTexCoord("diffuse", "a_texcoord1");
 
             gvrTestUtils.waitForSceneRendering();
             screenshotName = "testMeshWithSecondSetTextCoord";
             gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
-            // test failed, textcoord is not changing
-
         }
         catch (JSONException e)
         {
@@ -549,7 +588,7 @@ public class RenderShaderTests
 
             // remove lighting from the scene
             GVRSceneObject lightNode = gvrTestUtils.getMainScene().getSceneObjectByName("lightNode");
-            gvrTestUtils.getMainScene().removeSceneObject(lightNode);
+            lightNode.getParent().removeChildObject(lightNode);
 
             gvrTestUtils.waitForXFrames(NUM_FRAMES);
             screenshotName = "testMeshRemoveLighting";
@@ -591,7 +630,6 @@ public class RenderShaderTests
             gvrTestUtils.waitForXFrames(NUM_FRAMES);
             screenshotName = "testMeshDisableRenderDataLight";
             gvrTestUtils.screenShot(getClass().getSimpleName(), screenshotName, mWaiter, mDoCompare);
-
         }
         catch (JSONException e)
         {

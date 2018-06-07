@@ -6,6 +6,7 @@ import android.support.test.runner.AndroidJUnit4;
 import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRBone;
+import org.gearvrf.GVRNotifications;
 import org.gearvrf.shaders.GVRColorBlendShader;
 import org.gearvrf.GVRIndexBuffer;
 import org.gearvrf.GVRShaderId;
@@ -45,7 +46,8 @@ import static android.opengl.GLES20.GL_SRC_ALPHA;
 @RunWith(AndroidJUnit4.class)
 
 
-public class RenderTests {
+public class MeshTests
+{
     private GVRTestUtils mTestUtils;
     private Waiter mWaiter;
 
@@ -176,37 +178,60 @@ public class RenderTests {
         return true;
     }
 
+
     @Test
-    public void testBlendFunc() throws TimeoutException {
+    public void testMeshSimpleApi1() {
         final GVRContext ctx = mTestUtils.getGvrContext();
         final GVRScene scene = mTestUtils.getMainScene();
-        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 2);
 
-        ctx.getEventReceiver().addListener(texHandler);
-        GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.checker));;
-        GVRTexture tex2 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.donut));
-        GVRMaterial mat1 = new GVRMaterial(ctx);
-        GVRSceneObject cube1 = new GVRCubeSceneObject(ctx, true, mat1);
-        GVRSceneObject quad2 = new GVRSceneObject(ctx, 1.0f, 1.0f, tex2);
-        GVRRenderData rdata2 = quad2.getRenderData();
-        GVRMaterial mat2 = rdata2.getMaterial();
+        final GVRCylinderSceneObject so = new GVRCylinderSceneObject(ctx);
+        final GVRMesh mesh = so.getRenderData().getMesh();
 
-        mat1.setMainTexture(tex1);
-        mat2.setColor(1.0f, 1.0f, 0.0f);
-        rdata2.setAlphaBlend(true);
-        rdata2.setAlphaBlendFunc(GL_ONE, GL_SRC_ALPHA);
-        rdata2.setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
-        cube1.getTransform().setPositionZ(-2.0f);
-        quad2.getTransform().setPositionZ(-0.8f);
-        scene.addSceneObject(cube1);
-        scene.addSceneObject(quad2);
-        mWaiter.assertEquals(GL_ONE, rdata2.getSourceAlphaBlendFunc());
-        mWaiter.assertEquals(GL_SRC_ALPHA, rdata2.getDestAlphaBlendFunc());
-        mTestUtils.waitForAssetLoad();
-        ctx.getEventReceiver().removeListener(texHandler);
-        mTestUtils.waitForSceneRendering();
-        mTestUtils.screenShot(getClass().getSimpleName(), "testBlendFunc", mWaiter, true);
+        mWaiter.assertTrue(0 < mesh.getIndexBuffer().getIndexCount());
+
+        float[] asArray = mesh.getVertices();
+        mWaiter.assertTrue(0 < asArray.length);
+        FloatBuffer asBuffer = mesh.getVerticesAsFloatBuffer();
+        mWaiter.assertTrue(0 < asBuffer.remaining());
+
+        asArray = mesh.getNormals();
+        mWaiter.assertTrue(0 < asArray.length);
+        asBuffer = mesh.getNormalsAsFloatBuffer();
+        mWaiter.assertTrue(0 < asBuffer.remaining());
+
+        asArray = mesh.getTexCoords();
+        mWaiter.assertTrue(0 < asArray.length);
+        asBuffer = mesh.getTexCoordsAsFloatBuffer();
+        mWaiter.assertTrue(0 < asBuffer.remaining());
     }
+
+    @Test
+    public void testVertexBufferSimpleApi1() {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        final GVRScene scene = mTestUtils.getMainScene();
+
+        mTestUtils.waitForOnInit();
+        final GVRCylinderSceneObject so = new GVRCylinderSceneObject(ctx);
+        so.getTransform().setPosition(0,0,-2);
+        scene.addSceneObject(so);
+        mTestUtils.waitForSceneRendering();
+        GVRNotifications.waitAfterStep();
+
+        {
+            final float[] bound = new float[6];
+            final boolean result = so.getRenderData().getMesh().getVertexBuffer().getBoxBound(bound);
+            mWaiter.assertTrue(result);
+            mWaiter.assertTrue(0 != bound[0] && 0 != bound[1] && 0 != bound[2] && 0 != bound[3]
+                    && 0 != bound[4] && 0 != bound[5]);
+        }
+
+        {
+            final float[] bound = new float[4];
+            final float radius = so.getRenderData().getMesh().getVertexBuffer().getSphereBound(bound);
+            mWaiter.assertTrue(0 != radius);
+        }
+    }
+
 
     @Test
     public void testAccessMeshShortArray() throws TimeoutException
@@ -365,62 +390,6 @@ public class RenderTests {
         mWaiter.assertTrue(compareArrays(triangles, itmp));
     }
 
-    @Test
-    public void testOnePostEffect() throws TimeoutException {
-        final GVRContext ctx = mTestUtils.getGvrContext();
-        final GVRScene scene = mTestUtils.getMainScene();
-        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
-
-        ctx.getEventReceiver().addListener(texHandler);
-        GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.gearvr_logo));;
-        GVRMaterial mat1 = new GVRMaterial(ctx);
-        GVRSceneObject cube1 = new GVRCubeSceneObject(ctx, true, mat1);
-        GVRMaterial flipHorzPostEffect = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.VerticalFlip.ID);
-
-        mat1.setMainTexture(tex1);
-        cube1.getTransform().setPositionZ(-2.0f);
-        scene.getMainCameraRig().getRightCamera().addPostEffect(flipHorzPostEffect);
-        scene.getMainCameraRig().getLeftCamera().addPostEffect(flipHorzPostEffect);
-        scene.addSceneObject(cube1);
-        mTestUtils.waitForAssetLoad();
-        ctx.getEventReceiver().removeListener(texHandler);
-        mTestUtils.waitForSceneRendering();
-        mTestUtils.screenShot(getClass().getSimpleName(), "testOnePostEffect", mWaiter, true);
-    }
-
-    @Test
-    public void testTwoPostEffects() throws TimeoutException {
-        final GVRContext ctx = mTestUtils.getGvrContext();
-        final GVRScene scene = mTestUtils.getMainScene();
-        TextureEventHandler texHandler = new TextureEventHandler(mTestUtils, 1);
-
-        ctx.getEventReceiver().addListener(texHandler);
-        GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.gearvr_logo));;
-        GVRMaterial mat1 = new GVRMaterial(ctx);
-        GVRSceneObject cube1 = new GVRCubeSceneObject(ctx, true, mat1);
-        GVRMaterial flipHorzPostEffect = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.VerticalFlip.ID);
-        GVRShaderId colorBlendID = new GVRShaderId(GVRColorBlendShader.class);
-        GVRMaterial colorBlendPostEffect = new GVRMaterial(ctx, colorBlendID);
-
-        colorBlendPostEffect.setVec3("u_color", 0.0f, 0.3f, 0.3f);
-        colorBlendPostEffect.setFloat("u_factor", 0.5f);
-        flipHorzPostEffect.setVec3("u_color", 0, 0, 0);
-        flipHorzPostEffect.setFloat("u_factor", 0);
-
-        mat1.setMainTexture(tex1);
-        cube1.getTransform().setPositionZ(-2.0f);
-        scene.getMainCameraRig().getRightCamera().addPostEffect(colorBlendPostEffect);
-        scene.getMainCameraRig().getLeftCamera().addPostEffect(colorBlendPostEffect);
-        scene.getMainCameraRig().getCenterCamera().addPostEffect(colorBlendPostEffect);
-        scene.getMainCameraRig().getRightCamera().addPostEffect(flipHorzPostEffect);
-        scene.getMainCameraRig().getLeftCamera().addPostEffect(flipHorzPostEffect);
-        scene.getMainCameraRig().getCenterCamera().addPostEffect(flipHorzPostEffect);
-        scene.addSceneObject(cube1);
-        mTestUtils.waitForAssetLoad();
-        ctx.getEventReceiver().removeListener(texHandler);
-        mTestUtils.waitForSceneRendering();
-        mTestUtils.screenShot(getClass().getSimpleName(), "testTwoPostEffects", mWaiter, true);
-    }
 
     @Test
     public void testSkinningTwoBones() throws TimeoutException, InterruptedException

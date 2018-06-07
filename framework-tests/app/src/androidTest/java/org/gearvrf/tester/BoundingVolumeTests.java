@@ -9,16 +9,21 @@ import net.jodah.concurrentunit.Waiter;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 
+import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.GVRTransform;
 import org.gearvrf.scene_objects.GVRConeSceneObject;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -158,21 +163,57 @@ public class BoundingVolumeTests {
 
         GVRSceneObject parent = new GVRSceneObject(context);
         GVRSphereSceneObject sphereSceneObject = new GVRSphereSceneObject(context, true);
-        parent.addChildObject(sphereSceneObject);
+        GVRSceneObject.BoundingVolume orig = sphereSceneObject.getBoundingVolume();
+        GVRTransform trans = sphereSceneObject.getTransform();
 
+        // rotate by 45 degrees
+        trans.rotateByAxis(45.0f, 0.0f, 1.0f, 0.0f);
+        Vector3f expectedMinCorner = new Vector3f(orig.minCorner);
+        Vector3f expectedMaxCorner = new Vector3f(orig.maxCorner);
+
+        calcBounds(expectedMinCorner, expectedMaxCorner, trans);
+        parent.addChildObject(sphereSceneObject);
         scene.addSceneObject(parent);
         gvrTestUtils.waitForSceneRendering();
 
-        // rotate by 45 degrees
-        sphereSceneObject.getTransform().rotateByAxis(45.0f, 0.0f, 1.0f, 0.0f);
         GVRSceneObject.BoundingVolume boundingVolume = parent.getBoundingVolume();
-
         Vector3f bvMin = boundingVolume.minCorner;
         Vector3f bvMax = boundingVolume.maxCorner;
 
-        mWaiter.assertTrue(checkResult(new Vector3f(-1.0f * SQRT_2, -1.0f, -1.0f * SQRT_2), bvMin));
-        mWaiter.assertTrue(checkResult(new Vector3f(1.0f * SQRT_2, 1.0f, 1.0f * SQRT_2), bvMax));
+        mWaiter.assertTrue(checkResult(expectedMinCorner, bvMin));
+        mWaiter.assertTrue(checkResult(expectedMaxCorner, bvMax));
     }
+
+    //
+    // Duplicates the algorithm GearVRf uses to calculate bounding volumes
+    //
+    private void calcBounds(Vector3f minCorner, Vector3f maxCorner, GVRTransform trans)
+    {
+        Matrix4f mtx = trans.getModelMatrix4f();
+        Vector3f center = new Vector3f(minCorner);
+        Vector3f extents = new Vector3f(maxCorner);
+        Matrix3f newMtx = new Matrix3f(
+                Math.abs(mtx.m00()), Math.abs(mtx.m01()), Math.abs(mtx.m02()),
+                Math.abs(mtx.m10()), Math.abs(mtx.m11()), Math.abs(mtx.m12()),
+                Math.abs(mtx.m20()), Math.abs(mtx.m21()), Math.abs(mtx.m22()));
+
+        center.add(maxCorner);
+        center.mul(0.5f);
+        extents.sub(minCorner);
+        extents.mul(0.5f);
+        mtx.transformPosition(center);
+        newMtx.transform(extents);
+        Vector3f c1 = new Vector3f(center);
+        Vector3f c2 = new Vector3f(center);
+
+        c1.sub(extents);
+        c2.add(extents);
+        minCorner.set(c1);
+        maxCorner.set(c1);
+        minCorner.min(c2);
+        maxCorner.max(c2);
+    }
+
 
     private boolean checkResult(Vector3f expected, Vector3f actual) {
         if (Math.abs(expected.x - actual.x) < 0.0001f && Math.abs(expected.y - actual.y) <
