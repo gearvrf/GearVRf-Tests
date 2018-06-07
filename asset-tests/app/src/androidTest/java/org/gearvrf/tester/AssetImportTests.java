@@ -1,6 +1,7 @@
 package org.gearvrf.tester;
 
 
+import android.graphics.Color;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import net.jodah.concurrentunit.Waiter;
@@ -545,6 +546,10 @@ public class AssetImportTests
         GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRPointLight pointLight = new GVRPointLight(ctx);
+        GVRCameraRig rig = scene.getMainCameraRig();
+        rig.getCenterCamera().setBackgroundColor(Color.LTGRAY);
+        rig.getLeftCamera().setBackgroundColor(Color.LTGRAY);
+        rig.getRightCamera().setBackgroundColor(Color.LTGRAY);
 
         pointLight.setDiffuseIntensity(0.8f, 0.8f, 08f, 1.0f);
         pointLight.setSpecularIntensity(0.8f, 0.8f, 08f, 1.0f);
@@ -561,6 +566,10 @@ public class AssetImportTests
         GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject lightObj = new GVRSceneObject(ctx);
         GVRPointLight pointLight = new GVRPointLight(ctx);
+        GVRCameraRig rig = scene.getMainCameraRig();
+        rig.getCenterCamera().setBackgroundColor(Color.LTGRAY);
+        rig.getLeftCamera().setBackgroundColor(Color.LTGRAY);
+        rig.getRightCamera().setBackgroundColor(Color.LTGRAY);
 
         pointLight.setDiffuseIntensity(0.8f, 0.8f, 08f, 1.0f);
         pointLight.setSpecularIntensity(0.8f, 0.8f, 08f, 1.0f);
