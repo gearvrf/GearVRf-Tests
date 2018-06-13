@@ -8,6 +8,7 @@ import net.jodah.concurrentunit.Waiter;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRBoundsPicker;
 import org.gearvrf.GVRBoxCollider;
+import org.gearvrf.GVRCollider;
 import org.gearvrf.GVRColliderGroup;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRFrustumPicker;
@@ -133,6 +134,12 @@ public class PickerTests
         group.addCollider(collider);
         sphere.attachComponent(group);
         scene.addSceneObject(sphere);
+        String types = "";
+        for (GVRCollider c : group)
+        {
+            types += c.getClass().getSimpleName();
+        }
+        mWaiter.assertEquals("GVRSphereCollider", types);
         scene.getEventReceiver().addListener(mPickHandler);
         mPicker = new GVRPicker(context, scene);
         gvrTestUtils.waitForXFrames(NUM_WAIT_FRAMES);
