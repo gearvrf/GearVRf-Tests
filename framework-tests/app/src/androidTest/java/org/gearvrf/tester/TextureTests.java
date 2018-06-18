@@ -562,8 +562,7 @@ public class TextureTests
         GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.colortex), texparams);
         GVRTexture tex2 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.rock_normal));
         GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.PhongLayered.ID);
-        GVRSceneObject sphere = new GVRSphereSceneObject(ctx, "float3 a_position, float2 a_texcoord, float2 a_texcoord1, float3 a_normal ",
-                                 10, 10, true, 1, mtl);
+        GVRSceneObject sphere = new GVRSphereSceneObject(ctx, 10, 10, true, mtl);
         GVRDirectLight light = new GVRDirectLight(ctx);
         GVRMesh mesh = sphere.getRenderData().getMesh();
 
