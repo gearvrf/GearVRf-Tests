@@ -592,12 +592,6 @@ public class AssetImportTests
     }
 
     @Test
-    public void jassimpBlendShapes() throws TimeoutException
-    {
-        mHandler.loadTestModel("jassimp/blendShapes.gltf", 0, 0, "jassimpBlendShapes");
-    }
-
-    @Test
     public void jassimpLoadError() throws TimeoutException
     {
         try
