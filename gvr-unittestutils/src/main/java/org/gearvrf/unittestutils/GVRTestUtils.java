@@ -52,7 +52,8 @@ public class GVRTestUtils implements GVRMainMonitor {
     private static final String TAG = GVRTestUtils.class.getSimpleName();
     private static final String DEFAULT_DEVICE_TYPE = "S7Edge";
     public static final String DEVICE_TYPE = GetDeviceType();
-    public static final String GITHUB_URL = "https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/";
+//    public static final String GITHUB_URL = "https://raw.githubusercontent.com/gearvrf/GearVRf-Tests/master/";
+    public static final String GITHUB_URL = "https://raw.githubusercontent.com/NolaDonato/GearVRf-Tests/testfixes/";
     private static final String GOLDEN_MASTERS_BASE_URL = GITHUB_URL + "golden_masters/";
     public static final String GOLDEN_MASTERS_URL = GOLDEN_MASTERS_BASE_URL + DEVICE_TYPE;
 
