@@ -1,4 +1,5 @@
-package org.gearvrf.tester;
+
+package org.gearvrf.stress;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,7 +24,7 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.io.TestSendEvents;
-import org.gearvrf.scene_objects.GVRCylinderSceneObject;
+import org.gearvrf.tester.R;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
 import org.junit.After;
@@ -36,7 +37,7 @@ import org.junit.runners.MethodSorters;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.FloatBuffer;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -44,7 +45,7 @@ import static junit.framework.Assert.fail;
 
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MiscTests {
+public class StressTests {
     private GVRTestUtils mTestUtils;
     private Waiter mWaiter;
 
@@ -115,7 +116,7 @@ public class MiscTests {
                 mesh.setFloatArray("a_texcoord", texCoords);
                 material.setDiffuseColor(0, 0, 0, 0);
                 GVRNotifications.waitAfterStep();
-          }
+            }
         } catch (final Throwable t) {
             t.printStackTrace();
             mWaiter.assertTrue(false);
@@ -178,58 +179,6 @@ public class MiscTests {
         Log.d(TAG, "Finished heap dump");
     }
 
-    @Test
-    public void testMeshSimpleApi1() {
-        final GVRContext ctx = mTestUtils.getGvrContext();
-        final GVRScene scene = mTestUtils.getMainScene();
-
-        final GVRCylinderSceneObject so = new GVRCylinderSceneObject(ctx);
-        final GVRMesh mesh = so.getRenderData().getMesh();
-
-        mWaiter.assertTrue(0 < mesh.getIndexBuffer().getIndexCount());
-
-        float[] asArray = mesh.getVertices();
-        mWaiter.assertTrue(0 < asArray.length);
-        FloatBuffer asBuffer = mesh.getVerticesAsFloatBuffer();
-        mWaiter.assertTrue(0 < asBuffer.remaining());
-
-        asArray = mesh.getNormals();
-        mWaiter.assertTrue(0 < asArray.length);
-        asBuffer = mesh.getNormalsAsFloatBuffer();
-        mWaiter.assertTrue(0 < asBuffer.remaining());
-
-        asArray = mesh.getTexCoords();
-        mWaiter.assertTrue(0 < asArray.length);
-        asBuffer = mesh.getTexCoordsAsFloatBuffer();
-        mWaiter.assertTrue(0 < asBuffer.remaining());
-    }
-
-    @Test
-    public void testVertexBufferSimpleApi1() {
-        final GVRContext ctx = mTestUtils.getGvrContext();
-        final GVRScene scene = mTestUtils.getMainScene();
-
-        mTestUtils.waitForOnInit();
-        final GVRCylinderSceneObject so = new GVRCylinderSceneObject(ctx);
-        so.getTransform().setPosition(0,0,-2);
-        scene.addSceneObject(so);
-        mTestUtils.waitForSceneRendering();
-        GVRNotifications.waitAfterStep();
-
-        {
-            final float[] bound = new float[6];
-            final boolean result = so.getRenderData().getMesh().getVertexBuffer().getBoxBound(bound);
-            mWaiter.assertTrue(result);
-            mWaiter.assertTrue(0 != bound[0] && 0 != bound[1] && 0 != bound[2] && 0 != bound[3]
-                    && 0 != bound[4] && 0 != bound[5]);
-        }
-
-        {
-            final float[] bound = new float[4];
-            final float radius = so.getRenderData().getMesh().getVertexBuffer().getSphereBound(bound);
-            mWaiter.assertTrue(0 != radius);
-        }
-    }
 
     @Test
     public void testSendEvents() {

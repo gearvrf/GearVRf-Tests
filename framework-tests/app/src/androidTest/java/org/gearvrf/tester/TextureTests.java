@@ -21,6 +21,7 @@ import org.gearvrf.GVRShader;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTextureParameters;
 import org.gearvrf.GVRTransform;
+import org.gearvrf.GVRVertexBuffer;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
@@ -562,11 +563,14 @@ public class TextureTests
         GVRTexture tex1 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.colortex), texparams);
         GVRTexture tex2 = ctx.getAssetLoader().loadTexture(new GVRAndroidResource(ctx, R.drawable.rock_normal));
         GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.PhongLayered.ID);
-        GVRSceneObject sphere = new GVRSphereSceneObject(ctx, 10, 10, true, mtl);
         GVRDirectLight light = new GVRDirectLight(ctx);
-        GVRMesh mesh = sphere.getRenderData().getMesh();
+        GVRSceneObject protoSphere = new GVRSphereSceneObject(ctx, true, mtl);
+        GVRMesh protoMesh = protoSphere.getRenderData().getMesh();
+        GVRVertexBuffer newVerts = new GVRVertexBuffer(protoMesh.getVertexBuffer(),"float3 a_position, float2 a_texcoord, float3 a_normal, float2 a_texcoord1");
+        GVRMesh newmesh = new GVRMesh(newVerts, protoMesh.getIndexBuffer());
+        GVRSceneObject sphere = new GVRSceneObject(ctx, newmesh, mtl);
 
-        repeatTexcoords(mesh);
+        repeatTexcoords(newmesh);
         mtl.setDiffuseColor(0.7f, 0.7f, 0.7f, 1);
         mtl.setSpecularColor(1, 1, 1, 1);
         mtl.setSpecularExponent(4.0f);
