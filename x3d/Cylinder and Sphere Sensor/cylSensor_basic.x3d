@@ -1,0 +1,23 @@
+<X3D profile='Interactive' version='3.0' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.0.xsd'>
+  <Scene>
+    <NavigationInfo headlight='false' type='"WALK" "FLY" "ANY"'/>
+    <Group>
+      <Viewpoint description='Front View' position='0 1.5 4'/>
+      <DirectionalLight/>
+        <Background skyColor='.5 .5 .7'/>
+    </Group>
+    <Group>
+      <Transform DEF='MYCYL' rotation='0 1 0 .4'>
+        <CylinderSensor DEF='CYLSENSOR' minAngle='-1.57'  maxAngle='1.57'/>
+        <Shape>
+          <Appearance>
+            <Material/>
+			<ImageTexture url="lattitudelongitude.png"/>
+          </Appearance>
+          <Cylinder/>
+        </Shape>
+      </Transform>
+    </Group>
+    <ROUTE fromField='rotation_changed' fromNode='CYLSENSOR' toField='set_rotation' toNode='MYCYL'/>
+  </Scene>
+</X3D>
