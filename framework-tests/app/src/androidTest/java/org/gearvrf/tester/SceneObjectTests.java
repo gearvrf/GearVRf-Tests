@@ -6,6 +6,10 @@ import android.support.test.runner.AndroidJUnit4;
 import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRBehavior;
+import org.gearvrf.GVRBillboard;
+import org.gearvrf.GVRComponent;
+import org.gearvrf.GVRComponentGroup;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRScene;
@@ -15,7 +19,6 @@ import org.gearvrf.GVRTransform;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRCylinderSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
-import org.gearvrf.GVRBillboard;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
@@ -28,9 +31,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import static java.lang.Thread.sleep;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(AndroidJUnit4.class)
@@ -366,4 +369,34 @@ public class SceneObjectTests
         mWaiter.assertTrue(Math.abs(1 - zs) < epsilon);
    }
 
+    private final static int MAX_COMPONENTS_IN_GROUP = 5;
+    private final class TestBehavior extends GVRBehavior {
+        public TestBehavior(GVRContext gvrContext) {
+            super(gvrContext);
+        }
+        @Override
+        public void onDrawFrame(float frameTime) {
+            mTestComponentGroupLatch.countDown();
+            stopListening();
+        }
+    }
+    private final CountDownLatch mTestComponentGroupLatch = new CountDownLatch(MAX_COMPONENTS_IN_GROUP);
+
+    @Test
+    public void testComponentGroup() throws InterruptedException {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        final GVRScene scene = mTestUtils.getMainScene();
+
+        GVRComponentGroup<GVRBehavior> group = new GVRComponentGroup<>(ctx, GVRBehavior.getComponentType());
+        final GVRSceneObject so = new GVRSceneObject(ctx);
+        for (int i = 0; i < MAX_COMPONENTS_IN_GROUP; ++i) {
+            group.addChildComponent(new TestBehavior(ctx));
+        }
+        so.attachComponent(group);
+        scene.addSceneObject(so);
+        mWaiter.assertTrue(mTestComponentGroupLatch.await(10, TimeUnit.SECONDS));
+
+        group = (GVRComponentGroup<GVRBehavior>)so.getComponent(GVRBehavior.getComponentType());
+        mWaiter.assertTrue(MAX_COMPONENTS_IN_GROUP == group.getSize());
+    }
 }
