@@ -1,0 +1,36 @@
+<X3D profile='Interactive' version='3.0' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.0.xsd'>
+  <Scene>
+    <NavigationInfo headlight='false' type='"WALK" "FLY" "ANY"'/>
+    <Group>
+      <Viewpoint description='Front View' position='0 1.5 4'/>
+      <DirectionalLight/>
+        <Background skyColor='.5 .5 .7'/>
+    </Group>
+    
+        <Transform translation='-1 .5 0' rotation='0 1 0 .785'>
+          <Transform DEF='recepientCylinder'>
+            <Shape>
+              <Appearance>
+                <Material/>
+    			<ImageTexture url="deedee1.jpg"/>
+              </Appearance>
+              <Cylinder radius='.75' height='1.5'/>
+            </Shape>
+          </Transform>
+        </Transform>
+
+    <Transform translation='1 -2 0'>
+      <Transform DEF='MYCYL' rotation='0 1 0 .4'>
+        <CylinderSensor DEF='CYLSENSOR' minAngle='-2.5'  maxAngle='2.5'/>
+        <Shape>
+          <Appearance>
+            <Material/>
+			<ImageTexture url="lattitudelongitude.png"/>
+          </Appearance>
+          <Cylinder/>
+        </Shape>
+      </Transform>
+    </Transform>
+    <ROUTE fromField='rotation_changed' fromNode='CYLSENSOR' toField='set_rotation' toNode='recepientCylinder'/>
+  </Scene>
+</X3D>

@@ -1,0 +1,28 @@
+<X3D>
+  <Scene>
+    <NavigationInfo Headline='false'/>
+    <Viewpoint description='Front View' position='0 1.25 2.5'/>
+        <!-- DirectionalLight/ -->
+        <PointLight location='0 0 5'/>
+        <Background skyColor='.6 .6 .7'/>
+
+    <Group>
+    
+      <Transform DEF='mySphere' translation='-.5 .5 -1'>
+      <!-- Transform DEF='mySphere' -->
+        <SphereSensor DEF='SPHERE_SENSOR' description='click and drag to rotate' enabled='true'/>
+          <Shape>
+            <Appearance>
+              <Material diffuseColor='1 1 1'/>
+              	<ImageTexture url="NASA_Earth.jpg" repeatS="TRUE" repeatT="TRUE"/>
+              	<!-- ImageTexture url="lattitudelongitude.png" repeatS="TRUE" repeatT="TRUE"/ -->
+
+            </Appearance>
+            <Sphere/>
+          </Shape>
+        </Transform>
+
+    </Group>
+    <ROUTE fromField='rotation_changed' fromNode='SPHERE_SENSOR' toField='set_rotation' toNode='mySphere'/>
+  </Scene>
+</X3D>
