@@ -524,7 +524,7 @@ public class MeshTests
         GVRMesh baseMesh = baseShape.getRenderData().getMesh();
         GVRVertexBuffer baseVerts = baseMesh.getVertexBuffer();
         float[] positions = baseMesh.getVertices();
-        float[] weights = new float[] { 1, 0 };
+        float[] weights = new float[] { 2, 1 };
 
         GVRVertexBuffer blendShape1 = new GVRVertexBuffer(ctx, baseVerts.getDescriptor(), baseVerts.getVertexCount());
         GVRVertexBuffer blendShape2 = new GVRVertexBuffer(ctx, baseVerts.getDescriptor(), baseVerts.getVertexCount());
@@ -536,13 +536,13 @@ public class MeshTests
         mtl.setDiffuseColor(1, 0.4f, 0.8f, 1);
         for (int i = 0; i < positions.length; i += 3)
         {
-            positions[i] *= 2;     // scale X coordinates
+            positions[i] *= 1 + positions[i + 1] * 0.3f;
         }
         blendShape1.setFloatArray("a_position", positions);
         positions = baseMesh.getVertices();
         for (int i = 0; i < positions.length; i += 3)
         {
-            positions[i + 1] *= 2;  // scale Y coordinates
+            positions[i + 1] *= 1 + positions[i] * 0.3f;
         }
         blendShape2.setFloatArray("a_position", positions);
         GVRMeshMorph morph = new GVRMeshMorph(ctx, 2, false);
@@ -571,7 +571,7 @@ public class MeshTests
         GVRMesh baseMesh = baseShape.getRenderData().getMesh();
         GVRVertexBuffer baseVerts = baseMesh.getVertexBuffer();
         float[] positions = baseMesh.getVertices();
-        float[] weights = new float[] { 0, 0 };
+        float[] weights = new float[] { 2, 1 };
 
         GVRVertexBuffer blendShape1 = new GVRVertexBuffer(ctx, baseVerts.getDescriptor(), baseVerts.getVertexCount());
         GVRVertexBuffer blendShape2 = new GVRVertexBuffer(ctx, baseVerts.getDescriptor(), baseVerts.getVertexCount());
