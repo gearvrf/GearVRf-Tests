@@ -1,12 +1,17 @@
 package org.gearvrf.tester;
 
+import android.graphics.Color;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRBone;
+import org.gearvrf.GVRCameraRig;
+import org.gearvrf.GVRMeshMorph;
 import org.gearvrf.GVRNotifications;
+import org.gearvrf.GVRPointLight;
+import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.shaders.GVRColorBlendShader;
 import org.gearvrf.GVRIndexBuffer;
 import org.gearvrf.GVRShaderId;
@@ -504,5 +509,99 @@ public class MeshTests
         scene.addSceneObject(root);
         mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "testSkinningTwoBones", mWaiter, false);
+    }
+
+    @Test
+    public void testMorphTwoShapes() throws TimeoutException, InterruptedException
+    {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        final GVRScene scene = mTestUtils.getMainScene();
+        final GVRCameraRig rig = scene.getMainCameraRig();
+        GVRPointLight light = new GVRPointLight(ctx);
+        GVRSceneObject lightObj = new GVRSceneObject(ctx);
+        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
+        final GVRSphereSceneObject baseShape = new GVRSphereSceneObject(ctx, true, mtl);
+        GVRMesh baseMesh = baseShape.getRenderData().getMesh();
+        GVRVertexBuffer baseVerts = baseMesh.getVertexBuffer();
+        float[] positions = baseMesh.getVertices();
+        float[] weights = new float[] { 1, 0 };
+
+        GVRVertexBuffer blendShape1 = new GVRVertexBuffer(ctx, baseVerts.getDescriptor(), baseVerts.getVertexCount());
+        GVRVertexBuffer blendShape2 = new GVRVertexBuffer(ctx, baseVerts.getDescriptor(), baseVerts.getVertexCount());
+
+        baseShape.getTransform().setPositionZ(-3);
+        rig.getLeftCamera().setBackgroundColor(Color.LTGRAY);
+        rig.getRightCamera().setBackgroundColor(Color.LTGRAY);
+        rig.getCenterCamera().setBackgroundColor(Color.LTGRAY);
+        mtl.setDiffuseColor(1, 0.4f, 0.8f, 1);
+        for (int i = 0; i < positions.length; i += 3)
+        {
+            positions[i] *= 2;     // scale X coordinates
+        }
+        blendShape1.setFloatArray("a_position", positions);
+        positions = baseMesh.getVertices();
+        for (int i = 0; i < positions.length; i += 3)
+        {
+            positions[i + 1] *= 2;  // scale Y coordinates
+        }
+        blendShape2.setFloatArray("a_position", positions);
+        GVRMeshMorph morph = new GVRMeshMorph(ctx, 2, false);
+        baseShape.attachComponent(morph);
+        morph.setBlendShape(0, blendShape1);
+        morph.setBlendShape(1, blendShape2);
+        morph.update();
+        morph.setWeights(weights);
+        lightObj.attachComponent(light);
+        scene.addSceneObject(lightObj);
+        scene.addSceneObject(baseShape);
+        mTestUtils.waitForXFrames(2);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testMorphTwoShapes", mWaiter, false);
+    }
+
+    @Test
+    public void testMorphTwoCubes() throws TimeoutException, InterruptedException
+    {
+        final GVRContext ctx = mTestUtils.getGvrContext();
+        final GVRScene scene = mTestUtils.getMainScene();
+        final GVRCameraRig rig = scene.getMainCameraRig();
+        GVRPointLight light = new GVRPointLight(ctx);
+        GVRSceneObject lightObj = new GVRSceneObject(ctx);
+        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
+        final GVRCubeSceneObject baseShape = new GVRCubeSceneObject(ctx, true, mtl);
+        GVRMesh baseMesh = baseShape.getRenderData().getMesh();
+        GVRVertexBuffer baseVerts = baseMesh.getVertexBuffer();
+        float[] positions = baseMesh.getVertices();
+        float[] weights = new float[] { 0, 0 };
+
+        GVRVertexBuffer blendShape1 = new GVRVertexBuffer(ctx, baseVerts.getDescriptor(), baseVerts.getVertexCount());
+        GVRVertexBuffer blendShape2 = new GVRVertexBuffer(ctx, baseVerts.getDescriptor(), baseVerts.getVertexCount());
+
+        baseShape.getTransform().setPositionZ(-3);
+        rig.getLeftCamera().setBackgroundColor(Color.LTGRAY);
+        rig.getRightCamera().setBackgroundColor(Color.LTGRAY);
+        rig.getCenterCamera().setBackgroundColor(Color.LTGRAY);
+        mtl.setDiffuseColor(1, 0.4f, 0.8f, 1);
+        for (int i = 0; i < positions.length; i += 3)
+        {
+            positions[i] *= 2;     // scale X coordinates
+        }
+        blendShape1.setFloatArray("a_position", positions);
+        positions = baseMesh.getVertices();
+        for (int i = 0; i < positions.length; i += 3)
+        {
+            positions[i + 1] *= 2;  // scale Y coordinates
+        }
+        blendShape2.setFloatArray("a_position", positions);
+        GVRMeshMorph morph = new GVRMeshMorph(ctx, 2, false);
+        baseShape.attachComponent(morph);
+        morph.setBlendShape(0, blendShape1);
+        morph.setBlendShape(1, blendShape2);
+        morph.update();
+        morph.setWeights(weights);
+        lightObj.attachComponent(light);
+        scene.addSceneObject(lightObj);
+        scene.addSceneObject(baseShape);
+        mTestUtils.waitForXFrames(2);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testMorphTwoCubes", mWaiter, false);
     }
 }
