@@ -531,12 +531,12 @@ public class MeshTests
         GVRMesh baseMesh = baseShape.getRenderData().getMesh();
         GVRVertexBuffer baseVerts = baseMesh.getVertexBuffer();
         float[] positions = baseMesh.getVertices();
-        float[] weights = new float[] { 2, 1 };
+        float[] weights = new float[] { 1, 0.5f };
 
         GVRVertexBuffer blendShape1 = new GVRVertexBuffer(ctx, baseVerts.getDescriptor(), baseVerts.getVertexCount());
         GVRVertexBuffer blendShape2 = new GVRVertexBuffer(ctx, baseVerts.getDescriptor(), baseVerts.getVertexCount());
 
-        baseShape.getTransform().setPositionZ(-3);
+        baseShape.getTransform().setPositionZ(-2);
         rig.getLeftCamera().setBackgroundColor(Color.LTGRAY);
         rig.getRightCamera().setBackgroundColor(Color.LTGRAY);
         rig.getCenterCamera().setBackgroundColor(Color.LTGRAY);
@@ -562,139 +562,8 @@ public class MeshTests
         scene.addSceneObject(lightObj);
         scene.addSceneObject(baseShape);
         mTestUtils.waitForXFrames(2);
-        mTestUtils.screenShot(getClass().getSimpleName(), "testMorphTwoShapes", mWaiter, false);
-    }
-
-    @Test
-    public void testMorphTwoCubes() throws TimeoutException, InterruptedException
-    {
-        final GVRContext ctx = mTestUtils.getGvrContext();
-        final GVRScene scene = mTestUtils.getMainScene();
-        final GVRCameraRig rig = scene.getMainCameraRig();
-        GVRPointLight light = new GVRPointLight(ctx);
-        GVRSceneObject lightObj = new GVRSceneObject(ctx);
-        GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
-        final GVRCubeSceneObject baseShape = new GVRCubeSceneObject(ctx, true, mtl);
-        GVRMesh baseMesh = baseShape.getRenderData().getMesh();
-        GVRVertexBuffer baseVerts = baseMesh.getVertexBuffer();
-        float[] positions = baseMesh.getVertices();
-        float[] weights = new float[] { 2, 1 };
-
-        GVRVertexBuffer blendShape1 = new GVRVertexBuffer(ctx, baseVerts.getDescriptor(), baseVerts.getVertexCount());
-        GVRVertexBuffer blendShape2 = new GVRVertexBuffer(ctx, baseVerts.getDescriptor(), baseVerts.getVertexCount());
-
-        baseShape.getTransform().setPositionZ(-3);
-        rig.getLeftCamera().setBackgroundColor(Color.LTGRAY);
-        rig.getRightCamera().setBackgroundColor(Color.LTGRAY);
-        rig.getCenterCamera().setBackgroundColor(Color.LTGRAY);
-        mtl.setDiffuseColor(1, 0.4f, 0.8f, 1);
-        for (int i = 0; i < positions.length; i += 3)
-        {
-            positions[i] *= 2;     // scale X coordinates
-        }
-        blendShape1.setFloatArray("a_position", positions);
-        positions = baseMesh.getVertices();
-        for (int i = 0; i < positions.length; i += 3)
-        {
-            positions[i + 1] *= 2;  // scale Y coordinates
-        }
-        blendShape2.setFloatArray("a_position", positions);
-        GVRMeshMorph morph = new GVRMeshMorph(ctx, 2, false);
-        baseShape.attachComponent(morph);
-        morph.setBlendShape(0, blendShape1);
-        morph.setBlendShape(1, blendShape2);
-        morph.update();
-        morph.setWeights(weights);
-        lightObj.attachComponent(light);
-        scene.addSceneObject(lightObj);
-        scene.addSceneObject(baseShape);
-        mTestUtils.waitForXFrames(2);
-        mTestUtils.screenShot(getClass().getSimpleName(), "testMorphTwoCubes", mWaiter, false);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testMorphTwoShapes", mWaiter, true);
     }
 
 
-    @Test
-    public void jassimpMorphTest() throws TimeoutException
-    {
-        GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
-        GVRSceneObject lightObj = new GVRSceneObject(ctx);
-        GVRPointLight pointLight = new GVRPointLight(ctx);
-        GVRCameraRig rig = scene.getMainCameraRig();
-        GVRSceneObject model = null;
-        GVRTransform t = scene.getMainCameraRig().getTransform();
-        EnumSet<GVRImportSettings> settings = EnumSet.of(GVRImportSettings.TRIANGULATE,
-                                                         GVRImportSettings.FLIP_UV,
-                                                         GVRImportSettings.LIMIT_BONE_WEIGHT,
-                                                         GVRImportSettings.SORTBY_PRIMITIVE_TYPE);
-        rig.getCenterCamera().setBackgroundColor(Color.LTGRAY);
-        rig.getLeftCamera().setBackgroundColor(Color.LTGRAY);
-        rig.getRightCamera().setBackgroundColor(Color.LTGRAY);
-        pointLight.setDiffuseIntensity(0.8f, 0.8f, 08f, 1.0f);
-        pointLight.setSpecularIntensity(0.8f, 0.8f, 08f, 1.0f);
-        lightObj.attachComponent(pointLight);
-        lightObj.getTransform().setPosition(-1.0f, 1.0f, 0);
-        scene.addSceneObject(lightObj);
-
-        try
-        {
-            model = ctx.getAssetLoader().loadModel("faceBlendShapes_freeze.fbx");
-        }
-        catch (IOException ex)
-        {
-            mWaiter.fail(ex);
-        }
-
-        String[] shapeNames = { "Jason_Shapes_Ref:JasnNeutral:Default", "Jaw_Open", "Smile" };
-        GVRMeshMorph morph = addMorph(model, shapeNames);
-
-        centerModel(model, t);
-        model.getTransform().setPositionZ(-1);
-        scene.addSceneObject(model);
-        GVRAnimator animator = setupAnimation(model, morph);
-        animator.start();
-        mTestUtils.waitForXFrames(1000);
-        mTestUtils.screenShot(getClass().getSimpleName(), "jassimpMorphTest", mWaiter, false);
-    }
-
-    public void centerModel(GVRSceneObject model, GVRTransform camTrans)
-    {
-        GVRSceneObject.BoundingVolume bv = model.getBoundingVolume();
-        float x = camTrans.getPositionX();
-        float y = camTrans.getPositionY();
-        float z = camTrans.getPositionZ();
-        float sf = 1 / bv.radius;
-        model.getTransform().setScale(sf, sf, sf);
-        bv = model.getBoundingVolume();
-        model.getTransform().setPosition(x - bv.center.x, y - bv.center.y, z - bv.center.z - 1.5f * bv.radius);
-    }
-
-    private GVRMeshMorph addMorph(GVRSceneObject model, String shapeNames[])
-    {
-        GVRSceneObject baseShape = model.getSceneObjectByName(shapeNames[0]);
-        GVRMeshMorph morph = new GVRMeshMorph(model.getGVRContext(), 2, false);
-
-        baseShape.attachComponent(morph);
-        for (int i = 1; i < shapeNames.length; ++i)
-        {
-            GVRSceneObject blendShape = model.getSceneObjectByName(shapeNames[i]);
-            GVRSceneObject parent = blendShape.getParent();
-
-            parent.removeChildObject(blendShape);
-            morph.setBlendShape(i - 1, blendShape);
-        }
-        morph.update();
-        return morph;
-    }
-
-    private GVRAnimator setupAnimation(GVRSceneObject root, GVRMeshMorph morph)
-    {
-        float[] keys = new float[] { 0, 0, 0, 1, 1, 0, 2, 0, 0, 3, 0, 1 };
-        GVRAnimator animator = new GVRAnimator(root.getGVRContext());
-        GVRMorphAnimation morphAnim = new GVRMorphAnimation(morph, keys, 3);
-        animator.addAnimation(morphAnim);
-        animator.setRepeatMode(GVRRepeatMode.REPEATED);
-        root.attachComponent(animator);
-        return animator;
-    }
 }
