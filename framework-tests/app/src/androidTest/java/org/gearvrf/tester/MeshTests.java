@@ -8,28 +8,18 @@ import net.jodah.concurrentunit.Waiter;
 
 import org.gearvrf.GVRBone;
 import org.gearvrf.GVRCameraRig;
-import org.gearvrf.GVRImportSettings;
 import org.gearvrf.GVRMeshMorph;
 import org.gearvrf.GVRNotifications;
 import org.gearvrf.GVRPointLight;
-import org.gearvrf.GVRTransform;
-import org.gearvrf.animation.GVRAnimator;
-import org.gearvrf.animation.GVRMorphAnimation;
-import org.gearvrf.animation.GVRRepeatMode;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
-import org.gearvrf.shaders.GVRColorBlendShader;
 import org.gearvrf.GVRIndexBuffer;
-import org.gearvrf.GVRShaderId;
-import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRVertexBuffer;
-import org.gearvrf.scene_objects.GVRCubeSceneObject;
+
 import org.gearvrf.scene_objects.GVRCylinderSceneObject;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
@@ -40,7 +30,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.CharBuffer;
@@ -48,12 +37,9 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
-import static android.opengl.GLES20.GL_ONE;
-import static android.opengl.GLES20.GL_SRC_ALPHA;
 
 @RunWith(AndroidJUnit4.class)
 
