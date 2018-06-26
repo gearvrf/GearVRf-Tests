@@ -219,6 +219,66 @@ public class PhysicsSimulationTest {
         mWaiter.assertTrue(beginCallback.mCollisionHandler.collisionCounter >= beginCallback.lenght);
     }
 
+    @Test
+    public void applyingForcesTest() throws Exception {
+        float distance;
+        float rotation;
+        addGroundMesh(gvrTestUtils.getMainScene(), 0.0f,0.0f,0.0f, 0.0f);
+        GVRSceneObject cube = addCube(gvrTestUtils.getMainScene(), 0.0f, 0.6f, -5.0f, 0.01f);
+        gvrTestUtils.waitForSceneRendering();
+        gvrTestUtils.waitForXFrames(10);
+
+        distance = cube.getTransform().getPositionZ();
+        rotation = cube.getTransform().getRotationPitch();
+        ((GVRRigidBody)cube.getComponent(
+                GVRRigidBody.getComponentType())).applyCentralForce(0,0,-1);
+        gvrTestUtils.waitForXFrames(60);
+        mWaiter.assertFalse(distance - cube.getTransform().getPositionZ() == 0);
+        mWaiter.assertTrue(Math.abs(rotation - cube.getTransform().getRotationPitch()) < 1);
+
+        distance = cube.getTransform().getPositionZ();
+        rotation = cube.getTransform().getRotationPitch();
+        ((GVRRigidBody)cube.getComponent(
+                GVRRigidBody.getComponentType())).applyForce(0,0,-1,
+                0.0f, 0.5f, 0.0f);
+        gvrTestUtils.waitForXFrames(120);
+        mWaiter.assertFalse(distance - cube.getTransform().getPositionZ() == 0);
+        mWaiter.assertFalse(Math.abs(rotation - cube.getTransform().getRotationPitch()) < 1);
+
+        distance = cube.getTransform().getPositionZ();
+        rotation = cube.getTransform().getRotationPitch();
+        ((GVRRigidBody)cube.getComponent(
+                GVRRigidBody.getComponentType())).applyCentralImpulse(0,0,-0.02f);
+        gvrTestUtils.waitForXFrames(120);
+        mWaiter.assertFalse(distance - cube.getTransform().getPositionZ() == 0);
+        mWaiter.assertTrue(Math.abs(rotation - cube.getTransform().getRotationPitch()) < 1);
+
+        distance = cube.getTransform().getPositionZ();
+        rotation = cube.getTransform().getRotationPitch();
+        ((GVRRigidBody)cube.getComponent(
+                GVRRigidBody.getComponentType())).applyImpulse(0,0, -0.02f,
+                0.0f, 0.5f, 0.0f);
+        gvrTestUtils.waitForXFrames(120);
+        mWaiter.assertFalse(distance - cube.getTransform().getPositionZ() == 0);
+        mWaiter.assertFalse(Math.abs(rotation - cube.getTransform().getRotationPitch()) < 1);
+
+        distance = cube.getTransform().getPositionZ();
+        rotation = cube.getTransform().getRotationPitch();
+        ((GVRRigidBody)cube.getComponent(
+                GVRRigidBody.getComponentType())).applyTorque(-1, 0, 0);
+        gvrTestUtils.waitForXFrames(120);
+        mWaiter.assertFalse(distance - cube.getTransform().getPositionZ() == 0);
+        mWaiter.assertFalse(Math.abs(rotation - cube.getTransform().getRotationPitch()) < 1);
+
+        distance = cube.getTransform().getPositionZ();
+        rotation = cube.getTransform().getRotationPitch();
+        ((GVRRigidBody)cube.getComponent(
+                GVRRigidBody.getComponentType())).applyTorqueImpulse(-0.1f, 0, 0);
+        gvrTestUtils.waitForXFrames(60);
+        mWaiter.assertFalse(distance - cube.getTransform().getPositionZ() == 0);
+        mWaiter.assertFalse(Math.abs(rotation - cube.getTransform().getRotationPitch()) < 1);
+    }
+
     class OnTestStartRenderCallback implements GVRTestUtils.OnRenderCallback {
         public int lenght;
         public GVRSceneObject cube[];
@@ -393,7 +453,7 @@ public class PhysicsSimulationTest {
                 cubeTexture = gvrTestUtils.getGvrContext().getAssetLoader().loadTexture(
                         new GVRAndroidResource(gvrTestUtils.getGvrContext(), "cube.jpg"));
             } catch (IOException e) {
-
+                e.printStackTrace();
             }
         }
 
