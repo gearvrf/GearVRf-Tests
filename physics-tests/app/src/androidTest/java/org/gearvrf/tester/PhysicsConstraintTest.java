@@ -65,6 +65,30 @@ public class PhysicsConstraintTest {
     }
 
     @Test
+    public void multipleConstraintsTest() throws Exception {
+        float pivotInA[] = {0f, 0f, 0f};
+        float pivotInB[] = {0f, 0f, 0f};
+
+        GVRSceneObject left = addSphere(gvrTestUtils.getMainScene(), -1.5f, 10f, -30f, 0.001f);
+        GVRSceneObject center = addCube(gvrTestUtils.getMainScene(), 0.0f, 10f, -30f, 0.0f);
+        GVRSceneObject right = addSphere(gvrTestUtils.getMainScene(), 1.5f, 10f, -30f, 0.001f);
+        GVRRigidBody leftBody = (GVRRigidBody)left.getComponent(GVRRigidBody.getComponentType());
+        GVRRigidBody rightBody = (GVRRigidBody)right.getComponent(GVRRigidBody.getComponentType());
+
+        GVRPoint2PointConstraint leftConstraint = new GVRPoint2PointConstraint(gvrTestUtils.getGvrContext(), leftBody, pivotInA, pivotInB);
+        GVRPoint2PointConstraint rightConstraint = new GVRPoint2PointConstraint(gvrTestUtils.getGvrContext(), rightBody, pivotInA, pivotInB);
+
+        // Multiple constraints to same scene object.
+        center.attachComponent(leftConstraint);
+        center.attachComponent(rightConstraint);
+
+        gvrTestUtils.waitForXFrames(60);
+
+        mWaiter.assertTrue(left.getTransform().getPositionY() > center.getTransform().getPositionY() - 1.5f);
+        mWaiter.assertTrue(right.getTransform().getPositionY() > center.getTransform().getPositionY() - 1.5f);
+    }
+
+    @Test
     public void fixedConstraintTest() throws Exception {
         GVRSceneObject ground = addGround(gvrTestUtils.getMainScene(), 0f, 0f, -15f);
 
