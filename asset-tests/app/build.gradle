@@ -47,6 +47,9 @@ android {
     packagingOptions {
         pickFirst 'lib/*/libc++_shared.so'
         pickFirst 'lib/*/libgnustl_shared.so'
+        exclude 'lib/arm64-v8a/*'
+        exclude 'lib/x86_64/*'
+        exclude 'lib/x86/*'
     }
 }
 
