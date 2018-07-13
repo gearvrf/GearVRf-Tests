@@ -82,6 +82,18 @@ public class AssetAnimTests
         mHandler = new AssetEventHandler(scene, mWaiter, mTestUtils, getClass().getSimpleName());
     }
 
+    public void centerModel(GVRSceneObject model, GVRTransform camTrans)
+    {
+        GVRSceneObject.BoundingVolume bv = model.getBoundingVolume();
+        float x = camTrans.getPositionX();
+        float y = camTrans.getPositionY();
+        float z = camTrans.getPositionZ();
+        float sf = 1 / bv.radius;
+        model.getTransform().setScale(sf, sf, sf);
+        bv = model.getBoundingVolume();
+        model.getTransform().setPosition(x - bv.center.x, y - bv.center.y, z - bv.center.z - 1.5f * bv.radius);
+    }
+
     @Test
     public void jassimpMorphTest() throws TimeoutException
     {
@@ -103,7 +115,9 @@ public class AssetAnimTests
 
         try
         {
-            model = ctx.getAssetLoader().loadModel("jassimp/faceBlendShapes.fbx");
+            EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedMorphSettings();
+            model = ctx.getAssetLoader().loadModel("jassimp/faceBlendShapes_center.fbx", settings, true, null);
+            centerModel(model, rig.getTransform());
         }
         catch (IOException ex)
         {
@@ -129,6 +143,7 @@ public class AssetAnimTests
         for (int i = 1; i < shapeNames.length; ++i)
         {
             GVRSceneObject blendShape = model.getSceneObjectByName(shapeNames[i]);
+            blendShape.getParent().removeChildObject(blendShape);
             morph.setBlendShape(i - 1, blendShape);
         }
         morph.update();
