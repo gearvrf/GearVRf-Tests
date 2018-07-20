@@ -16,17 +16,27 @@ android {
 
     defaultConfig {
         applicationId "org.gearvrf.tester"
-        minSdkVersion 23
+        minSdkVersion 21
         targetSdkVersion 23
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk {
+            moduleName = "asset-tests"
+            abiFilter "armeabi-v7a"
+        }
+
+        externalNativeBuild {
+            cmake {
+                arguments.add('-DINCLUDE_DIR='+rootProject.projectDir.absolutePath)
+                arguments.add('-DPATH_TO_LIBGVRF='+projectDir.absolutePath+'/build/intermediates/exploded-aar/framework-debug/jni/')
+                //difference in sign extension when reinterpret_cast-ing a pointer between
+                //gcc and clang hence overriding the default toolchain to match the one used
+                //by the other modules
+                arguments.add('-DANDROID_TOOLCHAIN=gcc')
+            }
+        }
     }
-    testBuildType "debug"
 
     buildTypes {
-        debug {
-            debuggable = true
-            jniDebuggable = true
-        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
@@ -41,6 +51,12 @@ android {
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
             output.outputFileName = rootProject.name + ".apk"
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path 'src/main/cpp/CMakeLists.txt'
         }
     }
 
@@ -74,10 +90,21 @@ dependencies {
     } else {
         compile(name:'framework-debug', ext:'aar')
     }
+    if (findProject(':backend_daydream')) {
+        compile project (':backend_daydream')
+    } else {
+        compile(name:'backend_daydream-debug', ext:'aar')
+    }
     if (findProject(':backend_oculus')) {
         compile project (':backend_oculus')
     } else {
         compile(name:'backend_oculus-debug', ext:'aar')
+    }
+
+    if (findProject(':backend_monoscopic')) {
+        compile project (':backend_monoscopic')
+    } else {
+        compile(name:'backend_monoscopic-debug', ext:'aar')
     }
     if (findProject(':x3d')) {
         compile project(':x3d')
