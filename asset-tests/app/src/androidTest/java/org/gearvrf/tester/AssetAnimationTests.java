@@ -25,11 +25,15 @@ import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.animation.GVRPose;
 import org.gearvrf.animation.GVRRepeatMode;
 import org.gearvrf.animation.GVRSkeleton;
+import org.gearvrf.animation.keyframe.GVRAnimationBehavior;
+import org.gearvrf.animation.keyframe.GVRAnimationChannel;
 import org.gearvrf.animation.keyframe.GVRSkeletonAnimation;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -38,6 +42,7 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 @RunWith(AndroidJUnit4.class)
@@ -213,7 +218,8 @@ public class AssetAnimationTests
 
             if (anim instanceof GVRSkeletonAnimation)
             {
-                skel = ((GVRSkeletonAnimation) anim).getSkeletion();
+                GVRSkeletonAnimation skelAnim = (GVRSkeletonAnimation) anim;
+                skel = skelAnim.getSkeleton();
                 break;
             }
         }
@@ -302,4 +308,119 @@ public class AssetAnimationTests
         morph.update();
         return morph;
     }
+
+    @Test
+    public void testSkeletonAnimation() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRSceneObject model = null;
+        GVRCameraRig rig = scene.getMainCameraRig();
+
+        rig.getLeftCamera().setBackgroundColor(Color.LTGRAY);
+        rig.getRightCamera().setBackgroundColor(Color.LTGRAY);
+        rig.getTransform().rotateByAxis(0, 1, 0, 90);
+
+        ctx.getEventReceiver().addListener(mHandler);
+        try
+        {
+            model = ctx.getAssetLoader().loadModel("Andromeda/Andromeda.dae", scene);
+        }
+        catch (IOException ex)
+        {
+            mWaiter.fail(ex);
+        }
+        mTestUtils.waitForAssetLoad();
+        mHandler.centerModel(model, scene.getMainCameraRig().getTransform());
+        mWaiter.assertNotNull(scene.getSceneObjectByName("Andromeda.dae"));
+        List<GVRComponent> components = model.getAllComponents(GVRSkeleton.getComponentType());
+
+        mWaiter.assertTrue(components.size() > 0);
+        GVRSkeleton skel = (GVRSkeleton) components.get(0);
+        mWaiter.assertNotNull(skel);
+
+        GVRSkeletonAnimation skelAnim = makeSkeletonAnimation(skel);
+
+        skelAnim.animate(0);
+        mTestUtils.waitForXFrames(2);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testSkeletonAnimation0", mWaiter, mDoCompare);
+        skelAnim.animate(1);
+        mTestUtils.waitForXFrames(2);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testSkeletonAnimation1", mWaiter, mDoCompare);
+        skelAnim.animate(2);
+        mTestUtils.waitForXFrames(2);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testSkeletonAnimation2", mWaiter, mDoCompare);
+    }
+
+    public GVRSkeletonAnimation makeSkeletonAnimation(GVRSkeleton skel)
+    {
+        Quaternionf q = new Quaternionf();
+        Matrix4f mtx = new Matrix4f();
+        GVRPose pose = new GVRPose(skel);
+        int leftShoulderBone = skel.getBoneIndex("mixamorig_LeftShoulder");
+        int rightShoulderBone = skel.getBoneIndex("mixamorig_RightShoulder");
+        Vector3f v = new Vector3f();
+        float[] rotKeys = new float[] { 0, 0, 0, 0, 1,   2, 0, 0, 0, 1 };
+        float[] posKeys = new float[] { 0, 0, 0, 0,      2, 0, 0, 0 };
+
+        pose.copy(skel.getBindPose());
+        pose.getLocalMatrix(leftShoulderBone, mtx);
+        mtx.getTranslation(v);
+        mtx.getUnnormalizedRotation(q);
+        posKeys[1] = v.x;
+        posKeys[2] = v.y;
+        posKeys[3] = v.z;
+        rotKeys[1] = q.x;
+        rotKeys[2] = q.y;
+        rotKeys[3] = q.z;
+        rotKeys[4] = q.w;
+
+        q.fromAxisAngleDeg(1, 0, 0, -45);
+        mtx.rotate(q);
+        pose.setLocalMatrix(leftShoulderBone, mtx);
+        mtx.getTranslation(v);
+        mtx.getUnnormalizedRotation(q);
+        posKeys[5] = v.x;
+        posKeys[6] = v.y;
+        posKeys[7] = v.z;
+        rotKeys[6] = q.x;
+        rotKeys[7] = q.y;
+        rotKeys[8] = q.z;
+        rotKeys[9] = q.w;
+        GVRAnimationChannel leftShoulder = new GVRAnimationChannel("mixamorig_LeftShoulder", posKeys, rotKeys, null,
+                                                                   GVRAnimationBehavior.DEFAULT, GVRAnimationBehavior.DEFAULT);
+        rotKeys = new float[] { 0, 0, 0, 0, 1,   2, 0, 0, 0, 1 };
+        posKeys = new float[] { 0, 0, 0, 0,      2, 0, 0, 0 };
+        pose.getLocalMatrix(rightShoulderBone, mtx);
+        mtx.getTranslation(v);
+        mtx.getUnnormalizedRotation(q);
+        posKeys[1] = v.x;
+        posKeys[2] = v.y;
+        posKeys[3] = v.z;
+        rotKeys[1] = q.x;
+        rotKeys[2] = q.y;
+        rotKeys[3] = q.z;
+        rotKeys[4] = q.w;
+
+        q.fromAxisAngleDeg(1, 0, 0, -45);
+        mtx.rotate(q);
+        pose.setLocalMatrix(rightShoulderBone, mtx);
+        mtx.getTranslation(v);
+        mtx.getUnnormalizedRotation(q);
+        posKeys[5] = v.x;
+        posKeys[6] = v.y;
+        posKeys[7] = v.z;
+        rotKeys[6] = q.x;
+        rotKeys[7] = q.y;
+        rotKeys[8] = q.z;
+        rotKeys[9] = q.w;
+        GVRAnimationChannel rightShoulder = new GVRAnimationChannel("mixamorig_RightShoulder", posKeys, rotKeys, null,
+                                                                   GVRAnimationBehavior.DEFAULT, GVRAnimationBehavior.DEFAULT);
+        GVRSkeletonAnimation skelAnim = new GVRSkeletonAnimation("LiftArms", skel, 2);
+        skelAnim.setTarget(skel.getOwnerObject());
+        skelAnim.addChannel("mixamorig_LeftShoulder", leftShoulder);
+        skelAnim.addChannel("mixamorig_RightShoulder", rightShoulder);
+        return skelAnim;
+    }
+
 }
