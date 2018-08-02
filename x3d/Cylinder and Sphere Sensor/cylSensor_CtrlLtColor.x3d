@@ -1,0 +1,147 @@
+<X3D profile='Interactive' version='3.0' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.0.xsd'>
+  <Scene>
+    <NavigationInfo headlight='false' type='"WALK" "FLY" "ANY"'/>
+    <Group>
+      <Viewpoint description='Front View' position='0 1.5 4'/>
+      <DirectionalLight DEF='DL1' color='.5 .5 .5'/>
+      <!-- PointLight location='0 0 2' DEF='DL1'/ -->
+        <Background skyColor='.5 .5 .7'/>
+    </Group>
+    
+    <Transform DEF="CMY" translation="-1.25 1 0">
+        <Shape>
+            <Appearance>
+                <Material diffuseColor="1 1 1"/>
+                <ImageTexture url="CMYpattern.png"/>
+            </Appearance>
+            <IndexedFaceSet DEF="plane"
+                    coordIndex='0 1 2 -1    0 3 1 -1'
+                    texCoordIndex='0 1 2 -1   0 3 1 -1'
+                    normalIndex='0 0 0 -1   0 0 0 -1'
+                    >
+                <Coordinate point='-1 -1 0    1 1 0    -1 1 0    1 -1 0' />
+                <TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+                <Normal vector='0 0 1'/>
+            </IndexedFaceSet>
+        </Shape>
+    </Transform>
+    <Transform DEF="RGB" translation="1.25 1 0">
+        <Shape>
+            <Appearance>
+                <Material diffuseColor="1 1 1"/>
+                <ImageTexture url="RGBpattern.png"/>
+            </Appearance>
+            <IndexedFaceSet USE="plane"/>
+        </Shape>
+    </Transform>
+
+    <Transform translation='-2.5 -2.5 -2'>
+      <Transform DEF='RedCYL' rotation='0 1 0 0'>
+        <CylinderSensor DEF='RedCYLSENSOR' minAngle='-1'  maxAngle='1'/>
+           <Transform rotation='0 1 0 1.57'>
+           <Shape>
+              <Appearance>
+                <Material/>
+                <ImageTexture url="radiansWrap.png"/>
+              </Appearance>
+              <Cylinder/>
+            </Shape>
+          </Transform>
+      </Transform>
+    </Transform>
+    <ROUTE fromField='rotation_changed' fromNode='RedCYLSENSOR' toField='set_rotation' toNode='RedCYL'/>
+
+
+    <Transform translation='0 -2.5 -2'>
+      <Transform DEF='GreenCYL' rotation='0 1 0 0'>
+        <CylinderSensor DEF='GreenCYLSENSOR' minAngle='-1'  maxAngle='1'/>
+           <Transform rotation='0 1 0 1.57'>
+           <Shape>
+              <Appearance>
+                <Material/>
+                <ImageTexture url="radiansWrap.png"/>
+              </Appearance>
+              <Cylinder/>
+            </Shape>
+          </Transform>
+      </Transform>
+    </Transform>
+    <ROUTE fromField='rotation_changed' fromNode='GreenCYLSENSOR' toField='set_rotation' toNode='GreenCYL'/>
+
+
+    <Transform translation='2.5 -2.5 -2'>
+      <Transform DEF='BlueCYL' rotation='0 1 0 0'>
+        <CylinderSensor DEF='BlueCYLSENSOR' minAngle='-1'  maxAngle='1'/>
+           <Transform rotation='0 1 0 1.57'>
+           <Shape>
+              <Appearance>
+                <Material/>
+                <ImageTexture url="radiansWrap.png"/>
+              </Appearance>
+              <Cylinder/>
+            </Shape>
+          </Transform>
+      </Transform>
+    </Transform>
+    <ROUTE fromField='rotation_changed' fromNode='BlueCYLSENSOR' toField='set_rotation' toNode='BlueCYL'/>
+
+
+
+    <Script DEF='ControlLtRed'>
+        <field accessType='inputOnly' name='rotation' type='SFRotation'/>
+        <field accessType='inputOutput' name='lightColor' type='SFColor'/>
+
+        <![CDATA[
+            ecmascript:
+                function rotation (rotValue, valueRed)
+                {
+                    red = (rotValue + 1) / 2.0;
+                    lightColor.setValue( red, lightColor.getGreen(), lightColor.getBlue() );
+                }
+        ]]>
+    </Script>
+            
+    <ROUTE fromField='rotation_changed' fromNode='RedCYLSENSOR' toField='set_rotation' toNode='ControlLtRed'/>
+    <ROUTE fromField='color' fromNode='DL1' toField='lightColor' toNode='ControlLtRed'/>
+    <ROUTE fromField='lightColor' fromNode='ControlLtRed' toField='color' toNode='DL1'/>
+    
+
+    <Script DEF='ControlLtGreen'>
+        <field accessType='inputOnly' name='rotation' type='SFRotation'/>
+        <field accessType='inputOutput' name='lightColor' type='SFColor'/>
+
+        <![CDATA[
+            ecmascript:
+                function rotation (rotValue, valueX)
+                {
+                    green = (rotValue + 1) / 2.0;
+                    lightColor.setValue( lightColor.getRed(), green, lightColor.getBlue() );
+                }
+        ]]>
+    </Script>
+
+    <ROUTE fromField='rotation_changed' fromNode='GreenCYLSENSOR' toField='set_rotation' toNode='ControlLtGreen'/>
+    <ROUTE fromField='color' fromNode='DL1' toField='lightColor' toNode='ControlLtGreen'/>
+    <ROUTE fromField='lightColor' fromNode='ControlLtGreen' toField='color' toNode='DL1'/>
+
+
+    <Script DEF='ControlLtBlue'>
+        <field accessType='inputOnly' name='rotation' type='SFRotation'/>
+        <field accessType='inputOutput' name='lightColor' type='SFColor'/>
+
+        <![CDATA[
+            ecmascript:
+                function rotation (rotValue, valueX)
+                {
+                    blue = (rotValue + 1) / 2.0;
+                    lightColor.setValue( lightColor.getRed(), lightColor.getGreen(), blue );
+                }
+        ]]>
+    </Script>
+
+    <ROUTE fromField='rotation_changed' fromNode='BlueCYLSENSOR' toField='set_rotation' toNode='ControlLtBlue'/>
+    <ROUTE fromField='color' fromNode='DL1' toField='lightColor' toNode='ControlLtBlue'/>
+    <ROUTE fromField='lightColor' fromNode='ControlLtBlue' toField='color' toNode='DL1'/>
+
+  </Scene>
+</X3D>
