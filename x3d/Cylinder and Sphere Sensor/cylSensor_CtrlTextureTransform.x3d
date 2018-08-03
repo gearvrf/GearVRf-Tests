@@ -10,7 +10,7 @@
             <Appearance>
                 <Material DEF="matColor" diffuseColor=".5 .5 .5"/>
                 <ImageTexture url="texture_rotation_testpattern.jpg"/>
-		        <TextureTransform DEF='tt' center='-.5 .5' rotation='0' scale='1 1' translation='0 0'/>
+		        <TextureTransform DEF='tt' center='-.5 -.5' rotation='0' scale='1 1' translation='0 0'/>
             </Appearance>
             <IndexedFaceSet DEF="plane"
                     coordIndex='0 1 2 -1    0 3 1 -1'

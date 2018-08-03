@@ -1,0 +1,81 @@
+<X3D>
+  <Scene>
+    <NavigationInfo Headline='false'/>
+    <Viewpoint position='0 0 8'/>
+    <DirectionalLight/>
+    <Background skyColor='.6 .6 .7'/>
+
+  
+        <Transform DEF="myPlane" translation="0 0 0">
+            <Shape>
+                <Appearance>
+                    <Material diffuseColor="1 1 1"/>
+                    <ImageTexture url="news_texture_map.jpg"/>
+    		    <TextureTransform DEF='tt' center='-.5 .5' rotation='0' scale='1 1' translation='0 0'/>
+                </Appearance>
+                <IndexedFaceSet DEF="plane"
+                        coordIndex='0 1 2 -1    0 3 1 -1'
+                        texCoordIndex='0 1 2 -1   0 3 1 -1'
+                        normalIndex='0 0 0 -1   0 0 0 -1'
+                        >
+                    <Coordinate point='-1 -1 0    1 1 0    -1 1 0    1 -1 0' />
+                    <TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+                    <Normal vector='0 0 1'/>
+                </IndexedFaceSet>
+            </Shape>
+        </Transform>
+
+    
+      <Transform DEF='mySphere' translation='0 -2.5 1'>
+        <SphereSensor DEF='SPHERE_SENSOR'/>
+          <Shape>
+            <Appearance>
+              <Material diffuseColor='1 1 1'/>
+              	<!-- ImageTexture url="NASA_Earth.jpg"/ -->
+              	<ImageTexture url="lattitudelongitude.png"/>
+
+            </Appearance>
+            <Sphere/>
+          </Shape>
+        </Transform>
+
+
+        <Transform translation="0 -5.5 0">
+	        <Shape>
+	          <Text DEF='xyzLocation' string='"-xxxx- -yyyy- -zzzz-"'>
+	            <FontStyle DEF='fs1' family='Air Americana.ttf' justify='MIDDLE' size='4.0'/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="1 1 0"/>
+	          </Appearance>
+	        </Shape>
+	    </Transform>
+
+    <Script DEF='ControlTranslation'>
+        <field accessType='inputOnly' name='rotation' type='SFRotation'/>
+        <field accessType='outputOnly' name='translate' type='SFVec3f'/>
+        <field accessType='outputOnly' name='xyzPosition' type='MFString'/>
+
+        <![CDATA[
+            ecmascript:
+                function rotation (rotValue, axisX, axisY, axisZ)
+                {
+                    if (rotValue < 0) {
+                        axisX = -axisX;
+                        axisY = -axisY;
+                        axisZ = -axisZ;
+                    }
+                    translate = new SFVec3f(axisX, axisY, axisZ);
+
+                    xyzPosition = new MFString(axisX.toFixed(2) + ", " + axisY.toFixed(2) + ", " + axisZ.toFixed(2) );
+                }
+        ]]>
+    </Script>
+
+    <ROUTE fromField='rotation_changed' fromNode='SPHERE_SENSOR' toField='rotation' toNode='ControlTranslation'/>
+    <ROUTE fromField='translate' fromNode='ControlTranslation' toField='translation' toNode='myPlane'/>
+    <ROUTE fromField='xyzPosition' fromNode='ControlTranslation' toField='string' toNode='xyzLocation'/>
+
+    <ROUTE fromField='rotation_changed' fromNode='SPHERE_SENSOR' toField='set_rotation' toNode='mySphere'/>
+  </Scene>
+</X3D>
