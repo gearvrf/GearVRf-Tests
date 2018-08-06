@@ -226,14 +226,14 @@ public class AssetAnimationTests
         mWaiter.assertNotNull(skel);
         int rightShoulder = skel.getBoneIndex("astroBoy_newSkeleton_R_shoulder");
         int leftShoulder = skel.getBoneIndex("astroBoy_newSkeleton_L_shoulder");
-        GVRPose pose = new GVRPose(skel, GVRPose.PoseSpace.BIND_POSE_RELATIVE);
+        GVRPose pose = new GVRPose(skel);
 
         mWaiter.assertTrue(rightShoulder >= 0);
         mWaiter.assertTrue(leftShoulder >= 0);
         q.fromAxisAngleDeg(1, 0, 0, -45);
         pose.setLocalRotation(leftShoulder, q.x, q.y, q.z, q.w);
         pose.setLocalRotation(rightShoulder, q.x, q.y, q.z, q.w);
-        skel.applyPose(pose);
+        skel.applyPose(pose, GVRSkeleton.BIND_POSE_RELATIVE);
         skel.poseToBones();
         skel.computeSkinPose();
 
@@ -324,7 +324,7 @@ public class AssetAnimationTests
         ctx.getEventReceiver().addListener(mHandler);
         try
         {
-            model = ctx.getAssetLoader().loadModel("Andromeda/Andromeda.dae", scene);
+            model = ctx.getAssetLoader().loadModel(GVRTestUtils.GITHUB_URL + "jassimp/Andromeda/Andromeda.dae", scene);
         }
         catch (IOException ex)
         {
