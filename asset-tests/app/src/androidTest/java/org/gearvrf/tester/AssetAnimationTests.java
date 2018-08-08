@@ -235,10 +235,72 @@ public class AssetAnimationTests
         pose.setLocalRotation(rightShoulder, q.x, q.y, q.z, q.w);
         skel.applyPose(pose, GVRSkeleton.BIND_POSE_RELATIVE);
         skel.poseToBones();
-        skel.computeSkinPose();
+        skel.updateSkinPose();
 
         mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "testSkeleton", mWaiter, mDoCompare);
+    }
+
+    @Test
+    public void testSkeleton2() throws TimeoutException
+    {
+        GVRContext ctx  = mTestUtils.getGvrContext();
+        GVRScene scene = mTestUtils.getMainScene();
+        GVRSceneObject model = null;
+        GVRCameraRig rig = scene.getMainCameraRig();
+
+        rig.getLeftCamera().setBackgroundColor(Color.LTGRAY);
+        rig.getRightCamera().setBackgroundColor(Color.LTGRAY);
+        rig.getTransform().rotateByAxis(0, 1, 0, 90);
+
+        ctx.getEventReceiver().addListener(mHandler);
+        try
+        {
+            model = ctx.getAssetLoader().loadModel("jassimp/DeepMotionSkeleton.fbx", scene);
+        }
+        catch (IOException ex)
+        {
+            mWaiter.fail(ex);
+        }
+        mTestUtils.waitForAssetLoad();
+        mHandler.centerModel(model, rig.getTransform());
+        mWaiter.assertNotNull(scene.getSceneObjectByName("DeepMotionSkeleton.fbx"));
+
+        List<GVRComponent> components = model.getAllComponents(GVRSkeleton.getComponentType());
+        Quaternionf q = new Quaternionf();
+        GVRSkeleton skel = null;
+
+        for (GVRComponent c : components)
+        {
+            if (c instanceof GVRSkeleton)
+            {
+                skel = (GVRSkeleton) c;
+                break;
+            }
+        }
+        mWaiter.assertNotNull(skel);
+        skel.updateSkinPose();
+        mTestUtils.waitForXFrames(2);
+
+        int rightShoulder = skel.getBoneIndex("ShoulderRight");
+        int leftShoulder = skel.getBoneIndex("ShoulderLeft");
+        GVRPose bindpose = skel.getBindPose();
+        GVRPose pose = skel.getPose();
+
+        pose.copy(bindpose);
+        skel.updateSkinPose();
+        mTestUtils.waitForXFrames(2);
+
+        mWaiter.assertTrue(rightShoulder >= 0);
+        mWaiter.assertTrue(leftShoulder >= 0);
+        q.fromAxisAngleDeg(0, 0, 1, -45);
+        //pose.setLocalRotation(leftShoulder, q.x, q.y, q.z, q.w);
+        //pose.setLocalRotation(rightShoulder, q.x, q.y, q.z, q.w);
+        skel.poseToBones();
+        skel.updateSkinPose();
+
+        mTestUtils.waitForXFrames(2);
+        mTestUtils.screenShot(getClass().getSimpleName(), "testSkeleton2", mWaiter, mDoCompare);
     }
 
     public void centerModel(GVRSceneObject model, GVRTransform camTrans)
