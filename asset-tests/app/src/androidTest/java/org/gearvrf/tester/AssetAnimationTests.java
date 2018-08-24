@@ -267,7 +267,8 @@ public class AssetAnimationTests
         mWaiter.assertNotNull(scene.getSceneObjectByName("DeepMotionSkeleton.fbx"));
 
         List<GVRComponent> components = model.getAllComponents(GVRSkeleton.getComponentType());
-        Quaternionf q = new Quaternionf();
+        Quaternionf q1 = new Quaternionf();
+        Quaternionf q2 = new Quaternionf();
         GVRSkeleton skel = null;
 
         for (GVRComponent c : components)
@@ -279,23 +280,37 @@ public class AssetAnimationTests
             }
         }
         mWaiter.assertNotNull(skel);
-        skel.updateSkinPose();
-        mTestUtils.waitForXFrames(2);
 
         int rightShoulder = skel.getBoneIndex("ShoulderRight");
         int leftShoulder = skel.getBoneIndex("ShoulderLeft");
+        int rightElbow = skel.getBoneIndex("ElbowRight");
+        int leftElbow = skel.getBoneIndex("ElbowLeft");
+        int leftWrist = skel.getBoneIndex("WristLeft");
         GVRPose bindpose = skel.getBindPose();
         GVRPose pose = skel.getPose();
 
-        pose.copy(bindpose);
-        skel.updateSkinPose();
-        mTestUtils.waitForXFrames(2);
-
         mWaiter.assertTrue(rightShoulder >= 0);
         mWaiter.assertTrue(leftShoulder >= 0);
-        q.fromAxisAngleDeg(0, 0, 1, -45);
-        //pose.setLocalRotation(leftShoulder, q.x, q.y, q.z, q.w);
-        //pose.setLocalRotation(rightShoulder, q.x, q.y, q.z, q.w);
+        mWaiter.assertTrue(rightElbow >= 0);
+        mWaiter.assertTrue(leftElbow >= 0);
+        q1.fromAxisAngleDeg(0, 0, 1, -45);
+        bindpose.getLocalRotation(leftShoulder, q2);
+        q2.mul(q1);
+        pose.setLocalRotation(leftShoulder, q2.x, q2.y, q2.z, q2.w);
+        bindpose.getLocalRotation(leftElbow, q2);
+        q2.mul(q1);
+        pose.setLocalRotation(leftElbow, q2.x, q2.y, q2.z, q2.w);
+        bindpose.getLocalRotation(leftWrist, q2);
+        q2.mul(q1);
+        pose.setLocalRotation(leftWrist, q2.x, q2.y, q2.z, q2.w);
+
+        bindpose.getLocalRotation(rightShoulder, q2);
+        q1.invert();
+        q2.mul(q1);
+        pose.setLocalRotation(rightShoulder, q2.x, q2.y, q2.z, q2.w);
+        bindpose.getLocalRotation(rightElbow, q2);
+        q2.mul(q1);
+        pose.setLocalRotation(rightElbow, q2.x, q2.y, q2.z, q2.w);
         skel.poseToBones();
         skel.updateSkinPose();
 
@@ -358,7 +373,7 @@ public class AssetAnimationTests
     private GVRMeshMorph addMorph(GVRSceneObject model, String shapeNames[])
     {
         GVRSceneObject baseShape = model.getSceneObjectByName(shapeNames[0]);
-        GVRMeshMorph morph = new GVRMeshMorph(model.getGVRContext(), 2, false);
+        GVRMeshMorph morph = new GVRMeshMorph(model.getGVRContext(), 2);
 
         baseShape.attachComponent(morph);
         for (int i = 1; i < shapeNames.length; ++i)
