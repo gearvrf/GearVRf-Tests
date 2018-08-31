@@ -1,0 +1,169 @@
+<X3D profile='Interactive' version='3.0' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.0.xsd'>
+  <Scene>
+    <NavigationInfo headlight='false'/>
+    <Viewpoint description='Front View' position='0 1.5 4'/>
+    <DirectionalLight DEF='DL1' color='1 1 1'/>
+    <Background skyColor='.5 .5 .7'/>
+
+    <Transform translation="0 1 0">
+        <Shape>
+            <Appearance>
+                <Material DEF="matColor" diffuseColor=".5 .5 .5"/>
+                <ImageTexture url="texture_rotation_testpattern.jpg"/>
+		        <TextureTransform DEF='tt' center='-.5 -.5' rotation='0' scale='1 1' translation='0 0'/>
+            </Appearance>
+            <IndexedFaceSet DEF="plane"
+                    coordIndex='0 1 2 -1    0 3 1 -1'
+                    texCoordIndex='0 1 2 -1   0 3 1 -1'
+                    normalIndex='0 0 0 -1   0 0 0 -1'
+                    >
+                <Coordinate point='-1 -1 0    1 1 0    -1 1 0    1 -1 0' />
+                <TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+                <Normal vector='0 0 1'/>
+            </IndexedFaceSet>
+        </Shape>
+    </Transform>
+
+    <Transform translation='-3 1.5 -2'>
+      <Transform DEF='tmXlateXCYL' rotation='0 1 0 0'>
+        <CylinderSensor DEF='tmXlateX_CYLSENSOR' minAngle='-1'  maxAngle='1'/>
+           <Transform rotation='0 1 0 1.57'>
+           <Shape>
+              <Appearance>
+                <Material/>
+                <ImageTexture url="radiansWrap.png"/>
+              </Appearance>
+              <Cylinder/>
+            </Shape>
+          </Transform>
+      </Transform>
+    </Transform>
+    <ROUTE fromField='rotation_changed' fromNode='tmXlateX_CYLSENSOR' toField='set_rotation' toNode='tmXlateXCYL'/>
+
+
+    <Transform translation='3 1.5 -2'>
+      <Transform DEF='tmXlateYCYL' rotation='0 1 0 0'>
+        <CylinderSensor DEF='tmXlateY_CYLSENSOR' minAngle='-1'  maxAngle='1'/>
+           <Transform rotation='0 1 0 1.57'>
+           <Shape>
+              <Appearance>
+                <Material/>
+                <ImageTexture url="radiansWrap.png"/>
+              </Appearance>
+              <Cylinder/>
+            </Shape>
+          </Transform>
+      </Transform>
+    </Transform>
+    <ROUTE fromField='rotation_changed' fromNode='tmXlateY_CYLSENSOR' toField='set_rotation' toNode='tmXlateYCYL'/>
+
+
+    <Transform translation='-3 -2 -2'>
+      <Transform DEF='tmScaleCYL' rotation='0 1 0 0'>
+        <CylinderSensor DEF='tmScaleCYLSENSOR' minAngle='-1'  maxAngle='1'/>
+           <Transform rotation='0 1 0 1.57'>
+           <Shape>
+              <Appearance>
+                <Material/>
+                <ImageTexture url="radiansWrap.png"/>
+              </Appearance>
+              <Cylinder/>
+            </Shape>
+          </Transform>
+      </Transform>
+    </Transform>
+    <ROUTE fromField='rotation_changed' fromNode='tmScaleCYLSENSOR' toField='set_rotation' toNode='tmScaleCYL'/>
+
+    <Transform translation='3 -2 -2'>
+      <Transform DEF='tmRotateCYL' rotation='0 1 0 0'>
+        <CylinderSensor DEF='tmRotateCYLSENSOR' minAngle='-3.14'  maxAngle='3.14'/>
+           <Transform rotation='0 1 0 1.57'>
+           <Shape>
+              <Appearance>
+                <Material/>
+                <ImageTexture url="radiansWrap.png"/>
+              </Appearance>
+              <Cylinder/>
+            </Shape>
+          </Transform>
+      </Transform>
+    </Transform>
+    <ROUTE fromField='rotation_changed' fromNode='tmRotateCYLSENSOR' toField='set_rotation' toNode='tmRotateCYL'/>
+
+
+
+    <Script DEF='ControltmRotate'>
+        <field accessType='inputOnly' name='rotation' type='SFRotation'/>
+        <field accessType='inputOutput' name='textureRotation' type='SFFloat'/>
+
+        <![CDATA[
+            ecmascript:
+                function rotation (rotValue, valueRed)
+                {
+                    textureRotation.setValue( rotValue );
+               }
+        ]]>
+    </Script>
+            
+    <ROUTE fromField='rotation_changed' fromNode='tmRotateCYLSENSOR' toField='set_rotation' toNode='ControltmRotate'/>
+    <ROUTE fromField='rotation' fromNode='tt' toField='textureRotation' toNode='ControltmRotate'/>
+    <ROUTE fromField='textureRotation' fromNode='ControltmRotate' toField='rotation' toNode='tt'/>
+
+
+
+    <Script DEF='ControltmXlateX'>
+        <field accessType='inputOnly' name='rotation' type='SFRotation'/>
+        <field accessType='inputOutput' name='translate' type='SFVec2f'/>
+
+        <![CDATA[
+            ecmascript:
+                function rotation (rotValue, valueRed)
+                {
+                    translate.setValue( rotValue, translate.getY() );
+                }
+        ]]>
+    </Script>
+            
+    <ROUTE fromField='rotation_changed' fromNode='tmXlateX_CYLSENSOR' toField='set_rotation' toNode='ControltmXlateX'/>
+    <ROUTE fromField='translation' fromNode='tt' toField='translate' toNode='ControltmXlateX'/>
+    <ROUTE fromField='translate' fromNode='ControltmXlateX' toField='translation' toNode='tt'/>
+    
+
+    <Script DEF='ControltmXlateY'>
+        <field accessType='inputOnly' name='rotation' type='SFRotation'/>
+        <field accessType='inputOutput' name='translate' type='SFVec2f'/>
+
+        <![CDATA[
+            ecmascript:
+                function rotation (rotValue, valueX)
+                {
+                    translate.setValue( translate.getX(), rotValue );
+                }
+        ]]>
+    </Script>
+
+    <ROUTE fromField='rotation_changed' fromNode='tmXlateY_CYLSENSOR' toField='set_rotation' toNode='ControltmXlateY'/>
+    <ROUTE fromField='translation' fromNode='tt' toField='translate' toNode='ControltmXlateY'/>
+    <ROUTE fromField='translate' fromNode='ControltmXlateY' toField='translation' toNode='tt'/>
+
+
+    <Script DEF='ControlScale'>
+        <field accessType='inputOnly' name='rotation' type='SFRotation'/>
+        <field accessType='inputOutput' name='scaleTM' type='SFVec2f'/>
+
+        <![CDATA[
+            ecmascript:
+                function rotation (rotValue, valueX)
+                {
+                    scaleValue = (rotValue + 1) * (rotValue + 1);
+                    scaleTM.setValue( scaleValue, scaleValue );
+                }
+        ]]>
+    </Script>
+
+    <ROUTE fromField='rotation_changed' fromNode='tmScaleCYLSENSOR' toField='set_rotation' toNode='ControlScale'/>
+    <ROUTE fromField='scale' fromNode='tt' toField='scaleTM' toNode='ControlScale'/>
+    <ROUTE fromField='scaleTM' fromNode='ControlScale' toField='scale' toNode='tt'/>
+
+  </Scene>
+</X3D>
