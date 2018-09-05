@@ -567,7 +567,7 @@ public class MeshTests
         curPose.getWorldRotation(2, resultRot);
         mWaiter.assertEquals(correctRot2, resultRot);
 
-        skel.computeSkinPose();
+        skel.updateSkinPose();
         mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "testSkinningTwoMeshes", mWaiter, false);
     }
@@ -623,7 +623,7 @@ public class MeshTests
 
         curPose.sync();
         curPose.getWorldMatrix(1, resultMtx);
-        skel.computeSkinPose();
+        skel.updateSkinPose();
 
         resultMtx.getTranslation(resultPos);
         correctMtx.getTranslation(correctPos);
@@ -712,7 +712,7 @@ public class MeshTests
         curPose.getWorldRotation(2, resultRot);
         mWaiter.assertEquals(correctRot2, resultRot);
 
-        skel.computeSkinPose();
+        skel.updateSkinPose();
         mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot(getClass().getSimpleName(), "testSkinningBindPose", mWaiter, true);
     }
@@ -819,7 +819,7 @@ public class MeshTests
         skelanim.addChannel("bone2", channel2);
         pose.setWorldPositions(new float[] { 0, -1, 0, -2, 0, 0, 2, 0, 0 });
         skel.setBindPose(pose);
-        skel.computeSkinPose();
+        skel.updateSkinPose();
 
         skelanim.animate(0.5f);
         skelanim.animate(1);
@@ -849,8 +849,8 @@ public class MeshTests
         float[] normals = baseMesh.getNormals();
         float[] weights = new float[] { 1, 0.5f };
 
-        GVRVertexBuffer blendShape1 = new GVRVertexBuffer(ctx, baseVerts.getDescriptor(), baseVerts.getVertexCount());
-        GVRVertexBuffer blendShape2 = new GVRVertexBuffer(ctx, baseVerts.getDescriptor(), baseVerts.getVertexCount());
+        GVRVertexBuffer blendShape1 = new GVRVertexBuffer(ctx, "float3 a_position float3 a_normal", baseVerts.getVertexCount());
+        GVRVertexBuffer blendShape2 = new GVRVertexBuffer(ctx, "float3 a_position float3 a_normal", baseVerts.getVertexCount());
 
         baseShape.getTransform().setPositionZ(-2);
         rig.getLeftCamera().setBackgroundColor(Color.LTGRAY);
@@ -868,6 +868,7 @@ public class MeshTests
         {
             positions[i + 1] *= 1 + positions[i] * 0.3f;
         }
+        normals = baseMesh.getNormals();
         blendShape2.setFloatArray("a_position", positions);
         blendShape2.setFloatArray("a_normal", normals);
         GVRMeshMorph morph = new GVRMeshMorph(ctx, 2);
