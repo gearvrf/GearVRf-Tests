@@ -18,7 +18,6 @@ package org.gearvrf.unittestutils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.mtp.MtpConstants;
 import android.os.Build;
 import android.os.Environment;
 

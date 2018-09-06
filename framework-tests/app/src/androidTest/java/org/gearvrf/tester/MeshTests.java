@@ -538,7 +538,7 @@ public class MeshTests
             positions[i + 1] *= 1 + positions[i] * 0.3f;
         }
         blendShape2.setFloatArray("a_position", positions);
-        GVRMeshMorph morph = new GVRMeshMorph(ctx, 2, false);
+        GVRMeshMorph morph = new GVRMeshMorph(ctx, 2);
         baseShape.attachComponent(morph);
         morph.setBlendShape(0, blendShape1);
         morph.setBlendShape(1, blendShape2);

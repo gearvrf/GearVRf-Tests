@@ -11,12 +11,12 @@ allprojects {
 
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 26
     buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "org.gearvrf.tester"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 23
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
@@ -78,8 +78,10 @@ task copyOculusSignature(type: Copy) {
 preBuild {}.dependsOn copyOculusSignature
 
 project.ext.jomlVersion = "1.9.1-SNAPSHOT"
+project.ext.gsonVersion = '2.8.2'
 
 dependencies {
+    compile "com.google.code.gson:gson:$gsonVersion"
     compile "org.joml:joml-android:${jomlVersion}"
 
     if (findProject(':framework')) {
@@ -104,10 +106,17 @@ dependencies {
         compile(name:'backend_monoscopic-debug', ext:'aar')
     }
 
+    if (findProject(':widgetLib')) {
+        compile project (':widgetLib')
+    } else {
+        compile(name: 'widgetLib-debug', ext: 'aar')
+    }
+
     androidTestCompile 'com.android.support:support-annotations:23.+'
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
+
     compile 'net.jodah:concurrentunit:0.4.2'
     compile project(path: ':gvr-unittestutils')
 }

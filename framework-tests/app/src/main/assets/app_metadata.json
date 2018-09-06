@@ -1,0 +1,32 @@
+{
+  "objects": {
+    "org.gearvrf.tester.WidgetLibTests.SimpleQuad": {
+      "name": "ContentWidget",
+      "size": {
+        "x": 2,
+        "y": 2
+      }
+    },
+    "org.gearvrf.tester.WidgetLibTests.BackgroundWidget": {
+      "name": "BackgroundWidget",
+      "mesh": {
+        "id": "sphere_bg.obj"
+      },
+      "level": 0,
+      "levels": [
+        {
+          "material": {
+            "main_texture": {
+              "type": "bitmap",
+              "bitmap": {
+                "resource_type": "asset",
+                "type": "uncompressed",
+                "id": "bg.jpg"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
