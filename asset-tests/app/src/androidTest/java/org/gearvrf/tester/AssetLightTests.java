@@ -217,7 +217,7 @@ public class AssetLightTests
     @Test
     public void testAddLight() throws TimeoutException
     {
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/animals/wolf-obj.obj", 5, 0, null);
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/animals/wolf-obj.obj", 3, 0, null);
         mTestUtils.waitForXFrames(2);
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
