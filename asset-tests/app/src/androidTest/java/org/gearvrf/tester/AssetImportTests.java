@@ -24,8 +24,8 @@ import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRSpotLight;
 import org.gearvrf.GVRVertexBuffer;
 import org.gearvrf.animation.GVRAnimator;
+import org.gearvrf.animation.GVRRepeatMode;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
-import org.gearvrf.scene_objects.GVRModelSceneObject;
 
 import org.gearvrf.unittestutils.GVRTestUtils;
 import org.gearvrf.unittestutils.GVRTestableActivity;
@@ -91,12 +91,16 @@ public class AssetImportTests
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject model = null;
-
+        String baseName = "astro_boy.dae";
+        String filePath = "jassimp/astro_boy.dae";
+        //String baseName = "TRex_NoGround.fbx";
+        //String filePath = GVRTestUtils.GITHUB_URL + "jassimp/trex/TRex_NoGround.fbx";
+        EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(GVRImportSettings.NO_ANIMATION));
         ctx.getEventReceiver().addListener(mHandler);
         mHandler.dontAddToScene();
         try
         {
-            model = ctx.getAssetLoader().loadModel("jassimp/astro_boy.dae", (GVRScene) null);
+            model = ctx.getAssetLoader().loadModel(filePath, settings, true, null);
         }
         catch (IOException ex)
         {
@@ -104,38 +108,13 @@ public class AssetImportTests
         }
         mTestUtils.waitForAssetLoad();
         mHandler.checkAssetLoaded(null, 4);
-        mWaiter.assertNull(scene.getSceneObjectByName("astro_boy.dae"));
+        mWaiter.assertNull(scene.getSceneObjectByName(baseName));
         mHandler.checkAssetErrors(0, 0);
+        mHandler.centerModel(model, scene.getMainCameraRig().getTransform());
         scene.addSceneObject(model);
-        mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
+        mWaiter.assertNotNull(scene.getSceneObjectByName(baseName));
         mTestUtils.waitForXFrames(2);
         mTestUtils.screenShot("AssetImportTests", "canLoadModel", mWaiter, mDoCompare);
-    }
-
-    @Test
-    public void canStartAnimations() throws TimeoutException
-    {
-        GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRScene scene = mTestUtils.getMainScene();
-        EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(GVRImportSettings.START_ANIMATIONS));
-        GVRSceneObject model = null;
-
-        ctx.getEventReceiver().addListener(mHandler);
-        try
-        {
-            model = ctx.getAssetLoader().loadModel("jassimp/astro_boy.dae", settings, false, scene);
-        }
-        catch (IOException ex)
-        {
-            mWaiter.fail(ex);
-        }
-        mTestUtils.waitForAssetLoad();
-        mHandler.centerModel(model, scene.getMainCameraRig().getTransform());
-        mHandler.checkAssetLoaded(null, 4);
-        mHandler.checkAssetErrors(0, 0);
-        mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
-        mTestUtils.waitForXFrames(2);
-        mTestUtils.screenShot("AssetImportTests", "canStartAnimations", mWaiter, mDoCompare);
     }
 
     @Test
@@ -144,10 +123,11 @@ public class AssetImportTests
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
         GVRSceneObject model = null;
+        String filePath = "jassimp/astro_boy.dae";
 
         try
         {
-            model = ctx.getAssetLoader().loadModel("jassimp/astro_boy.dae", mHandler);
+            model = ctx.getAssetLoader().loadModel(filePath, mHandler);
         }
         catch (IOException ex)
         {
@@ -198,7 +178,7 @@ public class AssetImportTests
         };
         GVRContext ctx  = mTestUtils.getGvrContext();
         GVRScene scene = mTestUtils.getMainScene();
-        GVRModelSceneObject model = new GVRModelSceneObject(ctx);
+        GVRSceneObject model = new GVRSceneObject(ctx);
         ResourceLoader volume = new ResourceLoader(ctx, "jassimp/astro_boy.dae");
         EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(GVRImportSettings.NO_ANIMATION));
 
@@ -214,7 +194,7 @@ public class AssetImportTests
         scene.addSceneObject(model);
         mWaiter.assertNotNull(scene.getSceneObjectByName("astro_boy.dae"));
         mTestUtils.waitForXFrames(2);
-        mTestUtils.screenShot("AssetImportTests", "canLoadModelWithCustomIO", mWaiter, false);
+        mTestUtils.screenShot("AssetImportTests", "canLoadModelWithCustomIO", mWaiter, mDoCompare);
     }
 
 
@@ -234,33 +214,17 @@ public class AssetImportTests
 
         ctx.getEventReceiver().addListener(mHandler);
         model.attachComponent(sceneLoader);
+        mHandler.dontAddToScene();
         sceneLoader.load(scene);
         mWaiter.assertNotNull(model);
         mTestUtils.waitForAssetLoad();
+        mHandler.centerModel(model, scene.getMainCameraRig().getTransform());
         mHandler.checkAssetLoaded("astro_boy.dae", 4);
         mHandler.checkAssetErrors(0, 0);
-        mTestUtils.waitForSceneRendering();
+        mTestUtils.waitForXFrames(5);
         mTestUtils.screenShot("AssetImportTests", "canLoadExternalScene", mWaiter, mDoCompare);
     }
 
-    class MeshVisitorNoAnim implements GVRSceneObject.ComponentVisitor
-    {
-        public boolean visit(GVRComponent comp)
-        {
-            GVRRenderData rdata = (GVRRenderData) comp;
-            GVRMesh mesh = rdata.getMesh();
-            if (mesh != null)
-            {
-                GVRVertexBuffer vbuf = mesh.getVertexBuffer();
-                mWaiter.assertNotNull(vbuf);
-                mWaiter.assertTrue(vbuf.hasAttribute("a_position"));
-                mWaiter.assertTrue(vbuf.hasAttribute("a_normal"));
-                mWaiter.assertFalse(vbuf.hasAttribute("a_bone_weights"));
-                mWaiter.assertFalse(vbuf.hasAttribute("a_bone_indices"));
-            }
-            return true;
-        }
-    }
 
     class MeshVisitorNoLights implements GVRSceneObject.ComponentVisitor
     {
@@ -303,54 +267,6 @@ public class AssetImportTests
             }
             return true;
         }
-    }
-
-    @Test
-    public void canLoadModelWithoutAnimation() throws TimeoutException
-    {
-        GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRSceneObject model = null;
-
-        ctx.getEventReceiver().addListener(mHandler);
-        try
-        {
-            EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(GVRImportSettings.NO_ANIMATION));
-            model = ctx.getAssetLoader().loadModel("jassimp/astro_boy.dae", settings, true, (GVRScene) null);
-        }
-        catch (IOException ex)
-        {
-            mWaiter.fail(ex);
-        }
-        mTestUtils.waitForAssetLoad();
-        mTestUtils.waitForXFrames(5);
-        mHandler.checkAssetLoaded(null, 4);
-        mHandler.checkAssetErrors(0, 0);
-        mWaiter.assertNull(model.getComponent(GVRAnimator.getComponentType()));
-        model.forAllComponents(new MeshVisitorNoAnim(), GVRRenderData.getComponentType());
-    }
-
-    @Test
-    public void canLoadX3DModelWithoutAnimation() throws TimeoutException
-    {
-        GVRContext ctx  = mTestUtils.getGvrContext();
-        GVRSceneObject model = null;
-
-        ctx.getEventReceiver().addListener(mHandler);
-        try
-        {
-            EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(GVRImportSettings.NO_ANIMATION));
-            model = ctx.getAssetLoader().loadModel(GVRTestUtils.GITHUB_URL + "x3d/animation/animation04.x3d", settings, true, (GVRScene) null);
-        }
-        catch (IOException ex)
-        {
-            mWaiter.fail(ex);
-        }
-        mTestUtils.waitForAssetLoad();
-        mTestUtils.waitForXFrames(5);
-        mHandler.checkAssetLoaded(null, 4);
-        mHandler.checkAssetErrors(0, 0);
-        mWaiter.assertNull(model.getComponent(GVRAnimator.getComponentType()));
-        model.forAllComponents(new MeshVisitorNoAnim(), GVRRenderData.getComponentType());
     }
 
     @Test
@@ -489,7 +405,7 @@ public class AssetImportTests
     @Test
     public void jassimpTrees3DS() throws TimeoutException
     {
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/trees/trees9.3ds", 9, 0, "jassimpTrees3DS");
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/trees/trees9.3ds", 8, 0, "jassimpTrees3DS");
     }
 
     @Test
@@ -514,13 +430,13 @@ public class AssetImportTests
     @Test
     public void jassimpBearOBJ() throws TimeoutException
     {
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/animals/bear-obj.obj", 5, 0, "jassimpBearOBJ");
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/animals/bear-obj.obj", 3, 0, "jassimpBearOBJ");
     }
 
     @Test
     public void jassimpWolfOBJ() throws TimeoutException
     {
-        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/animals/wolf-obj.obj", 5, 0, "jassimpWolfOBJ");
+        mHandler.loadTestModel(GVRTestUtils.GITHUB_URL + "jassimp/animals/wolf-obj.obj", 3, 0, "jassimpWolfOBJ");
     }
 
     @Test
