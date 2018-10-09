@@ -1,0 +1,79 @@
+<X3D>
+  <Scene>
+    <ProtoDeclare name='MeshProto'>
+      <ProtoBody>
+          <Transform>
+            <Shape>
+                  <Appearance>
+                        <Material DEF='DIFFUSE_PROTO' diffuseColor='.5 1 1'/>
+                        <ImageTexture url="texture_rotation_testpattern.jpg" repeatS="TRUE" repeatT="TRUE"/>
+                        <TextureTransform center='-.5 -.5' rotation='0' scale='2 3' translation='0 0'/>
+                  </Appearance>
+                    <IndexedFaceSet
+                        coordIndex='0 1 2 -1    0 3 1 -1'
+                        texCoordIndex='0 1 2 -1   0 3 1 -1'
+                        normalIndex='0 0 0 -1   0 0 0 -1'
+                    >
+                        <Coordinate point='-2 -2 0    2 2 0    -2 2 0    2 -2 0' />
+                        <TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+                        <Normal vector='0 0 1'/>
+                    </IndexedFaceSet>
+            </Shape>
+          </Transform>
+
+      </ProtoBody>
+    </ProtoDeclare>
+
+    <NavigationInfo headlight='false'/>
+    <Viewpoint position='0 0 10'/>
+    <DirectionalLight color='1 1 1'/>
+    <Background skyColor='.2 .3 .4'/>
+
+        <Transform DEF="image1" translation="-6 -6 -1" rotation="0 0 1 .6">
+	        <Shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="markerone.png" repeatS="TRUE" repeatT="TRUE"/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-3 -2 0    3 2 0    -3 2 0    3 -2 0' />
+					<TextureCoordinate point='.25 0   2 1    .25 1   2 0'/>
+				    <TextureTransform DEF='tt01' center='-.5 -.5' rotation='.6' scale='1 1' translation='0 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </Shape>
+        </Transform>
+
+      <Transform DEF='PROTO1' translation='2 -3.5 1' rotation='0 0 1 -.25'>
+        <ProtoInstance DEF='MYPROTO1' name='MeshProto'/>
+      </Transform>
+
+      <Transform DEF='PROTO2' translation='-2 -1 0' rotation='0 0 1 .15'>
+        <ProtoInstance DEF='MYPROTO2' name='MeshProto'/>
+      </Transform>
+
+        <Transform DEF="image4" translation="-6 2 -2" rotation="0 0 1 0">
+	        <shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="news_texture_map.jpg" repeatS="TRUE" repeatT="TRUE"/>
+				    <TextureTransform center='-.5 -.5' rotation='0' scale='3 2' translation='0 0'/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-3 -2 0    3 2 0    -3 2 0    3 -2 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </shape>
+        </Transform>
+
+  </Scene>
+</X3D>

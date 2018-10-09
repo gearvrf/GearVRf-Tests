@@ -1,0 +1,105 @@
+<X3D>
+  <Scene>
+    <ProtoDeclare name='MeshProto'>
+    
+      <ProtoInterface>  
+        <field accessType='initializeOnly' name='picture' type='MFString' value='deedee1.jpg'/>
+        <field accessType='initializeOnly' name='textureRotationInterface' type='SFFloat' value='0'/>
+        <field accessType='initializeOnly' name='diffuseColorInterface' type='SFVec3f' value='1 1 1'/>
+      </ProtoInterface>
+      
+      <ProtoBody>
+          <Transform>
+            <Shape>
+              <Appearance>
+                <Material DEF='DIFFUSE_PROTO'/>
+                  <IS>
+                    <connect nodeField='diffuseColor' protoField='diffuseColorInterface'/>
+                  </IS>
+              	<ImageTexture url="markertwo.png" repeatS="TRUE" repeatT="TRUE"/>
+                  <IS>
+                    <connect nodeField='url' protoField='picture'/>
+                  </IS>
+                <TextureTransform DEF='tt01'/>
+                  <IS>
+                    <connect nodeField='rotation' protoField='textureRotationInterface'/>
+                  </IS>
+              </Appearance>
+                    <IndexedFaceSet
+                        coordIndex='0 1 2 -1    0 3 1 -1'
+                        texCoordIndex='0 1 2 -1   0 3 1 -1'
+                        normalIndex='0 0 0 -1   0 0 0 -1'
+                    >
+                        <Coordinate point='-2 -2 0    2 2 0    -2 2 0    2 -2 0' />
+                        <TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+                        <Normal vector='0 0 1'/>
+                    </IndexedFaceSet>
+            </Shape>
+          </Transform>
+      </ProtoBody>
+      
+    </ProtoDeclare>
+
+    <NavigationInfo headlight='false'/>
+    <Viewpoint position='0 0 10'/>
+    <DirectionalLight color='1 1 1'/>
+    <Background skyColor='.1 .2 .4'/>
+
+    <Transform DEF="image1" translation="-5 -6 -1" rotation="0 0 1 .6">
+	        <shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="markerone.png" repeatS="TRUE" repeatT="TRUE"/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-3 -2 0    3 2 0    -3 2 0    3 -2 0' />
+					<TextureCoordinate point='.25 0   2 1    .25 1   2 0'/>
+				    <TextureTransform DEF='tt01' center='-.5 -.5' rotation='.6' scale='1 1' translation='0 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </shape>
+      </Transform>
+
+      <Transform DEF='proto1' translation='3 1 2' rotation='0 0 1 0'>
+        <ProtoInstance DEF='MYPROTO1' name='MeshProto'>
+            <fieldValue name='textureRotationInterface' value='-.4'/>
+        </ProtoInstance>
+      </Transform>
+
+      <Transform DEF='proto2' translation='3 -4 1' rotation='0 0 1 .35'>
+        <ProtoInstance DEF='MYPROTO2' name='MeshProto'>
+            <fieldValue name='picture' value='texture_rotation_tblrm.jpg'/>
+        </ProtoInstance>
+      </Transform>
+
+      <Transform DEF='proto3' translation='0 -1 0' rotation='0 0 1 -.25'>
+        <ProtoInstance DEF='MYPROTO1' name='MeshProto'>
+            <fieldValue name='diffuseColorInterface' value='1 1 0'/>
+        </ProtoInstance>
+      </Transform>
+
+        <Transform DEF="image4" translation="-5 2 -2" rotation="0 0 1 1.57">
+	        <shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="markerthree.png" repeatS="TRUE" repeatT="TRUE"/>
+				    <TextureTransform center='-.5 -.5' rotation='0' scale='.5 .4' translation='0 0'/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-3 -2 0    3 2 0    -3 2 0    3 -2 0' />
+					<TextureCoordinate point='.25 0   2 1.5    .25 1.5   2 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </shape>
+        </Transform>
+
+  </Scene>
+</X3D>

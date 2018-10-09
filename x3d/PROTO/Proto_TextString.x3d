@@ -1,0 +1,100 @@
+<X3D>
+  <Scene>
+
+        <Transform DEF='defaultFont' translation=".75 .5 -1">
+	        <Shape>
+	          <Text string='"Test" "BEFORE" "Bold"'>
+	          	  <FontStyle DEF='fs1a' justify='MIDDLE' style="BOLD" family="Prisma.ttf"/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor=".8 .8 .8"/>
+	          </Appearance>
+	        </Shape>
+	    </Transform>
+
+    <ProtoDeclare name='TextStringProtoDeclare'>
+      <ProtoInterface>
+        <field accessType='inputOutput' name='stringInterface' type='MFString' value='"String" "Interface"'/>
+        <field accessType='initializeOnly' name='sizeInterface' type='SFFloat' value='2.8'/>
+        <field accessType='initializeOnly' name='justifyInterface' type='MFString' value='"END" "MIDDLE"'/>
+        <field accessType='initializeOnly' name='styleInterface' type='SFString' value='BOLDITALIC'/>
+        <field accessType='initializeOnly' name='familyInterface' type='MFString' value='"Prisma.ttf"'/>
+        <field accessType='initializeOnly' name='spacingInterface' type='SFFloat' value='4.0'/>
+      </ProtoInterface>
+      <ProtoBody>
+        <Transform>
+          <Shape>
+            <Appearance>
+              <Material>
+              </Material>
+            </Appearance>
+            <Text string='"My Test" "TEXT"'>
+              <IS>
+                <connect nodeField='string' protoField='stringInterface'/>
+              </IS>
+              <FontStyle>
+                <IS>
+                  <connect nodeField='family' protoField='familyInterface'/>
+                  <connect nodeField='justify' protoField='justifyInterface'/>
+                  <connect nodeField='size' protoField='sizeInterface'/>
+                  <connect nodeField='style' protoField='styleInterface'/>
+                  <connect nodeField='spacing' protoField='spacingInterface'/>
+                </IS>
+              </FontStyle>
+            </Text>
+          </Shape>
+        </Transform>
+      </ProtoBody>
+    </ProtoDeclare>
+
+
+        <Transform DEF='defaultFont' translation="-.75 .5 -1">
+	        <Shape>
+	          <Text string='"Test" "BEFORE" "Plain"'>
+	          	  <FontStyle DEF='fs1b' justify='MIDDLE' style="PLAIN" family="Prisma.ttf"/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor=".8 .8 .8"/>
+	          </Appearance>
+	        </Shape>
+	    </Transform>
+
+    <Transform translation='-1.2 -1.2 1'>
+        <ProtoInstance DEF='MyTextString1' name='TextStringProtoDeclare'>
+          <fieldValue name='justifyInterface' value='"END"'/>
+          <fieldValue name='sizeInterface' value='0.9'/>
+          <fieldValue name='styleInterface' value='PLAIN'/>
+        </ProtoInstance>
+    </Transform>
+
+    <NavigationInfo headlight='false'/>
+    <Viewpoint position='0 0 4'/>
+    <DirectionalLight  color='.6 .6 .6'/>
+    <DirectionalLight direction='0 -1 0' color='.3 .3 .3'/>
+    <Background skyColor='.2 .3 .4'/>
+
+    <Transform translation='0 -.5 -1.5'>
+        <ProtoInstance DEF='MyTextString2' name='TextStringProtoDeclare'>
+          <fieldValue name='stringInterface' value='"my text" "demo"'/>
+          <fieldValue name='justifyInterface' value='"MIDDLE"'/>
+          <fieldValue name='sizeInterface' value='1.5'/>
+          <fieldValue name='styleInterface' value='PLAIN'/>
+          <fieldValue name='spacingInterface' value='36.0'/>
+          <fieldValue name='familyInterface' value='"BroadcastTitling.ttf" "nsecthck.ttf" "CAUTION.ttf"'/>
+        </ProtoInstance>
+    </Transform>
+
+
+        <Transform DEF='defaultFont' translation=".5 -1 -1.25">
+	        <Shape>
+	          <Text string='"Test" "AFTER "'>
+	          	  <FontStyle DEF='fs2' justify='MIDDLE' style="ITALIC" family="Prisma.ttf"/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="0 1 1"/>
+	          </Appearance>
+	        </Shape>
+	    </Transform>
+
+  </Scene>
+</X3D>

@@ -1,0 +1,100 @@
+<X3D>
+  <Scene>
+    <ProtoDeclare name='MeshProto'>
+    
+      <ProtoInterface>  
+        <field accessType='initializeOnly' name='scaling' type='SFVec2f' value='2 3'/>
+        <field accessType='initializeOnly' name='rotating' type='SFFloat' value='-.3'/>
+        <field accessType='initializeOnly' name='translating' type='SFVec2f' value='.2 .6'/>
+      </ProtoInterface>
+      
+      <ProtoBody>
+          <Transform>
+            <Shape>
+              <Appearance>
+                <Material DEF='DIFFUSE_PROTO' diffuseColor='.75 1 .5'/>
+              	<ImageTexture url="markertwo.png" repeatS="TRUE" repeatT="TRUE"/>
+		<TextureTransform DEF='tt01'/>
+		  <IS>
+		    <connect nodeField='scale' protoField='scaling'/>
+		    <connect nodeField='rotation' protoField='rotating'/>
+		    <connect nodeField='translation' protoField='translating'/>
+		  </IS>
+              </Appearance>
+            </Shape>
+          </Transform>
+          <Transform>
+            <Shape>
+              <Appearance>
+                <Material USE='DIFFUSE_PROTO'/>
+              </Appearance>
+                    <IndexedFaceSet
+                        coordIndex='0 1 2 -1    0 3 1 -1'
+                        texCoordIndex='0 1 2 -1   0 3 1 -1'
+                        normalIndex='0 0 0 -1   0 0 0 -1'
+                    >
+                        <Coordinate point='-2 -2 0    2 2 0    -2 2 0    2 -2 0' />
+                        <TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+                        <Normal vector='0 0 1'/>
+                    </IndexedFaceSet>
+            </Shape>
+          </Transform>
+      </ProtoBody>
+      
+    </ProtoDeclare>
+
+    <NavigationInfo headlight='false'/>
+    <Viewpoint position='0 0 10'/>
+    <DirectionalLight color='1 1 1'/>
+    <Background skyColor='.1 .3 .6'/>
+
+    <Transform DEF="image1" translation="-6 -6 -1" rotation="0 0 1 .6">
+	        <shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="markerone.png" repeatS="TRUE" repeatT="TRUE"/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-3 -2 0    3 2 0    -3 2 0    3 -2 0' />
+					<TextureCoordinate point='.25 0   2 1    .25 1   2 0'/>
+				    <TextureTransform DEF='tt01' center='-.5 -.5' rotation='.6' scale='1 1' translation='0 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </shape>
+      </Transform>
+
+      <Transform translation='3 -2.5 2' rotation='0 0 1 0'>
+        <ProtoInstance DEF='MYPROTO1' name='MeshProto'/>
+      </Transform>
+
+      <Transform translation='3 2 0' rotation='0 0 1 0'>
+        <ProtoInstance DEF='MYPROTO2' name='MeshProto'>
+           <fieldValue name='rotating' value='-.6'/>
+        </ProtoInstance>
+      </Transform>
+
+        <Transform DEF="image4" translation="-6 2 -2" rotation="0 0 1 1.57">
+	        <shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="markerthree.png" repeatS="TRUE" repeatT="TRUE"/>
+				    <TextureTransform center='-.5 -.5' rotation='0' scale='.5 .4' translation='0 0'/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-3 -2 0    3 2 0    -3 2 0    3 -2 0' />
+					<TextureCoordinate point='.25 0   2 1.5    .25 1.5   2 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </shape>
+        </Transform>
+
+  </Scene>
+</X3D>
