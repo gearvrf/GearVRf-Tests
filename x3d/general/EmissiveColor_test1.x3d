@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <Scene>
+  
+    <Viewpoint DEF='VP1' position='0 0 0'/>
+    <Background skyColor='.5 .5 .5'/>
+    <DirectionalLight DEF="dlLight" color='1 1 1' on='false'/>
+    <NavigationInfo headlight='false'/>
+
+    <Transform DEF="demoObj"  translation='-2.5 -1 -12'>
+
+        <Transform DEF="RedBox"  translation='0 2.5 0' rotation='.6 .8 0 .5'>
+            <Shape>
+              <Appearance>
+                <Material DEF='redMat' emissiveColor='1 0 0' diffuseColor='0 0 0' specularColor='0 0 0'/>
+              </Appearance>
+              <Box/>
+            </Shape>
+          </Transform>
+        <Transform translation="2.75 2.5 0">
+	        <Shape>
+	          <Text string='"red box" "emissiveColor" '>
+	            <FontStyle DEF='fs1' size='1.75' family='Air Americana.ttf' justify='BEGIN' spacing='2.0'/>
+	          </Text>
+	          <Appearance>
+	            <Material emissiveColor='1 0 0' diffuseColor='1 0 0' />
+	          </Appearance>
+	        </Shape>
+	    </Transform>
+
+        <Transform DEF="GreenCone"  translation='0 0 0'>
+            <Shape>
+              <Appearance>
+                <Material DEF='greenMat' emissiveColor='0 1 0' diffuseColor='0 0 0' specularColor='0 0 0'/>
+              </Appearance>
+              <Cone/>
+            </Shape>
+          </Transform>
+        <Transform translation="2.5 0 0">
+	        <Shape>
+	          <Text string='"green cone" "emissiveColor"'>
+	            <FontStyle USE='fs1'/>
+	          </Text>
+	          <Appearance>
+	            <Material emissiveColor='0 1 0' diffuseColor='0 1 0' />
+	          </Appearance>
+	        </Shape>
+	    </Transform>
+
+        <Transform DEF="BlueSphere" translation='0 -2.5 0'>
+            <Shape>
+              <Appearance>
+                <Material DEF='blueMat' emissiveColor='0 0 1' diffuseColor='0 0 0' specularColor='0 0 0'/>
+              </Appearance>
+              <Sphere/>
+            </Shape>
+          </Transform>
+        <Transform translation="2.5 -2.5 0">
+	        <Shape>
+	          <Text string='"blue cone" "emissiveColor"'>
+	            <FontStyle USE='fs1'/>
+	          </Text>
+	          <Appearance>
+	            <Material emissiveColor='0 0 1' diffuseColor='0 0 1' />
+	          </Appearance>
+	        </Shape>
+	    </Transform>
+
+
+        <Transform DEF="WhiteCylinder" translation='7 -2.5 2'>
+            <Shape>
+              <Appearance>
+                <Material diffuseColor='1 1 1'/>
+              </Appearance>
+              <Sphere/>
+            </Shape>
+            <Transform translation="0 -2.5 0">
+            	<Shape>
+            	   <Text string='"white sphere" "diffuseColor only"'>
+            	       <FontStyle USE='fs1'/>
+            	    </Text>
+            	    <Appearance>
+            	      <Material diffuseColor='1 1 1' />
+            	    </Appearance>
+            	</Shape>
+            </Transform>
+          </Transform>
+
+   </Transform>
+
+
+
+      <Transform DEF="LightOnOff" translation='3 .5 -8'>
+        <Transform>
+            <TouchSensor DEF='LightOnOffTouchSensor' description='red controller'/>
+            <Shape>
+               <Appearance>
+                   <Material emissiveColor='0 .5 .5' diffuseColor='0 .5 .5' specularColor='0 0 0'/>
+                </Appearance>
+                <Box size='1 .7 1'/>
+            </Shape>
+          </Transform>
+          <Transform translation=".5 -.75 0">
+      	     <Shape>
+      	        <Text DEF="textLightOnOff" string='"light on/off"'>
+      	          <FontStyle USE='fs1'/>
+      	        </Text>
+      	        <Appearance>
+      	          <Material emissiveColor='0 .75 .75' diffuseColor='0 .75 .75' />
+      	        </Appearance>
+      	     </Shape>
+           </Transform>
+      </Transform>
+
+
+   <Script DEF='IsActiveLightOnOffScript'>
+        <field accessType='inputOnly' name='IsActiveLightonOff' type='SFBool'/>
+        <field accessType='outputOnly' name='lightOnOff' type='SFBool'/>
+        <field accessType='outputOnly' name='lightOnOffText' type='MFString'/>
+
+        <![CDATA[
+            ecmascript:
+    	    function initialize() {
+    	        light = false;
+    	        lightOnOffText = new MFString( "over button" );
+    	    }
+            function IsActiveLightonOff( isActiveBoolean )
+            {
+                lightOnOff = new SFBool( light );
+              	if ( isActiveBoolean ) {
+              	    light = !light;
+              	    lightOnOff = new SFBool( light );
+              	    if (light) lightOnOffText = new MFString( "light ON" );
+              	    else lightOnOffText = new MFString( "light OFF" );
+              	}
+            }
+        ]]>
+   </Script>
+   <ROUTE fromField='isOver' fromNode='LightOnOffTouchSensor' toField='IsActiveLightonOff' toNode='IsActiveLightOnOffScript'/>
+   <ROUTE fromField='lightOnOff' fromNode='IsActiveLightOnOffScript' toField='on' toNode='dlLight'/>
+   <ROUTE fromField='lightOnOffText' fromNode='IsActiveLightOnOffScript' toField='string' toNode='textLightOnOff'/>
+
+
+	
+  </Scene>
+</X3D>
